@@ -1,0 +1,30 @@
+{
+   "name": "cubecon-backend",
+   "version": "0.0.1",
+   "description": "Cubecon backend",
+   "type": "commonjs",
+   "devDependencies": {
+      "@flydotio/dockerfile": "^0.5.0",
+      "@types/express": "^4.17.21",
+      "@types/jsonwebtoken": "^9.0.5",
+      "@types/node": "^20.10.5",
+      "nodemon": "^3.0.2",
+      "ts-node": "^10.9.2",
+      "typescript": "^5.3.3"
+   },
+   "dependencies": {
+      "cors": "^2.8.5",
+      "express": "^4.18.2",
+      "jsonwebtoken": "^9.0.2",
+      "pg": "^8.4.0",
+      "reflect-metadata": "^0.1.13",
+      "typeorm": "0.3.17"
+   },
+   "scripts": {
+      "dev": "nodemon -L --watch 'src/**/*.ts' --exec ts-node src/index.ts",
+      "start": "ts-node src/index.ts",
+      "typeorm": "typeorm-ts-node-commonjs -d ./src/data-source.ts"
+   },
+   "main": "index.js",
+   "license": "MIT"
+}

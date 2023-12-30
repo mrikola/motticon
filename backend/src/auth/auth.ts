@@ -1,0 +1,45 @@
+import { verify, sign, JwtPayload } from "jsonwebtoken";
+import { UserService } from "../service/user.service";
+
+const { JWT_SECRET_KEY } = process.env;
+const userService = new UserService();
+
+export const isValidToken = (token: string) => {
+  try {
+    const decoded = verify(token, JWT_SECRET_KEY);
+    return true;
+  } catch (err: unknown) {
+    return false;
+  }
+};
+
+export const isValidAdminToken = (token: string) => {
+  try {
+    const decoded = verify(token, JWT_SECRET_KEY) as JwtPayload;
+    return decoded.isAdmin;
+  } catch (err: unknown) {
+    return false;
+  }
+};
+
+// TODO actual encoding
+const encodePassword = (password: string) => password;
+
+export const doLogin = async (email: string, password: string) => {
+  const user = await userService.getUserByEmail(email);
+
+  if (!user || encodePassword(password) !== user.password) {
+    // TODO log the login error
+    return undefined;
+  }
+
+  return sign(
+    {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      isAdmin: user.isAdmin,
+    },
+    JWT_SECRET_KEY
+  );
+};
