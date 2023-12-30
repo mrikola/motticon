@@ -23,7 +23,8 @@
    "scripts": {
       "dev": "nodemon -L --watch 'src/**/*.ts' --exec ts-node src/index.ts",
       "start": "ts-node src/index.ts",
-      "typeorm": "typeorm-ts-node-commonjs -d ./src/data-source.ts"
+      "typeorm": "typeorm-ts-node-commonjs -d ./src/data-source.ts",
+      "fixtures": "docker compose exec db psql -U postgres -d motticon -f /home/fixtures.sql"
    },
    "main": "index.js",
    "license": "MIT"
