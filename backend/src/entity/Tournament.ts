@@ -24,6 +24,6 @@ export class Tournament {
   enrollments: Enrollment[];
 
   @ManyToMany(() => User)
-  @JoinTable()
+  @JoinTable({ name: "tournament_staff_members" })
   staffMembers: User[];
 }
