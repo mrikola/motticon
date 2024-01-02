@@ -11,7 +11,7 @@ const Profile = () => {
         this is you: {user.firstName} {user.lastName}
         <div>click these and watch the console</div>
         <div>
-          <button
+          <button type="button" className="btn btn-primary" 
             onClick={() =>
               get("/user/profile").then(async (resp) =>
                 console.log(await resp.text())
@@ -20,9 +20,10 @@ const Profile = () => {
           >
             do normal user shit
           </button>
-          <button onClick={() => get("/admin")}>do admin shit</button>
+          <button type="button" className="btn btn-secondary" onClick={() => get("/admin")}>do admin shit</button>
         </div>
         <div>
+          <button type="button" className="btn btn-danger" onClick={() => get("/logout")}>log me out</button>
           <Link style={{ color: "red" }} to={"/logout"}>
             log me out
           </Link>
