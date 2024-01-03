@@ -7,6 +7,7 @@ import Logout from "./components/user/Logout";
 import Profile from "./components/user/Profile";
 import Cubes from "./components/general/Cubes";
 import Cube from "./components/general/Cube";
+import Test from "./components/general/Test";
 
 function App() {
   const routes: RouteObject[] = [
@@ -40,6 +41,10 @@ function App() {
             {
               path: "cube/:cubeId",
               Component: Cube,
+            },
+            {
+              path: "test",
+              Component: Test,
             },
             {
               path: "*",

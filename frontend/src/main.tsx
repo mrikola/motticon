@@ -4,10 +4,10 @@ import App from "./App";
 import "./index.css";
 
 // Import our custom CSS
-import './scss/style.scss'
+import './scss/style.scss';
 
 // Import all of Bootstrap's JS
-import * as bootstrap from 'bootstrap'
+import * as bootstrap from 'bootstrap';
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
