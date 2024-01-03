@@ -5,9 +5,9 @@ import Login from "./components/user/Login";
 import UserInfoProvider from "./components/provider/UserInfoProvider";
 import Logout from "./components/user/Logout";
 import Profile from "./components/user/Profile";
-import ListCubes from "./components/general/ListCubes";
-import ViewCube from "./components/general/ViewCube";
+import ViewCube from "./pages/ViewCube/ViewCube";
 import Test from "./components/general/Test";
+import ListCubes from "./pages/ListCubes/ListCubes";
 
 function App() {
   const routes: RouteObject[] = [

@@ -5,6 +5,7 @@ import Modal from "react-bootstrap/Modal";
 import DeckImage from "/img/draft_pool.png";
 import { Cube } from "../../types/Cube";
 import { get } from "../../services/ApiService";
+import { Image, List, PenFill } from "react-bootstrap-icons";
 
 const ViewCube = () => {
   const { cubeId } = useParams();
@@ -42,14 +43,16 @@ const ViewCube = () => {
               <div className="row h-100 align-items-center">
                 <div className="col-12 text-center">
                   <h1>{cube.title}</h1>
-                  <p className="lead"><i className="bi bi-pen-fill text-primary"></i> Cube Designer: John Doe</p>
+                  <p className="lead">
+                    <PenFill /> Cube Designer: John Doe
+                  </p>
                   <p>{cube.description}</p>
                   <a
                     href={cube.url}
                     target="_blank"
                     className="btn btn-primary"
                   >
-                    <i className="bi bi-list"></i> View list on Cube Cobra
+                    <List /> View list on Cube Cobra
                   </a>
                 </div>
               </div>
@@ -57,7 +60,7 @@ const ViewCube = () => {
           </div>
         </div>
         <div className="container">
-          <div class="row">
+          <div className="row">
             <h3>Draft 1</h3>
           </div>
           <div className="row">
@@ -73,15 +76,15 @@ const ViewCube = () => {
             </div>
             <div className="col-4 col-xs-4">
               <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleShow}
-                >
-                <i className="bi bi-image"></i>
+                type="button"
+                className="btn btn-primary"
+                onClick={handleShow}
+              >
+                <Image />
               </button>
             </div>
           </div>
-          <div class="row">
+          <div className="row">
             <h3>Draft 2</h3>
           </div>
           <div className="row">
@@ -97,15 +100,15 @@ const ViewCube = () => {
             </div>
             <div className="col-4 col-xs-4">
               <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleShow}
-                >
-                <i className="bi bi-image"></i>
+                type="button"
+                className="btn btn-primary"
+                onClick={handleShow}
+              >
+                <Image />
               </button>
             </div>
           </div>
-          <div class="row">
+          <div className="row">
             <h3>Draft 3</h3>
           </div>
           <div className="row">
@@ -121,11 +124,11 @@ const ViewCube = () => {
             </div>
             <div className="col-4 col-xs-4">
               <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleShow}
-                >
-                <i className="bi bi-image"></i>
+                type="button"
+                className="btn btn-primary"
+                onClick={handleShow}
+              >
+                <Image />
               </button>
             </div>
           </div>

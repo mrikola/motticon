@@ -1,5 +1,8 @@
+import { Container, Navbar, Nav } from "react-bootstrap";
+import { Boxes, PersonFill } from "react-bootstrap-icons";
 import { Outlet, useLocation } from "react-router";
 import { Link } from "react-router-dom";
+import Footer from "./Footer";
 
 const Layout = () => {
   const location = useLocation();
@@ -7,14 +10,14 @@ const Layout = () => {
   return isLoggedIn && location.pathname !== "/login" ? (
     <>
       <header>
-        <nav className="navbar navbar-expand-lg bg-body-tertiary">
-          <div className="container-fluid">
-            <Link className="navbar-brand" to="/">
-              Navbar
-            </Link>
-            <button
-              className="navbar-toggler"
-              type="button"
+        <Navbar expand="lg">
+          <Container fluid>
+            <Navbar.Brand>
+              <Link className="navbar-brand" to="/">
+                Navbar
+              </Link>
+            </Navbar.Brand>
+            <Navbar.Toggle
               data-bs-toggle="collapse"
               data-bs-target="#navbarSupportedContent"
               aria-controls="navbarSupportedContent"
@@ -22,37 +25,39 @@ const Layout = () => {
               aria-label="Toggle navigation"
             >
               <span className="navbar-toggler-icon"></span>
-            </button>
-            <div
-              className="collapse navbar-collapse"
-              id="navbarSupportedContent"
-            >
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
+            </Navbar.Toggle>
+            <Navbar.Collapse id="navbarSupportedContent">
+              <Nav className="me-auto">
+                <Nav.Item>
                   <Link className="nav-link active" aria-current="page" to="/">
                     Home
                   </Link>
-                </li>
-                <li className="nav-item">
+                </Nav.Item>
+                <Nav.Item>
                   <Link className="nav-link" to="/profile">
-                    <i className="bi bi-person-fill"></i> Profile
+                    <PersonFill />
+                    Profile
                   </Link>
-                </li>
-                <li className="nav-item">
-
+                </Nav.Item>
+                <Nav.Item>
                   <Link className="nav-link" to="/cubes">
-                    <i className="bi bi-boxes"></i> Cubes
+                    <Boxes />
+                    Cubes
                   </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
+                </Nav.Item>
+              </Nav>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
       </header>
       <Outlet />
+      <Footer />
     </>
   ) : (
-    <Outlet />
+    <>
+      <Outlet />
+      <Footer />
+    </>
   );
 };
 

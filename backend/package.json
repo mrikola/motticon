@@ -1,7 +1,7 @@
 {
-   "name": "cubecon-backend",
+   "name": "motticon-backend",
    "version": "0.0.1",
-   "description": "Cubecon backend",
+   "description": "MottiCon backend",
    "type": "commonjs",
    "devDependencies": {
       "@flydotio/dockerfile": "^0.5.0",
