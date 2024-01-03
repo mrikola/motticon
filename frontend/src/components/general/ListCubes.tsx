@@ -24,35 +24,29 @@ const Cubes = () => {
         <div className="row">
           <h1>Cubes</h1>
         </div>
-        <div className="row">
+        <div className="row row-cols-1 row-cols-md-2 g-4">
           {cubes.map((cube) => (
-            <div className="col-sm-6" key={cube.id}>
-              <div className="card">
-                <svg
-                  className="bd-placeholder-img card-img-top"
-                  width="100%"
-                  height="180"
-                  xmlns="http://www.w3.org/2000/svg"
-                  role="img"
-                  aria-label="Placeholder: Image cap"
-                  preserveAspectRatio="xMidYMid slice"
-                  focusable="false"
-                >
-                  <title>Placeholder</title>
-                  <rect width="100%" height="100%" fill="#868e96"></rect>
-                  <text x="50%" y="50%" fill="#dee2e6" dy=".3em">
-                    Image cap
-                  </text>
-                </svg>
-                <div className="card-body">
-                  <h5 className="card-title">{cube.title}</h5>
-                  <p className="card-text">{cube.description}</p>
-                  <Link to={`/cube/${cube.id}`} className="btn btn-primary">
-                    Go to cube
-                  </Link>
+          <div className="col" key={cube.id}>
+            <div className="card mb-3">
+              <div className="row g-0">
+                <div className="col-5 cube-card-image" style={{ backgroundImage: 'url(/img/masthead_'+cube.id+'.jpeg)' }}>
+                </div>
+                <div className="col-7">
+                  <div className="card-body">
+                    <h5 className="card-title">
+                      {cube.title + ' '}
+                      {cube.id == '1'? <i className="bi bi-exclamation-circle-fill text-primary"></i>: null }
+                    </h5>
+                    <p className="card-text">{cube.description}</p>
+                    <p className="card-text"><small className="text-body-secondary">Designed by: Timo Tuuttari</small></p>
+                    <Link to={`/cube/${cube.id}`} className="btn btn-primary">
+                      <i className="bi bi-box"></i> Go to cube
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
           ))}
         </div>
       </div>

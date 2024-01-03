@@ -35,17 +35,13 @@ const Layout = () => {
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/profile">
-                    Profile
+                    <i className="bi bi-person-fill"></i> Profile
                   </Link>
                 </li>
                 <li className="nav-item">
+
                   <Link className="nav-link" to="/cubes">
-                    Cubes
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/test">
-                    Test
+                    <i className="bi bi-boxes"></i> Cubes
                   </Link>
                 </li>
               </ul>

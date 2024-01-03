@@ -41,15 +41,15 @@ const ViewCube = () => {
             <div className="container h-100">
               <div className="row h-100 align-items-center">
                 <div className="col-12 text-center">
-                  <h1>This is cube: {cube.title}</h1>
-                  <p className="lead">Cube Designer: John Doe</p>
+                  <h1>{cube.title}</h1>
+                  <p className="lead"><i className="bi bi-pen-fill text-primary"></i> Cube Designer: John Doe</p>
                   <p>{cube.description}</p>
                   <a
                     href={cube.url}
                     target="_blank"
                     className="btn btn-primary"
                   >
-                    Go to Cube Cobra
+                    <i className="bi bi-list"></i> View list on Cube Cobra
                   </a>
                 </div>
               </div>
@@ -57,20 +57,11 @@ const ViewCube = () => {
           </div>
         </div>
         <div className="container">
+          <div class="row">
+            <h3>Draft 1</h3>
+          </div>
           <div className="row">
-            <div className="col-sm-4">
-              <h3>Draft 1</h3>
-              <p onClick={handleShow}>Player Name 1</p>
-              <p onClick={handleShow}>Player Name 2</p>
-              <p onClick={handleShow}>Player Name 3</p>
-              <p onClick={handleShow}>Player Name 4</p>
-              <p onClick={handleShow}>Player Name 5</p>
-              <p onClick={handleShow}>Player Name 6</p>
-              <p onClick={handleShow}>Player Name 7</p>
-              <p onClick={handleShow}>Player Name 8</p>
-            </div>
-            <div className="col-sm-4">
-              <h3>Draft 2</h3>
+            <div className="col-8 col-xs-8">
               <p>Player Name 1</p>
               <p>Player Name 2</p>
               <p>Player Name 3</p>
@@ -78,10 +69,23 @@ const ViewCube = () => {
               <p>Player Name 5</p>
               <p>Player Name 6</p>
               <p>Player Name 7</p>
-              <p>Player Name 8</p>
+              <p>Player Name 1</p>
             </div>
-            <div className="col-sm-4">
-              <h3>Draft 3</h3>
+            <div className="col-4 col-xs-4">
+              <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleShow}
+                >
+                <i className="bi bi-image"></i>
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <h3>Draft 2</h3>
+          </div>
+          <div className="row">
+            <div className="col-8 col-xs-8">
               <p>Player Name 1</p>
               <p>Player Name 2</p>
               <p>Player Name 3</p>
@@ -89,13 +93,43 @@ const ViewCube = () => {
               <p>Player Name 5</p>
               <p>Player Name 6</p>
               <p>Player Name 7</p>
-              <p>Player Name 8</p>
+              <p>Player Name 1</p>
+            </div>
+            <div className="col-4 col-xs-4">
+              <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleShow}
+                >
+                <i className="bi bi-image"></i>
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <h3>Draft 3</h3>
+          </div>
+          <div className="row">
+            <div className="col-8 col-xs-8">
+              <p>Player Name 1</p>
+              <p>Player Name 2</p>
+              <p>Player Name 3</p>
+              <p>Player Name 4</p>
+              <p>Player Name 5</p>
+              <p>Player Name 6</p>
+              <p>Player Name 7</p>
+              <p>Player Name 1</p>
+            </div>
+            <div className="col-4 col-xs-4">
+              <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleShow}
+                >
+                <i className="bi bi-image"></i>
+              </button>
             </div>
           </div>
         </div>
-        <Button variant="primary" onClick={handleShow}>
-          Launch demo modal
-        </Button>
 
         <Modal show={show} onHide={handleClose} fullscreen={true}>
           <Modal.Header closeButton>
