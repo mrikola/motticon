@@ -23,6 +23,9 @@ const Layout = () => {
                 <li className="nav-item">
                   <a className="nav-link" href="/cubes">Cubes</a>
                 </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="/test">Test</a>
+                </li>
               </ul>
             </div>
           </div>
