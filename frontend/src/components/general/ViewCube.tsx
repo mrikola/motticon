@@ -1,6 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import DeckImage from "/img/draft_pool.png";
@@ -9,7 +8,7 @@ import { get } from "../../services/ApiService";
 
 const ViewCube = () => {
   const { cubeId } = useParams();
-  const ImageURL = `/img/masthead_${cubeId}jpeg`;
+  const ImageURL = `/img/masthead_${cubeId}.jpeg`;
 
   const [cube, setCube] = useState<Cube>();
 
