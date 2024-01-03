@@ -5,8 +5,8 @@ import Login from "./components/user/Login";
 import UserInfoProvider from "./components/provider/UserInfoProvider";
 import Logout from "./components/user/Logout";
 import Profile from "./components/user/Profile";
-import Cubes from "./components/general/Cubes";
-import Cube from "./components/general/Cube";
+import ListCubes from "./components/general/ListCubes";
+import ViewCube from "./components/general/ViewCube";
 
 function App() {
   const routes: RouteObject[] = [
@@ -35,11 +35,11 @@ function App() {
             },
             {
               path: "cubes",
-              Component: Cubes,
+              Component: ListCubes,
             },
             {
               path: "cube/:cubeId",
-              Component: Cube,
+              Component: ViewCube,
             },
             {
               path: "*",

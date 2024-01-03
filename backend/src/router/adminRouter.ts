@@ -10,6 +10,6 @@ adminRouter.use((req, res, next) => {
   next();
 });
 
-adminRouter.get("/", (req, res) => {
+adminRouter.get("/admin", (req, res) => {
   res.send("you got da powa");
 });
