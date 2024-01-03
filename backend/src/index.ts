@@ -23,8 +23,8 @@ AppDataSource.initialize()
     });
 
     app.use(notLoggedInRouter);
-    app.use(adminRouter);
     app.use(userRouter);
+    app.use(adminRouter);
 
     app.listen(port, () => {
       console.log("Listening on port", port);
