@@ -45,7 +45,7 @@ function Standings() {
           <td>{player.firstName}</td>
           <td>{player.lastName}</td>
           <td>{player.matchPoints}</td>
-          <td>{player.draftWins}</td>
+          <td>{player.draftWins }</td>
         </tr>
         ))}
       </tbody>

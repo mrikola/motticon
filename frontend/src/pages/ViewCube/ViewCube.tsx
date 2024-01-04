@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
+import { Button, Col, Container, Row, Modal } from "react-bootstrap";
 import DeckImage from "/img/draft_pool.png";
 import { Cube } from "../../types/Cube";
 import { get } from "../../services/ApiService";
@@ -17,126 +16,101 @@ const ViewCube = () => {
     const fetchData = async () => {
       const resp = await get(`/cube/${cubeId}`);
       const cube = (await resp.json()) as Cube;
+      // temporary fix: url field empty, set dummy url so link goes somewhere
+      cube.url = "https://cubecobra.com/cube/overview/thebteam";
       setCube(cube);
     };
 
     fetchData();
   }, []);
-
+  
   const [show, setShow] = useState(false);
+
+  const drafts = [];
+    for (let d= 1; d <= 3; d++) {
+      const playerList = [];
+      for (let p = 1; p <= 8; p++) {
+        playerList.push({
+              id: p
+            });
+      }
+      drafts.push({
+        id: d,
+        players: playerList
+      });
+  }
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  // var modalDraftNumber = 'Dummy';
+  var [modalDraftNumber, setModalDraftNumber] = useState('dummy number');
+  var [modalPlayerName, setModalPlayerName] = useState('filler name');
+  // var modalPlayerName = 'Filler Name';
+
+  function setModalContent(draftNumber, playerName) {
+    setModalDraftNumber(draftNumber);
+    setModalPlayerName(playerName);
+    handleShow();
+
+  }
+
   if (cube) {
     return (
       <>
-        <div
-          className="cube-masthead text-light"
-          style={{ backgroundImage: `url(${ImageURL})` }}
-        >
           <div
-            className="mask"
-            style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+            className="cube-masthead text-light mb-3"
+            style={{ backgroundImage: `url(${ImageURL})` }}
           >
-            <div className="container h-100">
-              <div className="row h-100 align-items-center">
-                <div className="col-12 text-center">
-                  <h1>{cube.title}</h1>
-                  <p className="lead">
-                    <PenFill /> Cube Designer: John Doe
-                  </p>
-                  <p>{cube.description}</p>
-                  <a
-                    href={cube.url}
-                    target="_blank"
-                    className="btn btn-primary"
-                  >
-                    <List /> View list on Cube Cobra
-                  </a>
-                </div>
-              </div>
+            <div
+              className="mask"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+            >
+              <Container className="h-100">
+                <Row className="h-100 align-items-center">
+                  <Col className="text-center">
+                    <h1>{cube.title}</h1>
+                    <p className="lead">
+                      <PenFill /> Cube Designer: John Doe
+                    </p>
+                    <p>{cube.description}</p>
+                    <a
+                      href={cube.url}
+                      target="_blank"
+                      className="btn btn-primary"
+                    >
+                      <List /> View list on Cube Cobra
+                    </a>
+                  </Col>
+                </Row>
+              </Container>
             </div>
           </div>
-        </div>
-        <div className="container">
-          <div className="row">
-            <h3>Draft 1</h3>
-          </div>
-          <div className="row">
-            <div className="col-8 col-xs-8">
-              <p>Player Name 1</p>
-              <p>Player Name 2</p>
-              <p>Player Name 3</p>
-              <p>Player Name 4</p>
-              <p>Player Name 5</p>
-              <p>Player Name 6</p>
-              <p>Player Name 7</p>
-              <p>Player Name 1</p>
-            </div>
-            <div className="col-4 col-xs-4">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleShow}
-              >
-                <Image />
-              </button>
-            </div>
-          </div>
-          <div className="row">
-            <h3>Draft 2</h3>
-          </div>
-          <div className="row">
-            <div className="col-8 col-xs-8">
-              <p>Player Name 1</p>
-              <p>Player Name 2</p>
-              <p>Player Name 3</p>
-              <p>Player Name 4</p>
-              <p>Player Name 5</p>
-              <p>Player Name 6</p>
-              <p>Player Name 7</p>
-              <p>Player Name 1</p>
-            </div>
-            <div className="col-4 col-xs-4">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleShow}
-              >
-                <Image />
-              </button>
-            </div>
-          </div>
-          <div className="row">
-            <h3>Draft 3</h3>
-          </div>
-          <div className="row">
-            <div className="col-8 col-xs-8">
-              <p>Player Name 1</p>
-              <p>Player Name 2</p>
-              <p>Player Name 3</p>
-              <p>Player Name 4</p>
-              <p>Player Name 5</p>
-              <p>Player Name 6</p>
-              <p>Player Name 7</p>
-              <p>Player Name 1</p>
-            </div>
-            <div className="col-4 col-xs-4">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleShow}
-              >
-                <Image />
-              </button>
-            </div>
-          </div>
-        </div>
+        <Container>
+          <Row>
+            {drafts.map((draft) => (
+              <Col xs={12} sm={6} md={4} key={draft.id}>
+                <h3>Draft {draft.id}</h3>
+                  {draft.players.map((player) => (
+                    <p key={player.id}>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-player-pool-image"
+                      onClick={()=>setModalContent(draft.id, 'Player ' + player.id)}
+                    >
+                      <Image />
+                    </button>
+                    Player Name {player.id}
+                    </p>
+                  ))}
+              </Col>
+            ))}
+          </Row>
+        </Container>
 
         <Modal show={show} onHide={handleClose} fullscreen={true}>
           <Modal.Header closeButton>
-            <Modal.Title>Cube Name – Draft Number – Player Name</Modal.Title>
+            <Modal.Title>{cube.title} – Draft {modalDraftNumber} – {modalPlayerName}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <img src={DeckImage} className="img-fluid" />
