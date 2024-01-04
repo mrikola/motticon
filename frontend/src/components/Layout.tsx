@@ -1,5 +1,10 @@
-import { Button, Container, Navbar, Nav } from "react-bootstrap";
-import { Boxes, PersonFill, ListOl, BoxArrowRight } from "react-bootstrap-icons";
+import { Container, Navbar, Nav } from "react-bootstrap";
+import {
+  Boxes,
+  PersonFill,
+  ListOl,
+  BoxArrowRight,
+} from "react-bootstrap-icons";
 import { Outlet, useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
@@ -53,8 +58,8 @@ const Layout = () => {
                 </Nav.Item>
                 <Nav.Item>
                   <Link className="nav-link" to={"/logout"}>
-                      <BoxArrowRight /> 
-                      Log out
+                    <BoxArrowRight />
+                    Log out
                   </Link>
                 </Nav.Item>
               </Nav>

@@ -4,3 +4,10 @@ export type Cube = {
   description: string;
   url: string;
 };
+
+export type CubeSelection = {
+  key: string;
+  value: string;
+  displayText: string;
+  disabled: boolean;
+};
