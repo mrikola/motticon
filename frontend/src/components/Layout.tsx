@@ -1,5 +1,5 @@
 import { Container, Navbar, Nav } from "react-bootstrap";
-import { Boxes, PersonFill } from "react-bootstrap-icons";
+import { Boxes, PersonFill, ListOl } from "react-bootstrap-icons";
 import { Outlet, useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
@@ -43,6 +43,12 @@ const Layout = () => {
                   <Link className="nav-link" to="/cubes">
                     <Boxes />
                     Cubes
+                  </Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Link className="nav-link" to="/standings">
+                    <ListOl />
+                     Standings
                   </Link>
                 </Nav.Item>
               </Nav>

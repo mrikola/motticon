@@ -8,6 +8,7 @@ import Profile from "./components/user/Profile";
 import ViewCube from "./pages/ViewCube/ViewCube";
 import Test from "./components/general/Test";
 import ListCubes from "./pages/ListCubes/ListCubes";
+import Standings from "./pages/Standings/Standings";
 
 function App() {
   const routes: RouteObject[] = [
@@ -41,6 +42,10 @@ function App() {
             {
               path: "cube/:cubeId",
               Component: ViewCube,
+            },
+            {
+              path: "standings",
+              Component: Standings,
             },
             {
               path: "test",
