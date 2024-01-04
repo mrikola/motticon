@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { post } from "../../services/ApiService";
 import { getUserInfoFromJwt } from "../../utils/auth";
+import { Button, Col, Container, Row, Form, Select, FloatingLabel } from "react-bootstrap";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,16 +20,47 @@ const Login = () => {
     });
   };
 
+<FloatingLabel
+        controlId="floatingInput"
+        label="Email address"
+        className="mb-3"
+      >
+        <Form.Control type="email" placeholder="name@example.com" />
+      </FloatingLabel>
   return (
-    <>
-      <input value={email} onChange={(event) => setEmail(event.target.value)} />
-      <input
-        type="password"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-      />
-      <button onClick={() => doLogin()}>login</button>
-    </>
+    <Container>
+      <Row>
+        <Col>
+          <FloatingLabel
+            controlId="email"
+            label="Email address"
+            className="mb-3"
+          >
+            <Form.Control
+              type="email"
+              value={email}
+              placeholder="Enter email"
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </FloatingLabel>
+          <FloatingLabel
+            controlId="password"
+            label="Password"
+            className="mb-3"
+          >
+          <Form.Control 
+            type="password"
+            value={password}
+            placeholder="Password"
+            onChange={(event) => setPassword(event.target.value)}
+          />
+          </FloatingLabel>
+        <Button variant="primary" type="submit" onClick={() => doLogin()}>
+          Login
+        </Button>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
