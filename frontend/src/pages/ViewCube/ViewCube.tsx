@@ -43,16 +43,13 @@ const ViewCube = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  // var modalDraftNumber = 'Dummy';
   var [modalDraftNumber, setModalDraftNumber] = useState('dummy number');
   var [modalPlayerName, setModalPlayerName] = useState('filler name');
-  // var modalPlayerName = 'Filler Name';
 
   function setModalContent(draftNumber, playerName) {
     setModalDraftNumber(draftNumber);
     setModalPlayerName(playerName);
     handleShow();
-
   }
 
   if (cube) {

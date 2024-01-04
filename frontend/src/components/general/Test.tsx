@@ -1,37 +1,77 @@
 import { useState } from "react";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import DeckImage from "/img/draft_pool.png";
+import { Button, Card, Col, Container, Row, Form, Select } from "react-bootstrap";
+
 
 function Test() {
-  const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+const [options, setOptions] = useState([
+  {key: 1, value: 1, disabled: false},
+  {key: 2, value: 2, disabled: false},
+  {key: 3, value: 3, disabled: false}
+]);
+
+const handleChange = (e) => {
+  const index = e.target.value;
+  //handle the "click here" placeholder option
+  if(index == 0) {
+    return;
+  }
+ const optionsCopy = [...options];
+   optionsCopy[index-1].disabled = true;
+   setOptions(optionsCopy);
+  }
 
   return (
-    <>
-      <Button variant="primary" onClick={handleShow}>
-        Launch demo modal
-      </Button>
-
-      <Modal show={show} onHide={handleClose} fullscreen={true}>
-        <Modal.Header closeButton>
-          <Modal.Title>Cube Name – Draft Number – Player Name</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <img src={DeckImage} className="img-fluid" />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+    
+      <Container>
+      <Row>
+        <Form.Group className="mb-3" controlId="CubePreference1">
+          <Form.Label>Cube preference #1</Form.Label>
+            <Form.Select onChange={handleChange}>
+            <option value="0">Select your preferred cube</option>
+            {options.map((opt) => (
+              <option key={opt.key} disabled={opt.disabled} value={opt.key}> {opt.value} </option>
+            ))} 
+            </Form.Select>
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="CubePreference2">
+          <Form.Label>Cube preference #2</Form.Label>
+            <Form.Select onChange={handleChange}>
+            <option value="0">Select your preferred cube</option>
+            {options.map((opt) => (
+              <option key={opt.key} disabled={opt.disabled} value={opt.key}> {opt.value} </option>
+            ))} 
+            </Form.Select>
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="CubePreference2">
+          <Form.Label>Cube preference #3</Form.Label>
+            <Form.Select onChange={handleChange}>
+            <option value="0">Select your preferred cube</option>
+            {options.map((opt) => (
+              <option  key={opt.key} disabled={opt.disabled} value={opt.key}> {opt.value} </option>
+            ))} 
+            </Form.Select>
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="CubePreference2">
+          <Form.Label>Cube preference #4</Form.Label>
+            <Form.Select onChange={handleChange}>
+            <option value="0">Select your preferred cube</option>
+            {options.map((opt) => (
+              <option  key={opt.key} disabled={opt.disabled} value={opt.key}> {opt.value} </option>
+            ))} 
+            </Form.Select>
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="CubePreference2">
+          <Form.Label>Cube preference #5</Form.Label>
+            <Form.Select onChange={handleChange}>
+            <option value="0">Select your preferred cube</option>
+            {options.map((opt) => (
+              <option  key={opt.key} disabled={opt.disabled} value={opt.key}> {opt.value} </option>
+            ))} 
+            </Form.Select>
+        </Form.Group>
+      </Row>
+      </Container>
   );
 }
 

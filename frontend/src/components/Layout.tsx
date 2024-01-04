@@ -1,5 +1,5 @@
-import { Container, Navbar, Nav } from "react-bootstrap";
-import { Boxes, PersonFill, ListOl } from "react-bootstrap-icons";
+import { Button, Container, Navbar, Nav } from "react-bootstrap";
+import { Boxes, PersonFill, ListOl, BoxArrowRight } from "react-bootstrap-icons";
 import { Outlet, useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
@@ -10,7 +10,7 @@ const Layout = () => {
   return isLoggedIn && location.pathname !== "/login" ? (
     <>
       <header>
-        <Navbar expand="lg">
+        <Navbar expand="lg" className="bg-primary">
           <Container fluid>
             <Navbar.Brand>
               <Link className="navbar-brand" to="/">
@@ -48,7 +48,13 @@ const Layout = () => {
                 <Nav.Item>
                   <Link className="nav-link" to="/standings">
                     <ListOl />
-                     Standings
+                    Standings
+                  </Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Link className="nav-link" to={"/logout"}>
+                      <BoxArrowRight /> 
+                      Log out
                   </Link>
                 </Nav.Item>
               </Nav>

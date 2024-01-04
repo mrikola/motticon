@@ -5,6 +5,7 @@ import Login from "./components/user/Login";
 import UserInfoProvider from "./components/provider/UserInfoProvider";
 import Logout from "./components/user/Logout";
 import Profile from "./components/user/Profile";
+import UserCubePreferences from "./components/user/UserCubePreferences";
 import ViewCube from "./pages/ViewCube/ViewCube";
 import Test from "./components/general/Test";
 import ListCubes from "./pages/ListCubes/ListCubes";
@@ -34,6 +35,10 @@ function App() {
             {
               path: "profile",
               Component: Profile,
+            },
+            {
+              path: "user/cubePreferences",
+              Component: UserCubePreferences,
             },
             {
               path: "cubes",

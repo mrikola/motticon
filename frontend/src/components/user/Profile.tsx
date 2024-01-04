@@ -2,6 +2,8 @@ import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { get } from "../../services/ApiService";
 import { UserInfoContext } from "../provider/UserInfoProvider";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import { Box, BoxArrowRight } from "react-bootstrap-icons";
 
 const Profile = () => {
   const user = useContext(UserInfoContext);
@@ -9,9 +11,22 @@ const Profile = () => {
   if (user) {
     return (
       <>
-        this is you: {user.firstName} {user.lastName}
-        <div>click these and watch the console</div>
-        <div>
+      <Container>
+        <Row>
+          <h1>Hello, {user.firstName} {user.lastName}</h1>
+        </Row>
+        <Row>
+          <h2>Cube preferences</h2>
+          <Link to={`/user/cubePreferences`}>
+            <Button variant="primary">
+              <Box /> Set your cube preferences
+            </Button>
+          </Link>
+        </Row>
+        <Row>
+          <h2>click these and watch the console</h2>
+        </Row>
+        <Row>
           <button
             type="button"
             className="btn btn-primary"
@@ -23,6 +38,8 @@ const Profile = () => {
           >
             do normal user shit
           </button>
+        </Row>
+        <Row>
           <button
             type="button"
             className="btn btn-secondary"
@@ -30,19 +47,15 @@ const Profile = () => {
           >
             do admin shit
           </button>
-        </div>
-        <div>
-          <button
-            type="button"
-            className="btn btn-danger"
-            onClick={() => navigate("/logout")}
-          >
-            log me out
-          </button>
-          <Link style={{ color: "red" }} to={"/logout"}>
-            log me out
+        </Row>
+        <Row>
+          <Link to={"/logout"}>
+            <Button variant="danger">
+              <BoxArrowRight /> Log out
+            </Button>
           </Link>
-        </div>
+        </Row>
+        </Container>
       </>
     );
   } else {
