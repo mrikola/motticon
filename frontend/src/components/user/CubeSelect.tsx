@@ -9,26 +9,19 @@ type Props = {
   switchOption: (priority: number, newOption?: CubeSelection) => void;
 };
 
-const CubeSelect = ({
-  priority,
-  options,
-  selectedOption,
-  switchOption,
-}: Props) => {
+const CubeSelect = ({ priority, options, switchOption }: Props) => {
   const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const foo = e.target.value;
     const newOption = options.find((opt) => opt.key === foo);
     switchOption(priority, newOption);
   };
 
-  const allOptions = selectedOption ? [selectedOption, ...options] : options;
-
   return (
     <Form.Group className="mb-3" controlId={`CubePreference${priority}`}>
       <Form.Label>Cube preference #{priority + 1}</Form.Label>
       <Form.Select onChange={handleSelectChange}>
         <option>Select your preferred cube</option>
-        {allOptions.map((opt) => (
+        {options.map((opt) => (
           <option key={opt.key} disabled={opt.disabled} value={opt.value}>
             {" "}
             {opt.displayText}{" "}

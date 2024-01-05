@@ -44,9 +44,10 @@ const UserCubePreferences = () => {
     ]);
   };
 
-  const availableOptions = options.filter(
-    (opt) => !selectedOptions.find((so) => so?.key === opt.key)
-  );
+  const availableOptions = options.map((opt) => ({
+    ...opt,
+    disabled: Boolean(selectedOptions.find((so) => so?.key === opt.key)),
+  }));
 
   if (user) {
     return (
@@ -76,7 +77,6 @@ const UserCubePreferences = () => {
                 key={i}
                 priority={i}
                 options={availableOptions}
-                selectedOption={selectedOptions[i]}
                 switchOption={switchOption}
               />
             ))}
