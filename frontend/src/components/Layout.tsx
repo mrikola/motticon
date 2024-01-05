@@ -65,6 +65,12 @@ const Layout = () => {
                     Standings
                   </Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Link className="nav-link" to="/players/1">
+                    <PersonFill />
+                    Public Profile
+                  </Link>
+                </Nav.Item>
               </Nav>
               <Nav className="flex-row flex-wrap ms-md-auto">
                 <div className="vr d-none d-lg-block"></div>
