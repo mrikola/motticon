@@ -47,7 +47,7 @@ function PublicProfile() {
       <Row>
         <Container>
         <Card className="round-card mb-3">
-          <Row>
+          <Row className="align-items-center">
               <Col xs={3}>
                 <span className="icon-stack">
                   <SquareFill className="icon-stack-3x" />
@@ -56,7 +56,7 @@ function PublicProfile() {
               </Col>
               <Col xs={9}>
                 <Card.Body className="round-card-body">
-                  <Card.Title className="round-card-title">
+                  <Card.Title className="round-card-title-small align-middle">
                   Match points
                   </Card.Title>
                 </Card.Body>
@@ -64,7 +64,7 @@ function PublicProfile() {
             </Row>
         </Card>
         <Card className="round-card mb-3">
-          <Row>
+          <Row className="align-items-center">
               <Col xs={3}>
                 <span className="icon-stack">
                   <SquareFill className="icon-stack-3x" />
@@ -73,7 +73,7 @@ function PublicProfile() {
               </Col>
               <Col xs={9}>
                 <Card.Body className="round-card-body">
-                  <Card.Title className="round-card-title">
+                  <Card.Title className="round-card-title-small align-middle">
                   Drafts won
                   </Card.Title>
                 </Card.Body>
