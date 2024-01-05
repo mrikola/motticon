@@ -56,6 +56,10 @@ const Layout = () => {
                     Standings
                   </Link>
                 </Nav.Item>
+              </Nav>
+              <Nav className="flex-row flex-wrap ms-md-auto">
+                <div className="vr d-none d-lg-block"></div>
+                <hr className="d-xs d-lg-none w-100" />
                 <Nav.Item>
                   <Link className="nav-link" to={"/logout"}>
                     <BoxArrowRight />

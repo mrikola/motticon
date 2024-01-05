@@ -3,6 +3,9 @@ $primary: #fdcb6e;
 // Import all of Bootstrap's CSS
 @import "bootstrap/scss/bootstrap";
 
+$card-spacer-y: 0.5rem;
+$card-spacer-x: 0.5rem;
+
 .cube-masthead {
   height: 40vh;
   min-height: 300px;
@@ -17,6 +20,14 @@ $primary: #fdcb6e;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.card-body {
+  padding: 1rem 0;
+}
+
+.card-text {
+  min-height: 3rem;
 }
 
 .mask {
