@@ -11,9 +11,9 @@ const Profile = () => {
   if (user) {
     return (
       <>
-      <Container>
+      <Container className="mt-3 my-md-4">
         <Row>
-          <h1>Hello, {user.firstName} {user.lastName}</h1>
+          <h1 className="display-1">Hello, {user.firstName} {user.lastName}</h1>
         </Row>
         <Row>
           <h2>Cube preferences</h2>
@@ -27,26 +27,26 @@ const Profile = () => {
           <h2>click these and watch the console</h2>
         </Row>
         <Row>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() =>
-              get("/user/profile").then(async (resp) =>
-                console.log(await resp.text())
-              )
-            }
-          >
-            do normal user shit
-          </button>
-        </Row>
-        <Row>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => get("/admin")}
-          >
-            do admin shit
-          </button>
+          <Col>
+            <Button 
+              variant="primary"
+              onClick={() =>
+                get("/user/profile").then(async (resp) =>
+                  console.log(await resp.text())
+                )
+              }
+            >
+              do normal user shit
+            </Button>
+          </Col>
+          <Col>
+            <Button 
+              variant="primary"
+              onClick={() => get("/admin")}
+            >
+              do admin shit
+            </Button>
+          </Col>
         </Row>
         <Row>
           <Link to={"/logout"}>

@@ -51,7 +51,7 @@ const UserCubePreferences = () => {
 
   if (user) {
     return (
-      <Container>
+      <Container className="mt-3 my-md-4">
         <Row>
           <h1>Your cube preferences</h1>
           <p>

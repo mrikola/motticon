@@ -1,6 +1,18 @@
 import { useState } from "react";
 import { Button, Card, Col, Container, Row, Form, Select, FloatingLabel } from "react-bootstrap";
-
+import {
+  Box,
+  Image,
+  SquareFill,
+  Icon1SquareFill,
+  Icon2SquareFill,
+  Icon3SquareFill,
+  Icon4SquareFill,
+  Icon5SquareFill,
+  Icon6SquareFill,
+  Icon7SquareFill,
+  Icon8SquareFill,
+} from "react-bootstrap-icons";
 
 function Test() {
 
@@ -9,16 +21,11 @@ function Test() {
       <Container>
       <Row>
       <Col>
-      <FloatingLabel
-        controlId="floatingInput"
-        label="Email address"
-        className="mb-3"
-      >
-        <Form.Control type="email" placeholder="name@example.com" />
-      </FloatingLabel>
-      <FloatingLabel controlId="floatingPassword" label="Password">
-        <Form.Control type="password" placeholder="Password" />
-      </FloatingLabel>
+      <span className="icon-stack">
+      
+      <SquareFill className="icon-stack-3x"/>
+      <Box className="icon-stack-2x text-primary" />
+      </span>
       </Col>
       </Row>
       </Container>

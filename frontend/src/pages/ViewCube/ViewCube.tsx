@@ -16,8 +16,6 @@ const ViewCube = () => {
     const fetchData = async () => {
       const resp = await get(`/cube/${cubeId}`);
       const cube = (await resp.json()) as Cube;
-      // temporary fix: url field empty, set dummy url so link goes somewhere
-      cube.url = "https://cubecobra.com/cube/overview/thebteam";
       setCube(cube);
     };
 
@@ -66,7 +64,7 @@ const ViewCube = () => {
               <Container className="h-100">
                 <Row className="h-100 align-items-center">
                   <Col className="text-center">
-                    <h1>{cube.title}</h1>
+                    <h1 className="display-1">{cube.title}</h1>
                     <p className="lead">
                       <PenFill /> Cube Designer: John Doe
                     </p>

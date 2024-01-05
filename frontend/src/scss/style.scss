@@ -3,6 +3,9 @@ $primary: #fdcb6e;
 // Import all of Bootstrap's CSS
 @import "bootstrap/scss/bootstrap";
 
+$card-spacer-y: 0.5rem;
+$card-spacer-x: 0.5rem;
+
 .cube-masthead {
   height: 40vh;
   min-height: 300px;
@@ -17,6 +20,14 @@ $primary: #fdcb6e;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.card-body {
+  padding: 1rem 0;
+}
+
+.card-text {
+  min-height: 3rem;
 }
 
 .mask {
@@ -38,4 +49,69 @@ nav {
 
 .btn-player-pool-image {
   margin-right: 5px;
+}
+
+.round-card {
+  border-radius: 0.75rem;
+}
+
+.round-card-body {
+  padding: 0.5rem 0;
+}
+
+.round-card-title {
+  font-size: 3rem;
+}
+.round-card-title-small {
+  font-size: 1.5rem;
+}
+
+.round-card-icon {
+  font-size: 5.2rem;
+}
+
+.round-radio-group {
+  .btn {
+    background-color: $gray-200;
+    border: none;
+    &:hover {
+      background-color: $gray-400;
+    }
+  }
+  .btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active{
+      background-color: $primary !important;
+  }
+}
+
+.icon-stack {
+  position: relative;
+  display: inline-block;
+  width: 5.2rem;
+  height: 5.2rem;
+  line-height: 5.2rem;
+  vertical-align: middle;
+  p {
+    text-align: center;
+    top: 0;
+  }
+}
+.icon-stack-1x,
+.icon-stack-2x,
+.icon-stack-3x {
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+.icon-stack-1x {
+  line-height: inherit;
+  position: absolute;
+  left:8px;
+  top:-11px;
+}
+.icon-stack-2x {
+  font-size: 4rem;
+  top: 0.5rem;
+}
+.icon-stack-3x {
+  font-size: 5.2rem;
 }

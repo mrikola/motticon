@@ -6,9 +6,14 @@ INSERT INTO "user"(id, "firstName", "lastName", email, password, "isAdmin") valu
 INSERT INTO "user"(id, "firstName", "lastName", email, password, "isAdmin") values(2, 'Pekka', 'Pelaaja', 'pekka.pelaaja@outlook.com', 'qwerty123', false);
 INSERT INTO "user"(id, "firstName", "lastName", email, password, "isAdmin") values(3, 'Sakari', 'Staffer', 'sakari.staff@motticon.fi', 'qwerty123', false);
 
-INSERT INTO cube(title, description, url) values('Monoblue', 'Pelkkää sinistä', '');
-INSERT INTO cube(title, description, url) values('Vintage cube', 'Powerit löytyy', '');
-INSERT INTO cube(title, description, url) values('Allun faksicube', 'Faksit on parhaita', '');
+INSERT INTO cube(title, description, url) values('Monoblue', 'Pelkkää sinistä', 'https://cubecobra.com/cube/list/0de5c855-ad9a-4ce1-8a8c-d8f846e96712');
+INSERT INTO cube(title, description, url) values('Vintage cube', 'Powerit löytyy', 'https://cubecobra.com/cube/list/r47');
+INSERT INTO cube(title, description, url) values('Allun faksicube', 'Faksit on parhaita', 'https://cubecobra.com/cube/list/et9');
+INSERT INTO cube(title, description, url) values('The B-Team', 'Second rate heroes', 'https://cubecobra.com/cube/list/thebteam');
+INSERT INTO cube(title, description, url) values('Universes Beyond', 'Like Garfield intended', 'https://cubecobra.com/cube/list/SoNotUniversesBeyondCube');
+INSERT INTO cube(title, description, url) values('Oops, All Creatures', 'It´s creatures all the way down', 'https://cubecobra.com/cube/list/1o7yb');
+
+
 
 INSERT INTO tournament(id, name, description) values(1, 'MottiCon 2023', 'Servin Mökki 4.-5.5.2024');
 
