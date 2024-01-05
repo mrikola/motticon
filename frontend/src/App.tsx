@@ -10,6 +10,8 @@ import ViewCube from "./pages/ViewCube/ViewCube";
 import Test from "./components/general/Test";
 import ListCubes from "./pages/ListCubes/ListCubes";
 import Standings from "./pages/Standings/Standings";
+import RoundOngoing from "./pages/Tournament/RoundOngoing";
+import DraftOngoing from "./pages/Tournament/DraftOngoing";
 
 function App() {
   const routes: RouteObject[] = [
@@ -51,6 +53,14 @@ function App() {
             {
               path: "standings",
               Component: Standings,
+            },
+            {
+              path: "roundOngoing",
+              Component: RoundOngoing,
+            },
+            {
+              path: "draftOngoing",
+              Component: DraftOngoing,
             },
             {
               path: "test",

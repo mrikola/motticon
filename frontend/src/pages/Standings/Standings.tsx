@@ -22,7 +22,7 @@ function Standings() {
   return (
     <Container className="mt-3 my-md-4">
      <Row>
-     	<h1>Standings after round 5</h1>
+     	<h1 className="display-1">Standings after round 5</h1>
      </Row>
     <Row>
     <Table striped bordered hover>

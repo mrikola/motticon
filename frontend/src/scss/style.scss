@@ -50,3 +50,56 @@ nav {
 .btn-player-pool-image {
   margin-right: 5px;
 }
+
+.round-card {
+  border-radius: 0.75rem;
+}
+
+.round-card-body {
+  padding: 0.5rem 0;
+}
+
+.round-card-title {
+  font-size: 3rem;
+}
+.round-card-title-small {
+  font-size: 1.5rem;
+}
+
+
+.round-card-icon {
+  font-size: 5.2rem;
+}
+
+.icon-stack {
+  position: relative;
+  display: inline-block;
+  width: 5.2rem;
+  height: 5.2rem;
+  line-height: 5.2rem;
+  vertical-align: middle;
+  p {
+    text-align: center;
+    top: 0;
+  }
+}
+.icon-stack-1x,
+.icon-stack-2x,
+.icon-stack-3x {
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+.icon-stack-1x {
+  line-height: inherit;
+  position: absolute;
+  left:8px;
+  top:-11px;
+}
+.icon-stack-2x {
+  font-size: 4rem;
+  top: 0.5rem;
+}
+.icon-stack-3x {
+  font-size: 5.2rem;
+}

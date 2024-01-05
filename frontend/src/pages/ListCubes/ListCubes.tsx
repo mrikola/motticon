@@ -25,7 +25,7 @@ const ListCubes = () => {
     return (
       <Container className="mt-3 my-md-4">
         <Row>
-          <h1>Cubes</h1>
+          <h1 className="display-1">Cubes</h1>
         </Row>
         <Row xs={1} sm={1} md={2}>
           {cubes.map((cube) => (

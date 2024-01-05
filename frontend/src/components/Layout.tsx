@@ -4,6 +4,8 @@ import {
   PersonFill,
   ListOl,
   BoxArrowRight,
+  HouseFill,
+  TrophyFill,
 } from "react-bootstrap-icons";
 import { Outlet, useLocation } from "react-router";
 import { Link } from "react-router-dom";
@@ -19,7 +21,7 @@ const Layout = () => {
           <Container fluid>
             <Navbar.Brand>
               <Link className="navbar-brand" to="/">
-                Navbar
+                MottiCon
               </Link>
             </Navbar.Brand>
             <Navbar.Toggle
@@ -35,6 +37,7 @@ const Layout = () => {
               <Nav className="me-auto">
                 <Nav.Item>
                   <Link className="nav-link active" aria-current="page" to="/">
+                    <HouseFill />
                     Home
                   </Link>
                 </Nav.Item>
@@ -42,6 +45,12 @@ const Layout = () => {
                   <Link className="nav-link" to="/profile">
                     <PersonFill />
                     Profile
+                  </Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Link className="nav-link" to="/roundOngoing">
+                    <TrophyFill />
+                    Tournament
                   </Link>
                 </Nav.Item>
                 <Nav.Item>

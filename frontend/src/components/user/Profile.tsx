@@ -13,7 +13,7 @@ const Profile = () => {
       <>
       <Container className="mt-3 my-md-4">
         <Row>
-          <h1>Hello, {user.firstName} {user.lastName}</h1>
+          <h1 className="display-1">Hello, {user.firstName} {user.lastName}</h1>
         </Row>
         <Row>
           <h2>Cube preferences</h2>
