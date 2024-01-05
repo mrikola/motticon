@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { 
@@ -24,27 +24,53 @@ function RoundOngoing() {
   const user = useContext(UserInfoContext);
   const [playerRadioValue, setPlayerRadioValue] = useState('0');
   const [opponentRadioValue, setOpponentRadioValue] = useState('0');
-
-  const total = 64;
-  const ongoing = Math.floor(Math.random() * (total - 1 + 1)) + 1;
-  const percentage = ongoing/total*100;
-
+  const [timerStyle, setTimerStyle] =useState('display-5');
+  
+  const totalMatches = 64;
+  const [ongoingMatches, setOngoingMatches] = useState(Math.floor(Math.random() * totalMatches) + 1);
+  const percentage = ongoingMatches/totalMatches*100;
   const radios = [
     { name: '0', value: '0' },
     { name: '1', value: '1' },
     { name: '2', value: '2' },
   ];
+
+  const [time, setTime] = useState(3);
+
+  function timeRunOut() {
+    console.log('timer ran out');
+    setTimerStyle('display-5 text-danger');
+  }
+
+  useEffect(() => {
+    let timer = setInterval(() => {
+      setTime((time) => {
+        if (time === 0) {
+          clearInterval(timer);
+          timeRunOut();
+          return 0;
+        } else return time - 1;
+      });
+    }, 1000)
+    return function stopTimer() {
+      clearInterval(timer)
+    }
+  }, []);
+
   if(user) {
     return (
       <Container className="mt-3 my-md-4">
         <Row>
           <h1 className="display-1">Round: 5</h1>
           <Col xs={12} className="align-items-center">
-            <p className="display-5"><Stopwatch /> 32:45 remaining</p>
+            <p className={timerStyle}>
+            <Stopwatch   /> 
+            {`${Math.floor(time / 60)}`.padStart(2, 0)}:{`${time % 60}`.padStart(2, 0)} remaining
+            </p>
           </Col>
           <Col xs={12}>
             <ProgressBar striped variant="primary" now={100-percentage} />
-            <p className="lead">{ongoing}/{total} matches remaining</p>
+            <p className="lead">{ongoingMatches}/{totalMatches} matches remaining</p>
           </Col>
         </Row>
         <Row>
