@@ -29,8 +29,8 @@ const ListCubes = () => {
         </Row>
         <Row xs={1} sm={1} md={2}>
           {cubes.map((cube) => (
-            <Col>
-              <Card className={styles.cubeCard} key={cube.id}>
+            <Col key={cube.id}>
+              <Card className={styles.cubeCard}>
                 <Row>
                     <Col
                       xs={6}
