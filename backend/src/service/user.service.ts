@@ -16,7 +16,10 @@ export class UserService {
 
   async getUserByEmail(email: string): Promise<User> {
     return await this.repository.findOne({
-      where: { email: email },
+      relations: {
+        tournamentsStaffed: true,
+      },
+      where: { email },
     });
   }
 

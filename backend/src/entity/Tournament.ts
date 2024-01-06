@@ -29,7 +29,7 @@ export class Tournament {
   @OneToMany(() => Enrollment, (enrollment) => enrollment.tournament)
   enrollments: Enrollment[];
 
-  @ManyToMany(() => User)
+  @ManyToMany(() => User, (user) => user.tournamentsStaffed)
   @JoinTable({ name: "tournament_staff_members" })
   staffMembers: User[];
 }
