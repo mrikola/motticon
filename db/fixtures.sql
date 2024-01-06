@@ -3,9 +3,9 @@ TRUNCATE "user" CASCADE;
 TRUNCATE tournament CASCADE;
 TRUNCATE cube CASCADE;
 
-INSERT INTO "user"(id, "firstName", "lastName", email, password, "isAdmin") values(1, 'Markku', 'Rikola', 'markku.rikola@gmail.com', 'qwerty123', true);
-INSERT INTO "user"(id, "firstName", "lastName", email, password, "isAdmin") values(2, 'Pekka', 'Pelaaja', 'pekka.pelaaja@outlook.com', 'qwerty123', false);
-INSERT INTO "user"(id, "firstName", "lastName", email, password, "isAdmin") values(3, 'Sakari', 'Staffer', 'sakari.staff@motticon.fi', 'qwerty123', false);
+INSERT INTO "user"(id, "firstName", "lastName", email, password, "isAdmin") values(1, 'Markku', 'Rikola', 'markku.rikola@gmail.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', true);
+INSERT INTO "user"(id, "firstName", "lastName", email, password, "isAdmin") values(2, 'Pekka', 'Pelaaja', 'pekka.pelaaja@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false);
+INSERT INTO "user"(id, "firstName", "lastName", email, password, "isAdmin") values(3, 'Sakari', 'Staffer', 'sakari.staff@motticon.fi', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false);
 
 INSERT INTO cube(title, description, url) values('Monoblue', 'Pelkkää sinistä', 'https://cubecobra.com/cube/list/0de5c855-ad9a-4ce1-8a8c-d8f846e96712');
 INSERT INTO cube(title, description, url) values('Vintage cube', 'Powerit löytyy', 'https://cubecobra.com/cube/list/r47');

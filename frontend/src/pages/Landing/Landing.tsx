@@ -5,10 +5,8 @@ import { get } from "../../services/ApiService";
 import { UsersTournaments } from "../../types/Tournament";
 
 const Landing = () => {
-  const EMPTY: UsersTournaments = { ongoing: [], future: [], past: [] };
   const [tournaments, setTournaments] = useState<UsersTournaments>();
   const user = useContext(UserInfoContext);
-  console.log("user", user);
 
   useEffect(() => {
     const fetchData = async () => {

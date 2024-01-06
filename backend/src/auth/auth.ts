@@ -1,3 +1,4 @@
+import { hashSync, compareSync } from "bcrypt";
 import { verify, sign, JwtPayload } from "jsonwebtoken";
 import { UserService } from "../service/user.service";
 
@@ -22,13 +23,13 @@ export const isValidAdminToken = (token: string) => {
   }
 };
 
-// TODO actual encoding
-const encodePassword = (password: string) => password;
+// TODO: use this for signup purposes
+const encodePassword = (password: string) => hashSync(password, 10);
 
 export const doLogin = async (email: string, password: string) => {
   const user = await userService.getUserByEmail(email);
 
-  if (!user || encodePassword(password) !== user.password) {
+  if (!user || !compareSync(password, user.password)) {
     // TODO log the login error
     return undefined;
   }
