@@ -20,6 +20,12 @@ export class Tournament {
   @Column()
   description: string;
 
+  @Column({ nullable: true })
+  startDate: Date;
+
+  @Column({ nullable: true })
+  endDate: Date;
+
   @OneToMany(() => Enrollment, (enrollment) => enrollment.tournament)
   enrollments: Enrollment[];
 

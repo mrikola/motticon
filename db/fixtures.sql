@@ -1,6 +1,7 @@
--- these two truncations will cascade to every other table
+-- these truncations will cascade to every other table
 TRUNCATE "user" CASCADE;
 TRUNCATE tournament CASCADE;
+TRUNCATE cube CASCADE;
 
 INSERT INTO "user"(id, "firstName", "lastName", email, password, "isAdmin") values(1, 'Markku', 'Rikola', 'markku.rikola@gmail.com', 'qwerty123', true);
 INSERT INTO "user"(id, "firstName", "lastName", email, password, "isAdmin") values(2, 'Pekka', 'Pelaaja', 'pekka.pelaaja@outlook.com', 'qwerty123', false);
@@ -13,9 +14,8 @@ INSERT INTO cube(title, description, url) values('The B-Team', 'Second rate hero
 INSERT INTO cube(title, description, url) values('Universes Beyond', 'Like Garfield intended', 'https://cubecobra.com/cube/list/SoNotUniversesBeyondCube');
 INSERT INTO cube(title, description, url) values('Oops, All Creatures', 'It´s creatures all the way down', 'https://cubecobra.com/cube/list/1o7yb');
 
-
-
-INSERT INTO tournament(id, name, description) values(1, 'MottiCon 2023', 'Servin Mökki 4.-5.5.2024');
+INSERT INTO tournament(id, name, description, "startDate", "endDate") values(1, 'MottiCon 2023', 'Servin Mökki 4.-5.5.2024', '2024-05-04', '2024-05-05');
+INSERT INTO tournament(id, name, description, "startDate", "endDate") values(2, 'Pikadrafti', 'Tänään', now(), now());
 
 INSERT INTO tournament_staff_members("tournamentId", "userId") values(1, 3);
 
