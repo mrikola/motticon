@@ -39,6 +39,8 @@ export const doLogin = async (email: string, password: string) => {
       firstName: user.firstName,
       lastName: user.lastName,
       isAdmin: user.isAdmin,
+      tournamentsStaffed:
+        user.tournamentsStaffed?.map((tournament) => tournament.id) ?? [],
     },
     JWT_SECRET_KEY
   );

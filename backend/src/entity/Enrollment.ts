@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
@@ -13,8 +14,14 @@ export class Enrollment {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @JoinColumn()
+  tournamentId: Tournament;
+
   @ManyToOne(() => Tournament, (tournament) => tournament.enrollments)
   tournament: Tournament;
+
+  @JoinColumn()
+  playerId: User;
 
   @ManyToOne(() => User, (user) => user.enrollments)
   player: User;

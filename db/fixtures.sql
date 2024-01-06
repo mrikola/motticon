@@ -12,11 +12,13 @@ INSERT INTO cube(title, description, url) values('Vintage cube', 'Powerit löyty
 INSERT INTO cube(title, description, url) values('Allun faksicube', 'Faksit on parhaita', 'https://cubecobra.com/cube/list/et9');
 INSERT INTO cube(title, description, url) values('The B-Team', 'Second rate heroes', 'https://cubecobra.com/cube/list/thebteam');
 INSERT INTO cube(title, description, url) values('Universes Beyond', 'Like Garfield intended', 'https://cubecobra.com/cube/list/SoNotUniversesBeyondCube');
-INSERT INTO cube(title, description, url) values('Oops, All Creatures', 'It´s creatures all the way down', 'https://cubecobra.com/cube/list/1o7yb');
+INSERT INTO cube(title, description, url) values('Oops, All Creatures', 'It''s creatures all the way down', 'https://cubecobra.com/cube/list/1o7yb');
 
 INSERT INTO tournament(id, name, description, "startDate", "endDate") values(1, 'MottiCon 2023', 'Servin Mökki 4.-5.5.2024', '2024-05-04', '2024-05-05');
-INSERT INTO tournament(id, name, description, "startDate", "endDate") values(2, 'Pikadrafti', 'Tänään', now(), now());
+INSERT INTO tournament(id, name, description, "startDate", "endDate") values(2, 'Pikadrafti', 'Tänään', date_trunc('day', now()), date_trunc('day', now()) + time '23:59:59.999999');
 
 INSERT INTO tournament_staff_members("tournamentId", "userId") values(1, 3);
+INSERT INTO tournament_staff_members("tournamentId", "userId") values(2, 3);
 
 INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(1, 2, false, false);
+INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(2, 2, false, false);

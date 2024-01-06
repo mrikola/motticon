@@ -13,6 +13,7 @@ import Standings from "./pages/Standings/Standings";
 import PublicProfile from "./pages/PublicProfile/PublicProfile";
 import RoundOngoing from "./pages/Tournament/RoundOngoing";
 import DraftOngoing from "./pages/Tournament/DraftOngoing";
+import Landing from "./pages/Landing/Landing";
 
 function App() {
   const routes: RouteObject[] = [
@@ -25,7 +26,7 @@ function App() {
             {
               path: "/",
               index: true,
-              element: <>index</>,
+              Component: Landing,
             },
             {
               path: "login",
