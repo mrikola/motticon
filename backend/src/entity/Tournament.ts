@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Enrollment } from "./Enrollment";
 import { User } from "./User";
+import { Cube } from "./Cube";
 
 @Entity()
 export class Tournament {
@@ -28,6 +29,10 @@ export class Tournament {
 
   @OneToMany(() => Enrollment, (enrollment) => enrollment.tournament)
   enrollments: Enrollment[];
+
+  @ManyToMany(() => Cube)
+  @JoinTable({ name: "tournament_cubes" })
+  cubes: Cube[];
 
   @ManyToMany(() => User, (user) => user.tournamentsStaffed)
   @JoinTable({ name: "tournament_staff_members" })

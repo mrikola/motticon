@@ -17,6 +17,8 @@ INSERT INTO cube(title, description, url) values('Oops, All Creatures', 'It''s c
 INSERT INTO tournament(id, name, description, "startDate", "endDate") values(1, 'MottiCon 2023', 'Servin Mökki 4.-5.5.2024', '2024-05-04', '2024-05-05');
 INSERT INTO tournament(id, name, description, "startDate", "endDate") values(2, 'Pikadrafti', 'Tänään', date_trunc('day', now()), date_trunc('day', now()) + time '23:59:59.999999');
 
+INSERT INTO tournament_cubes("tournamentId", "cubeId") select 1, id from cube;
+
 INSERT INTO tournament_staff_members("tournamentId", "userId") values(1, 3);
 INSERT INTO tournament_staff_members("tournamentId", "userId") values(2, 3);
 
