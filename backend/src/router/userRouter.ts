@@ -20,6 +20,13 @@ userRouter.get("/user/:id/tournaments", async (req, res) => {
   res.send(await getUsersTournaments(req));
 });
 
+userRouter.get(
+  "/user/:userId/tournament/:tournamentId/matches",
+  async (req, res) => {
+    res.send(await getUsersTournaments(req));
+  }
+);
+
 userRouter.get("/cube", async (req, res) => {
   res.send(await getAllCubes());
 });

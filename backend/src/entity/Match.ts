@@ -20,12 +20,16 @@ export class Match {
   @Column("smallint")
   tableNumber: number;
 
-  @OneToOne(() => User)
   @JoinColumn()
-  player1: User;
+  player1Id: number;
 
   @OneToOne(() => User)
+  player1: User;
+
   @JoinColumn()
+  player2Id: number;
+
+  @OneToOne(() => User)
   player2: User;
 
   @Column("smallint")
@@ -34,7 +38,9 @@ export class Match {
   @Column("smallint")
   player2GamesWon: number;
 
-  @OneToOne(() => User, { nullable: true })
   @JoinColumn()
+  resultSubmittedById: number;
+
+  @OneToOne(() => User, { nullable: true })
   resultSubmittedBy: User;
 }
