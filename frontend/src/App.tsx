@@ -2,6 +2,7 @@ import { RouteObject, RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./components/Layout";
 import Login from "./components/user/Login";
+import SignUp from "./components/user/SignUp";
 import UserInfoProvider from "./components/provider/UserInfoProvider";
 import Logout from "./components/user/Logout";
 import Profile from "./components/user/Profile";
@@ -36,6 +37,10 @@ function App() {
             {
               path: "logout",
               Component: Logout,
+            },
+            {
+              path: "signup",
+              Component: SignUp,
             },
             {
               path: "profile",
