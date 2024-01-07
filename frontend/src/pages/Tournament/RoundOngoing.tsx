@@ -24,7 +24,7 @@ function RoundOngoing() {
   const user = useContext(UserInfoContext);
   const [playerRadioValue, setPlayerRadioValue] = useState('0');
   const [opponentRadioValue, setOpponentRadioValue] = useState('0');
-  const [timerStyle, setTimerStyle] = useState('display-5');
+  
   
   const totalMatches = 64;
   const [ongoingMatches, setOngoingMatches] = useState(Math.floor(Math.random() * totalMatches) + 1);
@@ -35,6 +35,7 @@ function RoundOngoing() {
     { name: '2', value: '2' },
   ];
 
+  const [timerStyle, setTimerStyle] = useState('display-5');
   const [time, setTime] = useState(3);
 
   function timeRunOut() {

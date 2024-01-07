@@ -14,6 +14,7 @@ import PublicProfile from "./pages/PublicProfile/PublicProfile";
 import RoundOngoing from "./pages/Tournament/RoundOngoing";
 import DraftOngoing from "./pages/Tournament/DraftOngoing";
 import Landing from "./pages/Landing/Landing";
+import StaffView from "./pages/Staff/StaffView";
 
 function App() {
   const routes: RouteObject[] = [
@@ -57,7 +58,7 @@ function App() {
               Component: Standings,
             },
             {
-              path: "players/:id",
+              path: "players/:playerId",
               Component: PublicProfile,
             },
             {
@@ -67,6 +68,10 @@ function App() {
             {
               path: "draftOngoing",
               Component: DraftOngoing,
+            },
+            {
+              path: "tournament/:tournamentId/staff",
+              Component: StaffView,
             },
             {
               path: "test",

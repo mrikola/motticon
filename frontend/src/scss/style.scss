@@ -93,6 +93,7 @@ nav {
   p {
     text-align: center;
     top: 0;
+    left: 0;
   }
 }
 .icon-stack-1x,
@@ -105,6 +106,7 @@ nav {
 .icon-stack-1x {
   line-height: inherit;
   position: absolute;
+  font-size: 1.5rem;
   left:8px;
   top:-11px;
 }
