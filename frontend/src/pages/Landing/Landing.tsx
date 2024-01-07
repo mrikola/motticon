@@ -26,9 +26,9 @@ const Landing = () => {
   ];
 
   return user && tournaments ? (
-    <Container>
+    <Container className="mt-3 my-md-4">
       <Col>
-        <h1>
+        <h1 className="display-1">
           Welcome, {user?.firstName} {user?.lastName}
         </h1>
         {user.isAdmin && (

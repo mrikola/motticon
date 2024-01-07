@@ -6,6 +6,7 @@ import {
   BoxArrowRight,
   HouseFill,
   TrophyFill,
+  Globe,
 } from "react-bootstrap-icons";
 import { Outlet, useLocation } from "react-router";
 import { Link } from "react-router-dom";
@@ -69,6 +70,12 @@ const Layout = () => {
                   <Link className="nav-link" to="/players/1">
                     <PersonFill />
                     Public Profile
+                  </Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Link className="nav-link" to="/tournament/1/staff">
+                    <Globe />
+                    Staff View
                   </Link>
                 </Nav.Item>
               </Nav>

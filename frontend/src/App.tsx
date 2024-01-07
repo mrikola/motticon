@@ -2,6 +2,7 @@ import { RouteObject, RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./components/Layout";
 import Login from "./components/user/Login";
+import SignUp from "./components/user/SignUp";
 import UserInfoProvider from "./components/provider/UserInfoProvider";
 import Logout from "./components/user/Logout";
 import Profile from "./components/user/Profile";
@@ -14,6 +15,7 @@ import PublicProfile from "./pages/PublicProfile/PublicProfile";
 import RoundOngoing from "./pages/Tournament/RoundOngoing";
 import DraftOngoing from "./pages/Tournament/DraftOngoing";
 import Landing from "./pages/Landing/Landing";
+import StaffView from "./pages/Staff/StaffView";
 
 function App() {
   const routes: RouteObject[] = [
@@ -37,6 +39,10 @@ function App() {
               Component: Logout,
             },
             {
+              path: "signup",
+              Component: SignUp,
+            },
+            {
               path: "profile",
               Component: Profile,
             },
@@ -57,7 +63,7 @@ function App() {
               Component: Standings,
             },
             {
-              path: "players/:id",
+              path: "players/:playerId",
               Component: PublicProfile,
             },
             {
@@ -67,6 +73,10 @@ function App() {
             {
               path: "draftOngoing",
               Component: DraftOngoing,
+            },
+            {
+              path: "tournament/:tournamentId/staff",
+              Component: StaffView,
             },
             {
               path: "test",
