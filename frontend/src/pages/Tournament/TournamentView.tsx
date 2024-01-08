@@ -5,6 +5,7 @@ import { get } from "../../services/ApiService";
 import { Tournament } from "../../types/Tournament";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Table, Col, Container, Row, Button } from "react-bootstrap";
+import { Box, BoxArrowInLeft } from "react-bootstrap-icons";
 
 
 const TournamentView = () => {
@@ -43,6 +44,20 @@ const TournamentView = () => {
           <h1 className="display-1">
             {tournament.name}
           </h1>
+          <Col xs={12}>
+            <Link to={`/tournaments`}>
+              <Button variant="primary">
+                <BoxArrowInLeft /> Back to tournaments
+              </Button>
+            </Link>
+          </Col>
+          <Col xs={12}>
+            <Link to={`/tournament/${tournamentId}/cubes/`}>
+              <Button variant="primary">
+                <Box /> View tournament cubes
+              </Button>
+            </Link>
+          </Col>
 
         </Col>
       </Container>
