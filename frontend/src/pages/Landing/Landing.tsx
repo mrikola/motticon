@@ -3,6 +3,7 @@ import { Col, Container } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { get } from "../../services/ApiService";
 import { UsersTournaments } from "../../types/Tournament";
+import { Link } from "react-router-dom";
 
 const Landing = () => {
   const [tournaments, setTournaments] = useState<UsersTournaments>();
@@ -41,7 +42,11 @@ const Landing = () => {
               <>
                 <h2>Your {type} tournaments</h2>
                 {tourneys.map((tournament) => (
-                  <div key={tournament.id}>{tournament.name}</div>
+                  <div key={tournament.id}>
+                    <Link to={`/tournament/${tournament.id}`}>
+                      {tournament.name}
+                    </Link>
+                  </div>
                 ))}
               </>
             ) : (
