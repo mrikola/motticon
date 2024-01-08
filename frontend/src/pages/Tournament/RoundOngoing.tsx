@@ -39,7 +39,6 @@ function RoundOngoing() {
   const [time, setTime] = useState(3);
 
   function timeRunOut() {
-    console.log('timer ran out');
     setTimerStyle('display-5 text-danger');
   }
 

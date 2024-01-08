@@ -65,7 +65,7 @@ export class UserService {
       notPast,
       (tournament) => tournament.startDate > today
     );
-
+    
     return {
       past,
       ongoing,

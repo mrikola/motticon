@@ -35,17 +35,17 @@ const Landing = () => {
           <>You're an admin, some admin panel links should be here</>
         )}
         {tournaments &&
-          tournamentTypes.map((type) => {
+          tournamentTypes.map((type, index) => {
             const tourneys = tournaments[type];
             return tourneys.length > 0 ? (
               <>
-                <h2>Your {type} tournaments</h2>
+                <h2 key={index}>Your {type} tournaments</h2>
                 {tourneys.map((tournament) => (
                   <div key={tournament.id}>{tournament.name}</div>
                 ))}
-              </>
+                </>
             ) : (
-              <></>
+              <h2 key={index}>No {type} tournaments</h2>
             );
           })}
       </Col>
