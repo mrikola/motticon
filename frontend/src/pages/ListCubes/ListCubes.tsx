@@ -28,15 +28,15 @@ const ListCubes = () => {
           <h1 className="display-1">Cubes</h1>
         </Row>
         <Row xs={1} sm={1} md={2}>
-          {cubes.map((cube) => (
-            <Col key={cube.id}>
+          {cubes.map((cube, index) => (
+            <Col key={cube.id} className={cube.id} >
               <Card className={styles.cubeCard}>
                 <Row>
                     <Col
                       xs={6}
                       className="cube-card-image rounded-start"
                       style={{
-                        backgroundImage: `url("/img/masthead_${cube.id}.jpeg")`,
+                        backgroundImage: 'url("/img/masthead_'+(index+1)+'.jpeg")'
                       }}
                     ></Col>
                     <Col xs={6}>
