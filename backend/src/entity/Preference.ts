@@ -16,12 +16,16 @@ export class Preference {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Tournament)
   @JoinColumn()
+  tournamentId: number;
+
+  @OneToOne(() => Tournament)
   tournament: Tournament;
 
-  @OneToOne(() => User)
   @JoinColumn()
+  playerId: number;
+
+  @OneToOne(() => User)
   player: User;
 
   @OneToOne(() => Cube)

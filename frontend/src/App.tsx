@@ -16,6 +16,7 @@ import RoundOngoing from "./pages/Tournament/RoundOngoing";
 import DraftOngoing from "./pages/Tournament/DraftOngoing";
 import Landing from "./pages/Landing/Landing";
 import StaffView from "./pages/Staff/StaffView";
+import Tournament from "./pages/Tournament/Tournament";
 
 function App() {
   const routes: RouteObject[] = [
@@ -73,6 +74,10 @@ function App() {
             {
               path: "draftOngoing",
               Component: DraftOngoing,
+            },
+            {
+              path: "tournament/:tournamentId",
+              Component: Tournament,
             },
             {
               path: "tournament/:tournamentId/staff",

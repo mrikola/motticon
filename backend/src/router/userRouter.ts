@@ -1,7 +1,11 @@
 import * as express from "express";
 import { isValidToken } from "../auth/auth";
 import { getAllCubes, getCube } from "../controller/cube.controller";
-import { getUsersTournaments } from "../controller/user.controller";
+import {
+  getUserTournamentInfo,
+  getUsersTournaments,
+} from "../controller/user.controller";
+import { getPlayerMatchHistory } from "../controller/match.controller";
 
 export const userRouter = express.Router();
 
@@ -20,10 +24,14 @@ userRouter.get("/user/:id/tournaments", async (req, res) => {
   res.send(await getUsersTournaments(req));
 });
 
+userRouter.get("/user/:userId/tournament/:tournamentId", async (req, res) => {
+  res.send(await getUserTournamentInfo(req));
+});
+
 userRouter.get(
   "/user/:userId/tournament/:tournamentId/matches",
   async (req, res) => {
-    res.send(await getUsersTournaments(req));
+    res.send(await getPlayerMatchHistory(req));
   }
 );
 

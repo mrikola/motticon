@@ -4,6 +4,8 @@ import { User } from "../entity/User";
 import { Tournament } from "../entity/Tournament";
 import { partition, uniqBy } from "lodash";
 import { UsersTournaments } from "../dto/user.dto";
+import { Enrollment } from "../entity/Enrollment";
+import { Preference } from "../entity/Preference";
 
 export class UserService {
   private appDataSource: DataSource;
@@ -69,5 +71,37 @@ export class UserService {
       ongoing,
       future,
     };
+  }
+
+  async getUserTournamentInfo(
+    userId: number,
+    tournamentId: number
+  ): Promise<any> {
+    // get tournament basics
+    const tournament = await this.appDataSource
+      .getRepository(Tournament)
+      .findOne({ where: { id: tournamentId } });
+
+    // get enrollment
+    const enrollment = await this.appDataSource
+      .getRepository(Enrollment)
+      .createQueryBuilder("enrollment")
+      .leftJoinAndSelect("enrollment.player", "user")
+      .where("user.id = :userId and enrollment.tournamentId = :tournamentId", {
+        userId,
+        tournamentId,
+      })
+      .getOne();
+
+    // get preferences
+    const preferences = await this.appDataSource
+      .getRepository(Preference)
+      .createQueryBuilder("preference")
+      .where(
+        'preference."playerId" = :userId and preference."tournamentId" = :tournamentId',
+        { userId, tournamentId }
+      )
+      .getMany();
+    return { tournament, enrollment, preferences };
   }
 }
