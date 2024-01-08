@@ -4,6 +4,7 @@ export type Tournament = {
   description: string;
   startDate: Date;
   endDate: Date;
+  cubes: cube[];
 };
 
 export type TournamentsByType = {

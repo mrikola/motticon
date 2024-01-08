@@ -19,6 +19,7 @@ INSERT INTO tournament(id, name, description, "startDate", "endDate") values(2, 
 INSERT INTO tournament(id, name, description, "startDate", "endDate") values(3, 'Muinainen Turnaus', 'Antiikkia', '2015-02-07', '2015-04-07');
 
 INSERT INTO tournament_cubes("tournamentId", "cubeId") select 1, id from cube;
+INSERT INTO tournament_cubes("tournamentId", "cubeId") values(2, 1);
 
 INSERT INTO tournament_staff_members("tournamentId", "userId") values(1, 3);
 INSERT INTO tournament_staff_members("tournamentId", "userId") values(2, 3);

@@ -10,6 +10,7 @@ import UserCubePreferences from "./components/user/UserCubePreferences";
 import ViewCube from "./pages/ViewCube/ViewCube";
 import Test from "./components/general/Test";
 import ListCubes from "./pages/ListCubes/ListCubes";
+import ListCubesForTournament from "./pages/ListCubes/ListCubesForTournament";
 import Standings from "./pages/Standings/Standings";
 import PublicProfile from "./pages/PublicProfile/PublicProfile";
 import RoundOngoing from "./pages/Tournament/RoundOngoing";
@@ -17,7 +18,7 @@ import DraftOngoing from "./pages/Tournament/DraftOngoing";
 import Landing from "./pages/Landing/Landing";
 import StaffView from "./pages/Staff/StaffView";
 import Tournaments from "./pages/Tournament/Tournaments";
-import Tournament from "./pages/Tournament/Tournament";
+import TournamentView from "./pages/Tournament/TournamentView";
 
 function App() {
   const routes: RouteObject[] = [
@@ -82,7 +83,15 @@ function App() {
             },
             {
               path: "tournament/:tournamentId",
-              Component: Tournament,
+              Component: TournamentView,
+            },
+            {
+              path: "tournament/:tournamentId/cubes",
+              Component: ListCubesForTournament,
+            },
+            {
+              path: "tournament/:tournamentId/cubes/:cubeId",
+              Component: ViewCube,
             },
             {
               path: "tournament/:tournamentId/staff",

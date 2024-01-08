@@ -3,6 +3,7 @@ import { AppDataSource } from "../data-source";
 import { Tournament } from "../entity/Tournament";
 import { partition, uniqBy } from "lodash";
 import { TournamentsByType } from "../dto/tournaments.dto";
+import { Cube } from "../entity/Cube";
 
 export class TournamentService {
   private appDataSource: DataSource;
@@ -33,10 +34,27 @@ export class TournamentService {
     };
   }
 
-
   async getTournament(id: number): Promise<Tournament> {
     return await this.repository.findOne({
       where: { id },
     });
+  }
+
+  async getTournamentCubes(id: number): Promise<Tournament[]> {
+    // const cubes = await this.appDataSource
+    //   .getRepository(Cube)
+    //   .createQueryBuilder("cube")
+    //   .leftJoinAndSelect("tournament_cubes", "cube")
+    //   .where("cube.tournamentId = :id", { id })
+    //   .getMany();
+    // return cubes;
+    const enrollments = await this.appDataSource
+      .getRepository(Tournament)
+      .createQueryBuilder("tournament")
+      .leftJoinAndSelect("tournament.enrollments", "enrollment")
+      .leftJoinAndSelect("enrollment.player", "user")
+      .where("user.id = :id", { id })
+      .getMany();
+    return enrollments;
   }
 }

@@ -4,10 +4,10 @@ import { Button, Col, Container, Row, Modal } from "react-bootstrap";
 import DeckImage from "/img/draft_pool.png";
 import { Cube } from "../../types/Cube";
 import { get } from "../../services/ApiService";
-import { Image, List, PenFill } from "react-bootstrap-icons";
+import { Image, List, PenFill, BoxArrowInLeft } from "react-bootstrap-icons";
 
 const ViewCube = () => {
-  const { cubeId } = useParams();
+  const { cubeId, tournamentId } = useParams();
   const ImageURL = `/img/masthead_${cubeId}.jpeg`;
 
   const [cube, setCube] = useState<Cube>();
@@ -69,13 +69,21 @@ const ViewCube = () => {
                       <PenFill /> Cube Designer: John Doe
                     </p>
                     <p>{cube.description}</p>
-                    <a
-                      href={cube.url}
-                      target="_blank"
-                      className="btn btn-primary"
-                    >
-                      <List /> View list on Cube Cobra
-                    </a>
+                    <div className="d-grid gap-2">
+                      <a
+                        href={cube.url}
+                        target="_blank"
+                        className="btn btn-primary"
+                      >
+                        <List /> View list on Cube Cobra
+                      </a>
+                      <a
+                        href={`/tournament/${tournamentId}/cubes/`}
+                        className="btn btn-primary"
+                      >
+                        <BoxArrowInLeft /> Back to tournament cubes
+                      </a>
+                    </div>
                   </Col>
                 </Row>
               </Container>
