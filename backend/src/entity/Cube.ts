@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToMany,
+} from "typeorm";
+import { Tournament } from "./Tournament";
 
 @Entity()
 export class Cube {
@@ -13,4 +20,7 @@ export class Cube {
 
   @Column()
   url: string;
+
+  @ManyToMany(() => Tournament, (tournament) => tournament.cubes)
+  tournaments: Tournament[];
 }
