@@ -1,7 +1,10 @@
 import * as express from "express";
 import { isValidToken } from "../auth/auth";
 import { getAllCubes, getCube } from "../controller/cube.controller";
-import { getAllTournaments, getTournament } from "../controller/tournament.controller";
+import {
+  getAllTournaments,
+  getTournament,
+} from "../controller/tournament.controller";
 import {
   getUserTournamentInfo,
   getUsersTournaments,

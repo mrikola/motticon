@@ -17,8 +17,10 @@ const Tournament = () => {
       sessionStorage.setItem("currentTournament", tournament.id);
     };
 
-    fetchData();
-  }, []);
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
 
   return <>tournament {tournamentId}</>;
 };
