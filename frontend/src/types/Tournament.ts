@@ -6,6 +6,12 @@ export type Tournament = {
   endDate: Date;
 };
 
+export type TournamentsByType = {
+  past: Tournament[];
+  ongoing: Tournament[];
+  future: Tournament[];
+};
+
 export type UsersTournaments = {
   past: Tournament[];
   ongoing: Tournament[];

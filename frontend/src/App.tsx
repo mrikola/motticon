@@ -16,6 +16,7 @@ import RoundOngoing from "./pages/Tournament/RoundOngoing";
 import DraftOngoing from "./pages/Tournament/DraftOngoing";
 import Landing from "./pages/Landing/Landing";
 import StaffView from "./pages/Staff/StaffView";
+import Tournaments from "./pages/Tournament/Tournaments";
 import Tournament from "./pages/Tournament/Tournament";
 
 function App() {
@@ -74,6 +75,10 @@ function App() {
             {
               path: "draftOngoing",
               Component: DraftOngoing,
+            },
+            {
+              path: "tournaments",
+              Component: Tournaments,
             },
             {
               path: "tournament/:tournamentId",
