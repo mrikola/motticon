@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { Button, Card, Col, Container, Row, Form, Select, FloatingLabel } from "react-bootstrap";
 import {
-  Box
-} from "react-bootstrap-icons";
+  Button,
+  Col,
+  Container,
+  Row,
+  Form,
+  FloatingLabel,
+} from "react-bootstrap";
 
 function SignUp() {
   const [email, setEmail] = useState("");
@@ -10,9 +14,12 @@ function SignUp() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
+  function createAccount() {
+    // todo actual account creation
+  }
+
   return (
-    
-      <Container className="mt-3 my-md-4">
+    <Container className="mt-3 my-md-4">
       <Col>
         <h1 className="display-1">Create account</h1>
       </Col>
@@ -70,12 +77,16 @@ function SignUp() {
           </FloatingLabel>
         </Col>
         <Col xs={12} className="d-grid">
-          <Button variant="primary" type="submit" onClick={() => doLogin()}>
+          <Button
+            variant="primary"
+            type="submit"
+            onClick={() => createAccount()}
+          >
             Create account
           </Button>
         </Col>
       </Row>
-      </Container>
+    </Container>
   );
 }
 

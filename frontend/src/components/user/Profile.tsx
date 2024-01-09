@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { get } from "../../services/ApiService";
 import { UserInfoContext } from "../provider/UserInfoProvider";
 import { Button, Col, Container, Row } from "react-bootstrap";
@@ -7,7 +7,6 @@ import { Box, BoxArrowRight } from "react-bootstrap-icons";
 
 const Profile = () => {
   const user = useContext(UserInfoContext);
-  const navigate = useNavigate();
   if (user) {
     return (
       <>

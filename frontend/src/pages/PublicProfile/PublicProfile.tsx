@@ -12,6 +12,7 @@ function PublicProfile() {
     { name: "3", value: "1-2" },
     { name: "4", value: "0-2" },
   ];
+
   useEffect(() => {
     setDraftResults(
       [...Array(3)].map((drafts) => {
@@ -78,12 +79,12 @@ function PublicProfile() {
           </Card>
         </Container>
       </Row>
-      {draftResults.map((draft) => (
-        <Row key={draft.id}>
+      {draftResults.map((draft, index) => (
+        <Row key={"draftrow-" + index}>
           <Col xs={12} className="text-center">
             <h3>Draft {draft.id}</h3>
-            {draft.results.map((result) => (
-              <Row key={result.id}>
+            {draft.results.map((result, index) => (
+              <Row key={"result-" + index}>
                 <Col xs={4}>
                   <p>John Doe</p>
                 </Col>
