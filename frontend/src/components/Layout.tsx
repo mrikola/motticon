@@ -53,12 +53,6 @@ const Layout = () => {
                   </Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Link className="nav-link" to="/roundOngoing">
-                    <TrophyFill />
-                    Ongoing view quick link
-                  </Link>
-                </Nav.Item>
-                <Nav.Item>
                   <Link className="nav-link" to="/players/1">
                     <PersonFill />
                     Public Profile

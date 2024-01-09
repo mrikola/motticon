@@ -16,6 +16,7 @@ import PublicProfile from "./pages/PublicProfile/PublicProfile";
 import Ongoing from "./pages/Tournament/Ongoing";
 import RoundOngoing from "./pages/Tournament/RoundOngoing";
 import DraftOngoing from "./pages/Tournament/DraftOngoing";
+import TournamentStaffView from "./pages/Tournament/TournamentStaffView";
 import Landing from "./pages/Landing/Landing";
 import StaffView from "./pages/Staff/StaffView";
 import Tournaments from "./pages/Tournament/Tournaments";
@@ -85,6 +86,10 @@ function App() {
             {
               path: "tournament/:tournamentId",
               Component: TournamentView,
+            },
+            {
+              path: "tournament/:tournamentId/staff",
+              Component: TournamentStaffView,
             },
             {
               path: "tournament/:tournamentId/cubes",

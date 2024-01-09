@@ -37,7 +37,7 @@ function RoundOngoing() {
   }
 
   useEffect(() => {
-    let timer = setInterval(() => {
+    const timer = setInterval(() => {
       setTime((time) => {
         if (time === 0) {
           clearInterval(timer);

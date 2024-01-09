@@ -5,10 +5,15 @@ import {
   getTournament,
   getTournamentCubes,
 } from "../controller/tournament.controller";
-import { getAllCubes, getCube, getCubesForTournament } from "../controller/cube.controller";
+import {
+  getAllCubes,
+  getCube,
+  getCubesForTournament,
+} from "../controller/cube.controller";
 import {
   getUserTournamentInfo,
   getUsersTournaments,
+  getTournamentsStaffed,
 } from "../controller/user.controller";
 import { getPlayerMatchHistory } from "../controller/match.controller";
 
@@ -40,6 +45,10 @@ userRouter.get(
   }
 );
 
+userRouter.get("/user/:userId/staff", async (req, res) => {
+  res.send(await getTournamentsStaffed(req));
+});
+
 userRouter.get("/cube", async (req, res) => {
   res.send(await getAllCubes());
 });
@@ -63,4 +72,3 @@ userRouter.get("/tournament/:id", async (req, res) => {
 userRouter.get("/tournament/:id/cubes", async (req, res) => {
   res.send(await getCubesForTournament(req));
 });
-

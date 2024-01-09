@@ -7,6 +7,11 @@ export const getUsersTournaments = async (req) => {
   return await userService.getUsersTournaments(id as number);
 };
 
+export const getTournamentsStaffed = async (req) => {
+  const { userId } = req.params;
+  return await userService.getTournamentsStaffed(userId as number);
+};
+
 export const getUserTournamentInfo = async (req) => {
   const { userId, tournamentId } = req.params;
   return await userService.getUserTournamentInfo(

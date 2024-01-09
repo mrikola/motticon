@@ -24,6 +24,7 @@ const TournamentView = () => {
   const [cubes, setCubes] = useState<Cube[]>([]);
   const [tournamentStatus, setTournamentStatus] = useState<string>();
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
+  const [staff, setStaff] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,6 +54,22 @@ const TournamentView = () => {
       fetchData();
     }
   }, [user, tournamentId]);
+
+  // check if user is staff
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await get(`/user/${user?.id}/staff`);
+      const staffed = await response.json();
+      staffed.map((tournament) => {
+        if (tournament.id == tournamentId) {
+          setStaff(true);
+        }
+      });
+    };
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
 
   // get cubes for this tournament
   useEffect(() => {
@@ -87,6 +104,21 @@ const TournamentView = () => {
           <Link to={`/tournament/${tournamentId}/ongoing/`}>
             <Button variant="primary">
               <TrophyFill /> View ongoing
+            </Button>
+          </Link>
+        </Col>
+      </Row>
+    );
+  }
+
+  function showStaffButton() {
+    // todo: add actual signup functionality
+    return (
+      <Row>
+        <Col xs={12}>
+          <Link to={`/tournament/${tournamentId}/staff`}>
+            <Button variant="primary">
+              <ListOl /> Go to staff view
             </Button>
           </Link>
         </Col>
@@ -174,6 +206,7 @@ const TournamentView = () => {
         ) : (
           <></>
         )}
+        {staff ? showStaffButton() : <></>}
         {tournamentStatus != "future" ? showStandings(5) : <></>}
       </Container>
     );
