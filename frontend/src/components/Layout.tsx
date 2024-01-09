@@ -1,8 +1,6 @@
 import { Container, Navbar, Nav } from "react-bootstrap";
 import {
-  Boxes,
   PersonFill,
-  ListOl,
   BoxArrowRight,
   HouseFill,
   TrophyFill,

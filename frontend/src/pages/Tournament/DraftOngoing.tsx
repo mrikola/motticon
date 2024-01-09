@@ -75,13 +75,6 @@ function DraftOngoing() {
           </Button>
         </div>
       </Row>
-      <Row className="my-3">
-        <Col>
-          <Link to={"/roundOngoing"}>
-            <Button variant="danger">Swap to round ongoing</Button>
-          </Link>
-        </Col>
-      </Row>
     </Container>
   );
 }

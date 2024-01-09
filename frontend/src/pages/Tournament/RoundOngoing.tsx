@@ -11,7 +11,7 @@ import {
   ToggleButton,
   ProgressBar,
 } from "react-bootstrap";
-import { SquareFill, Stopwatch } from "react-bootstrap-icons";
+import { SquareFill, Stopwatch, BoxArrowInLeft } from "react-bootstrap-icons";
 
 function RoundOngoing() {
   const user = useContext(UserInfoContext);
@@ -141,18 +141,8 @@ function RoundOngoing() {
             <Button variant="primary">Submit result</Button>
           </div>
         </Row>
-
-        <Row className="my-3">
-          <Col>
-            <Link to={"/draftOngoing"}>
-              <Button variant="danger">Swap to draft ongoing</Button>
-            </Link>
-          </Col>
-        </Row>
       </Container>
     );
-  } else {
-    return <>no user lul</>;
   }
 }
 

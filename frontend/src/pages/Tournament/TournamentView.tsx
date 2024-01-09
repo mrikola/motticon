@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { get } from "../../services/ApiService";
 import { Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
@@ -12,13 +12,15 @@ import {
   ListOl,
   CalendarDate,
   XLg,
+  TrophyFill,
 } from "react-bootstrap-icons";
 import dayjs from "dayjs";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
+  const navigate = useNavigate();
   const user = useContext(UserInfoContext);
-  const [tournament, setTournament] = useState<Tournament>();
+  const [activeTournament, setActiveTournament] = useState<Tournament>();
   const [cubes, setCubes] = useState<Cube[]>([]);
   const [tournamentStatus, setTournamentStatus] = useState<string>();
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
@@ -31,7 +33,7 @@ const TournamentView = () => {
       // TODO types + view
       const { tournament, enrollment, preferences } = await response.json();
       sessionStorage.setItem("currentTournament", tournament.id);
-      setTournament(tournament);
+      setActiveTournament(tournament);
       const now = dayjs();
       const tournyStartDate = dayjs(tournament.startDate);
       const tournyEndDate = dayjs(tournament.endDate);
@@ -77,6 +79,21 @@ const TournamentView = () => {
     );
   }
 
+  function showGoToOngoing() {
+    // todo: add actual signup functionality
+    return (
+      <Row>
+        <Col xs={12}>
+          <Link to={`/tournament/${tournamentId}/ongoing/`}>
+            <Button variant="primary">
+              <TrophyFill /> View ongoing
+            </Button>
+          </Link>
+        </Col>
+      </Row>
+    );
+  }
+
   function showSignup() {
     // todo: add actual signup functionality
     return (
@@ -103,7 +120,7 @@ const TournamentView = () => {
     );
   }
 
-  if (tournament) {
+  if (activeTournament) {
     return (
       <Container className="mt-3 my-md-4">
         <Row>
@@ -115,7 +132,7 @@ const TournamentView = () => {
             </Link>
           </Col>
           <Col xs={12}>
-            <h1 className="display-1">{tournament.name}</h1>
+            <h1 className="display-1">{activeTournament.name}</h1>
             <h2>Status: {tournamentStatus}</h2>
           </Col>
         </Row>
@@ -123,10 +140,10 @@ const TournamentView = () => {
           <Col xs={12}>
             <p>
               <CalendarDate /> Date:{" "}
-              {dayjs(tournament.startDate).format("DD/MM/YYYY")} –{" "}
-              {dayjs(tournament.endDate).format("DD/MM/YYYY")}
+              {dayjs(activeTournament.startDate).format("DD/MM/YYYY")} –{" "}
+              {dayjs(activeTournament.endDate).format("DD/MM/YYYY")}
             </p>
-            <p>{tournament.description}</p>
+            <p>{activeTournament.description}</p>
           </Col>
         </Row>
         {(() => {
@@ -145,7 +162,12 @@ const TournamentView = () => {
           }
           return <></>;
         })()}
-        {tournamentStatus == "future" && !isEnrolled ? showSignup() : <></>}
+        {isEnrolled && tournamentStatus === "ongoing" ? (
+          showGoToOngoing()
+        ) : (
+          <></>
+        )}
+        {tournamentStatus === "future" && !isEnrolled ? showSignup() : <></>}
         {isEnrolled &&
         (tournamentStatus === "ongoing" || tournamentStatus === "future") ? (
           showDrop()

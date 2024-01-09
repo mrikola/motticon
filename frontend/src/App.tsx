@@ -13,6 +13,7 @@ import ListCubes from "./pages/ListCubes/ListCubes";
 import ListCubesForTournament from "./pages/ListCubes/ListCubesForTournament";
 import Standings from "./pages/Standings/Standings";
 import PublicProfile from "./pages/PublicProfile/PublicProfile";
+import Ongoing from "./pages/Tournament/Ongoing";
 import RoundOngoing from "./pages/Tournament/RoundOngoing";
 import DraftOngoing from "./pages/Tournament/DraftOngoing";
 import Landing from "./pages/Landing/Landing";
@@ -92,6 +93,10 @@ function App() {
             {
               path: "tournament/:tournamentId/cubes/:cubeId",
               Component: ViewCube,
+            },
+            {
+              path: "tournament/:tournamentId/ongoing",
+              Component: Ongoing,
             },
             {
               path: "tournament/:tournamentId/standings/:roundNumber",
