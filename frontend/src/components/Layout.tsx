@@ -49,21 +49,15 @@ const Layout = () => {
                   </Link>
                 </Nav.Item>
                 <Nav.Item>
+                  <Link className="nav-link" to="/tournaments">
+                    <TrophyFill />
+                    Tournaments
+                  </Link>
+                </Nav.Item>
+                <Nav.Item>
                   <Link className="nav-link" to="/roundOngoing">
                     <TrophyFill />
-                    Tournament
-                  </Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Link className="nav-link" to="/cubes">
-                    <Boxes />
-                    Cubes
-                  </Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Link className="nav-link" to="/standings">
-                    <ListOl />
-                    Standings
+                    Ongoing view quick link
                   </Link>
                 </Nav.Item>
                 <Nav.Item>
@@ -75,7 +69,7 @@ const Layout = () => {
                 <Nav.Item>
                   <Link className="nav-link" to="/tournament/1/staff">
                     <Globe />
-                    Staff View
+                    Staff View quick link
                   </Link>
                 </Nav.Item>
               </Nav>

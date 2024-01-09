@@ -1,6 +1,10 @@
-import { Table, Col, Container, Row } from "react-bootstrap";
+import { Table, Col, Container, Row, Button } from "react-bootstrap";
+import { useParams } from "react-router";
+import { Link } from "react-router-dom";
+import { Box, BoxArrowInLeft } from "react-bootstrap-icons";
 
 function Standings() {
+  const { roundNumber, tournamentId } = useParams();
   const players = [];
   const max = 15;
   const min = 0;
@@ -22,7 +26,12 @@ function Standings() {
   return (
     <Container className="mt-3 my-md-4">
      <Row>
-     	<h1 className="display-1">Standings after round 5</h1>
+     <Link to={`/tournament/${tournamentId}`}>
+        <Button variant="primary">
+          <BoxArrowInLeft /> Back to tournament
+        </Button>
+      </Link>
+     	<h1 className="display-1">Standings after round {roundNumber}</h1>
      </Row>
     <Row>
     <Table striped bordered hover>

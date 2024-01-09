@@ -34,15 +34,15 @@ function Tournaments() {
           <Col xs={12} key={index}>
             <h2 className="text-capitalize">{type} tournaments</h2>
             {tourneys.map((tournament) => (
-              <Row key={tournament.id}>
+              <Row key={tournament.id} className="mt-3 my-md-4">
                 <Col xs={3}>
-                  {tournament.name}
+                  <p>{tournament.name}</p>
                 </Col>
                 <Col xs={3}>
-                  {tournament.description}
+                  <p>{tournament.description}</p>
                 </Col>
                 <Col xs={3}>
-                  {dayjs(tournament.startDate).format('DD/MM/YYYY')} – {dayjs(tournament.endDate).format('DD/MM/YYYY')}
+                  <p>{dayjs(tournament.startDate).format('DD/MM/YYYY')} – {dayjs(tournament.endDate).format('DD/MM/YYYY')}</p>
                 </Col>
                 <Col xs={3}>
                   <Link to={`/tournament/${tournament.id}`}>

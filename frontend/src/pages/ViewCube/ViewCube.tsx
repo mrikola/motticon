@@ -62,8 +62,17 @@ const ViewCube = () => {
               style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
             >
               <Container className="h-100">
+                <Row className="mt-3 my-md-4">
+                  <a
+                    href={`/tournament/${tournamentId}/cubes/`}
+                    className="btn btn-primary"
+                  >
+                    <BoxArrowInLeft /> Back to tournament cubes
+                  </a>
+                </Row>
                 <Row className="h-100 align-items-center">
                   <Col className="text-center">
+                  
                     <h1 className="display-1">{cube.title}</h1>
                     <p className="lead">
                       <PenFill /> Cube Designer: John Doe
@@ -77,12 +86,7 @@ const ViewCube = () => {
                       >
                         <List /> View list on Cube Cobra
                       </a>
-                      <a
-                        href={`/tournament/${tournamentId}/cubes/`}
-                        className="btn btn-primary"
-                      >
-                        <BoxArrowInLeft /> Back to tournament cubes
-                      </a>
+                      
                     </div>
                   </Col>
                 </Row>

@@ -94,6 +94,10 @@ function App() {
               Component: ViewCube,
             },
             {
+              path: "tournament/:tournamentId/standings/:roundNumber",
+              Component: Standings,
+            },
+            {
               path: "tournament/:tournamentId/staff",
               Component: StaffView,
             },

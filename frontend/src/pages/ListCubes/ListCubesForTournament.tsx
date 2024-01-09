@@ -37,12 +37,12 @@ const ListCubesForTournament = () => {
     return (
       <Container className="mt-3 my-md-4">
         <Row>
-          <h1 className="display-1">{tournament.name} cubes: {cubes.title}</h1>
           <Link to={`/tournament/${tournamentId}`}>
             <Button variant="primary">
               <BoxArrowInLeft /> Back to tournament
             </Button>
           </Link>
+          <h1 className="display-1">{tournament.name} cubes: {cubes.title}</h1>
         </Row>
         <Row xs={1} sm={1} md={2}>
           {cubes.map((cube, index) => (
