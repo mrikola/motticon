@@ -2,9 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { get } from "../../services/ApiService";
-import { Tournament } from "../../types/Tournament";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
-import { Col, Container, Row, Button } from "react-bootstrap";
+import { Col, Container, Button } from "react-bootstrap";
 import RoundOngoing from "./RoundOngoing";
 import DraftOngoing from "./DraftOngoing";
 import { BoxArrowInLeft } from "react-bootstrap-icons";
@@ -12,18 +11,18 @@ import { BoxArrowInLeft } from "react-bootstrap-icons";
 const Ongoing = () => {
   const { tournamentId } = useParams();
   const user = useContext(UserInfoContext);
-  const [activeTournament, setActiveTournament] = useState<Tournament>();
   const [ongoingStatus, setOngoingStatus] = useState("round");
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(
-        `/user/${user?.id}/tournament/${tournamentId}`
+        `/user/${user?.id}/tournament/${tournamentId}/current`
       );
       // TODO types + view
-      const { tournament, enrollment, preferences } = await response.json();
-      sessionStorage.setItem("currentTournament", tournament.id);
-      setActiveTournament(tournament);
+      const { draft, round, match } = await response.json();
+      console.log("draft", JSON.stringify(draft));
+      console.log("round", JSON.stringify(round));
+      console.log("match", JSON.stringify(match));
     };
 
     if (user) {
@@ -39,28 +38,24 @@ const Ongoing = () => {
     }
   }
 
-  if (activeTournament) {
-    return (
-      <Container className="mt-3 my-md-4">
-        <Col xs={12}>
-          <Button variant="danger" onClick={() => changeOngoingStatus()}>
-            Change ongoing round status
+  return (
+    <Container className="mt-3 my-md-4">
+      <Col xs={12}>
+        <Button variant="danger" onClick={() => changeOngoingStatus()}>
+          Change ongoing round status
+        </Button>
+      </Col>
+      <Col xs={12}>
+        <Link to={`/tournament/${tournamentId}`}>
+          <Button variant="primary">
+            <BoxArrowInLeft /> Back to tournament
           </Button>
-        </Col>
-        <Col xs={12}>
-          <Link to={`/tournaments`}>
-            <Button variant="primary">
-              <BoxArrowInLeft /> Back to tournaments
-            </Button>
-          </Link>
-        </Col>
-        {ongoingStatus === "round" ? <RoundOngoing /> : <></>}
-        {ongoingStatus === "draft" ? <DraftOngoing /> : <></>}
-      </Container>
-    );
-  } else {
-    return <>no user lul</>;
-  }
+        </Link>
+      </Col>
+      {ongoingStatus === "round" ? <RoundOngoing /> : <></>}
+      {ongoingStatus === "draft" ? <DraftOngoing /> : <></>}
+    </Container>
+  );
 };
 
 export default Ongoing;

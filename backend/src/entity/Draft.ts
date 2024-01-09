@@ -6,6 +6,7 @@ import {
   OneToMany,
   OneToOne,
   JoinColumn,
+  ManyToOne,
 } from "typeorm";
 import { DraftPod } from "./DraftPod";
 import { Tournament } from "./Tournament";
@@ -16,7 +17,7 @@ export class Draft {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Tournament)
+  @ManyToOne(() => Tournament)
   @JoinColumn()
   tournament: Tournament;
 

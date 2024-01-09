@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { get } from "../../services/ApiService";
-import { Tournament } from "../../types/Tournament";
+import { TournamentsByType } from "../../types/Tournament";
 import { Col, Container, Row, Button } from "react-bootstrap";
 import * as dayjs from "dayjs";
 

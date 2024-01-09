@@ -1,8 +1,9 @@
-import { Tournament } from "../entity/Tournament"
+import { DraftPodSeat } from "../entity/DraftPodSeat";
+import { Match } from "../entity/Match";
+import { Round } from "../entity/Round";
 
-// TODO make DTO for tournament
-export type UsersTournaments {
-  past: Tournament[];
-  ongoing: Tournament[];
-  future: Tournament[];
-}
+export type CurrentMatchAndDraft = {
+  draftSeat: DraftPodSeat;
+  match: Match;
+  round: Round;
+};

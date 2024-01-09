@@ -59,9 +59,9 @@ const TournamentView = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(`/user/${user?.id}/staff`);
-      const staffed = await response.json();
+      const staffed = (await response.json()) as Tournament[];
       staffed.map((tournament) => {
-        if (tournament.id == tournamentId) {
+        if (tournament.id === Number(tournamentId)) {
           setStaff(true);
         }
       });

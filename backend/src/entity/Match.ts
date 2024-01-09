@@ -23,13 +23,13 @@ export class Match {
   @JoinColumn()
   player1Id: number;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   player1: User;
 
   @JoinColumn()
   player2Id: number;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   player2: User;
 
   @Column("smallint")
@@ -41,6 +41,6 @@ export class Match {
   @JoinColumn()
   resultSubmittedById: number;
 
-  @OneToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true })
   resultSubmittedBy: User;
 }

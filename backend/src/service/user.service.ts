@@ -3,17 +3,24 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 import { Tournament } from "../entity/Tournament";
 import { partition, uniqBy } from "lodash";
-import { UsersTournaments } from "../dto/user.dto";
 import { Enrollment } from "../entity/Enrollment";
 import { Preference } from "../entity/Preference";
+import {
+  PlayerTournamentInfo,
+  TournamentsByType,
+} from "../dto/tournaments.dto";
+import { TournamentService } from "./tournament.service";
+import { Match } from "../entity/Match";
 
 export class UserService {
   private appDataSource: DataSource;
   private repository: Repository<User>;
+  private tournamentService: TournamentService;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(User);
+    this.tournamentService = new TournamentService();
   }
 
   async getUserByEmail(email: string): Promise<User> {
@@ -47,7 +54,7 @@ export class UserService {
     return memberships;
   }
 
-  async getUsersTournaments(userId: number): Promise<UsersTournaments> {
+  async getUsersTournaments(userId: number): Promise<TournamentsByType> {
     const enrolled = await this.getTournamentsEnrolled(userId);
     const staffed = await this.getTournamentsStaffed(userId);
 
@@ -65,7 +72,7 @@ export class UserService {
       notPast,
       (tournament) => tournament.startDate > today
     );
-    
+
     return {
       past,
       ongoing,
@@ -76,7 +83,7 @@ export class UserService {
   async getUserTournamentInfo(
     userId: number,
     tournamentId: number
-  ): Promise<any> {
+  ): Promise<PlayerTournamentInfo> {
     // get tournament basics
     const tournament = await this.appDataSource
       .getRepository(Tournament)
@@ -103,5 +110,29 @@ export class UserService {
       )
       .getMany();
     return { tournament, enrollment, preferences };
+  }
+
+  async getCurrentDraftAndMatch(
+    userId: number,
+    tournamentId: number
+  ): Promise<any> {
+    const round = await this.tournamentService.getCurrentRound(tournamentId);
+    const draft = await this.tournamentService.getCurrentDraft(tournamentId);
+
+    // TODO get seat info
+
+    const match = await this.appDataSource
+      .getRepository(Match)
+      .createQueryBuilder("match")
+      .leftJoinAndSelect("match.round", "round")
+      .where("round.id = :roundId", { roundId: round.id })
+      .andWhere((qb) =>
+        qb
+          .where('match."player1Id" = :userId', { userId })
+          .orWhere('match."player2Id" = :userId', { userId })
+      )
+      .getOne();
+
+    return { round, draft, match };
   }
 }

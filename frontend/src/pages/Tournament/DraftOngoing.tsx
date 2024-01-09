@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Button, Card, Col, Container, Row, Form } from "react-bootstrap";
 import { Box, Image, SquareFill } from "react-bootstrap-icons";
 

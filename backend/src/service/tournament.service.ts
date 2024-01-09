@@ -3,7 +3,8 @@ import { AppDataSource } from "../data-source";
 import { Tournament } from "../entity/Tournament";
 import { partition, uniqBy } from "lodash";
 import { TournamentsByType } from "../dto/tournaments.dto";
-import { Cube } from "../entity/Cube";
+import { Round } from "../entity/Round";
+import { Draft } from "../entity/Draft";
 
 export class TournamentService {
   private appDataSource: DataSource;
@@ -56,5 +57,40 @@ export class TournamentService {
       .where("user.id = :id", { id })
       .getMany();
     return enrollments;
+  }
+
+  async getCurrentRound(id: number): Promise<Round> {
+    return await this.appDataSource
+      .getRepository(Round)
+      .createQueryBuilder("round")
+      .leftJoin("round.tournament", "tournament")
+      .where("tournament.id = :id", { id })
+      .orderBy('"roundNumber"', "DESC")
+      .getOne();
+  }
+
+  async getCurrentDraft(id: number): Promise<Draft> {
+    const currentRound = await this.getCurrentRound(id);
+    const drafts = await this.appDataSource
+      .getRepository(Draft)
+      .createQueryBuilder("draft")
+      .leftJoin("draft.tournament", "tournament")
+      .where("tournament.id = :id", { id })
+      .orderBy('"draftNumber"', "ASC")
+      .getMany();
+
+    let roundsAllocated = 0;
+    let currentDraft;
+    drafts.forEach((draft) => {
+      if (
+        roundsAllocated < currentRound.roundNumber &&
+        roundsAllocated + draft.rounds >= currentRound.roundNumber
+      ) {
+        currentDraft = draft;
+      }
+      roundsAllocated += draft.rounds;
+    });
+
+    return currentDraft;
   }
 }

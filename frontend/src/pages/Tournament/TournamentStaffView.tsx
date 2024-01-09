@@ -36,9 +36,9 @@ function StaffView() {
   }, [user]);
 
   const totalMatches = 64;
-  const [players, setPlayers] = useState<Player>([]);
+  const [players, setPlayers] = useState<any>([]);
 
-  useState(() => {
+  useEffect(() => {
     for (let n = 1; n <= 32; n++) {
       players.push({
         table: n,
@@ -54,7 +54,7 @@ function StaffView() {
       });
     }
     players.sort((a, b) => (a.table > b.table ? 1 : -1));
-  });
+  }, []);
 
   const [resultsMissing, setResultsMissing] = useState(
     players.filter((player) => player.submitted == false).length

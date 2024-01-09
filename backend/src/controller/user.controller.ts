@@ -19,3 +19,11 @@ export const getUserTournamentInfo = async (req) => {
     tournamentId as number
   );
 };
+
+export const getCurrentDraftAndMatch = async (req) => {
+  const { userId, tournamentId } = req.params;
+  return await userService.getCurrentDraftAndMatch(
+    userId,
+    tournamentId as number
+  );
+};

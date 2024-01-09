@@ -3,7 +3,6 @@ import { isValidToken } from "../auth/auth";
 import {
   getAllTournaments,
   getTournament,
-  getTournamentCubes,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -14,6 +13,7 @@ import {
   getUserTournamentInfo,
   getUsersTournaments,
   getTournamentsStaffed,
+  getCurrentDraftAndMatch,
 } from "../controller/user.controller";
 import { getPlayerMatchHistory } from "../controller/match.controller";
 
@@ -37,6 +37,13 @@ userRouter.get("/user/:id/tournaments", async (req, res) => {
 userRouter.get("/user/:userId/tournament/:tournamentId", async (req, res) => {
   res.send(await getUserTournamentInfo(req));
 });
+
+userRouter.get(
+  "/user/:userId/tournament/:tournamentId/current",
+  async (req, res) => {
+    res.send(await getCurrentDraftAndMatch(req));
+  }
+);
 
 userRouter.get(
   "/user/:userId/tournament/:tournamentId/matches",

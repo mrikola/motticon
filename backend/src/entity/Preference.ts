@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -19,16 +20,16 @@ export class Preference {
   @JoinColumn()
   tournamentId: number;
 
-  @OneToOne(() => Tournament)
+  @ManyToOne(() => Tournament)
   tournament: Tournament;
 
   @JoinColumn()
   playerId: number;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   player: User;
 
-  @OneToOne(() => Cube)
+  @ManyToOne(() => Cube)
   @JoinColumn()
   cube: Cube;
 

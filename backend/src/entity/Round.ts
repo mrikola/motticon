@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -15,7 +16,7 @@ export class Round {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Tournament)
+  @ManyToOne(() => Tournament)
   @JoinColumn()
   tournament: Tournament;
 

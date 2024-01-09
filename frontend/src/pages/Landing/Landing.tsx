@@ -39,8 +39,8 @@ const Landing = () => {
           tournamentTypes.map((type, index) => {
             const tourneys = tournaments[type];
             return tourneys.length > 0 ? (
-              <>
-                <h2 key={index}>Your {type} tournaments</h2>
+              <div key={index}>
+                <h2>Your {type} tournaments</h2>
                 {tourneys.map((tournament) => (
                   <div key={tournament.id}>
                     <Link to={`/tournament/${tournament.id}`}>
@@ -48,7 +48,7 @@ const Landing = () => {
                     </Link>
                   </div>
                 ))}
-                </>
+              </div>
             ) : (
               <h2 key={index}>No {type} tournaments</h2>
             );

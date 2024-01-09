@@ -29,36 +29,37 @@ const ListCubes = () => {
         </Row>
         <Row xs={1} sm={1} md={2}>
           {cubes.map((cube, index) => (
-            <Col key={cube.id} className={cube.id} >
+            <Col key={cube.id}>
               <Card className={styles.cubeCard}>
                 <Row>
-                    <Col
-                      xs={6}
-                      className="cube-card-image rounded-start"
-                      style={{
-                        backgroundImage: 'url("/img/masthead_'+(index+1)+'.jpeg")'
-                      }}
-                    ></Col>
-                    <Col xs={6}>
-                      <Card.Body className={styles.cubeCardBody}>
-                        <Card.Title>
-                          {cube.title + " "}
-                          {cube.id === 1 && (
-                            <ExclamationCircleFill className="text-primary" />
-                          )}
-                        </Card.Title>
-                        <Card.Text>{cube.description}</Card.Text>
-                        <div className="cube-designer mb-2">
-                          <small>Designed by Timo Tuuttari</small>
-                        </div>
-                        <Link to={`/cube/${cube.id}`}>
-                          <Button variant="primary">
-                            <Box /> Go to cube
-                          </Button>
-                        </Link>
-                      </Card.Body>
-                    </Col>
-                  </Row>
+                  <Col
+                    xs={6}
+                    className="cube-card-image rounded-start"
+                    style={{
+                      backgroundImage:
+                        'url("/img/masthead_' + (index + 1) + '.jpeg")',
+                    }}
+                  ></Col>
+                  <Col xs={6}>
+                    <Card.Body className={styles.cubeCardBody}>
+                      <Card.Title>
+                        {cube.title + " "}
+                        {cube.id === 1 && (
+                          <ExclamationCircleFill className="text-primary" />
+                        )}
+                      </Card.Title>
+                      <Card.Text>{cube.description}</Card.Text>
+                      <div className="cube-designer mb-2">
+                        <small>Designed by Timo Tuuttari</small>
+                      </div>
+                      <Link to={`/cube/${cube.id}`}>
+                        <Button variant="primary">
+                          <Box /> Go to cube
+                        </Button>
+                      </Link>
+                    </Card.Body>
+                  </Col>
+                </Row>
               </Card>
             </Col>
           ))}
