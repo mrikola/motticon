@@ -9,7 +9,7 @@ export const getPlayerMatchHistory = async (req) => {
 
 export const submitResult = async (req) => {
   const { matchId, resultSubmittedBy, player1GamesWon, player2GamesWon } =
-    req.params;
+    req.body;
   return await matchService.submitResult(
     matchId,
     resultSubmittedBy,

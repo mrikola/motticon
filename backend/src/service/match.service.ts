@@ -32,7 +32,7 @@ export class MatchService {
       .set({
         player1GamesWon,
         player2GamesWon,
-        resultSubmittedById: resultSubmittedBy,
+        resultSubmittedBy: { id: resultSubmittedBy },
       })
       .where("id = :matchId", { matchId })
       .execute();
