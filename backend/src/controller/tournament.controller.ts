@@ -15,3 +15,18 @@ export const getTournamentCubes = async (req) => {
   const { id } = req.params;
   return await tournamentService.getTournamentCubes(id as number);
 };
+
+export const getCurrentDraft = async (req) => {
+  const { id } = req.params;
+  return await tournamentService.getCurrentDraft(id as number);
+};
+
+export const getCurrentRound = async (req) => {
+  const { id } = req.params;
+  return await tournamentService.getCurrentRound(id as number);
+};
+
+export const signupForTournament = async (req) => {
+  const { tournamentId, userId } = req.params;
+  return await tournamentService.signupForTournament(tournamentId, userId);
+};

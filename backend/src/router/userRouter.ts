@@ -3,6 +3,9 @@ import { isValidToken } from "../auth/auth";
 import {
   getAllTournaments,
   getTournament,
+  getCurrentDraft,
+  getCurrentRound,
+  signupForTournament,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -72,10 +75,24 @@ userRouter.get("/tournament/:id", async (req, res) => {
   res.send(await getTournament(req));
 });
 
+userRouter.get("/tournament/:id/round", async (req, res) => {
+  res.send(await getCurrentRound(req));
+});
+
+userRouter.get("/tournament/:id/draft", async (req, res) => {
+  res.send(await getCurrentDraft(req));
+});
+
 // userRouter.get("/tournament/:id/cubes", async (req, res) => {
 //   res.send(await getTournamentCubes(req));
 // });
 
 userRouter.get("/tournament/:id/cubes", async (req, res) => {
   res.send(await getCubesForTournament(req));
+});
+
+// todo: move tournament stuff to own router
+userRouter.post("/tournament/signup", async (req, res) => {
+  const { tournamentId, userId } = req.body;
+  res.send(await signupForTournament(req));
 });
