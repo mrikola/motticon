@@ -45,7 +45,7 @@ const TournamentView = () => {
       } else {
         setTournamentStatus("ongoing");
       }
-      if (enrollment && enrollment.id == tournamentId) {
+      if (enrollment && enrollment.player.id === user?.id) {
         setIsEnrolled(true);
       }
     };
