@@ -231,7 +231,11 @@ const TournamentView = () => {
           }
           return <></>;
         })()}
-        {isEnrolled && tournamentStatus === "ongoing" ? showOngoing() : <></>}
+        {isEnrolled && tournamentStatus === "ongoing" ? (
+          showGoToOngoing()
+        ) : (
+          <></>
+        )}
         {tournamentStatus === "future" && !isEnrolled ? showSignup() : <></>}
         {isEnrolled &&
         (tournamentStatus === "ongoing" || tournamentStatus === "future") ? (

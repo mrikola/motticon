@@ -18,7 +18,10 @@ import {
   getTournamentsStaffed,
   getCurrentDraftAndMatch,
 } from "../controller/user.controller";
-import { getPlayerMatchHistory } from "../controller/match.controller";
+import {
+  getPlayerMatchHistory,
+  submitResult,
+} from "../controller/match.controller";
 
 export const userRouter = express.Router();
 
@@ -54,6 +57,12 @@ userRouter.get(
     res.send(await getPlayerMatchHistory(req));
   }
 );
+
+userRouter.post("/submitResult", async (req, res) => {
+  const { matchId, resultSubmittedBy, player1GamesWon, player2GamesWon } =
+    req.body;
+  res.send(await submitResult(req));
+});
 
 userRouter.get("/user/:userId/staff", async (req, res) => {
   res.send(await getTournamentsStaffed(req));

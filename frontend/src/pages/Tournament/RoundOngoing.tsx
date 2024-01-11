@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
+import { post } from "../../services/ApiService";
 import {
   Button,
   Card,
@@ -10,13 +11,14 @@ import {
   ToggleButton,
   ProgressBar,
 } from "react-bootstrap";
-import { SquareFill, Stopwatch } from "react-bootstrap-icons";
+import { SquareFill } from "react-bootstrap-icons";
 import dayjs, { Dayjs } from "dayjs";
 import * as duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 import CountdownTimer from "../../components/general/CountdownTimer";
 
 function RoundOngoing({ round, match }) {
+  const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
   const [playerRadioValue, setPlayerRadioValue] = useState(
     match.player1GamesWon.toString()
@@ -25,8 +27,8 @@ function RoundOngoing({ round, match }) {
     match.player2GamesWon.toString()
   );
   const [roundStart, setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
-  const [roundEnd, setRoundEnd] = useState<Dayjs>();
 
+  // placeholder stuff to have something to show in the view
   const totalMatches = 64;
   const [ongoingMatches, setOngoingMatches] = useState(
     Math.floor(Math.random() * totalMatches) + 1
@@ -38,36 +40,28 @@ function RoundOngoing({ round, match }) {
     { name: "2", value: "2" },
   ];
 
-  // const countdownTimer = ({ initialSeconds }) => {
-  //   const [seconds, setSeconds] = useState(initialSeconds);
-
-  const [timerStyle, setTimerStyle] = useState("display-5");
-  // set timer as secionds
-  const [timeRemaining, setTimeRemaining] = useState<number>();
-
-  // function timeRunOut() {
-  //   setTimerStyle("display-5 text-danger");
-  // }
-
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     setTimeRemaining((timeRemaining) => {
-  //       if (timeRemaining === 0) {
-  //         clearInterval(timer);
-  //         timeRunOut();
-  //         return 0;
-  //       } else return timeRemaining - 1;
-  //     });
-  //   }, 1000);
-  //   return function stopTimer() {
-  //     clearInterval(timer);
-  //   };
-  // }, []);
+  const submitResult = () => {
+    const matchId = match.id;
+    const resultSubmittedBy = user?.id;
+    const player1GamesWon = playerRadioValue;
+    const player2GamesWon = opponentRadioValue;
+    post(`/submitResult`, {
+      matchId,
+      resultSubmittedBy,
+      player1GamesWon,
+      player2GamesWon,
+    }).then(async (resp) => {
+      const jwt = await resp.text();
+      if (jwt !== null) {
+        console.log(jwt);
+        // todo: do stuff here
+      }
+    });
+  };
 
   useEffect(() => {
     const now = dayjs();
     const endTime = roundStart.add(50, "m");
-    setRoundEnd(endTime);
     const diff = endTime.diff(now, "second");
     setTimeRemaining(diff);
   }, [user, roundStart, timeRemaining]);
@@ -158,7 +152,13 @@ function RoundOngoing({ round, match }) {
             ))}
           </ButtonGroup>
           <div className="d-grid gap-2 my-3">
-            <Button variant="primary">Submit result</Button>
+            <Button
+              variant="primary"
+              type="submit"
+              onClick={() => submitResult()}
+            >
+              Submit result
+            </Button>
           </div>
         </Row>
       </Container>

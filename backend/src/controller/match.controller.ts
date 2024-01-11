@@ -6,3 +6,14 @@ export const getPlayerMatchHistory = async (req) => {
   const { userId, tournamentId } = req.params;
   return await matchService.getPlayerMatchHistory(userId, tournamentId);
 };
+
+export const submitResult = async (req) => {
+  const { matchId, resultSubmittedBy, player1GamesWon, player2GamesWon } =
+    req.params;
+  return await matchService.submitResult(
+    matchId,
+    resultSubmittedBy,
+    player1GamesWon,
+    player2GamesWon
+  );
+};
