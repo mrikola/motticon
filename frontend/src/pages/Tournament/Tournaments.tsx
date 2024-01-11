@@ -18,7 +18,6 @@ function Tournaments() {
       const response = await get("/tournaments");
       setTournaments((await response.json()) as TournamentsByType);
       tournaments?.future.sort((a, b) => (a.startDate > b.startDate ? -1 : 1));
-      console.log(JSON.stringify(tournaments));
     };
     fetchData();
   }, []);

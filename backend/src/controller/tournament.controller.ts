@@ -33,3 +33,11 @@ export const enrollIntoTournament = async (req) => {
     userId as number
   );
 };
+
+export const dropFromTournament = async (req) => {
+  const { tournamentId, userId } = req.params;
+  return await tournamentService.dropFromTournament(
+    tournamentId as number,
+    userId as number
+  );
+};

@@ -35,6 +35,13 @@ const TournamentView = () => {
     );
   };
 
+  const doDrop = () => {
+    post(`/tournament/${tournamentId}/drop/${user?.id}`, {}).then(
+      // TODO show success and redirect to something
+      async () => null
+    );
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(
@@ -176,11 +183,9 @@ const TournamentView = () => {
     return (
       <Row>
         <Col xs={12}>
-          <Link to={`#`}>
-            <Button variant="danger">
-              <XLg /> Drop from tournament
-            </Button>
-          </Link>
+          <Button variant="danger" type="submit" onClick={() => doDrop()}>
+            <XLg /> Drop from tournament
+          </Button>
         </Col>
       </Row>
     );

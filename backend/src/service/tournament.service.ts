@@ -53,6 +53,17 @@ export class TournamentService {
       .execute();
   }
 
+  async dropFromTournament(tournamentId: number, userId: number): Promise<any> {
+    // todo: make sure this actually works and doesn't break stuff horribly
+    this.appDataSource
+      .createQueryBuilder()
+      .delete()
+      .from(Enrollment)
+      .where("tournamentId = :tournamentId", { tournamentId })
+      .andWhere("playerId = :userId", { userId })
+      .execute();
+  }
+
   async getTournament(id: number): Promise<Tournament> {
     return await this.repository.findOne({
       where: { id },

@@ -6,6 +6,7 @@ import {
   getCurrentDraft,
   getCurrentRound,
   enrollIntoTournament,
+  dropFromTournament,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -107,3 +108,7 @@ userRouter.post(
     res.send(await enrollIntoTournament(req));
   }
 );
+
+userRouter.post("/tournament/:tournamentId/drop/:userId", async (req, res) => {
+  res.send(await dropFromTournament(req));
+});
