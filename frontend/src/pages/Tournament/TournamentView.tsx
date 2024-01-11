@@ -33,7 +33,7 @@ const TournamentView = () => {
     post(`/tournament/signup`, { tournamentId, userId }).then(async (resp) => {
       const jwt = await resp.text();
       if (jwt !== null) {
-        console.log(jwt);
+        // console.log(jwt);
         // todo: do stuff here
       }
     });
@@ -135,7 +135,7 @@ const TournamentView = () => {
   }
 
   function showOngoing() {
-    const status = "Playing round " + ongoingRound.roundNumber;
+    const status = "Playing round ";
     return (
       <Row>
         <Col xs={12}>
@@ -235,7 +235,11 @@ const TournamentView = () => {
           }
           return <></>;
         })()}
-        {isEnrolled && tournamentStatus === "ongoing" ? showOngoing() : <></>}
+        {isEnrolled && tournamentStatus === "ongoing" ? (
+          showGoToOngoing()
+        ) : (
+          <></>
+        )}
         {tournamentStatus === "future" && !isEnrolled ? showSignup() : <></>}
         {isEnrolled &&
         (tournamentStatus === "ongoing" || tournamentStatus === "future") ? (
