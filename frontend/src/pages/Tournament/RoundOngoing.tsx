@@ -1,5 +1,4 @@
 import { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import {
   Button,
@@ -11,12 +10,22 @@ import {
   ToggleButton,
   ProgressBar,
 } from "react-bootstrap";
-import { SquareFill, Stopwatch, BoxArrowInLeft } from "react-bootstrap-icons";
+import { SquareFill, Stopwatch } from "react-bootstrap-icons";
+import dayjs, { Dayjs } from "dayjs";
+import * as duration from "dayjs/plugin/duration";
+dayjs.extend(duration);
+import CountdownTimer from "../../components/general/CountdownTimer";
 
-function RoundOngoing() {
+function RoundOngoing({ round, match }) {
   const user = useContext(UserInfoContext);
-  const [playerRadioValue, setPlayerRadioValue] = useState("0");
-  const [opponentRadioValue, setOpponentRadioValue] = useState("0");
+  const [playerRadioValue, setPlayerRadioValue] = useState(
+    match.player1GamesWon.toString()
+  );
+  const [opponentRadioValue, setOpponentRadioValue] = useState(
+    match.player2GamesWon.toString()
+  );
+  const [roundStart, setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
+  const [roundEnd, setRoundEnd] = useState<Dayjs>();
 
   const totalMatches = 64;
   const [ongoingMatches, setOngoingMatches] = useState(
@@ -29,39 +38,48 @@ function RoundOngoing() {
     { name: "2", value: "2" },
   ];
 
-  const [timerStyle, setTimerStyle] = useState("display-5");
-  const [time, setTime] = useState(3);
+  // const countdownTimer = ({ initialSeconds }) => {
+  //   const [seconds, setSeconds] = useState(initialSeconds);
 
-  function timeRunOut() {
-    setTimerStyle("display-5 text-danger");
-  }
+  const [timerStyle, setTimerStyle] = useState("display-5");
+  // set timer as secionds
+  const [timeRemaining, setTimeRemaining] = useState<number>();
+
+  // function timeRunOut() {
+  //   setTimerStyle("display-5 text-danger");
+  // }
+
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     setTimeRemaining((timeRemaining) => {
+  //       if (timeRemaining === 0) {
+  //         clearInterval(timer);
+  //         timeRunOut();
+  //         return 0;
+  //       } else return timeRemaining - 1;
+  //     });
+  //   }, 1000);
+  //   return function stopTimer() {
+  //     clearInterval(timer);
+  //   };
+  // }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTime((time) => {
-        if (time === 0) {
-          clearInterval(timer);
-          timeRunOut();
-          return 0;
-        } else return time - 1;
-      });
-    }, 1000);
-    return function stopTimer() {
-      clearInterval(timer);
-    };
-  }, []);
+    const now = dayjs();
+    const endTime = roundStart.add(50, "m");
+    setRoundEnd(endTime);
+    const diff = endTime.diff(now, "second");
+    setTimeRemaining(diff);
+  }, [user, roundStart, timeRemaining]);
 
-  if (user) {
+  if (user && timeRemaining) {
     return (
       <Container className="mt-3 my-md-4">
         <Row>
-          <h1 className="display-1">Round: 5</h1>
-          <Col xs={12} className="align-items-center">
-            <p className={timerStyle}>
-              <Stopwatch />
-              {`${Math.floor(time / 60)}`.padStart(2, "0")}:
-              {`${time % 60}`.padStart(2, "0")} remaining
-            </p>
+          <h1 className="display-1">Round: {round.roundNumber}</h1>
+          <h2>Started: {dayjs(roundStart).format("HH:mm")}</h2>
+          <Col xs={12}>
+            <CountdownTimer initialSeconds={timeRemaining} />
           </Col>
           <Col xs={12}>
             <ProgressBar striped variant="primary" now={100 - percentage} />
@@ -77,7 +95,9 @@ function RoundOngoing() {
                 <Col xs={3}>
                   <span className="icon-stack">
                     <SquareFill className="icon-stack-3x" />
-                    <p className="icon-stack-2x text-light">7</p>
+                    <p className="icon-stack-2x text-light">
+                      {match.tableNumber}
+                    </p>
                   </span>
                 </Col>
                 <Col xs={9}>

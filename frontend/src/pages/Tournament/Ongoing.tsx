@@ -12,6 +12,9 @@ const Ongoing = () => {
   const { tournamentId } = useParams();
   const user = useContext(UserInfoContext);
   const [ongoingStatus, setOngoingStatus] = useState("round");
+  const [currentRound, setCurrentRound] = useState<Round>();
+  const [currentDraft, setCurrentDraft] = useState<Draft>();
+  const [currentMatch, setCurrentMatch] = useState<Match>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,6 +23,9 @@ const Ongoing = () => {
       );
       // TODO types + view
       const { draft, round, match } = await response.json();
+      setCurrentRound(round);
+      setCurrentMatch(match);
+      setCurrentDraft(draft);
       console.log("draft", JSON.stringify(draft));
       console.log("round", JSON.stringify(round));
       console.log("match", JSON.stringify(match));
@@ -52,8 +58,12 @@ const Ongoing = () => {
           </Button>
         </Link>
       </Col>
-      {ongoingStatus === "round" ? <RoundOngoing /> : <></>}
-      {ongoingStatus === "draft" ? <DraftOngoing /> : <></>}
+      {currentRound && ongoingStatus === "round" ? (
+        <RoundOngoing round={currentRound} match={currentMatch} />
+      ) : (
+        <></>
+      )}
+      {currentDraft && ongoingStatus === "draft" ? <DraftOngoing /> : <></>}
     </Container>
   );
 };
