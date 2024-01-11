@@ -5,7 +5,7 @@ import {
   getTournament,
   getCurrentDraft,
   getCurrentRound,
-  signupForTournament,
+  enrollIntoTournament,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -92,7 +92,9 @@ userRouter.get("/tournament/:id/cubes", async (req, res) => {
 });
 
 // todo: move tournament stuff to own router
-userRouter.post("/tournament/signup", async (req, res) => {
-  const { tournamentId, userId } = req.body;
-  res.send(await signupForTournament(req));
-});
+userRouter.post(
+  "/tournament/:tournamentId/enroll/:userId",
+  async (req, res) => {
+    res.send(await enrollIntoTournament(req));
+  }
+);

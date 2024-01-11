@@ -1,10 +1,16 @@
+import { Cube } from "./Cube";
+
+export type Round = {
+  roundNumber: number;
+};
+
 export type Tournament = {
   id: number;
   name: string;
   description: string;
   startDate: Date;
   endDate: Date;
-  cubes: cube[];
+  cubes: Cube[];
 };
 
 export type TournamentsByType = {

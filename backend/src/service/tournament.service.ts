@@ -5,6 +5,7 @@ import { partition, uniqBy } from "lodash";
 import { TournamentsByType } from "../dto/tournaments.dto";
 import { Round } from "../entity/Round";
 import { Draft } from "../entity/Draft";
+import { Enrollment } from "../entity/Enrollment";
 
 export class TournamentService {
   private appDataSource: DataSource;
@@ -35,8 +36,21 @@ export class TournamentService {
     };
   }
 
-  async signupForTournament(tournamentId, userId): Promise<any> {
-    return "signed up player " + userId + " for tournament id: " + tournamentId;
+  async enrollIntoTournament(
+    tournamentId: number,
+    userId: number
+  ): Promise<any> {
+    this.appDataSource
+      .createQueryBuilder()
+      .insert()
+      .into(Enrollment)
+      .values({
+        player: { id: userId },
+        tournament: { id: tournamentId },
+        paid: false,
+        dropped: false,
+      })
+      .execute();
   }
 
   async getTournament(id: number): Promise<Tournament> {

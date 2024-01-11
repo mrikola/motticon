@@ -26,7 +26,10 @@ export const getCurrentRound = async (req) => {
   return await tournamentService.getCurrentRound(id as number);
 };
 
-export const signupForTournament = async (req) => {
+export const enrollIntoTournament = async (req) => {
   const { tournamentId, userId } = req.params;
-  return await tournamentService.signupForTournament(tournamentId, userId);
+  return await tournamentService.enrollIntoTournament(
+    tournamentId as number,
+    userId as number
+  );
 };

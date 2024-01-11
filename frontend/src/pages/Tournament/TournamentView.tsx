@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams, useNavigate } from "react-router";
 import { get, post } from "../../services/ApiService";
-import { Tournament } from "../../types/Tournament";
+import { Round, Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row, Button } from "react-bootstrap";
@@ -28,15 +28,11 @@ const TournamentView = () => {
   const [staff, setStaff] = useState<boolean>(false);
   const [ongoingRound, setOngoingRound] = useState<Round>();
 
-  const doSignup = () => {
-    const userId = user?.id;
-    post(`/tournament/signup`, { tournamentId, userId }).then(async (resp) => {
-      const jwt = await resp.text();
-      if (jwt !== null) {
-        console.log(jwt);
-        // todo: do stuff here
-      }
-    });
+  const doEnroll = () => {
+    post(`/tournament/${tournamentId}/enroll/${user?.id}`, {}).then(
+      // TODO show success and redirect to something
+      async () => null
+    );
   };
 
   useEffect(() => {
@@ -135,7 +131,7 @@ const TournamentView = () => {
   }
 
   function showOngoing() {
-    const status = "Playing round " + ongoingRound.roundNumber;
+    const status = "Playing round " + ongoingRound?.roundNumber;
     return (
       <Row>
         <Col xs={12}>
@@ -167,7 +163,7 @@ const TournamentView = () => {
           <h2>Sign Up</h2>
           <p>Price: free</p>
           <p>Seats left: 8/8</p>
-          <Button variant="primary" type="submit" onClick={() => doSignup()}>
+          <Button variant="primary" type="submit" onClick={() => doEnroll()}>
             <CheckSquare /> Sign up
           </Button>
         </Col>
