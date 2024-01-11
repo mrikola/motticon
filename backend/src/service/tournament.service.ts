@@ -35,6 +35,10 @@ export class TournamentService {
     };
   }
 
+  async signupForTournament(tournamentId, userId): Promise<any> {
+    return "signed up player " + userId + " for tournament id: " + tournamentId;
+  }
+
   async getTournament(id: number): Promise<Tournament> {
     return await this.repository.findOne({
       where: { id },

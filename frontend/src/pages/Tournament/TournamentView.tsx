@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams, useNavigate } from "react-router";
-import { get } from "../../services/ApiService";
+import { get, post } from "../../services/ApiService";
 import { Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
@@ -10,9 +10,10 @@ import {
   Box,
   BoxArrowInLeft,
   ListOl,
-  CalendarDate,
+  CalendarEvent,
   XLg,
   TrophyFill,
+  CheckSquare,
 } from "react-bootstrap-icons";
 import dayjs from "dayjs";
 
@@ -25,6 +26,18 @@ const TournamentView = () => {
   const [tournamentStatus, setTournamentStatus] = useState<string>();
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const [staff, setStaff] = useState<boolean>(false);
+  const [ongoingRound, setOngoingRound] = useState<Round>();
+
+  const doSignup = () => {
+    const userId = user?.id;
+    post(`/tournament/signup`, { tournamentId, userId }).then(async (resp) => {
+      const jwt = await resp.text();
+      if (jwt !== null) {
+        console.log(jwt);
+        // todo: do stuff here
+      }
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,6 +84,17 @@ const TournamentView = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await get(`/tournament/${tournamentId}/round`);
+      const round = (await response.json()) as Round;
+      setOngoingRound(round);
+    };
+    if (user && tournamentStatus === "ongoing") {
+      fetchData();
+    }
+  }, [user]);
+
   // get cubes for this tournament
   useEffect(() => {
     const fetchData = async () => {
@@ -97,7 +121,6 @@ const TournamentView = () => {
   }
 
   function showGoToOngoing() {
-    // todo: add actual signup functionality
     return (
       <Row>
         <Col xs={12}>
@@ -111,8 +134,18 @@ const TournamentView = () => {
     );
   }
 
+  function showOngoing() {
+    const status = "Playing round " + ongoingRound.roundNumber;
+    return (
+      <Row>
+        <Col xs={12}>
+          <p>Tournament status: {status}</p>
+        </Col>
+      </Row>
+    );
+  }
+
   function showStaffButton() {
-    // todo: add actual signup functionality
     return (
       <Row>
         <Col xs={12}>
@@ -131,7 +164,12 @@ const TournamentView = () => {
     return (
       <Row>
         <Col xs={12}>
-          <h2>This is the signup functionality</h2>
+          <h2>Sign Up</h2>
+          <p>Price: free</p>
+          <p>Seats left: 8/8</p>
+          <Button variant="primary" type="submit" onClick={() => doSignup()}>
+            <CheckSquare /> Sign up
+          </Button>
         </Col>
       </Row>
     );
@@ -165,17 +203,20 @@ const TournamentView = () => {
           </Col>
           <Col xs={12}>
             <h1 className="display-1">{activeTournament.name}</h1>
-            <h2>Status: {tournamentStatus}</h2>
           </Col>
         </Row>
         <Row>
           <Col xs={12}>
+            <h2>Tournament info</h2>
+          </Col>
+          <Col xs={12}>
             <p>
-              <CalendarDate /> Date:{" "}
+              <CalendarEvent className="display-6" />{" "}
               {dayjs(activeTournament.startDate).format("DD/MM/YYYY")} –{" "}
               {dayjs(activeTournament.endDate).format("DD/MM/YYYY")}
             </p>
             <p>{activeTournament.description}</p>
+            <p>Type: Draft</p>
           </Col>
         </Row>
         {(() => {
@@ -194,11 +235,7 @@ const TournamentView = () => {
           }
           return <></>;
         })()}
-        {isEnrolled && tournamentStatus === "ongoing" ? (
-          showGoToOngoing()
-        ) : (
-          <></>
-        )}
+        {isEnrolled && tournamentStatus === "ongoing" ? showOngoing() : <></>}
         {tournamentStatus === "future" && !isEnrolled ? showSignup() : <></>}
         {isEnrolled &&
         (tournamentStatus === "ongoing" || tournamentStatus === "future") ? (

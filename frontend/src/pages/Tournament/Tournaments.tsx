@@ -17,6 +17,8 @@ function Tournaments() {
     const fetchData = async () => {
       const response = await get("/tournaments");
       setTournaments((await response.json()) as TournamentsByType);
+      tournaments?.future.sort((a, b) => (a.startDate > b.startDate ? -1 : 1));
+      console.log(JSON.stringify(tournaments));
     };
     fetchData();
   }, []);
@@ -30,6 +32,7 @@ function Tournaments() {
         {tournaments &&
           tournamentTypes.map((type, index) => {
             const tourneys = tournaments[type];
+            tourneys.sort((a, b) => (a.startDate < b.startDate ? -1 : 1));
             return tourneys.length > 0 ? (
               <Col xs={12} key={index}>
                 <h2 className="text-capitalize">{type} tournaments</h2>
