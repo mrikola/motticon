@@ -33,7 +33,7 @@ const TournamentView = () => {
     heading: "",
     text: "",
     actionText: "",
-    actionFunction: "",
+    actionFunction: () => {},
   });
 
   const doEnroll = () => {
@@ -195,7 +195,7 @@ const TournamentView = () => {
       heading: "Confirm enrollment",
       text: "Are you sure you want to enroll to this tournament?",
       actionText: "Confirm enrollment",
-      actionFunction: "doDrop()",
+      actionFunction: doEnroll,
     });
   }
 
@@ -229,35 +229,24 @@ const TournamentView = () => {
   }
 
   function handleDropClick() {
-    console.log("called handleEnrollClick");
+    console.log("called handleDropClick");
     // add similar functionality as handleEnrollClick() here
   }
 
   function showCancel() {
-
     // todo: add actual drop functionality
     return (
       <Row>
         <Col xs={12}>
-
-          <Button
-            variant="danger"
-            type="submit"
-            onClick={() => handleDropClick()}
-          >
+          <Button variant="danger" type="submit" onClick={handleDropClick}>
             <XLg /> Drop from tournament
-
-          <Button variant="danger" type="submit" onClick={() => doCancel()}>
+          </Button>
+          <Button variant="danger" type="submit" onClick={doCancel}>
             <XLg /> Cancel enrollment
-
           </Button>
         </Col>
       </Row>
     );
-  }
-
-  function testfunction() {
-    console.log("clikced this");
   }
 
   if (activeTournament) {
@@ -315,10 +304,12 @@ const TournamentView = () => {
         {tournamentStatus != "future" ? showStandings(5) : <></>}
         <VerticallyCenteredModal
           show={modal.show}
-          onHide={setModal({
-            ...modal,
-            show: false,
-          })}
+          onHide={() =>
+            setModal({
+              ...modal,
+              show: false,
+            })
+          }
           heading={modal.heading}
           text={modal.text}
           actionText={modal.actionText}
