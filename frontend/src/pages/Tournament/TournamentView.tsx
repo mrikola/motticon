@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useParams, useNavigate } from "react-router";
+import { useParams } from "react-router";
 import { get, post } from "../../services/ApiService";
 import { Round, Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row, Button } from "react-bootstrap";
+import VerticallyCenteredModal from "../../components/general/VerticallyCenteredModal";
 import {
   Box,
   BoxArrowInLeft,
@@ -20,7 +21,6 @@ import dayjs from "dayjs";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
-  const navigate = useNavigate();
   const user = useContext(UserInfoContext);
   const [activeTournament, setActiveTournament] = useState<Tournament>();
   const [cubes, setCubes] = useState<Cube[]>([]);
@@ -28,6 +28,13 @@ const TournamentView = () => {
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const [staff, setStaff] = useState<boolean>(false);
   const [ongoingRound, setOngoingRound] = useState<Round>();
+  const [modal, setModal] = useState({
+    show: false,
+    heading: "",
+    text: "",
+    actionText: "",
+    actionFunction: "",
+  });
 
   const doEnroll = () => {
     post(`/tournament/${tournamentId}/enroll/${user?.id}`, {}).then(
@@ -35,6 +42,10 @@ const TournamentView = () => {
         // temporary solution that just checks boolean return (should be object with tournament info)
         const enrolled = await resp.text();
         if (enrolled) {
+          setModal({
+            ...modal,
+            show: false,
+          });
           setIsEnrolled(true);
         }
       }
@@ -47,6 +58,10 @@ const TournamentView = () => {
         // temporary solution that just checks boolean return (should be object with tournament info)
         const dropped = await resp.text();
         if (dropped) {
+          setModal({
+            ...modal,
+            show: false,
+          });
           setIsEnrolled(false);
         }
       }
@@ -177,6 +192,17 @@ const TournamentView = () => {
     );
   }
 
+  function handleEnrollClick() {
+    console.log("called handleEnrollClick");
+    setModal({
+      show: true,
+      heading: "Confirm enrollment",
+      text: "Are you sure you want to enroll to this tournament?",
+      actionText: "Confirm enrollment",
+      actionFunction: "doDrop()",
+    });
+  }
+
   function showEnroll() {
     return (
       <Row>
@@ -187,7 +213,7 @@ const TournamentView = () => {
           <Button
             variant="primary"
             type="submit"
-            onClick={() => doEnroll()}
+            onClick={() => handleEnrollClick()}
             disabled={isEnrolled}
           >
             {!isEnrolled ? (
@@ -206,17 +232,30 @@ const TournamentView = () => {
     );
   }
 
+  function handleDropClick() {
+    console.log("called handleEnrollClick");
+    // add similar functionality as handleEnrollClick() here
+  }
+
   function showDrop() {
     // todo: add actual drop functionality
     return (
       <Row>
         <Col xs={12}>
-          <Button variant="danger" type="submit" onClick={() => doDrop()}>
+          <Button
+            variant="danger"
+            type="submit"
+            onClick={() => handleDropClick()}
+          >
             <XLg /> Drop from tournament
           </Button>
         </Col>
       </Row>
     );
+  }
+
+  function testfunction() {
+    console.log("clikced this");
   }
 
   if (activeTournament) {
@@ -272,6 +311,17 @@ const TournamentView = () => {
         {tournamentStatus === "future" ? showEnroll() : <></>}
         {staff ? showStaffButton() : <></>}
         {tournamentStatus != "future" ? showStandings(5) : <></>}
+        <VerticallyCenteredModal
+          show={modal.show}
+          onHide={setModal({
+            ...modal,
+            show: false,
+          })}
+          heading={modal.heading}
+          text={modal.text}
+          actionText={modal.actionText}
+          actionFunction={modal.actionFunction}
+        />
       </Container>
     );
   } else {
