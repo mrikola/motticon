@@ -5,7 +5,6 @@ import Login from "./components/user/Login";
 import SignUp from "./components/user/SignUp";
 import UserInfoProvider from "./components/provider/UserInfoProvider";
 import Logout from "./components/user/Logout";
-import Profile from "./components/user/Profile";
 import UserCubePreferences from "./components/user/UserCubePreferences";
 import ViewCube from "./pages/ViewCube/ViewCube";
 import ListCubes from "./pages/ListCubes/ListCubes";
@@ -43,10 +42,6 @@ function App() {
             {
               path: "signup",
               Component: SignUp,
-            },
-            {
-              path: "profile",
-              Component: Profile,
             },
             {
               path: "tournament/:tournamentId/cubePreferences",

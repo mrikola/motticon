@@ -6,6 +6,7 @@ import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import CubeSelect from "./CubeSelect";
 import { generatePriorityArray } from "../../utils/preferences";
 import { useParams } from "react-router";
+import Loading from "../general/Loading";
 
 const PREFERENCES_TO_SELECT = 5;
 
@@ -54,45 +55,43 @@ const UserCubePreferences = () => {
 
   const priorityArray = generatePriorityArray(PREFERENCES_TO_SELECT);
 
-  if (user) {
-    return (
-      <Container className="mt-3 my-md-4">
-        <Row>
-          <h1>Your cube preferences</h1>
-          <p>
-            Please select the cubes that you would most like to draft during the
-            tournament. #1 is your most favorite, #2 the second most favorite
-            and so on. If you don’t care too much about what you draft, select
-            “No preference”.
-          </p>
-          <p>
-            We can not guarantee that you will get to draft the cubes you have
-            selected, but preferences will be taken into account when making the
-            draft pods.
-          </p>
-          <p>
-            You can find information about the available cubes in the “Cube”
-            section.
-          </p>
-        </Row>
-        <Row xs={1} sm={1} md={2}>
-          <Form>
-            {priorityArray.map((e, i) => (
-              <CubeSelect
-                key={i}
-                priority={i}
-                pointValue={e}
-                options={availableOptions}
-                switchOption={switchOption}
-              />
-            ))}
-          </Form>
-        </Row>
-      </Container>
-    );
-  } else {
-    return <>no user lul</>;
-  }
+  return user ? (
+    <Container className="mt-3 my-md-4">
+      <Row>
+        <h1>Your cube preferences</h1>
+        <p>
+          Please select the cubes that you would most like to draft during the
+          tournament. #1 is your most favorite, #2 the second most favorite and
+          so on. If you don’t care too much about what you draft, select “No
+          preference”.
+        </p>
+        <p>
+          We can not guarantee that you will get to draft the cubes you have
+          selected, but preferences will be taken into account when making the
+          draft pods.
+        </p>
+        <p>
+          You can find information about the available cubes in the “Cube”
+          section.
+        </p>
+      </Row>
+      <Row xs={1} sm={1} md={2}>
+        <Form>
+          {priorityArray.map((e, i) => (
+            <CubeSelect
+              key={i}
+              priority={i}
+              pointValue={e}
+              options={availableOptions}
+              switchOption={switchOption}
+            />
+          ))}
+        </Form>
+      </Row>
+    </Container>
+  ) : (
+    <Loading />
+  );
 };
 
 export default UserCubePreferences;

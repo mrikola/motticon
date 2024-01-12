@@ -41,12 +41,6 @@ const Layout = () => {
                   </Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Link className="nav-link" to="/profile">
-                    <PersonFill />
-                    Profile
-                  </Link>
-                </Nav.Item>
-                <Nav.Item>
                   <Link className="nav-link" to="/tournaments">
                     <TrophyFill />
                     Tournaments

@@ -21,6 +21,7 @@ import {
 } from "react-bootstrap-icons";
 import dayjs from "dayjs";
 import { Enrollment } from "../../types/User";
+import Loading from "../../components/general/Loading";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
@@ -260,77 +261,71 @@ const TournamentView = () => {
     );
   }
 
-  if (activeTournament) {
-    return (
-      <Container className="mt-3 my-md-4">
-        <Row>
-          <Col xs={12}>
-            <Link to={`/tournaments`}>
-              <Button variant="primary">
-                <BoxArrowInLeft /> Back to tournaments
-              </Button>
-            </Link>
-          </Col>
-          <Col xs={12}>
-            <h1 className="display-1">{activeTournament.name}</h1>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12}>
-            <h2>Tournament info</h2>
-          </Col>
-          <Col xs={12}>
-            <p>
-              <CalendarEvent className="display-6" />{" "}
-              {dayjs(activeTournament.startDate).format("DD/MM/YYYY")} –{" "}
-              {dayjs(activeTournament.endDate).format("DD/MM/YYYY")}
-            </p>
-            <p>{activeTournament.description}</p>
-            <p>Type: Draft</p>
-          </Col>
-        </Row>
-        {(() => {
-          if (cubes.length > 0) {
-            return (
-              <Row>
-                <Col xs={12}>
-                  <Link to={`/tournament/${tournamentId}/cubes/`}>
-                    <Button variant="primary">
-                      <Box /> View tournament cubes
-                    </Button>
-                  </Link>
-                </Col>
-              </Row>
-            );
-          }
-          return <></>;
-        })()}
-        {isEnrolled && tournamentStatus === "ongoing" ? (
-          showGoToOngoing()
-        ) : (
-          <></>
-        )}
-        {tournamentStatus === "future" ? showEnroll() : <></>}
-        {staff ? showStaffButton() : <></>}
-        {tournamentStatus != "future" ? showStandings(5) : <></>}
-        <VerticallyCenteredModal
-          show={modal.show}
-          onHide={() =>
-            setModal({
-              ...modal,
-              show: false,
-            })
-          }
-          heading={modal.heading}
-          text={modal.text}
-          actionText={modal.actionText}
-          actionFunction={modal.actionFunction}
-        />
-      </Container>
-    );
-  } else {
-    return <>no user lul</>;
-  }
+  return activeTournament ? (
+    <Container className="mt-3 my-md-4">
+      <Row>
+        <Col xs={12}>
+          <Link to={`/tournaments`}>
+            <Button variant="primary">
+              <BoxArrowInLeft /> Back to tournaments
+            </Button>
+          </Link>
+        </Col>
+        <Col xs={12}>
+          <h1 className="display-1">{activeTournament.name}</h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={12}>
+          <h2>Tournament info</h2>
+        </Col>
+        <Col xs={12}>
+          <p>
+            <CalendarEvent className="display-6" />{" "}
+            {dayjs(activeTournament.startDate).format("DD/MM/YYYY")} –{" "}
+            {dayjs(activeTournament.endDate).format("DD/MM/YYYY")}
+          </p>
+          <p>{activeTournament.description}</p>
+          <p>Type: Draft</p>
+        </Col>
+      </Row>
+      {(() => {
+        if (cubes.length > 0) {
+          return (
+            <Row>
+              <Col xs={12}>
+                <Link to={`/tournament/${tournamentId}/cubes/`}>
+                  <Button variant="primary">
+                    <Box /> View tournament cubes
+                  </Button>
+                </Link>
+              </Col>
+            </Row>
+          );
+        }
+        return <></>;
+      })()}
+      {isEnrolled && tournamentStatus === "ongoing" ? showGoToOngoing() : <></>}
+      {tournamentStatus === "future" ? showEnroll() : <></>}
+      {staff ? showStaffButton() : <></>}
+      {tournamentStatus != "future" ? showStandings(5) : <></>}
+      <VerticallyCenteredModal
+        show={modal.show}
+        onHide={() =>
+          setModal({
+            ...modal,
+            show: false,
+          })
+        }
+        heading={modal.heading}
+        text={modal.text}
+        actionText={modal.actionText}
+        actionFunction={modal.actionFunction}
+      />
+    </Container>
+  ) : (
+    <Loading />
+  );
 };
 
 export default TournamentView;
