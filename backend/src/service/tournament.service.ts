@@ -40,28 +40,40 @@ export class TournamentService {
     tournamentId: number,
     userId: number
   ): Promise<any> {
-    this.appDataSource
-      .createQueryBuilder()
-      .insert()
-      .into(Enrollment)
-      .values({
-        player: { id: userId },
-        tournament: { id: tournamentId },
-        paid: false,
-        dropped: false,
-      })
-      .execute();
+    // placeholder returning just boolean
+    try {
+      this.appDataSource
+        .createQueryBuilder()
+        .insert()
+        .into(Enrollment)
+        .values({
+          player: { id: userId },
+          tournament: { id: tournamentId },
+          paid: false,
+          dropped: false,
+        })
+        .execute();
+      return true;
+    } catch (err: unknown) {
+      return false;
+    }
   }
 
   async dropFromTournament(tournamentId: number, userId: number): Promise<any> {
-    // todo: make sure this actually works and doesn't break stuff horribly
-    this.appDataSource
-      .createQueryBuilder()
-      .delete()
-      .from(Enrollment)
-      .where("tournamentId = :tournamentId", { tournamentId })
-      .andWhere("playerId = :userId", { userId })
-      .execute();
+    // placeholder returning just boolean instead of object from getUserTournamentInfo()
+    try {
+      // todo: make sure this actually works and doesn't break stuff horribly
+      this.appDataSource
+        .createQueryBuilder()
+        .delete()
+        .from(Enrollment)
+        .where("tournamentId = :tournamentId", { tournamentId })
+        .andWhere("playerId = :userId", { userId })
+        .execute();
+      return true;
+    } catch (err: unknown) {
+      return false;
+    }
   }
 
   async getTournament(id: number): Promise<Tournament> {

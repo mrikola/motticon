@@ -14,6 +14,7 @@ import {
   XLg,
   TrophyFill,
   CheckSquare,
+  CheckSquareFill,
 } from "react-bootstrap-icons";
 import dayjs from "dayjs";
 
@@ -30,17 +31,33 @@ const TournamentView = () => {
 
   const doEnroll = () => {
     post(`/tournament/${tournamentId}/enroll/${user?.id}`, {}).then(
-      // TODO show success and redirect to something
-      async () => null
+      async (resp) => {
+        // temporary solution that just checks boolean return (should be object with tournament info)
+        const enrolled = await resp.text();
+        if (enrolled) {
+          setIsEnrolled(true);
+        }
+      }
     );
   };
 
   const doDrop = () => {
     post(`/tournament/${tournamentId}/drop/${user?.id}`, {}).then(
-      // TODO show success and redirect to something
-      async () => null
+      async (resp) => {
+        // temporary solution that just checks boolean return (should be object with tournament info)
+        const dropped = await resp.text();
+        if (dropped) {
+          setIsEnrolled(false);
+        }
+      }
     );
   };
+
+  function checkEnrolled(enrollment) {
+    if (enrollment && enrollment.player.id === user?.id) {
+      setIsEnrolled(true);
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,9 +78,7 @@ const TournamentView = () => {
       } else {
         setTournamentStatus("ongoing");
       }
-      if (enrollment && enrollment.player.id === user?.id) {
-        setIsEnrolled(true);
-      }
+      checkEnrolled(enrollment);
     };
 
     if (user) {
@@ -162,17 +177,30 @@ const TournamentView = () => {
     );
   }
 
-  function showSignup() {
-    // todo: add actual signup functionality
+  function showEnroll() {
     return (
       <Row>
         <Col xs={12}>
-          <h2>Sign Up</h2>
+          <h2>Enroll</h2>
           <p>Price: free</p>
           <p>Seats left: 8/8</p>
-          <Button variant="primary" type="submit" onClick={() => doEnroll()}>
-            <CheckSquare /> Sign up
+          <Button
+            variant="primary"
+            type="submit"
+            onClick={() => doEnroll()}
+            disabled={isEnrolled}
+          >
+            {!isEnrolled ? (
+              <>
+                <CheckSquare /> Enroll
+              </>
+            ) : (
+              <>
+                <CheckSquareFill /> Enrolled
+              </>
+            )}
           </Button>
+          {isEnrolled ? showDrop() : <></>}
         </Col>
       </Row>
     );
@@ -241,13 +269,7 @@ const TournamentView = () => {
         ) : (
           <></>
         )}
-        {tournamentStatus === "future" && !isEnrolled ? showSignup() : <></>}
-        {isEnrolled &&
-        (tournamentStatus === "ongoing" || tournamentStatus === "future") ? (
-          showDrop()
-        ) : (
-          <></>
-        )}
+        {tournamentStatus === "future" ? showEnroll() : <></>}
         {staff ? showStaffButton() : <></>}
         {tournamentStatus != "future" ? showStandings(5) : <></>}
       </Container>
