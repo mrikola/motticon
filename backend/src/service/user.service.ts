@@ -80,38 +80,6 @@ export class UserService {
     };
   }
 
-  async getUserTournamentInfo(
-    userId: number,
-    tournamentId: number
-  ): Promise<PlayerTournamentInfo> {
-    // get tournament basics
-    const tournament = await this.appDataSource
-      .getRepository(Tournament)
-      .findOne({ where: { id: tournamentId } });
-
-    // get enrollment
-    const enrollment = await this.appDataSource
-      .getRepository(Enrollment)
-      .createQueryBuilder("enrollment")
-      .leftJoinAndSelect("enrollment.player", "user")
-      .where("user.id = :userId and enrollment.tournamentId = :tournamentId", {
-        userId,
-        tournamentId,
-      })
-      .getOne();
-
-    // get preferences
-    const preferences = await this.appDataSource
-      .getRepository(Preference)
-      .createQueryBuilder("preference")
-      .where(
-        'preference."playerId" = :userId and preference."tournamentId" = :tournamentId',
-        { userId, tournamentId }
-      )
-      .getMany();
-    return { tournament, enrollment, preferences };
-  }
-
   async getCurrentDraftAndMatch(
     userId: number,
     tournamentId: number

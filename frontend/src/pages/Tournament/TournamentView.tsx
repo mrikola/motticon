@@ -41,12 +41,12 @@ const TournamentView = () => {
     );
   };
 
-  const doDrop = () => {
-    post(`/tournament/${tournamentId}/drop/${user?.id}`, {}).then(
+  const doCancel = () => {
+    post(`/tournament/${tournamentId}/cancel/${user?.id}`, {}).then(
       async (resp) => {
         // temporary solution that just checks boolean return (should be object with tournament info)
-        const dropped = await resp.text();
-        if (dropped) {
+        const cancelled = Boolean(await resp.text());
+        if (cancelled) {
           setIsEnrolled(false);
         }
       }
@@ -200,19 +200,19 @@ const TournamentView = () => {
               </>
             )}
           </Button>
-          {isEnrolled ? showDrop() : <></>}
+          {isEnrolled ? showCancel() : <></>}
         </Col>
       </Row>
     );
   }
 
-  function showDrop() {
+  function showCancel() {
     // todo: add actual drop functionality
     return (
       <Row>
         <Col xs={12}>
-          <Button variant="danger" type="submit" onClick={() => doDrop()}>
-            <XLg /> Drop from tournament
+          <Button variant="danger" type="submit" onClick={() => doCancel()}>
+            <XLg /> Cancel enrollment
           </Button>
         </Col>
       </Row>

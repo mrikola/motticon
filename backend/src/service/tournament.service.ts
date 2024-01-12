@@ -5,7 +5,6 @@ import { partition, uniqBy } from "lodash";
 import { TournamentsByType } from "../dto/tournaments.dto";
 import { Round } from "../entity/Round";
 import { Draft } from "../entity/Draft";
-import { Enrollment } from "../entity/Enrollment";
 
 export class TournamentService {
   private appDataSource: DataSource;
@@ -34,46 +33,6 @@ export class TournamentService {
       ongoing,
       future,
     };
-  }
-
-  async enrollIntoTournament(
-    tournamentId: number,
-    userId: number
-  ): Promise<any> {
-    // placeholder returning just boolean
-    try {
-      this.appDataSource
-        .createQueryBuilder()
-        .insert()
-        .into(Enrollment)
-        .values({
-          player: { id: userId },
-          tournament: { id: tournamentId },
-          paid: false,
-          dropped: false,
-        })
-        .execute();
-      return true;
-    } catch (err: unknown) {
-      return false;
-    }
-  }
-
-  async dropFromTournament(tournamentId: number, userId: number): Promise<any> {
-    // placeholder returning just boolean instead of object from getUserTournamentInfo()
-    try {
-      // todo: make sure this actually works and doesn't break stuff horribly
-      this.appDataSource
-        .createQueryBuilder()
-        .delete()
-        .from(Enrollment)
-        .where("tournamentId = :tournamentId", { tournamentId })
-        .andWhere("playerId = :userId", { userId })
-        .execute();
-      return true;
-    } catch (err: unknown) {
-      return false;
-    }
   }
 
   async getTournament(id: number): Promise<Tournament> {
