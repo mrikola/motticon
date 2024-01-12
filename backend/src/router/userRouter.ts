@@ -6,6 +6,7 @@ import {
   getCurrentDraft,
   getCurrentRound,
   enrollIntoTournament,
+  cancelEnrollment,
   dropFromTournament,
 } from "../controller/tournament.controller";
 import {
@@ -106,6 +107,13 @@ userRouter.post(
   "/tournament/:tournamentId/enroll/:userId",
   async (req, res) => {
     res.send(await enrollIntoTournament(req));
+  }
+);
+
+userRouter.post(
+  "/tournament/:tournamentId/cancel/:userId",
+  async (req, res) => {
+    res.send(await cancelEnrollment(req));
   }
 );
 

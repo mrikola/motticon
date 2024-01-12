@@ -1,6 +1,8 @@
+import { EnrollmentService } from "../service/enrollment.service";
 import { TournamentService } from "../service/tournament.service";
 
 const tournamentService = new TournamentService();
+const enrollmentService = new EnrollmentService();
 
 export const getAllTournaments = async () => {
   return await tournamentService.getAllTournaments();
@@ -28,7 +30,15 @@ export const getCurrentRound = async (req) => {
 
 export const enrollIntoTournament = async (req) => {
   const { tournamentId, userId } = req.params;
-  return await tournamentService.enrollIntoTournament(
+  return await enrollmentService.enrollIntoTournament(
+    tournamentId as number,
+    userId as number
+  );
+};
+
+export const cancelEnrollment = async (req) => {
+  const { tournamentId, userId } = req.params;
+  return await enrollmentService.cancelEnrollment(
     tournamentId as number,
     userId as number
   );
@@ -36,7 +46,7 @@ export const enrollIntoTournament = async (req) => {
 
 export const dropFromTournament = async (req) => {
   const { tournamentId, userId } = req.params;
-  return await tournamentService.dropFromTournament(
+  return await enrollmentService.dropFromTournament(
     tournamentId as number,
     userId as number
   );

@@ -1,6 +1,8 @@
+import { EnrollmentService } from "../service/enrollment.service";
 import { UserService } from "../service/user.service";
 
 const userService = new UserService();
+const enrollmentService = new EnrollmentService();
 
 export const getUsersTournaments = async (req) => {
   const { id } = req.params;
@@ -14,7 +16,7 @@ export const getTournamentsStaffed = async (req) => {
 
 export const getUserTournamentInfo = async (req) => {
   const { userId, tournamentId } = req.params;
-  return await userService.getUserTournamentInfo(
+  return await enrollmentService.getUserTournamentInfo(
     userId,
     tournamentId as number
   );
