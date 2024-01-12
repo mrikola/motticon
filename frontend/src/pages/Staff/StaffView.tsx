@@ -100,8 +100,8 @@ function StaffView() {
                   <SquareFill className="icon-stack-3x" />
 
                   <p className={timerStyle}>
-                    {`${Math.floor(time / 60)}`.padStart(2, 0)}:
-                    {`${time % 60}`.padStart(2, 0)}
+                    {`${Math.floor(time / 60)}`.padStart(2, "0")}:
+                    {`${time % 60}`.padStart(2, "0")}
                   </p>
                 </span>
               </Col>

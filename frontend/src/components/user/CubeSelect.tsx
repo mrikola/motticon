@@ -5,6 +5,7 @@ import { CubeSelection } from "../../types/Cube";
 type Props = {
   priority: number;
   options: CubeSelection[];
+  pointValue: number;
   selectedOption?: CubeSelection;
   switchOption: (priority: number, newOption?: CubeSelection) => void;
 };

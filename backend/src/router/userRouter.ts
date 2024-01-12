@@ -94,10 +94,6 @@ userRouter.get("/tournament/:id/draft", async (req, res) => {
   res.send(await getCurrentDraft(req));
 });
 
-// userRouter.get("/tournament/:id/cubes", async (req, res) => {
-//   res.send(await getTournamentCubes(req));
-// });
-
 userRouter.get("/tournament/:id/cubes", async (req, res) => {
   res.send(await getCubesForTournament(req));
 });

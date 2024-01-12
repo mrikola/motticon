@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router";
 import { post } from "../../services/ApiService";
 import { getUserInfoFromJwt } from "../../utils/auth";
@@ -10,13 +9,23 @@ import {
   Form,
   FloatingLabel,
 } from "react-bootstrap";
+import { useForm } from "react-hook-form";
+
+type LoginForm = {
+  email: string;
+  password: string;
+};
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { register, handleSubmit } = useForm<LoginForm>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const doLogin = () => {
+  const doLogin = ({ email, password }: LoginForm) => {
     post("/login", { email, password }).then(async (resp) => {
       const jwt = await resp.text();
       if (jwt !== null) {
@@ -27,40 +36,37 @@ const Login = () => {
     });
   };
 
-  <FloatingLabel
-    controlId="floatingInput"
-    label="Email address"
-    className="mb-3"
-  >
-    <Form.Control type="email" placeholder="name@example.com" />
-  </FloatingLabel>;
   return (
     <Container>
       <Row>
         <Col>
-          <FloatingLabel
-            controlId="email"
-            label="Email address"
-            className="mb-3"
-          >
-            <Form.Control
-              type="email"
-              value={email}
-              placeholder="Enter email"
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </FloatingLabel>
-          <FloatingLabel controlId="password" label="Password" className="mb-3">
-            <Form.Control
-              type="password"
-              value={password}
-              placeholder="Password"
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </FloatingLabel>
-          <Button variant="primary" type="submit" onClick={() => doLogin()}>
-            Login
-          </Button>
+          <Form onSubmit={handleSubmit(doLogin)}>
+            <FloatingLabel
+              controlId="email"
+              label="Email address"
+              className="mb-3"
+            >
+              <Form.Control
+                {...register("email")}
+                type="email"
+                placeholder="Enter email"
+              />
+            </FloatingLabel>
+            <FloatingLabel
+              controlId="password"
+              label="Password"
+              className="mb-3"
+            >
+              <Form.Control
+                {...register("password")}
+                type="password"
+                placeholder="Password"
+              />
+            </FloatingLabel>
+            <Button variant="primary" type="submit">
+              Login
+            </Button>
+          </Form>
         </Col>
       </Row>
     </Container>

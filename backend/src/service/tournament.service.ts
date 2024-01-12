@@ -41,24 +41,6 @@ export class TournamentService {
     });
   }
 
-  async getTournamentCubes(id: number): Promise<Tournament[]> {
-    // const cubes = await this.appDataSource
-    //   .getRepository(Cube)
-    //   .createQueryBuilder("cube")
-    //   .leftJoinAndSelect("tournament_cubes", "cube")
-    //   .where("cube.tournamentId = :id", { id })
-    //   .getMany();
-    // return cubes;
-    const enrollments = await this.appDataSource
-      .getRepository(Tournament)
-      .createQueryBuilder("tournament")
-      .leftJoinAndSelect("tournament.enrollments", "enrollment")
-      .leftJoinAndSelect("enrollment.player", "user")
-      .where("user.id = :id", { id })
-      .getMany();
-    return enrollments;
-  }
-
   async getCurrentRound(id: number): Promise<Round> {
     return await this.appDataSource
       .getRepository(Round)

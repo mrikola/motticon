@@ -49,7 +49,7 @@ function App() {
               Component: Profile,
             },
             {
-              path: "user/cubePreferences",
+              path: "tournament/:tournamentId/cubePreferences",
               Component: UserCubePreferences,
             },
             {

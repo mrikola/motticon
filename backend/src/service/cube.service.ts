@@ -24,7 +24,7 @@ export class CubeService {
   async getCubesForTournament(tournamentId: number): Promise<Cube[]> {
     return await this.repository
       .createQueryBuilder("cube")
-      .leftJoinAndSelect("cube.tournaments", "tournament")
+      .leftJoin("cube.tournaments", "tournament")
       .where("tournament.id = :tournamentId", { tournamentId })
       .getMany();
   }

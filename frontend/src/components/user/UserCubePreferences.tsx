@@ -4,11 +4,14 @@ import { Cube, CubeSelection } from "../../types/Cube";
 import { Container, Row, Form } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import CubeSelect from "./CubeSelect";
+import { generatePriorityArray } from "../../utils/preferences";
+import { useParams } from "react-router";
 
 const PREFERENCES_TO_SELECT = 5;
 
 const UserCubePreferences = () => {
   const user = useContext(UserInfoContext);
+  const { tournamentId } = useParams();
   const [cubes, setCubes] = useState<Cube[]>([]);
   const [options, setOptions] = useState<CubeSelection[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<
@@ -17,7 +20,7 @@ const UserCubePreferences = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const resp = await get("/cube");
+      const resp = await get(`/tournament/${tournamentId}/cubes`);
       const cubes = (await resp.json()) as Cube[];
       setCubes(cubes);
     };
@@ -49,6 +52,8 @@ const UserCubePreferences = () => {
     disabled: Boolean(selectedOptions.find((so) => so?.key === opt.key)),
   }));
 
+  const priorityArray = generatePriorityArray(PREFERENCES_TO_SELECT);
+
   if (user) {
     return (
       <Container className="mt-3 my-md-4">
@@ -72,10 +77,11 @@ const UserCubePreferences = () => {
         </Row>
         <Row xs={1} sm={1} md={2}>
           <Form>
-            {[...Array(PREFERENCES_TO_SELECT)].map((_e, i) => (
+            {priorityArray.map((e, i) => (
               <CubeSelect
                 key={i}
                 priority={i}
+                pointValue={e}
                 options={availableOptions}
                 switchOption={switchOption}
               />
