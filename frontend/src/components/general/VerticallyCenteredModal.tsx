@@ -23,7 +23,7 @@ function VerticallyCenteredModal({
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={onHide} variant="danger">
-          Cancel
+          Back
         </Button>
         <Button onClick={actionFunction}>{actionText}</Button>
       </Modal.Footer>

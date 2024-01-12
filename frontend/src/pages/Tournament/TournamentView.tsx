@@ -58,6 +58,10 @@ const TournamentView = () => {
         // temporary solution that just checks boolean return (should be object with tournament info)
         const cancelled = Boolean(await resp.text());
         if (cancelled) {
+          setModal({
+            ...modal,
+            show: false,
+          });
           setIsEnrolled(false);
         }
       }
@@ -189,7 +193,6 @@ const TournamentView = () => {
   }
 
   function handleEnrollClick() {
-    console.log("called handleEnrollClick");
     setModal({
       show: true,
       heading: "Confirm enrollment",
@@ -228,9 +231,14 @@ const TournamentView = () => {
     );
   }
 
-  function handleDropClick() {
-    console.log("called handleDropClick");
-    // add similar functionality as handleEnrollClick() here
+  function handleCancelClick() {
+    setModal({
+      show: true,
+      heading: "Confirm enrollment cancellation",
+      text: "Are you sure you want to cancel your enrollment to this tournament?",
+      actionText: "Confirm cancellation",
+      actionFunction: doCancel,
+    });
   }
 
   function showCancel() {
@@ -238,10 +246,7 @@ const TournamentView = () => {
     return (
       <Row>
         <Col xs={12}>
-          <Button variant="danger" type="submit" onClick={handleDropClick}>
-            <XLg /> Drop from tournament
-          </Button>
-          <Button variant="danger" type="submit" onClick={doCancel}>
+          <Button variant="danger" type="submit" onClick={handleCancelClick}>
             <XLg /> Cancel enrollment
           </Button>
         </Col>
