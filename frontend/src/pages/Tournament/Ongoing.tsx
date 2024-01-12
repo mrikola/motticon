@@ -4,9 +4,10 @@ import { Link } from "react-router-dom";
 import { get } from "../../services/ApiService";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Button } from "react-bootstrap";
-import RoundOngoing from "./RoundOngoing";
-import DraftOngoing from "./DraftOngoing";
+import RoundOngoing from "../../components/tournament/RoundOngoing";
+import DraftOngoing from "../../components/tournament/DraftOngoing";
 import { BoxArrowInLeft } from "react-bootstrap-icons";
+import { Draft, Match, Round } from "../../types/Tournament";
 
 const Ongoing = () => {
   const { tournamentId } = useParams();
@@ -58,7 +59,7 @@ const Ongoing = () => {
           </Button>
         </Link>
       </Col>
-      {currentRound && ongoingStatus === "round" ? (
+      {currentRound && currentMatch && ongoingStatus === "round" ? (
         <RoundOngoing round={currentRound} match={currentMatch} />
       ) : (
         <></>

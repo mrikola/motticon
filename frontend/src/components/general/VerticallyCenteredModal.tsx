@@ -1,6 +1,6 @@
 import { Button, Modal } from "react-bootstrap";
 
-type Props = {
+export type ModalProps = {
   show: boolean;
   onHide: () => void;
   heading: string;
@@ -16,7 +16,7 @@ function VerticallyCenteredModal({
   text,
   actionFunction,
   actionText,
-}: Props) {
+}: ModalProps) {
   return (
     <Modal
       size="lg"

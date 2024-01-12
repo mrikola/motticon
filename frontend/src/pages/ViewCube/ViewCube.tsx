@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Button, Col, Container, Row, Modal } from "react-bootstrap";
 import DeckImage from "/img/draft_pool.png";

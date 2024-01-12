@@ -2,6 +2,18 @@ import { Cube } from "./Cube";
 
 export type Round = {
   roundNumber: number;
+  startTime: Date;
+};
+
+export type Draft = {
+  draftNumber: number;
+};
+
+export type Match = {
+  id: number;
+  tableNumber: number;
+  player1GamesWon: number;
+  player2GamesWon: number;
 };
 
 export type Tournament = {

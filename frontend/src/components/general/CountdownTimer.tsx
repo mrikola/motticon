@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { Stopwatch } from "react-bootstrap-icons";
 
-function CountdownTimer({ initialSeconds }) {
+type Props = {
+  initialSeconds: number;
+};
+
+function CountdownTimer({ initialSeconds }: Props) {
   const [seconds, setSeconds] = useState<number>(initialSeconds);
   const [timerStyle, setTimerStyle] = useState("display-3");
 

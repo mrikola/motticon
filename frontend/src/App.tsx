@@ -8,14 +8,11 @@ import Logout from "./components/user/Logout";
 import Profile from "./components/user/Profile";
 import UserCubePreferences from "./components/user/UserCubePreferences";
 import ViewCube from "./pages/ViewCube/ViewCube";
-import Test from "./components/general/Test";
 import ListCubes from "./pages/ListCubes/ListCubes";
 import ListCubesForTournament from "./pages/ListCubes/ListCubesForTournament";
 import Standings from "./pages/Standings/Standings";
 import PublicProfile from "./pages/PublicProfile/PublicProfile";
 import Ongoing from "./pages/Tournament/Ongoing";
-import RoundOngoing from "./pages/Tournament/RoundOngoing";
-import DraftOngoing from "./pages/Tournament/DraftOngoing";
 import TournamentStaffView from "./pages/Tournament/TournamentStaffView";
 import Landing from "./pages/Landing/Landing";
 import StaffView from "./pages/Staff/StaffView";
@@ -72,14 +69,6 @@ function App() {
               Component: PublicProfile,
             },
             {
-              path: "roundOngoing",
-              Component: RoundOngoing,
-            },
-            {
-              path: "draftOngoing",
-              Component: DraftOngoing,
-            },
-            {
               path: "tournaments",
               Component: Tournaments,
             },
@@ -110,10 +99,6 @@ function App() {
             {
               path: "tournament/:tournamentId/staff",
               Component: StaffView,
-            },
-            {
-              path: "test",
-              Component: Test,
             },
             {
               path: "*",

@@ -7,7 +7,7 @@ export type User = {
 export type Player = User;
 
 export type Enrollment = {
-  playerId: number;
+  player: Player;
   tournamentId: number;
   dropped: boolean;
   paid: boolean;

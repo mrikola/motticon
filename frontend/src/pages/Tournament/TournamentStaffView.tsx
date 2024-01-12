@@ -13,6 +13,7 @@ import {
 } from "react-bootstrap";
 import { SquareFill, BoxArrowInLeft } from "react-bootstrap-icons";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
+import { Tournament } from "../../types/Tournament";
 
 function StaffView() {
   const user = useContext(UserInfoContext);
@@ -24,8 +25,8 @@ function StaffView() {
     const fetchData = async () => {
       const response = await get(`/user/${user?.id}/staff`);
       const staffed = await response.json();
-      staffed.map((tournament) => {
-        if (tournament.id == tournamentId) {
+      staffed.map((tournament: Tournament) => {
+        if (tournament.id === Number(tournamentId)) {
           setStaff(true);
         }
       });

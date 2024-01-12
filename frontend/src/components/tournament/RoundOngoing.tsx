@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { UserInfoContext } from "../../components/provider/UserInfoProvider";
+import { UserInfoContext } from "../provider/UserInfoProvider";
 import { post } from "../../services/ApiService";
 import {
   Button,
@@ -15,9 +15,15 @@ import { SquareFill } from "react-bootstrap-icons";
 import dayjs, { Dayjs } from "dayjs";
 import * as duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
-import CountdownTimer from "../../components/general/CountdownTimer";
+import CountdownTimer from "../general/CountdownTimer";
+import { Match, Round } from "../../types/Tournament";
 
-function RoundOngoing({ round, match }) {
+type Props = {
+  round: Round;
+  match: Match;
+};
+
+function RoundOngoing({ round, match }: Props) {
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
   const [playerRadioValue, setPlayerRadioValue] = useState(

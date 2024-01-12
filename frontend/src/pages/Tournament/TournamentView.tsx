@@ -6,7 +6,9 @@ import { Round, Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row, Button } from "react-bootstrap";
-import VerticallyCenteredModal from "../../components/general/VerticallyCenteredModal";
+import VerticallyCenteredModal, {
+  ModalProps,
+} from "../../components/general/VerticallyCenteredModal";
 import {
   Box,
   BoxArrowInLeft,
@@ -18,6 +20,7 @@ import {
   CheckSquareFill,
 } from "react-bootstrap-icons";
 import dayjs from "dayjs";
+import { Enrollment } from "../../types/User";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
@@ -28,8 +31,9 @@ const TournamentView = () => {
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const [staff, setStaff] = useState<boolean>(false);
   const [ongoingRound, setOngoingRound] = useState<Round>();
-  const [modal, setModal] = useState({
+  const [modal, setModal] = useState<ModalProps>({
     show: false,
+    onHide: () => null,
     heading: "",
     text: "",
     actionText: "",
@@ -68,7 +72,7 @@ const TournamentView = () => {
     );
   };
 
-  function checkEnrolled(enrollment) {
+  function checkEnrolled(enrollment: Enrollment) {
     if (enrollment && enrollment.player.id === user?.id) {
       setIsEnrolled(true);
     }
@@ -195,6 +199,7 @@ const TournamentView = () => {
   function handleEnrollClick() {
     setModal({
       show: true,
+      onHide: () => null,
       heading: "Confirm enrollment",
       text: "Are you sure you want to enroll to this tournament?",
       actionText: "Confirm enrollment",
@@ -234,6 +239,7 @@ const TournamentView = () => {
   function handleCancelClick() {
     setModal({
       show: true,
+      onHide: () => null,
       heading: "Confirm enrollment cancellation",
       text: "Are you sure you want to cancel your enrollment to this tournament?",
       actionText: "Confirm cancellation",

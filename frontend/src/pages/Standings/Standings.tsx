@@ -1,4 +1,4 @@
-import { Table, Col, Container, Row, Button } from "react-bootstrap";
+import { Table, Container, Row, Button } from "react-bootstrap";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { BoxArrowInLeft } from "react-bootstrap-icons";

@@ -3,8 +3,6 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 import { Tournament } from "../entity/Tournament";
 import { partition, uniqBy } from "lodash";
-import { Enrollment } from "../entity/Enrollment";
-import { Preference } from "../entity/Preference";
 import {
   PlayerTournamentInfo,
   TournamentsByType,
