@@ -1,27 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router";
-import { get, post } from "../../services/ApiService";
+import { get } from "../../services/ApiService";
 import { Round, Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row, Button } from "react-bootstrap";
-import VerticallyCenteredModal, {
-  ModalProps,
-} from "../../components/general/VerticallyCenteredModal";
-import {
-  Box,
-  BoxArrowInLeft,
-  ListOl,
-  CalendarEvent,
-  XLg,
-  TrophyFill,
-  CheckSquare,
-  CheckSquareFill,
-} from "react-bootstrap-icons";
+import { Box, BoxArrowInLeft, CalendarEvent } from "react-bootstrap-icons";
 import dayjs from "dayjs";
 import { Enrollment } from "../../types/User";
 import Loading from "../../components/general/Loading";
+import Standings from "./TournamentView/Standings";
+import Enroll from "./TournamentView/Enroll";
+import GoToOngoing from "./TournamentView/GoToOngoing";
+import Staff from "./TournamentView/Staff";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
@@ -32,46 +24,6 @@ const TournamentView = () => {
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const [staff, setStaff] = useState<boolean>(false);
   const [ongoingRound, setOngoingRound] = useState<Round>();
-  const [modal, setModal] = useState<ModalProps>({
-    show: false,
-    onHide: () => null,
-    heading: "",
-    text: "",
-    actionText: "",
-    actionFunction: () => {},
-  });
-
-  const doEnroll = () => {
-    post(`/tournament/${tournamentId}/enroll/${user?.id}`, {}).then(
-      async (resp) => {
-        // temporary solution that just checks boolean return (should be object with tournament info)
-        const enrolled = await resp.text();
-        if (enrolled) {
-          setModal({
-            ...modal,
-            show: false,
-          });
-          setIsEnrolled(true);
-        }
-      }
-    );
-  };
-
-  const doCancel = () => {
-    post(`/tournament/${tournamentId}/cancel/${user?.id}`, {}).then(
-      async (resp) => {
-        // temporary solution that just checks boolean return (should be object with tournament info)
-        const cancelled = Boolean(await resp.text());
-        if (cancelled) {
-          setModal({
-            ...modal,
-            show: false,
-          });
-          setIsEnrolled(false);
-        }
-      }
-    );
-  };
 
   function checkEnrolled(enrollment: Enrollment) {
     if (enrollment && enrollment.player.id === user?.id) {
@@ -143,124 +95,6 @@ const TournamentView = () => {
     fetchData();
   }, [tournamentId]);
 
-  function showStandings(roundNumber: number) {
-    // todo: add generating of multiple standings based on data
-    return (
-      <Row>
-        <Col xs={12}>
-          <Link to={`/tournament/${tournamentId}/standings/${roundNumber}`}>
-            <Button variant="primary">
-              <ListOl /> Standings round {roundNumber}
-            </Button>
-          </Link>
-        </Col>
-      </Row>
-    );
-  }
-
-  function showGoToOngoing() {
-    return (
-      <Row>
-        <Col xs={12}>
-          <Link to={`/tournament/${tournamentId}/ongoing/`}>
-            <Button variant="primary">
-              <TrophyFill /> View ongoing
-            </Button>
-          </Link>
-        </Col>
-      </Row>
-    );
-  }
-
-  function showOngoing() {
-    const status = "Playing round " + ongoingRound?.roundNumber;
-    return (
-      <Row>
-        <Col xs={12}>
-          <p>Tournament status: {status}</p>
-        </Col>
-      </Row>
-    );
-  }
-
-  function showStaffButton() {
-    return (
-      <Row>
-        <Col xs={12}>
-          <Link to={`/tournament/${tournamentId}/staff`}>
-            <Button variant="primary">
-              <ListOl /> Go to staff view
-            </Button>
-          </Link>
-        </Col>
-      </Row>
-    );
-  }
-
-  function handleEnrollClick() {
-    setModal({
-      show: true,
-      onHide: () => null,
-      heading: "Confirm enrollment",
-      text: "Are you sure you want to enroll to this tournament?",
-      actionText: "Confirm enrollment",
-      actionFunction: doEnroll,
-    });
-  }
-
-  function showEnroll() {
-    return (
-      <Row>
-        <Col xs={12}>
-          <h2>Enroll</h2>
-          <p>Price: free</p>
-          <p>Seats left: 8/8</p>
-          <Button
-            variant="primary"
-            type="submit"
-            onClick={() => handleEnrollClick()}
-            disabled={isEnrolled}
-          >
-            {!isEnrolled ? (
-              <>
-                <CheckSquare /> Enroll
-              </>
-            ) : (
-              <>
-                <CheckSquareFill /> Enrolled
-              </>
-            )}
-          </Button>
-          {isEnrolled ? showCancel() : <></>}
-        </Col>
-      </Row>
-    );
-  }
-
-  function handleCancelClick() {
-    setModal({
-      show: true,
-      onHide: () => null,
-      heading: "Confirm enrollment cancellation",
-      text: "Are you sure you want to cancel your enrollment to this tournament?",
-      actionText: "Confirm cancellation",
-      actionFunction: doCancel,
-    });
-  }
-
-  function showCancel() {
-    // todo: add actual drop functionality
-    return (
-      <Row>
-        <Col xs={12}>
-          <Button variant="danger" type="submit" onClick={handleCancelClick}>
-            <XLg /> Cancel enrollment
-          </Button>
-        </Col>
-      </Row>
-    );
-  }
-
   return activeTournament ? (
     <Container className="mt-3 my-md-4">
       <Row>
@@ -305,23 +139,21 @@ const TournamentView = () => {
         }
         return <></>;
       })()}
-      {isEnrolled && tournamentStatus === "ongoing" ? showGoToOngoing() : <></>}
-      {tournamentStatus === "future" ? showEnroll() : <></>}
-      {staff ? showStaffButton() : <></>}
-      {tournamentStatus != "future" ? showStandings(5) : <></>}
-      <VerticallyCenteredModal
-        show={modal.show}
-        onHide={() =>
-          setModal({
-            ...modal,
-            show: false,
-          })
-        }
-        heading={modal.heading}
-        text={modal.text}
-        actionText={modal.actionText}
-        actionFunction={modal.actionFunction}
-      />
+      {isEnrolled && tournamentStatus === "ongoing" && (
+        <GoToOngoing tournamentId={tournamentId} />
+      )}
+      {tournamentStatus === "future" && (
+        <Enroll
+          isEnrolled={isEnrolled}
+          tournamentId={tournamentId}
+          userId={user?.id}
+          enrolledChanger={setIsEnrolled}
+        />
+      )}
+      {staff && <Staff tournamentId={tournamentId} />}
+      {tournamentStatus != "future" && (
+        <Standings roundNumber={5} tournamentId={tournamentId} />
+      )}
     </Container>
   ) : (
     <Loading />
