@@ -24,7 +24,7 @@ export const isValidAdminToken = (token: string) => {
 };
 
 // TODO: use this for signup purposes
-const encodePassword = (password: string) => hashSync(password, 10);
+export const encodePassword = (password: string) => hashSync(password, 10);
 
 export const doLogin = async (email: string, password: string) => {
   const user = await userService.getUserByEmail(email);

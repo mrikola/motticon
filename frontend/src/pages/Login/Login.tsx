@@ -10,6 +10,7 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 type LoginForm = {
   email: string;
@@ -68,6 +69,9 @@ const Login = () => {
             </Button>
           </Form>
         </Col>
+      </Row>
+      <Row>
+        <Link to="/signup">Sign up</Link>
       </Row>
     </Container>
   );

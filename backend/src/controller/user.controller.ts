@@ -1,8 +1,14 @@
+import { encodePassword } from "../auth/auth";
 import { EnrollmentService } from "../service/enrollment.service";
 import { UserService } from "../service/user.service";
 
 const userService = new UserService();
 const enrollmentService = new EnrollmentService();
+
+export const signup = async (req) => {
+  const { firstName, lastName, email, password } = req.body;
+  return await userService.createUser(firstName, lastName, email, password);
+};
 
 export const getUsersTournaments = async (req) => {
   const { id } = req.params;

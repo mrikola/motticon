@@ -9,6 +9,7 @@ import {
 } from "../dto/tournaments.dto";
 import { TournamentService } from "./tournament.service";
 import { Match } from "../entity/Match";
+import { encodePassword } from "../auth/auth";
 
 export class UserService {
   private appDataSource: DataSource;
@@ -19,6 +20,27 @@ export class UserService {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(User);
     this.tournamentService = new TournamentService();
+  }
+
+  async createUser(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string
+  ) {
+    // TODO improve return values
+    try {
+      await this.repository.insert({
+        firstName,
+        lastName,
+        email,
+        password: encodePassword(password),
+        isAdmin: false,
+      });
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async getUserByEmail(email: string): Promise<User> {

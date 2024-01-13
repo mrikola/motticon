@@ -1,10 +1,18 @@
 import * as express from "express";
 import { doLogin } from "../auth/auth";
+import { signup } from "../controller/user.controller";
 
 export const notLoggedInRouter = express.Router();
 
 // TODO add stuff about creating a new user
-notLoggedInRouter.post("/signup", async (req, res) => {});
+notLoggedInRouter.post("/signup", async (req, res) => {
+  const result = await signup(req);
+  if (result) {
+    res.sendStatus(201); // CREATED
+  } else {
+    res.sendStatus(401); // UNAUTHORIZED
+  }
+});
 
 notLoggedInRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;

@@ -14,6 +14,7 @@ const UserInfoProvider = () => {
     if (
       location.pathname !== "/login" &&
       location.pathname !== "/logout" &&
+      location.pathname !== "/signup" &&
       localStorage.getItem("user") === null
     ) {
       navigate("/login", { replace: true });
