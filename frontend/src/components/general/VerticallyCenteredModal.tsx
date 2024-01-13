@@ -5,6 +5,8 @@ export type ModalProps = {
   onHide: () => void;
   heading: string;
   text: string;
+  text2?: string;
+  text3?: string;
   actionFunction: () => void;
   actionText: string;
 };
@@ -14,6 +16,8 @@ function VerticallyCenteredModal({
   onHide,
   heading,
   text,
+  text2,
+  text3,
   actionFunction,
   actionText,
 }: ModalProps) {
@@ -29,6 +33,8 @@ function VerticallyCenteredModal({
       </Modal.Header>
       <Modal.Body>
         <p>{text}</p>
+        {text2 && <p>{text2}</p>}
+        {text3 && <p>{text3}</p>}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={onHide} variant="danger">

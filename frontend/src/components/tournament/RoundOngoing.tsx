@@ -17,6 +17,9 @@ import * as duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 import CountdownTimer from "../general/CountdownTimer";
 import { Match, Round } from "../../types/Tournament";
+import VerticallyCenteredModal, {
+  ModalProps,
+} from "../general/VerticallyCenteredModal";
 
 type Props = {
   round: Round;
@@ -45,6 +48,18 @@ function RoundOngoing({ round, match }: Props) {
     { name: "1", value: "1" },
     { name: "2", value: "2" },
   ];
+  const [modal, setModal] = useState<ModalProps>({
+    show: false,
+    onHide: () => null,
+    heading: "",
+    text: "",
+    actionText: "",
+    actionFunction: () => {},
+  });
+  const [opponent, setOpponent] = useState({
+    firstName: "Opponent",
+    lastName: "Lastname",
+  });
 
   const submitResult = () => {
     const matchId = match.id;
@@ -64,6 +79,30 @@ function RoundOngoing({ round, match }: Props) {
       }
     });
   };
+
+  function handleSubmitClicked() {
+    setModal({
+      show: true,
+      onHide: () => null,
+      heading: "Confirm result",
+      text: "You submitted:",
+      text2:
+        user?.firstName +
+        " " +
+        user?.lastName +
+        " " +
+        playerRadioValue +
+        " – " +
+        opponentRadioValue +
+        " " +
+        opponent.firstName +
+        " " +
+        opponent.lastName,
+      text3: "Is this correct?",
+      actionText: "Confirm result",
+      actionFunction: submitResult,
+    });
+  }
 
   useEffect(() => {
     const now = dayjs();
@@ -137,7 +176,9 @@ function RoundOngoing({ round, match }: Props) {
             <h2>vs.</h2>
           </Col>
           <Col xs={12} className="text-center">
-            <h2>Their Name</h2>
+            <h2>
+              {opponent.firstName} {opponent.lastName}
+            </h2>
           </Col>
           <ButtonGroup className="round-radio-group">
             {radios.map((radio, idx) => (
@@ -161,11 +202,26 @@ function RoundOngoing({ round, match }: Props) {
             <Button
               variant="primary"
               type="submit"
-              onClick={() => submitResult()}
+              onClick={() => handleSubmitClicked()}
             >
               Submit result
             </Button>
           </div>
+          <VerticallyCenteredModal
+            show={modal.show}
+            onHide={() =>
+              setModal({
+                ...modal,
+                show: false,
+              })
+            }
+            heading={modal.heading}
+            text={modal.text}
+            text2={modal.text2}
+            text3={modal.text3}
+            actionText={modal.actionText}
+            actionFunction={modal.actionFunction}
+          />
         </Row>
       </Container>
     );
