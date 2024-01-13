@@ -27,6 +27,8 @@ type Props = {
 };
 
 function RoundOngoing({ round, match }: Props) {
+  // VIEW TODO: move radio buttons to element, disable radio buttons if result has been reported
+
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
   const [playerRadioValue, setPlayerRadioValue] = useState(
@@ -75,6 +77,10 @@ function RoundOngoing({ round, match }: Props) {
       const jwt = await resp.text();
       if (jwt !== null) {
         console.log(jwt);
+        setModal({
+          ...modal,
+          show: false,
+        });
         // todo: do stuff here
       }
     });
