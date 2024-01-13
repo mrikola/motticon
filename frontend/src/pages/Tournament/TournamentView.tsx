@@ -95,7 +95,7 @@ const TournamentView = () => {
     fetchData();
   }, [tournamentId]);
 
-  return activeTournament ? (
+  return activeTournament && user ? (
     <Container className="mt-3 my-md-4">
       <Row>
         <Col xs={12}>
@@ -123,36 +123,31 @@ const TournamentView = () => {
           <p>Type: Draft</p>
         </Col>
       </Row>
-      {(() => {
-        if (cubes.length > 0) {
-          return (
-            <Row>
-              <Col xs={12}>
-                <Link to={`/tournament/${tournamentId}/cubes/`}>
-                  <Button variant="primary">
-                    <Box /> View tournament cubes
-                  </Button>
-                </Link>
-              </Col>
-            </Row>
-          );
-        }
-        return <></>;
-      })()}
+      {cubes.length > 0 && (
+        <Row>
+          <Col xs={12}>
+            <Link to={`/tournament/${activeTournament.id}/cubes/`}>
+              <Button variant="primary">
+                <Box /> View tournament cubes
+              </Button>
+            </Link>
+          </Col>
+        </Row>
+      )}
       {isEnrolled && tournamentStatus === "ongoing" && (
-        <GoToOngoing tournamentId={tournamentId} />
+        <GoToOngoing tournamentId={activeTournament.id} />
       )}
       {tournamentStatus === "future" && (
         <Enroll
           isEnrolled={isEnrolled}
-          tournamentId={tournamentId}
+          tournamentId={activeTournament.id}
           userId={user?.id}
           enrolledChanger={setIsEnrolled}
         />
       )}
-      {staff && <Staff tournamentId={tournamentId} />}
+      {staff && <Staff tournamentId={activeTournament.id} />}
       {tournamentStatus != "future" && (
-        <Standings roundNumber={5} tournamentId={tournamentId} />
+        <Standings roundNumber={5} tournamentId={activeTournament.id} />
       )}
     </Container>
   ) : (

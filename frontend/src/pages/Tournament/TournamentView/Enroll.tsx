@@ -8,8 +8,9 @@ import VerticallyCenteredModal, {
 
 type Props = {
   isEnrolled: boolean;
-  tournamentId: string;
+  tournamentId: number;
   userId: number;
+  enrolledChanger: (isEnrolled: boolean) => void;
 };
 
 function Enroll({ isEnrolled, tournamentId, userId, enrolledChanger }: Props) {

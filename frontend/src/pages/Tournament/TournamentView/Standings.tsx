@@ -4,7 +4,7 @@ import { ListOl } from "react-bootstrap-icons";
 
 type Props = {
   roundNumber: number;
-  tournamentId: string;
+  tournamentId: number;
 };
 
 function Standings({ roundNumber, tournamentId }: Props) {

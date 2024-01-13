@@ -3,7 +3,7 @@ import { Col, Row, Button } from "react-bootstrap";
 import { TrophyFill } from "react-bootstrap-icons";
 
 type Props = {
-  tournamentId: string;
+  tournamentId: number;
 };
 
 function GoToOngoing({ tournamentId }: Props) {

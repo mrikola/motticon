@@ -1,8 +1,8 @@
 import { RouteObject, RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./components/Layout";
-import Login from "./components/user/Login";
-import SignUp from "./components/user/SignUp";
+import Login from "./pages/Login/Login";
+import SignUp from "./pages/SignUp/SignUp";
 import UserInfoProvider from "./components/provider/UserInfoProvider";
 import Logout from "./components/user/Logout";
 import UserCubePreferences from "./components/user/UserCubePreferences";
