@@ -20,6 +20,25 @@ export class MatchService {
     return matches;
   }
 
+  async getMatchesForRoundByPlayers(
+    tournamentId: number,
+    roundNumber: number,
+    playerIds: number[]
+  ) {
+    const matches = await this.repository
+      .createQueryBuilder("match")
+      .leftJoinAndSelect("match.round", "round")
+      .where('round."roundNumber" = :roundNumber', { roundNumber })
+      .andWhere('round."tournamentId" = :tournamentId', { tournamentId })
+      .andWhere((qb) =>
+        qb
+          .where('match."player1Id" in (:...playerIds)', { playerIds })
+          .orWhere('match."player2Id" in (:...playerIds)', { playerIds })
+      )
+      .getMany();
+    return matches;
+  }
+
   async submitResult(
     matchId: number,
     resultSubmittedBy: number,

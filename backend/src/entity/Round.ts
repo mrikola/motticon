@@ -16,8 +16,10 @@ export class Round {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Tournament)
   @JoinColumn()
+  tournamentId: number;
+
+  @ManyToOne(() => Tournament)
   tournament: Tournament;
 
   @Column("smallint")

@@ -3,9 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from "typeorm";
 import { DraftPod } from "./DraftPod";
 import { User } from "./User";
@@ -15,12 +13,16 @@ export class DraftPodSeat {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => DraftPod, (pod) => pod.seats)
   @JoinColumn()
+  podId: number;
+
+  @ManyToOne(() => DraftPod, (pod) => pod.seats)
   pod: DraftPod;
 
-  @OneToOne(() => User)
   @JoinColumn()
+  playerId: number;
+
+  @ManyToOne(() => User)
   player: User;
 
   @Column("smallint")

@@ -1,10 +1,11 @@
 import { DataSource, Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Tournament } from "../entity/Tournament";
-import { partition, uniqBy } from "lodash";
+import { partition } from "lodash";
 import { TournamentsByType } from "../dto/tournaments.dto";
 import { Round } from "../entity/Round";
 import { Draft } from "../entity/Draft";
+import { DraftWithRoundNumber } from "../dto/draft.dto";
 
 export class TournamentService {
   private appDataSource: DataSource;
@@ -51,8 +52,15 @@ export class TournamentService {
       .getOne();
   }
 
-  async getCurrentDraft(id: number): Promise<Draft> {
+  async getCurrentDraft(id: number): Promise<DraftWithRoundNumber> {
     const currentRound = await this.getCurrentRound(id);
+    return this.getDraftByRoundNumber(id, currentRound.roundNumber);
+  }
+
+  async getDraftByRoundNumber(
+    id: number,
+    roundNumber: number
+  ): Promise<DraftWithRoundNumber> {
     const drafts = await this.appDataSource
       .getRepository(Draft)
       .createQueryBuilder("draft")
@@ -62,17 +70,19 @@ export class TournamentService {
       .getMany();
 
     let roundsAllocated = 0;
+    let roundInDraft = 0;
     let currentDraft;
     drafts.forEach((draft) => {
       if (
-        roundsAllocated < currentRound.roundNumber &&
-        roundsAllocated + draft.rounds >= currentRound.roundNumber
+        roundsAllocated < roundNumber &&
+        roundsAllocated + draft.rounds >= roundNumber
       ) {
         currentDraft = draft;
+        roundInDraft = roundNumber - roundsAllocated;
       }
       roundsAllocated += draft.rounds;
     });
 
-    return currentDraft;
+    return { ...currentDraft, roundInDraft };
   }
 }

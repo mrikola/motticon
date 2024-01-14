@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Round } from "./Round";
 import { User } from "./User";
+import { PodDraftMatch } from "../dto/draft.dto";
 
 @Entity()
 export class Match {
@@ -32,10 +33,10 @@ export class Match {
   @ManyToOne(() => User)
   player2: User;
 
-  @Column("smallint")
+  @Column("smallint", { default: 0 })
   player1GamesWon: number;
 
-  @Column("smallint")
+  @Column("smallint", { default: 0 })
   player2GamesWon: number;
 
   @JoinColumn()
@@ -43,4 +44,7 @@ export class Match {
 
   @ManyToOne(() => User, { nullable: true })
   resultSubmittedBy: User;
+
+  @Column("varchar")
+  matchType: PodDraftMatch;
 }
