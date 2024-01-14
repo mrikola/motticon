@@ -72,10 +72,6 @@ function App() {
               Component: TournamentView,
             },
             {
-              path: "tournament/:tournamentId/staff",
-              Component: TournamentStaffView,
-            },
-            {
               path: "tournament/:tournamentId/cubes",
               Component: ListCubesForTournament,
             },

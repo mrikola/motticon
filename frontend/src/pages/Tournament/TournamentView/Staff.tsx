@@ -9,12 +9,14 @@ type Props = {
 function Staff({ tournamentId }: Props) {
   return (
     <Row className="my-3">
-      <Col xs={12}>
-        <Link to={`/tournament/${tournamentId}/staff`}>
-          <Button variant="primary">
-            <ListOl /> Go to staff view
-          </Button>
-        </Link>
+      <Col xs={8} className="d-grid gap-2 mx-auto">
+        <Button
+          variant="primary"
+          className="btn-lg"
+          href={`/tournament/${tournamentId}/staff`}
+        >
+          <ListOl /> Go to staff view
+        </Button>
       </Col>
     </Row>
   );
