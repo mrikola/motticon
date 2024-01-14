@@ -10,7 +10,7 @@ type Props = {
 function Standings({ roundNumber, tournamentId }: Props) {
   // todo: add generating of multiple standings based on data
   return (
-    <Row>
+    <Row className="my-3">
       <Col xs={12}>
         <Link to={`/tournament/${tournamentId}/standings/${roundNumber}`}>
           <Button variant="primary">

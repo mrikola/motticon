@@ -207,6 +207,7 @@ function RoundOngoing({ round, match }: Props) {
           <div className="d-grid gap-2 my-3">
             <Button
               variant="primary"
+              className="btn-lg"
               type="submit"
               onClick={() => handleSubmitClicked()}
             >

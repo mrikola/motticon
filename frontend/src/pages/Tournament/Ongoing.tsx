@@ -22,7 +22,6 @@ const Ongoing = () => {
       const response = await get(
         `/user/${user?.id}/tournament/${tournamentId}/current`
       );
-      // TODO types + view
       const { draft, round, match } = await response.json();
       setCurrentRound(round);
       setCurrentMatch(match);
@@ -49,7 +48,7 @@ const Ongoing = () => {
     <Container className="mt-3 my-md-4">
       <Col xs={12}>
         <Button variant="danger" onClick={() => changeOngoingStatus()}>
-          Change ongoing round status
+          Change ongoing round status (TEST)
         </Button>
       </Col>
       <Col xs={12}>
@@ -59,12 +58,12 @@ const Ongoing = () => {
           </Button>
         </Link>
       </Col>
-      {currentRound && currentMatch && ongoingStatus === "round" ? (
+      {currentRound && currentMatch && ongoingStatus === "round" && (
         <RoundOngoing round={currentRound} match={currentMatch} />
-      ) : (
-        <></>
       )}
-      {currentDraft && ongoingStatus === "draft" ? <DraftOngoing /> : <></>}
+      {currentDraft && ongoingStatus === "draft" && (
+        <DraftOngoing draft={currentDraft} />
+      )}
     </Container>
   );
 };

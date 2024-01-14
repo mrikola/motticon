@@ -8,7 +8,7 @@ type Props = {
 
 function GoToOngoing({ tournamentId }: Props) {
   return (
-    <Row>
+    <Row className="my-3">
       <Col xs={12}>
         <Link to={`/tournament/${tournamentId}/ongoing/`}>
           <Button variant="primary">

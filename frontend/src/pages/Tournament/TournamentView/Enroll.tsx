@@ -79,13 +79,16 @@ function Enroll({ isEnrolled, tournamentId, userId, enrolledChanger }: Props) {
 
   // todo: add generating of multiple standings based on data
   return (
-    <Row>
+    <Row className="my-3">
       <Col xs={12}>
         <h2>Enroll</h2>
         <p>Price: free</p>
         <p>Seats left: 8/8</p>
+      </Col>
+      <Col xs={8} className="d-grid gap-2 mx-auto">
         <Button
           variant="primary"
+          className="btn-lg"
           type="submit"
           onClick={() => handleEnrollClick()}
           disabled={isEnrolled}
@@ -101,19 +104,17 @@ function Enroll({ isEnrolled, tournamentId, userId, enrolledChanger }: Props) {
           )}
         </Button>
         {isEnrolled && (
-          <Row>
-            <Col xs={12}>
-              <Button
-                variant="danger"
-                type="submit"
-                onClick={handleCancelClick}
-              >
-                <XLg /> Cancel enrollment
-              </Button>
-            </Col>
-          </Row>
+          <Button
+            variant="danger"
+            className="btn-lg"
+            type="submit"
+            onClick={handleCancelClick}
+          >
+            <XLg /> Cancel enrollment
+          </Button>
         )}
       </Col>
+
       <VerticallyCenteredModal
         show={modal.show}
         onHide={() =>
