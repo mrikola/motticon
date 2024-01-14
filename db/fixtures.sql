@@ -57,8 +57,8 @@ INSERT INTO round("tournamentId", "roundNumber", "startTime") values(pikadrafti_
 INSERT INTO round("tournamentId", "roundNumber", "startTime") values(pikadrafti_id, 3, now()) RETURNING id INTO pikadrafti_round3_id;
 
 -- also create a match in round 3
-INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon") 
-  values(pikadrafti_round3_id, 1, pekka_id, sakari_id, 0, 0);
+INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon", "matchType") 
+  values(pikadrafti_round3_id, 1, pekka_id, sakari_id, 0, 0, 'final');
 return;
 END $$ LANGUAGE plpgsql;
 
