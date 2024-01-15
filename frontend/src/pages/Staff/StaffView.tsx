@@ -49,9 +49,12 @@ function StaffView() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(`/tournament/${tournamentId}/round`);
-      const round = await response.json();
-      setCurrentRound(round);
-      console.log(JSON.stringify(round));
+      const round = (await response.json()) as Round;
+      const roundParsed: Round = {
+        ...round,
+        startTime: new Date(round.startTime),
+      };
+      setCurrentRound(roundParsed);
     };
 
     if (user) {
@@ -60,18 +63,18 @@ function StaffView() {
   }, [user]);
 
   useEffect(() => {
-    console.log("current round: " + currentRound?.startTime);
-    setRoundStart(dayjs(currentRound?.startTime));
-    console.log("roundStart: " + roundStart?.format("DD/MM/YYYY HH:mm"));
+    if (currentRound) {
+      setRoundStart(dayjs(currentRound?.startTime));
+    }
   }, [currentRound]);
 
   useEffect(() => {
     //todo: time setting not working properly
     const now = dayjs();
-    const endTime = dayjs(currentRound?.startTime).add(50, "m");
+    const endTime = roundStart?.add(50, "m");
     const diff = endTime?.diff(now, "second");
     setTimeRemaining(diff);
-  }, [user, currentRound, timeRemaining]);
+  }, [user, roundStart, timeRemaining]);
 
   if (user && currentRound && timeRemaining) {
     return (
