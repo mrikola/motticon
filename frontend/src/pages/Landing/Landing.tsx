@@ -32,9 +32,7 @@ const Landing = () => {
         <h1 className="display-1">
           Welcome, {user?.firstName} {user?.lastName}
         </h1>
-        {user.isAdmin && (
-          <>You're an admin, some admin panel links should be here</>
-        )}
+        {user.isAdmin && <Link to="/admin">Go to admin page</Link>}
         {tournaments &&
           tournamentTypes.map((type, index) => {
             const tourneys = tournaments[type];

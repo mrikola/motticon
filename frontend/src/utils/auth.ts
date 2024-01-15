@@ -1,4 +1,7 @@
 import { jwtDecode } from "jwt-decode";
+import { useContext } from "react";
+import { useNavigate } from "react-router";
+import { UserInfoContext } from "../components/provider/UserInfoProvider";
 
 export type LoggedInUser = {
   id: number;
@@ -21,4 +24,14 @@ export const getUserInfoFromJwt = async (jwt: string) => {
     });
   }
   return "";
+};
+
+export const useIsAdmin = () => {
+  const user = useContext(UserInfoContext);
+  const navigate = useNavigate();
+
+  if (user && !user.isAdmin) {
+    navigate("/");
+  }
+  return user;
 };

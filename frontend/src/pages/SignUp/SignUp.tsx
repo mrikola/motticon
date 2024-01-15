@@ -28,8 +28,6 @@ function SignUp() {
         navigate("/login");
       }
     );
-
-    // todo actual account creation
   }
 
   const { register, handleSubmit } = useForm<SignupForm>({
