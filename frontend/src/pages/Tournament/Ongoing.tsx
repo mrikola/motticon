@@ -27,8 +27,20 @@ const Ongoing = () => {
       setCurrentMatch(match);
       setCurrentDraft(draft);
       // console.log("draft", JSON.stringify(draft));
-      // console.log("round", JSON.stringify(round));
+      console.log("round", JSON.stringify(round));
       // console.log("match", JSON.stringify(match));
+    };
+
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await get(`/tournament/${tournamentId}/round`);
+      const testRound = (await response.json()) as Round;
+      console.log("round", JSON.stringify(testRound));
     };
 
     if (user) {

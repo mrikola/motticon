@@ -9,18 +9,18 @@ export const getAllTournaments = async () => {
 };
 
 export const getTournament = async (req) => {
-  const { id } = req.params;
-  return await tournamentService.getTournament(id as number);
+  const { tournamentId } = req.params;
+  return await tournamentService.getTournament(tournamentId as number);
 };
 
 export const getCurrentDraft = async (req) => {
-  const { id } = req.params;
-  return await tournamentService.getCurrentDraft(id as number);
+  const { tournamentId } = req.params;
+  return await tournamentService.getCurrentDraft(tournamentId as number);
 };
 
 export const getCurrentRound = async (req) => {
-  const { id } = req.params;
-  return await tournamentService.getCurrentRound(id as number);
+  const { tournamentId } = req.params;
+  return await tournamentService.getCurrentRound(tournamentId as number);
 };
 
 export const enrollIntoTournament = async (req) => {

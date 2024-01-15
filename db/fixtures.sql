@@ -4,6 +4,13 @@ DECLARE
   markku_id integer;
   pekka_id integer;
   sakari_id integer;
+  timo_id integer;
+  tiina_id integer;
+  john_id integer;
+  jane_id integer;
+  spike_id integer;
+  johnny_id integer;
+  timmy_id integer;
 -- cubes
   monoblue_id integer;
 -- tournaments
@@ -11,6 +18,7 @@ DECLARE
   pikadrafti_id integer;
 -- rounds
   pikadrafti_round3_id integer;
+  pikadrafti_round4_id integer;
 
 BEGIN
 -- these truncations will cascade to every other table
@@ -24,6 +32,21 @@ INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin")
   values('Pekka', 'Pelaaja', 'pekka.pelaaja@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into pekka_id;
 INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
   values('Sakari', 'Staffer', 'sakari.staff@motticon.fi', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into sakari_id;
+-- more players to fill 8-player draft
+INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
+  values('Timo', 'Tuuttari', 'timo.tuuttari@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into timo_id;
+INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
+  values('Tiina', 'Tuuttari', 'tiina.tuuttari@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into tiina_id;
+INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
+  values('John', 'Doe', 'john.doe@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into john_id;
+INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
+  values('Jane', 'Doe', 'jane.doe@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into jane_id;
+INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
+  values('Timmy', 'Steaks', 'timmy.steaks@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into timmy_id;
+INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
+  values('Spike', 'von Spike', 'spike.von.spike@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into spike_id;
+INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
+  values('Johnny', 'McJohnny', 'johnny.mcjohnny@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into johnny_id;
 
 INSERT INTO cube(title, description, url) values('Monoblue', 'Pelkkää sinistä', 'https://cubecobra.com/cube/list/0de5c855-ad9a-4ce1-8a8c-d8f846e96712') RETURNING id INTO monoblue_id;
 INSERT INTO cube(title, description, url) values('Vintage cube', 'Powerit löytyy', 'https://cubecobra.com/cube/list/r47');
@@ -48,6 +71,12 @@ INSERT INTO tournament_staff_members("tournamentId", "userId") values(pikadrafti
 INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(motticon_id, pekka_id, false, false);
 INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(pikadrafti_id, pekka_id, false, false);
 INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(pikadrafti_id, markku_id, false, false);
+INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(pikadrafti_id, timo_id, false, false);
+INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(pikadrafti_id, tiina_id, false, false);
+INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(pikadrafti_id, john_id, false, false);
+INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(pikadrafti_id, jane_id, false, false);
+INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(pikadrafti_id, spike_id, false, false);
+INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(pikadrafti_id, timmy_id, false, false);
 
 -- pikadrafti has two 2 round drafts, we create rounds 1-3
 INSERT INTO draft("tournamentId", "draftNumber", "rounds") values(pikadrafti_id, 1, 2);
@@ -55,10 +84,21 @@ INSERT INTO draft("tournamentId", "draftNumber", "rounds") values(pikadrafti_id,
 INSERT INTO round("tournamentId", "roundNumber", "startTime") values(pikadrafti_id, 1, now());
 INSERT INTO round("tournamentId", "roundNumber", "startTime") values(pikadrafti_id, 2, now());
 INSERT INTO round("tournamentId", "roundNumber", "startTime") values(pikadrafti_id, 3, now()) RETURNING id INTO pikadrafti_round3_id;
+INSERT INTO round("tournamentId", "roundNumber", "startTime") values(pikadrafti_id, 4, now()) RETURNING id INTO pikadrafti_round4_id;
 
--- also create a match in round 3
+
+-- 4 dummy matches round 3
 INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon", "matchType") 
-  values(pikadrafti_round3_id, 1, pekka_id, sakari_id, 0, 0, 'final');
+  values(pikadrafti_round3_id, 1, pekka_id, markku_id, 0, 0, 'oddsWinners');
+INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon", "matchType") 
+  values(pikadrafti_round3_id, 2, timo_id, spike_id, 0, 0, 'oddsLosers');
+INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon", "matchType") 
+  values(pikadrafti_round3_id, 3, tiina_id, john_id, 0, 0, 'evensWinners');
+INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon", "matchType") 
+  values(pikadrafti_round3_id, 4, timmy_id, jane_id, 0, 0, 'evensLosers');
+-- also create a match in round 4
+INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon", "matchType") 
+  values(pikadrafti_round4_id, 1, pekka_id, sakari_id, 0, 0, 'final');
 return;
 END $$ LANGUAGE plpgsql;
 

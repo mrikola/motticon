@@ -86,11 +86,11 @@ userRouter.get("/tournament/:id", async (req, res) => {
   res.send(await getTournament(req));
 });
 
-userRouter.get("/tournament/:id/round", async (req, res) => {
+userRouter.get("/tournament/:tournamentId/round", async (req, res) => {
   res.send(await getCurrentRound(req));
 });
 
-userRouter.get("/tournament/:id/draft", async (req, res) => {
+userRouter.get("/tournament/:tournamentId/draft", async (req, res) => {
   res.send(await getCurrentDraft(req));
 });
 

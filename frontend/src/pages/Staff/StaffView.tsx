@@ -1,4 +1,6 @@
 import { useContext, useState, useEffect } from "react";
+import { useParams } from "react-router";
+import { get } from "../../services/ApiService";
 import { Card, Col, Container, Row, Table, ProgressBar } from "react-bootstrap";
 import { SquareFill } from "react-bootstrap-icons";
 import CardCountdownTimer from "../../components/general/CardCountdownTimer";
@@ -6,16 +8,19 @@ import dayjs, { Dayjs } from "dayjs";
 import * as duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
+import { Round } from "../../types/Tournament";
 
 function StaffView() {
-  const [timeRemaining, setTimeRemaining] = useState<number>();
+  const { tournamentId } = useParams();
   const user = useContext(UserInfoContext);
-  // const [roundStart, setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
-  const [roundStart, setRoundStart] = useState<Dayjs>(dayjs());
+  const [currentRound, setCurrentRound] = useState<Round>();
+  const [timeRemaining, setTimeRemaining] = useState<number>();
+
   const totalMatches = 64;
 
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState<any>([]);
 
+  // dummy data setup
   useEffect(() => {
     for (let n = 1; n <= 16; n++) {
       players.push({
@@ -39,14 +44,36 @@ function StaffView() {
   );
   const percentage = (resultsMissing / totalMatches) * 100;
 
-  useEffect(() => {
-    const now = dayjs();
-    const endTime = roundStart.add(50, "m");
-    const diff = endTime.diff(now, "second");
-    setTimeRemaining(diff);
-  }, [user, roundStart, timeRemaining]);
+  const [roundStart, setRoundStart] = useState<Dayjs>();
 
-  if (user) {
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await get(`/tournament/${tournamentId}/round`);
+      const round = await response.json();
+      setCurrentRound(round);
+      console.log(JSON.stringify(round));
+    };
+
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    console.log("current round: " + currentRound?.startTime);
+    setRoundStart(dayjs(currentRound?.startTime));
+    console.log("roundStart: " + roundStart?.format("DD/MM/YYYY HH:mm"));
+  }, [currentRound]);
+
+  useEffect(() => {
+    //todo: time setting not working properly
+    const now = dayjs();
+    const endTime = dayjs(currentRound?.startTime).add(50, "m");
+    const diff = endTime?.diff(now, "second");
+    setTimeRemaining(diff);
+  }, [user, currentRound, timeRemaining]);
+
+  if (user && currentRound && timeRemaining) {
     return (
       <Container className="mt-3 my-md-4">
         <Row>
@@ -61,7 +88,9 @@ function StaffView() {
                 <Col xs={4} sm={3}>
                   <span className="icon-stack">
                     <SquareFill className="icon-stack-3x" />
-                    <p className="icon-stack-2x text-light">4</p>
+                    <p className="icon-stack-2x text-light">
+                      {currentRound?.roundNumber}
+                    </p>
                   </span>
                 </Col>
                 <Col xs={8} sm={9}>
