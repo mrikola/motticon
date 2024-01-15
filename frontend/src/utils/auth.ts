@@ -35,3 +35,13 @@ export const useIsAdmin = () => {
   }
   return user;
 };
+
+export const useIsTournamentStaff = (tournamentId: number) => {
+  const user = useContext(UserInfoContext);
+  const navigate = useNavigate();
+
+  if (user && !user.tournamentsStaffed.includes(tournamentId)) {
+    navigate("/");
+  }
+  return user;
+};
