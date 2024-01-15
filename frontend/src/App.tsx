@@ -17,6 +17,8 @@ import Landing from "./pages/Landing/Landing";
 import StaffView from "./pages/Staff/StaffView";
 import Tournaments from "./pages/Tournament/Tournaments";
 import TournamentView from "./pages/Tournament/TournamentView";
+import AdminPage from "./pages/Admin/AdminPage";
+import CreateTournament from "./components/admin/CreateTournament";
 
 function App() {
   const routes: RouteObject[] = [
@@ -90,6 +92,14 @@ function App() {
             {
               path: "tournament/:tournamentId/staff",
               Component: StaffView,
+            },
+            {
+              path: "admin",
+              Component: AdminPage,
+            },
+            {
+              path: "admin/create-tournament",
+              Component: CreateTournament,
             },
             {
               path: "*",
