@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card, Col, Row } from "react-bootstrap";
-import { SquareFill, Stopwatch } from "react-bootstrap-icons";
+import { SquareFill } from "react-bootstrap-icons";
 
 type Props = {
   initialSeconds: number;
@@ -8,12 +8,17 @@ type Props = {
 
 function CardCountdownTimer({ initialSeconds }: Props) {
   const [seconds, setSeconds] = useState<number>(initialSeconds);
-  const [timerStyle, setTimerStyle] = useState("display-3");
+  const [timerStyle, setTimerStyle] = useState("icon-stack-1x text-light");
+  const [cardText, setCardText] = useState<string>("Time remaining");
 
   useEffect(() => {
-    // Exit early if countdown is finished
-    if (seconds === 0) {
+    if (seconds <= 0) {
       timeRunOut();
+      // Stop timer if one hour over time
+      if (seconds <= -3599) {
+        setSeconds(-3599);
+        return;
+      }
     }
 
     // Set up the timer
@@ -27,7 +32,8 @@ function CardCountdownTimer({ initialSeconds }: Props) {
 
   // Handle time running out
   function timeRunOut() {
-    setTimerStyle("display-3 text-danger");
+    setTimerStyle("icon-stack-1x over-time");
+    setCardText("Over time");
   }
 
   // Format the remaining time (e.g., “00:05:10” for 5 minutes and 10 seconds)
@@ -36,8 +42,8 @@ function CardCountdownTimer({ initialSeconds }: Props) {
     const minutes = Math.floor(absSeconds / 60)
       .toString()
       .padStart(2, "0");
-    const seconds = (absSeconds % 60).toString().padStart(2, "0");
-    return minutes + ":" + seconds;
+    const secs = (absSeconds % 60).toString().padStart(2, "0");
+    return minutes + ":" + secs;
   }
 
   return (
@@ -46,15 +52,13 @@ function CardCountdownTimer({ initialSeconds }: Props) {
         <Col xs={4} sm={3}>
           <span className="icon-stack countdown-timer">
             <SquareFill className="icon-stack-3x" />
-            <p className="icon-stack-1x text-light">
-              {formatTime(seconds)} {seconds < 0 ? "over" : ""}
-            </p>
+            <p className={timerStyle}>{formatTime(seconds)}</p>
           </span>
         </Col>
         <Col xs={8} sm={9}>
           <Card.Body className="round-card-body">
             <Card.Title className="round-card-title-small">
-              Time left
+              {cardText}
             </Card.Title>
           </Card.Body>
         </Col>

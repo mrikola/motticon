@@ -15,6 +15,8 @@ export class MatchService {
     const matches = await this.repository
       .createQueryBuilder("match")
       .leftJoinAndSelect("match.round", "round")
+      .leftJoinAndSelect("match.player1", "player1")
+      .leftJoinAndSelect("match.player2", "player2")
       .where("round.id = :roundId", { roundId })
       .getMany();
     return matches;

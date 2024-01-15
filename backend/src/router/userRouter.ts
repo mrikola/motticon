@@ -23,6 +23,7 @@ import {
 import {
   getPlayerMatchHistory,
   submitResult,
+  getMatchesForRound,
 } from "../controller/match.controller";
 
 export const userRouter = express.Router();
@@ -44,6 +45,10 @@ userRouter.get("/user/:id/tournaments", async (req, res) => {
 
 userRouter.get("/user/:userId/tournament/:tournamentId", async (req, res) => {
   res.send(await getUserTournamentInfo(req));
+});
+
+userRouter.get("/match/round/:roundId", async (req, res) => {
+  res.send(await getMatchesForRound(req));
 });
 
 userRouter.get(

@@ -1,6 +1,8 @@
 import { Cube } from "./Cube";
+import { Player } from "./User";
 
 export type Round = {
+  id: number;
   roundNumber: number;
   startTime: Date;
 };
@@ -14,6 +16,8 @@ export type Match = {
   tableNumber: number;
   player1GamesWon: number;
   player2GamesWon: number;
+  player1: Player;
+  player2: Player;
 };
 
 export type Tournament = {

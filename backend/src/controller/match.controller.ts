@@ -7,6 +7,11 @@ export const getPlayerMatchHistory = async (req) => {
   return await matchService.getPlayerMatchHistory(userId, tournamentId);
 };
 
+export const getMatchesForRound = async (req) => {
+  const { roundId } = req.params;
+  return await matchService.getMatchesForRound(roundId);
+};
+
 export const submitResult = async (req) => {
   const { matchId, resultSubmittedBy, player1GamesWon, player2GamesWon } =
     req.body;

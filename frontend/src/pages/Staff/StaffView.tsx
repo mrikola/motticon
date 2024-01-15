@@ -1,22 +1,30 @@
 import { useContext, useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { get } from "../../services/ApiService";
-import { Card, Col, Container, Row, Table, ProgressBar } from "react-bootstrap";
+import {
+  Card,
+  Col,
+  Container,
+  Row,
+  Table,
+  ProgressBar,
+  Button,
+} from "react-bootstrap";
 import { SquareFill } from "react-bootstrap-icons";
 import CardCountdownTimer from "../../components/general/CardCountdownTimer";
 import dayjs, { Dayjs } from "dayjs";
 import * as duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
-import { Round } from "../../types/Tournament";
+import { Match, Round } from "../../types/Tournament";
 
 function StaffView() {
   const { tournamentId } = useParams();
   const user = useContext(UserInfoContext);
   const [currentRound, setCurrentRound] = useState<Round>();
   const [timeRemaining, setTimeRemaining] = useState<number>();
-
-  const totalMatches = 64;
+  const [matches, setMatches] = useState<Match[]>();
+  const [totalMatches, setTotalMatches] = useState<number>(0);
 
   const [players, setPlayers] = useState<any>([]);
 
@@ -38,11 +46,6 @@ function StaffView() {
     }
     players.sort((a, b) => (a.table > b.table ? 1 : -1));
   }, []);
-
-  const [resultsMissing, setResultsMissing] = useState(
-    players.filter((player) => player.submitted == false).length
-  );
-  const percentage = (resultsMissing / totalMatches) * 100;
 
   const [roundStart, setRoundStart] = useState<Dayjs>();
 
@@ -69,14 +72,43 @@ function StaffView() {
   }, [currentRound]);
 
   useEffect(() => {
-    //todo: time setting not working properly
     const now = dayjs();
     const endTime = roundStart?.add(50, "m");
     const diff = endTime?.diff(now, "second");
     setTimeRemaining(diff);
   }, [user, roundStart, timeRemaining]);
 
-  if (user && currentRound && timeRemaining) {
+  useEffect(() => {
+    const fetchData = async () => {
+      // note: change static round number 4 back to ${currentRound?.roundNumber}
+      const response = await get(`/match/round/${currentRound?.id}`);
+      const mtchs = await response.json();
+      setMatches(mtchs);
+    };
+    if (currentRound) {
+      fetchData();
+    }
+  }, [currentRound]);
+
+  useEffect(() => {
+    setTotalMatches(matches?.length);
+  }, [matches]);
+
+  const [resultsMissing, setResultsMissing] = useState<number>(0);
+
+  useEffect(() => {
+    if (matches) {
+      setResultsMissing(
+        matches.filter((match) => match.player1GamesWon == 0).length
+      );
+    }
+  }, [matches]);
+
+  const [percentage, setPercentage] = useState<number>(
+    (resultsMissing / totalMatches) * 100
+  );
+
+  if (user && currentRound && timeRemaining && matches) {
     return (
       <Container className="mt-3 my-md-4">
         <Row>
@@ -99,7 +131,7 @@ function StaffView() {
                 <Col xs={8} sm={9}>
                   <Card.Body className="round-card-body">
                     <Card.Title className="round-card-title-small align-middle">
-                      Round TEST number
+                      Round number
                     </Card.Title>
                   </Card.Body>
                 </Col>
@@ -110,7 +142,7 @@ function StaffView() {
             <Col xs={12}>
               <ProgressBar striped variant="primary" now={100 - percentage} />
               <p className="lead">
-                {resultsMissing}/{totalMatches} matches remaining
+                {resultsMissing}/{totalMatches} matches left
               </p>
             </Col>
           </Container>
@@ -120,18 +152,30 @@ function StaffView() {
             <thead>
               <tr>
                 <th>Table</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Result Submitted</th>
+                <th>Player 1</th>
+                <th>Player 2</th>
+                <th>Result</th>
+                <th>Staff result entry</th>
               </tr>
             </thead>
             <tbody>
-              {players.map((player, index) => (
-                <tr key={index} className={player.id === 5 ? "table-info" : ""}>
-                  <td>{player.table}</td>
-                  <td>{player.firstName}</td>
-                  <td>{player.lastName}</td>
-                  <td>{player.submitted === true ? "yes" : "no"}</td>
+              {matches.map((match, index) => (
+                <tr key={index}>
+                  <td>{match.tableNumber}</td>
+                  <td>
+                    {match.player1.firstName} {match.player1.lastName}
+                  </td>
+                  <td>
+                    {match.player2.firstName} {match.player2.lastName}
+                  </td>
+                  <td>
+                    {match.player1GamesWon} – {match.player2GamesWon}
+                  </td>
+                  <td>
+                    <Button variant="primary" type="submit">
+                      Submit result
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
