@@ -1,21 +1,15 @@
 import { useState, useContext, useEffect } from "react";
 import { UserInfoContext } from "../provider/UserInfoProvider";
 import { post } from "../../services/ApiService";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Row,
-  ButtonGroup,
-  ToggleButton,
-  ProgressBar,
-} from "react-bootstrap";
+import { get } from "../../services/ApiService";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { SquareFill } from "react-bootstrap-icons";
 import dayjs, { Dayjs } from "dayjs";
 import * as duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 import CountdownTimer from "../general/CountdownTimer";
+import MatchesRemainingProgressBar from "../general/MatchesRemainingProgressBar";
+import MatchResultRadioButtons from "../general/MatchResultRadioButtons";
 import { Match, Round } from "../../types/Tournament";
 import VerticallyCenteredModal, {
   ModalProps,
@@ -31,25 +25,15 @@ function RoundOngoing({ round, match }: Props) {
 
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
-  const [playerRadioValue, setPlayerRadioValue] = useState(
+  const [roundStart, setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
+  const [totalMatches, setTotalMatches] = useState<number>(0);
+  const [matches, setMatches] = useState<Match[]>();
+  const [playerRadioValue, setPlayerRadioValue] = useState<string>(
     match.player1GamesWon.toString()
   );
-  const [opponentRadioValue, setOpponentRadioValue] = useState(
+  const [opponentRadioValue, setOpponentRadioValue] = useState<string>(
     match.player2GamesWon.toString()
   );
-  const [roundStart, setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
-
-  // placeholder stuff to have something to show in the view
-  const totalMatches = 64;
-  const [ongoingMatches, setOngoingMatches] = useState(
-    Math.floor(Math.random() * totalMatches) + 1
-  );
-  const percentage = (ongoingMatches / totalMatches) * 100;
-  const radios = [
-    { name: "0", value: "0" },
-    { name: "1", value: "1" },
-    { name: "2", value: "2" },
-  ];
   const [modal, setModal] = useState<ModalProps>({
     show: false,
     onHide: () => null,
@@ -117,6 +101,34 @@ function RoundOngoing({ round, match }: Props) {
     setTimeRemaining(diff);
   }, [user, roundStart, timeRemaining]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await get(`/match/round/${round.id}`);
+      const mtchs = await response.json();
+      setMatches(mtchs);
+    };
+    if (round) {
+      fetchData();
+    }
+  }, [round]);
+
+  useEffect(() => {
+    if (matches) {
+      setTotalMatches(matches.length);
+    }
+  }, [matches]);
+
+  const [resultsMissing, setResultsMissing] = useState<number>(0);
+
+  useEffect(() => {
+    if (matches) {
+      // player1GamesWon as placeholder, need some type of "resultReported" boolean in the future
+      setResultsMissing(
+        matches.filter((match) => match.player1GamesWon == 0).length
+      );
+    }
+  }, [matches]);
+
   if (user && timeRemaining) {
     return (
       <Container className="mt-3 my-md-4">
@@ -127,10 +139,10 @@ function RoundOngoing({ round, match }: Props) {
             <CountdownTimer initialSeconds={timeRemaining} />
           </Col>
           <Col xs={12}>
-            <ProgressBar striped variant="primary" now={100 - percentage} />
-            <p className="lead">
-              {ongoingMatches}/{totalMatches} matches remaining
-            </p>
+            <MatchesRemainingProgressBar
+              remainingMatches={resultsMissing}
+              totalMatches={totalMatches}
+            />
           </Col>
         </Row>
         <Row>
@@ -155,24 +167,11 @@ function RoundOngoing({ round, match }: Props) {
           </Container>
         </Row>
         <Row>
-          <ButtonGroup className="round-radio-group">
-            {radios.map((radio, idx) => (
-              <ToggleButton
-                key={idx}
-                size="lg"
-                id={`player-radio-${idx}`}
-                type="radio"
-                variant="round-radio"
-                name="player-radio"
-                value={radio.value}
-                checked={playerRadioValue === radio.value}
-                className="round-radio"
-                onChange={(e) => setPlayerRadioValue(e.currentTarget.value)}
-              >
-                {radio.name}
-              </ToggleButton>
-            ))}
-          </ButtonGroup>
+          <MatchResultRadioButtons
+            name={"player-radio"}
+            value={playerRadioValue}
+            updateFunction={setPlayerRadioValue}
+          />
           <Col xs={12} className="text-center">
             <h2>
               {user.firstName} {user.lastName}
@@ -186,24 +185,11 @@ function RoundOngoing({ round, match }: Props) {
               {opponent.firstName} {opponent.lastName}
             </h2>
           </Col>
-          <ButtonGroup className="round-radio-group">
-            {radios.map((radio, idx) => (
-              <ToggleButton
-                key={idx}
-                size="lg"
-                id={`opponent-radio-${idx}`}
-                type="radio"
-                variant="round-radio"
-                name="opponent-radio"
-                value={radio.value}
-                checked={opponentRadioValue === radio.value}
-                className="round-radio"
-                onChange={(e) => setOpponentRadioValue(e.currentTarget.value)}
-              >
-                {radio.name}
-              </ToggleButton>
-            ))}
-          </ButtonGroup>
+          <MatchResultRadioButtons
+            name={"opponent-radio"}
+            value={opponentRadioValue}
+            updateFunction={setOpponentRadioValue}
+          />
           <div className="d-grid gap-2 my-3">
             <Button
               variant="primary"

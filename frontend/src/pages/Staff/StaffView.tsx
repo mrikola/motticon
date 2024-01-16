@@ -2,15 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { get } from "../../services/ApiService";
-import {
-  Card,
-  Col,
-  Container,
-  Row,
-  Table,
-  ProgressBar,
-  Button,
-} from "react-bootstrap";
+import { Card, Col, Container, Row, Table, Button } from "react-bootstrap";
 import { BoxArrowInLeft, SquareFill } from "react-bootstrap-icons";
 import CardCountdownTimer from "../../components/general/CardCountdownTimer";
 import dayjs, { Dayjs } from "dayjs";
@@ -18,6 +10,7 @@ import * as duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 import { Match, Round } from "../../types/Tournament";
 import { useIsTournamentStaff } from "../../utils/auth";
+import MatchesRemainingProgressBar from "../../components/general/MatchesRemainingProgressBar";
 
 function StaffView() {
   const { tournamentId } = useParams();
@@ -60,7 +53,6 @@ function StaffView() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // note: change static round number 4 back to ${currentRound?.roundNumber}
       const response = await get(`/match/round/${currentRound?.id}`);
       const mtchs = await response.json();
       setMatches(mtchs);
@@ -86,10 +78,6 @@ function StaffView() {
       );
     }
   }, [matches]);
-
-  const [percentage, setPercentage] = useState<number>(
-    (resultsMissing / totalMatches) * 100
-  );
 
   if (user && currentRound && timeRemaining && matches) {
     return (
@@ -128,12 +116,11 @@ function StaffView() {
               </Row>
             </Card>
             <CardCountdownTimer initialSeconds={timeRemaining} />
-
             <Col xs={12}>
-              <ProgressBar striped variant="primary" now={100 - percentage} />
-              <p className="lead">
-                {resultsMissing}/{totalMatches} matches left
-              </p>
+              <MatchesRemainingProgressBar
+                remainingMatches={resultsMissing}
+                totalMatches={totalMatches}
+              />
             </Col>
           </Container>
         </Row>

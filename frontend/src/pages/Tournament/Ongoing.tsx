@@ -27,7 +27,7 @@ const Ongoing = () => {
       setCurrentMatch(match);
       setCurrentDraft(draft);
       // console.log("draft", JSON.stringify(draft));
-      console.log("round", JSON.stringify(round));
+      // console.log("round", JSON.stringify(round));
       // console.log("match", JSON.stringify(match));
     };
 
