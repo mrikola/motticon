@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { get } from "../../services/ApiService";
@@ -16,37 +16,16 @@ import CardCountdownTimer from "../../components/general/CardCountdownTimer";
 import dayjs, { Dayjs } from "dayjs";
 import * as duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
-import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Match, Round } from "../../types/Tournament";
+import { useIsTournamentStaff } from "../../utils/auth";
 
 function StaffView() {
   const { tournamentId } = useParams();
-  const user = useContext(UserInfoContext);
+  const user = useIsTournamentStaff(Number(tournamentId));
   const [currentRound, setCurrentRound] = useState<Round>();
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const [matches, setMatches] = useState<Match[]>();
   const [totalMatches, setTotalMatches] = useState<number>(0);
-
-  const [players, setPlayers] = useState<any>([]);
-
-  // dummy data setup
-  useEffect(() => {
-    for (let n = 1; n <= 16; n++) {
-      players.push({
-        table: n,
-        firstName: "Timo",
-        lastName: "Tuuttari",
-        submitted: false,
-      });
-      players.push({
-        table: n,
-        firstName: "Jaska",
-        lastName: "Jokunen",
-        submitted: true,
-      });
-    }
-    players.sort((a, b) => (a.table > b.table ? 1 : -1));
-  }, []);
 
   const [roundStart, setRoundStart] = useState<Dayjs>();
 
@@ -92,13 +71,16 @@ function StaffView() {
   }, [currentRound]);
 
   useEffect(() => {
-    setTotalMatches(matches?.length);
+    if (matches) {
+      setTotalMatches(matches.length);
+    }
   }, [matches]);
 
   const [resultsMissing, setResultsMissing] = useState<number>(0);
 
   useEffect(() => {
     if (matches) {
+      // player1GamesWon as placeholder, need some type of "resultReported" boolean in the future
       setResultsMissing(
         matches.filter((match) => match.player1GamesWon == 0).length
       );
