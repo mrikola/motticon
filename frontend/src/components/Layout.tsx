@@ -4,13 +4,16 @@ import {
   BoxArrowRight,
   HouseFill,
   TrophyFill,
-  Globe,
+  PersonFillCheck,
 } from "react-bootstrap-icons";
 import { Outlet, useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
+import { UserInfoContext } from "./provider/UserInfoProvider";
+import { useContext } from "react";
 
 const Layout = () => {
+  const user = useContext(UserInfoContext);
   const location = useLocation();
   const isLoggedIn = localStorage.getItem("user") !== null;
   return isLoggedIn && location.pathname !== "/login" ? (
@@ -40,6 +43,15 @@ const Layout = () => {
                     Home
                   </Link>
                 </Nav.Item>
+                {user?.isAdmin && (
+                  <Nav.Item>
+                    <Link className="nav-link" to="/admin">
+                      <PersonFillCheck />
+                      Admin
+                    </Link>
+                  </Nav.Item>
+                )}
+
                 <Nav.Item>
                   <Link className="nav-link" to="/tournaments">
                     <TrophyFill />
@@ -50,12 +62,6 @@ const Layout = () => {
                   <Link className="nav-link" to="/players/1">
                     <PersonFill />
                     Public Profile
-                  </Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Link className="nav-link" to="/tournament/1/staff">
-                    <Globe />
-                    Staff View quick link
                   </Link>
                 </Nav.Item>
               </Nav>

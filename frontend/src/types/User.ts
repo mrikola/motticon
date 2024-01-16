@@ -2,6 +2,7 @@ export type User = {
   id: number;
   firstName: string;
   lastName: string;
+  isAdmin: boolean;
 };
 
 export type Player = User;

@@ -1,5 +1,5 @@
 import { Cube } from "./Cube";
-import { Player } from "./User";
+import { Player, User } from "./User";
 
 export type Round = {
   id: number;
@@ -27,6 +27,7 @@ export type Tournament = {
   startDate: Date;
   endDate: Date;
   cubes: Cube[];
+  staffMembers: User[];
 };
 
 export type TournamentsByType = {

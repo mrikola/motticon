@@ -1,13 +1,19 @@
 import { useContext, useEffect, useState } from "react";
-import { Col, Container } from "react-bootstrap";
+import { Badge, Col, Container } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { get } from "../../services/ApiService";
-import { UsersTournaments } from "../../types/Tournament";
+import { Tournament, UsersTournaments } from "../../types/Tournament";
 import { Link } from "react-router-dom";
 
 const Landing = () => {
   const [tournaments, setTournaments] = useState<UsersTournaments>();
+  const [tournamentsStaffed, setTournamentsStaffed] = useState<Tournament[]>();
   const user = useContext(UserInfoContext);
+  // const [tournamentsStaffedIds, setTournamentsStaffedIds] = useState<number[]>([
+  //   1, 2,
+  // ]);
+  const [tournamentsStaffedIds, setTournamentsStaffedIds] =
+    useState<number[]>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,7 +24,31 @@ const Landing = () => {
     };
 
     fetchData();
-  }, [user, tournaments, get]);
+  }, [user, tournaments]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user && !tournamentsStaffed) {
+        const response = await get(`/user/${user?.id}/staff`);
+        setTournamentsStaffed(await response.json());
+        // for tournamentsStaffed?.length > 0 ? {
+
+        // }
+      }
+    };
+
+    fetchData();
+  }, [user, tournamentsStaffed]);
+
+  useEffect(() => {
+    if (!tournamentsStaffedIds && tournamentsStaffed) {
+      const ids = [];
+      for (const tournament in tournamentsStaffed) {
+        ids.push(tournamentsStaffed[tournament].id);
+      }
+      setTournamentsStaffedIds(ids);
+    }
+  }, [tournamentsStaffed]);
 
   const tournamentTypes: (keyof UsersTournaments)[] = [
     "ongoing",
@@ -26,24 +56,29 @@ const Landing = () => {
     "past",
   ];
 
-  return user && tournaments ? (
+  return user && tournaments && tournamentsStaffedIds ? (
     <Container className="mt-3 my-md-4">
       <Col>
         <h1 className="display-1">
           Welcome, {user?.firstName} {user?.lastName}
         </h1>
-        {user.isAdmin && <Link to="/admin">Go to admin page</Link>}
         {tournaments &&
           tournamentTypes.map((type, index) => {
             const tourneys = tournaments[type];
             return tourneys.length > 0 ? (
               <div key={index}>
                 <h2>Your {type} tournaments</h2>
+
                 {tourneys.map((tournament) => (
                   <div key={tournament.id}>
                     <Link to={`/tournament/${tournament.id}`}>
                       {tournament.name}
                     </Link>
+                    {tournamentsStaffedIds.includes(tournament.id) && (
+                      <Badge bg="primary" className="mx-3">
+                        Staff
+                      </Badge>
+                    )}
                   </div>
                 ))}
               </div>
