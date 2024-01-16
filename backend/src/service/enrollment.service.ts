@@ -79,7 +79,10 @@ export class EnrollmentService {
     // get tournament basics
     const tournament = await this.appDataSource
       .getRepository(Tournament)
-      .findOne({ where: { id: tournamentId } });
+      .createQueryBuilder("tournament")
+      .leftJoinAndSelect("tournament.enrollments", "enrollment")
+      .where("tournament.id = :tournamentId", { tournamentId })
+      .getOne();
 
     // get enrollment
     const enrollment = await this.repository
