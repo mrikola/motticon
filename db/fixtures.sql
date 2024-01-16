@@ -16,9 +16,14 @@ DECLARE
 -- tournaments
   motticon_id integer;
   pikadrafti_id integer;
+-- drafts
+  motticon_draft_id integer;
+  pikadrafti_draft_id integer;
+-- pods
+  pikadrafti_pod_id integer;
 -- rounds
   pikadrafti_round3_id integer;
-  pikadrafti_round4_id integer;
+  pikadrafti_round1_id integer;
 
 BEGIN
 -- these truncations will cascade to every other table
@@ -78,27 +83,33 @@ INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(pikadra
 INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(pikadrafti_id, spike_id, false, false);
 INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(pikadrafti_id, timmy_id, false, false);
 
--- pikadrafti has two 2 round drafts, we create rounds 1-3
-INSERT INTO draft("tournamentId", "draftNumber", "rounds") values(pikadrafti_id, 1, 2);
-INSERT INTO draft("tournamentId", "draftNumber", "rounds") values(pikadrafti_id, 2, 2);
-INSERT INTO round("tournamentId", "roundNumber", "startTime") values(pikadrafti_id, 1, now());
-INSERT INTO round("tournamentId", "roundNumber", "startTime") values(pikadrafti_id, 2, now());
-INSERT INTO round("tournamentId", "roundNumber", "startTime") values(pikadrafti_id, 3, now()) RETURNING id INTO pikadrafti_round3_id;
-INSERT INTO round("tournamentId", "roundNumber", "startTime") values(pikadrafti_id, 4, now()) RETURNING id INTO pikadrafti_round4_id;
+INSERT INTO draft("tournamentId", "draftNumber", "rounds") values(motticon_id, 1, 3) RETURNING id into motticon_draft_id;
 
+INSERT INTO draft("tournamentId", "draftNumber", "rounds") values(pikadrafti_id, 1, 3) RETURNING id into pikadrafti_draft_id;
+INSERT INTO draft_pod("draftId", "cubeId", "podNumber") values(pikadrafti_draft_id, monoblue_id, 1) RETURNING id into pikadrafti_pod_id;
 
--- 4 dummy matches round 3
+INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, pekka_id, 1);
+INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, markku_id, 2);
+INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, timo_id, 3);
+INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, tiina_id, 4);
+INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, john_id, 5);
+INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, jane_id, 6);
+INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, spike_id, 7);
+INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, timmy_id, 8);
+
+INSERT INTO round("tournamentId", "roundNumber", "status", "startTime") values(pikadrafti_id, 1, 'started', now()) RETURNING id INTO pikadrafti_round1_id;
+INSERT INTO round("tournamentId", "roundNumber") values(pikadrafti_id, 2);
+INSERT INTO round("tournamentId", "roundNumber") values(pikadrafti_id, 3);
+
+-- 4 dummy matches round 1
 INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon", "matchType") 
-  values(pikadrafti_round3_id, 1, pekka_id, markku_id, 0, 0, 'oddsWinners');
+  values(pikadrafti_round1_id, 1, pekka_id, john_id, 0, 0, '1v5');
 INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon", "matchType") 
-  values(pikadrafti_round3_id, 2, timo_id, spike_id, 0, 0, 'oddsLosers');
+  values(pikadrafti_round1_id, 2, timo_id, spike_id, 0, 0, '3v7');
 INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon", "matchType") 
-  values(pikadrafti_round3_id, 3, tiina_id, john_id, 0, 0, 'evensWinners');
+  values(pikadrafti_round1_id, 3, markku_id, jane_id, 0, 0, '2v6');
 INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon", "matchType") 
-  values(pikadrafti_round3_id, 4, timmy_id, jane_id, 0, 0, 'evensLosers');
--- also create a match in round 4
-INSERT INTO match("roundId", "tableNumber", "player1Id", "player2Id", "player1GamesWon", "player2GamesWon", "matchType") 
-  values(pikadrafti_round4_id, 1, pekka_id, sakari_id, 0, 0, 'final');
+  values(pikadrafti_round1_id, 4, tiina_id, timmy_id, 0, 0, '4v8');
 return;
 END $$ LANGUAGE plpgsql;
 
