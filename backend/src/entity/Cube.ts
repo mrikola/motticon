@@ -18,6 +18,9 @@ export class Cube {
   @Column()
   description: string;
 
+  @Column({ nullable: true })
+  owner: string;
+
   @Column()
   url: string;
 

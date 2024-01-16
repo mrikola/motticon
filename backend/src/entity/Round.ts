@@ -4,12 +4,12 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   Timestamp,
 } from "typeorm";
 import { Match } from "./Match";
 import { Tournament } from "./Tournament";
+import { RoundStatus } from "../dto/general.dto";
 
 @Entity()
 export class Round {
@@ -24,6 +24,9 @@ export class Round {
 
   @Column("smallint")
   roundNumber: number;
+
+  @Column({ default: "pending" })
+  status: RoundStatus;
 
   @Column("timestamp", { nullable: true })
   startTime: Timestamp;

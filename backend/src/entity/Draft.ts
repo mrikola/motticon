@@ -4,12 +4,12 @@ import {
   Column,
   Unique,
   OneToMany,
-  OneToOne,
   JoinColumn,
   ManyToOne,
 } from "typeorm";
 import { DraftPod } from "./DraftPod";
 import { Tournament } from "./Tournament";
+import { DraftStatus } from "../dto/general.dto";
 
 @Entity()
 @Unique(["tournament", "draftNumber"])
@@ -26,6 +26,9 @@ export class Draft {
 
   @Column("smallint")
   rounds: number;
+
+  @Column({ default: "pending" })
+  status: DraftStatus;
 
   @OneToMany(() => DraftPod, (pod) => pod.draft)
   pods: DraftPod[];

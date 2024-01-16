@@ -9,6 +9,7 @@ import {
 import { Enrollment } from "./Enrollment";
 import { User } from "./User";
 import { Cube } from "./Cube";
+import { TournamentStatus } from "../dto/general.dto";
 
 @Entity()
 export class Tournament {
@@ -26,6 +27,18 @@ export class Tournament {
 
   @Column({ nullable: true })
   endDate: Date;
+
+  @Column({ default: 0 })
+  entryFee: number;
+
+  @Column("smallint", { default: 8 })
+  totalSeats: number;
+
+  @Column("smallint", { default: 0 })
+  preferencesRequired: number;
+
+  @Column({ default: "pending" })
+  status: TournamentStatus;
 
   @OneToMany(() => Enrollment, (enrollment) => enrollment.tournament)
   enrollments: Enrollment[];
