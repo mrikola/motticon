@@ -127,3 +127,40 @@ nav {
     color: $red-400;
   }
 }
+
+.bootstrap-calendar {
+  font: var(--bs-body-font-family);
+  .react-datepicker__header {
+    // header color
+    background-color: $light-bg-subtle;
+  }
+  .react-datepicker__current-month {
+    // january 2024
+    color: var(--bs-heading-color);
+    font-size: calc(1.275rem + 0.3vw);
+    font-weight: normal;
+  }
+  .react-datepicker__day-name {
+    // su/mo/tue
+    color: var(--bs-heading-color);
+  }
+  .react-datepicker__day {
+    // 31.12.2024
+    color: var(--bs-heading-color);
+  }
+  .react-datepicker__day--keyboard-selected {
+    background-color: $primary;
+  }
+  .react-datepicker__navigation {
+    // left/right arrows
+    top: 14px;
+  }
+  .react-datepicker__navigation-icon::before {
+    // navigation arrow color
+    border-color: var(--bs-heading-color);
+  }
+  .react-datepicker__navigation:hover *::before {
+    // navigation arrow color on hover
+    border-color: $primary;
+  }
+}

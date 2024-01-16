@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { useParams } from "react-router";
+import { Link } from "react-router-dom";
 import { get } from "../../services/ApiService";
 import {
   Card,
@@ -10,7 +11,7 @@ import {
   ProgressBar,
   Button,
 } from "react-bootstrap";
-import { SquareFill } from "react-bootstrap-icons";
+import { BoxArrowInLeft, SquareFill } from "react-bootstrap-icons";
 import CardCountdownTimer from "../../components/general/CardCountdownTimer";
 import dayjs, { Dayjs } from "dayjs";
 import * as duration from "dayjs/plugin/duration";
@@ -111,6 +112,13 @@ function StaffView() {
   if (user && currentRound && timeRemaining && matches) {
     return (
       <Container className="mt-3 my-md-4">
+        <Col xs={12}>
+          <Link to={`/tournament/${tournamentId}`}>
+            <Button variant="primary">
+              <BoxArrowInLeft /> Back to tournament
+            </Button>
+          </Link>
+        </Col>
         <Row>
           <h1 className="display-1">
             Hey {user.firstName} {user.lastName}

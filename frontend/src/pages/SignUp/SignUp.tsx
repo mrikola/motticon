@@ -46,32 +46,34 @@ function SignUp() {
       </Col>
       <Row>
         <Form onSubmit={handleSubmit(createAccount)}>
-          <Col xs={6}>
-            <FloatingLabel
-              controlId="firstName"
-              label="First name"
-              className="mb-3"
-            >
-              <Form.Control
-                {...register("firstName")}
-                type="text"
-                placeholder="Jedit"
-              />
-            </FloatingLabel>
-          </Col>
-          <Col xs={6}>
-            <FloatingLabel
-              controlId="lastName"
-              label="Last name"
-              className="mb-3"
-            >
-              <Form.Control
-                {...register("lastName")}
-                type="text"
-                placeholder="Ojanen"
-              />
-            </FloatingLabel>
-          </Col>
+          <Row>
+            <Col xs={6}>
+              <FloatingLabel
+                controlId="firstName"
+                label="First name"
+                className="mb-3"
+              >
+                <Form.Control
+                  {...register("firstName")}
+                  type="text"
+                  placeholder="Jedit"
+                />
+              </FloatingLabel>
+            </Col>
+            <Col xs={6}>
+              <FloatingLabel
+                controlId="lastName"
+                label="Last name"
+                className="mb-3"
+              >
+                <Form.Control
+                  {...register("lastName")}
+                  type="text"
+                  placeholder="Ojanen"
+                />
+              </FloatingLabel>
+            </Col>
+          </Row>
           <Col xs={12}>
             <FloatingLabel
               controlId="email"

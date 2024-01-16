@@ -89,81 +89,105 @@ const CreateTournament = () => {
   }
 
   return user ? (
-    <Container>
+    <Container className="mt-3 my-md-4">
       <Row>
-        <div>
-          <h1>Create tournament</h1>
-        </div>
+        <Col xs={12}>
+          <h1 className="display-1">Create tournament</h1>
+        </Col>
+      </Row>
+      <Row>
         <Form onSubmit={handleSubmit(doCreateTournament)}>
-          <Col xs={6}>
+          <h2>General info</h2>
+          <Col xs={12}>
             <FloatingLabel
               controlId="name"
               label="Tournament name"
               className="mb-3"
             >
-              <Form.Control {...register("name")} type="text" />
+              <Form.Control
+                {...register("name")}
+                type="text"
+                placeholder="Tournament name"
+              />
             </FloatingLabel>
           </Col>
-          <Col xs={6}>
+          <Col xs={12}>
             <FloatingLabel
               controlId="description"
               label="Description"
               className="mb-3"
             >
-              <Form.Control {...register("description")} type="text" />
+              <Form.Control
+                {...register("description")}
+                type="text"
+                placeholder="Description"
+              />
             </FloatingLabel>
           </Col>
-          <Col xs={6}>
-            <Controller
-              control={control}
-              name="startDate"
-              render={({ field }) => (
-                <DatePicker
-                  placeholderText="Start date"
-                  onChange={(date) => field.onChange(date)}
-                  selected={field.value}
-                />
-              )}
-            />
-          </Col>
-          <Col xs={6}>
-            <Controller
-              control={control}
-              name="endDate"
-              render={({ field }) => (
-                <DatePicker
-                  placeholderText="End date"
-                  onChange={(date) => field.onChange(date)}
-                  selected={field.value}
-                />
-              )}
-            />
-          </Col>
-          <Col xs={6}>
-            <Form.Label>Player count</Form.Label>
-            <Form.Select {...register("players")}>
-              {[8, 16, 24, 32, 48, 64].map((count) => (
-                <option key={count} value={count}>
-                  {count}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-
-          <Col xs={6}>
-            <Form.Label>Drafts played</Form.Label>
-            <Form.Select {...register("drafts")}>
-              {[1, 2, 3, 4].map((count) => (
-                <option key={count} value={count}>
-                  {count}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-
-          <Col xs={6}>
+          <Row>
+            <h2>Date</h2>
+            <Col xs={6}>
+              <Controller
+                control={control}
+                name="startDate"
+                render={({ field }) => (
+                  <DatePicker
+                    placeholderText="Start date"
+                    onChange={(date) => field.onChange(date)}
+                    selected={field.value}
+                    calendarClassName="bootstrap-calendar"
+                    className="form-control mb-3"
+                  />
+                )}
+              />
+            </Col>
+            <Col xs={6}>
+              <Controller
+                control={control}
+                name="endDate"
+                render={({ field }) => (
+                  <DatePicker
+                    placeholderText="End date"
+                    onChange={(date) => field.onChange(date)}
+                    selected={field.value}
+                    calendarClassName="bootstrap-calendar"
+                    className="form-control mb-3"
+                  />
+                )}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <h2>Tournament structure</h2>
+            <Col xs={6}>
+              <Form.Label>Player count</Form.Label>
+              <Form.Select {...register("players")} className="mb-3">
+                {[8, 16, 24, 32, 48, 64].map((count) => (
+                  <option key={count} value={count}>
+                    {count}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+            <Col xs={6}>
+              <Form.Label>Drafts played</Form.Label>
+              <Form.Select {...register("drafts")} className="mb-3">
+                {[1, 2, 3, 4].map((count) => (
+                  <option key={count} value={count}>
+                    {count}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+          </Row>
+          <Col xs={12}>
             <Form.Label>Cubes used</Form.Label>
-            <Form.Select {...register("cubeIds")} multiple>
+            <Form.Select
+              {...register("cubeIds")}
+              htmlSize={cubes.length}
+              multiple
+              className="mb-3"
+            >
               {cubes.map((cube) => (
                 <option key={cube.id} value={cube.id}>
                   {cube.title}
@@ -172,7 +196,7 @@ const CreateTournament = () => {
             </Form.Select>
           </Col>
           <Col xs={12} className="d-grid">
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" className="btn-lg">
               Create tournament
             </Button>
           </Col>
