@@ -4,9 +4,15 @@ type Props = {
   name: string;
   value: string;
   updateFunction: (val: string) => void;
+  disabled: boolean;
 };
 
-function MatchResultsRadioButton({ name, value, updateFunction }: Props) {
+function MatchResultsRadioButton({
+  name,
+  value,
+  updateFunction,
+  disabled,
+}: Props) {
   const radios = [
     { name: "0", value: "0" },
     { name: "1", value: "1" },
@@ -27,6 +33,7 @@ function MatchResultsRadioButton({ name, value, updateFunction }: Props) {
           checked={value === radio.value}
           className="round-radio"
           onChange={(e) => updateFunction(e.currentTarget.value)}
+          disabled={disabled}
         >
           {radio.name}
         </ToggleButton>

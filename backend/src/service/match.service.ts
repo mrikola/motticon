@@ -17,6 +17,7 @@ export class MatchService {
       .leftJoin("match.round", "round")
       .leftJoinAndSelect("match.player1", "player1")
       .leftJoinAndSelect("match.player2", "player2")
+      .leftJoinAndSelect("match.resultSubmittedBy", "user")
       .where("round.id = :roundId", { roundId })
       .getMany();
     return matches;

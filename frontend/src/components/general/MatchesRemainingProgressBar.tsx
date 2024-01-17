@@ -11,13 +11,15 @@ function MatchesRemainingProgressBar({
   totalMatches,
 }: Props) {
   useEffect(() => {}, []);
+  const now = 100 - (remainingMatches / totalMatches) * 100;
 
   return (
     <>
       <ProgressBar
         striped
         variant="primary"
-        now={100 - (remainingMatches / totalMatches) * 100}
+        now={now}
+        label={`Round ${now}% done`}
       />
       <p className="lead">
         {remainingMatches}/{totalMatches} matches left

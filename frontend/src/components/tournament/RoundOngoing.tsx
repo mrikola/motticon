@@ -21,9 +21,8 @@ type Props = {
 };
 
 function RoundOngoing({ round, match }: Props) {
-  // VIEW TODO: disable radio buttons if result has been reported
-  // console.log(JSON.stringify(round));
-  // console.log(JSON.stringify(match));
+  console.log(match);
+  // todo: set corrent opponent name
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
   const [roundStart, setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
@@ -178,6 +177,7 @@ function RoundOngoing({ round, match }: Props) {
             name={"player-radio"}
             value={playerRadioValue}
             updateFunction={setPlayerRadioValue}
+            disabled={match.resultSubmittedBy ? true : false}
           />
           <Col xs={12} className="text-center">
             <h2>
@@ -196,15 +196,18 @@ function RoundOngoing({ round, match }: Props) {
             name={"opponent-radio"}
             value={opponentRadioValue}
             updateFunction={setOpponentRadioValue}
+            disabled={match.resultSubmittedBy ? true : false}
           />
           <div className="d-grid gap-2 my-3">
             <Button
               variant="primary"
               className="btn-lg"
               type="submit"
+              disabled={match.resultSubmittedBy ? true : false}
+              aria-disabled={match.resultSubmittedBy ? true : false}
               onClick={() => handleSubmitClicked()}
             >
-              Submit result
+              {match.resultSubmittedBy ? "Result submitted" : "Submit result"}
             </Button>
           </div>
           <VerticallyCenteredModal

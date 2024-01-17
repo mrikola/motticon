@@ -39,6 +39,7 @@ export type Match = {
   player2GamesWon: number;
   player1: Player;
   player2: Player;
+  resultSubmittedBy: Player;
 };
 
 export type Tournament = {

@@ -73,7 +73,10 @@ function StaffView() {
     const fetchData = async () => {
       const response = await get(`/match/round/${currentRound?.id}`);
       const mtchs = await response.json();
+      // sort by table number, descending
+      mtchs.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1));
       setMatches(mtchs);
+      console.log(mtchs);
     };
     if (currentRound) {
       fetchData();
@@ -83,7 +86,6 @@ function StaffView() {
   useEffect(() => {
     if (matches) {
       setTotalMatches(matches.length);
-      // console.log(JSON.stringify(matches));
     }
   }, [matches]);
 
@@ -185,6 +187,8 @@ function StaffView() {
                       variant="primary"
                       type="submit"
                       onClick={() => submitResultClicked(match)}
+                      disabled={match.resultSubmittedBy ? true : false}
+                      aria-disabled={match.resultSubmittedBy ? true : false}
                     >
                       Submit result
                     </Button>
