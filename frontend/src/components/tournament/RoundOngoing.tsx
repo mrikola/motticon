@@ -14,6 +14,7 @@ import { Match, Round } from "../../types/Tournament";
 import VerticallyCenteredModal, {
   ModalProps,
 } from "../general/VerticallyCenteredModal";
+import { Player } from "../../types/User";
 
 type Props = {
   round: Round;
@@ -21,19 +22,13 @@ type Props = {
 };
 
 function RoundOngoing({ round, match }: Props) {
-  console.log(match);
-  // todo: set corrent opponent name
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
   const [roundStart, setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
   const [totalMatches, setTotalMatches] = useState<number>(0);
   const [matches, setMatches] = useState<Match[]>();
-  const [playerRadioValue, setPlayerRadioValue] = useState<string>(
-    match.player1GamesWon.toString()
-  );
-  const [opponentRadioValue, setOpponentRadioValue] = useState<string>(
-    match.player2GamesWon.toString()
-  );
+  const [playerRadioValue, setPlayerRadioValue] = useState<string>();
+  const [opponentRadioValue, setOpponentRadioValue] = useState<string>();
   const [modal, setModal] = useState<ModalProps>({
     show: false,
     onHide: () => null,
@@ -42,10 +37,25 @@ function RoundOngoing({ round, match }: Props) {
     actionText: "",
     actionFunction: () => {},
   });
-  const [opponent, setOpponent] = useState({
-    firstName: "Opponent",
-    lastName: "Lastname",
-  });
+  const [player, setPlayer] = useState<Player>();
+  const [opponent, setOpponent] = useState<Player>();
+
+  useEffect(() => {
+    // check player id's from match and set correct player & opponent objects
+    if (match) {
+      if (match.player1.id === user?.id) {
+        setPlayer(match.player1);
+        setPlayerRadioValue(match.player1GamesWon.toString());
+        setOpponent(match.player2);
+        setOpponentRadioValue(match.player2GamesWon.toString());
+      } else {
+        setPlayer(match.player2);
+        setPlayerRadioValue(match.player2GamesWon.toString());
+        setOpponent(match.player1);
+        setOpponentRadioValue(match.player1GamesWon.toString());
+      }
+    }
+  }, [match]);
 
   // handle result submission
   const submitResult = () => {
@@ -135,7 +145,7 @@ function RoundOngoing({ round, match }: Props) {
     }
   }, [matches]);
 
-  if (user && timeRemaining) {
+  if (user && timeRemaining && player && opponent) {
     return (
       <Container className="mt-3 my-md-4">
         <Row>
@@ -181,7 +191,7 @@ function RoundOngoing({ round, match }: Props) {
           />
           <Col xs={12} className="text-center">
             <h2>
-              {user.firstName} {user.lastName}
+              {player.firstName} {player.lastName}
             </h2>
           </Col>
           <Col xs={12} className="text-center">

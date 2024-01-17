@@ -113,7 +113,9 @@ export class UserService {
       .getRepository(Match)
       .createQueryBuilder("match")
       .leftJoinAndSelect("match.round", "round")
-      .leftJoinAndSelect("match.resultSubmittedBy", "user")
+      .leftJoinAndSelect("match.resultSubmittedBy", "resultSubmittedUser")
+      .leftJoinAndSelect("match.player1", "player1")
+      .leftJoinAndSelect("match.player2", "player2")
       .where("round.id = :roundId", { roundId: round.id })
       .andWhere((qb) =>
         qb
