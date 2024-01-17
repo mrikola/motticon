@@ -5,15 +5,25 @@ import { CheckSquare, CheckSquareFill, XLg } from "react-bootstrap-icons";
 import VerticallyCenteredModal, {
   ModalProps,
 } from "../../../components/general/VerticallyCenteredModal";
+import { Tournament } from "../../../types/Tournament";
 
 type Props = {
   isEnrolled: boolean;
-  tournamentId: number;
   userId: number;
   enrolledChanger: (isEnrolled: boolean) => void;
+  freeSeats: number;
+  freeSeatsUpdater: (val: number) => void;
+  tournament: Tournament;
 };
 
-function Enroll({ isEnrolled, tournamentId, userId, enrolledChanger }: Props) {
+function Enroll({
+  isEnrolled,
+  userId,
+  enrolledChanger,
+  freeSeats,
+  freeSeatsUpdater,
+  tournament,
+}: Props) {
   const [modal, setModal] = useState<ModalProps>({
     show: false,
     onHide: () => null,
@@ -24,7 +34,7 @@ function Enroll({ isEnrolled, tournamentId, userId, enrolledChanger }: Props) {
   });
 
   const doEnroll = () => {
-    post(`/tournament/${tournamentId}/enroll/${userId}`, {}).then(
+    post(`/tournament/${tournament.id}/enroll/${userId}`, {}).then(
       async (resp) => {
         // temporary solution that just checks boolean return (should be object with tournament info)
         const enrolled = await resp.text();
@@ -34,13 +44,14 @@ function Enroll({ isEnrolled, tournamentId, userId, enrolledChanger }: Props) {
             show: false,
           });
           enrolledChanger(true);
+          freeSeatsUpdater(-1);
         }
       }
     );
   };
 
   const doCancel = () => {
-    post(`/tournament/${tournamentId}/cancel/${userId}`, {}).then(
+    post(`/tournament/${tournament.id}/cancel/${userId}`, {}).then(
       async (resp) => {
         // temporary solution that just checks boolean return (should be object with tournament info)
         const cancelled = Boolean(await resp.text());
@@ -50,6 +61,7 @@ function Enroll({ isEnrolled, tournamentId, userId, enrolledChanger }: Props) {
             show: false,
           });
           enrolledChanger(false);
+          freeSeatsUpdater(1);
         }
       }
     );
@@ -77,59 +89,62 @@ function Enroll({ isEnrolled, tournamentId, userId, enrolledChanger }: Props) {
     });
   }
 
-  // todo: add generating of multiple standings based on data
-  return (
-    <Row className="my-3">
-      <Col xs={12}>
-        <h2>Enroll</h2>
-        <p>Price: free</p>
-        <p>Seats left: 8/8</p>
-      </Col>
-      <Col xs={8} className="d-grid gap-2 mx-auto">
-        <Button
-          variant="primary"
-          className="btn-lg"
-          type="submit"
-          onClick={() => handleEnrollClick()}
-          disabled={isEnrolled}
-        >
-          {!isEnrolled ? (
-            <>
-              <CheckSquare /> Enroll
-            </>
-          ) : (
-            <>
-              <CheckSquareFill /> Enrolled
-            </>
-          )}
-        </Button>
-        {isEnrolled && (
+  if (tournament) {
+    return (
+      <Row className="my-3">
+        <Col xs={12}>
+          <h2>Enroll</h2>
+          <p>Price: {tournament.entryFee}</p>
+          <p>
+            Seats left: {freeSeats}/{tournament.totalSeats}
+          </p>
+        </Col>
+        <Col xs={8} className="d-grid gap-2 mx-auto">
           <Button
-            variant="danger"
+            variant="primary"
             className="btn-lg"
             type="submit"
-            onClick={handleCancelClick}
+            onClick={() => handleEnrollClick()}
+            disabled={isEnrolled}
           >
-            <XLg /> Cancel enrollment
+            {!isEnrolled ? (
+              <>
+                <CheckSquare /> Enroll
+              </>
+            ) : (
+              <>
+                <CheckSquareFill /> Enrolled
+              </>
+            )}
           </Button>
-        )}
-      </Col>
+          {isEnrolled && (
+            <Button
+              variant="danger"
+              className="btn-lg"
+              type="submit"
+              onClick={handleCancelClick}
+            >
+              <XLg /> Cancel enrollment
+            </Button>
+          )}
+        </Col>
 
-      <VerticallyCenteredModal
-        show={modal.show}
-        onHide={() =>
-          setModal({
-            ...modal,
-            show: false,
-          })
-        }
-        heading={modal.heading}
-        text={modal.text}
-        actionText={modal.actionText}
-        actionFunction={modal.actionFunction}
-      />
-    </Row>
-  );
+        <VerticallyCenteredModal
+          show={modal.show}
+          onHide={() =>
+            setModal({
+              ...modal,
+              show: false,
+            })
+          }
+          heading={modal.heading}
+          text={modal.text}
+          actionText={modal.actionText}
+          actionFunction={modal.actionFunction}
+        />
+      </Row>
+    );
+  }
 }
 
 export default Enroll;

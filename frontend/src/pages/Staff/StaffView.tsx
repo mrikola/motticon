@@ -11,6 +11,10 @@ dayjs.extend(duration);
 import { Match, Round } from "../../types/Tournament";
 import { useIsTournamentStaff } from "../../utils/auth";
 import MatchesRemainingProgressBar from "../../components/general/MatchesRemainingProgressBar";
+import ResultsInputModal, {
+  ModalProps,
+} from "../../components/general/ResultsInputModal";
+import { Player } from "../../types/User";
 
 function StaffView() {
   const { tournamentId } = useParams();
@@ -19,8 +23,22 @@ function StaffView() {
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const [matches, setMatches] = useState<Match[]>();
   const [totalMatches, setTotalMatches] = useState<number>(0);
-
   const [roundStart, setRoundStart] = useState<Dayjs>();
+  const [modal, setModal] = useState<ModalProps>({
+    show: false,
+    onHide: () => null,
+    heading: "",
+    actionText: "",
+    actionFunction: () => {},
+    match: {
+      id: 1,
+      tableNumber: 1,
+      player1GamesWon: 0,
+      player2GamesWon: 0,
+      player1: {} as Player,
+      player2: {} as Player,
+    },
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,6 +83,7 @@ function StaffView() {
   useEffect(() => {
     if (matches) {
       setTotalMatches(matches.length);
+      // console.log(JSON.stringify(matches));
     }
   }, [matches]);
 
@@ -78,6 +97,19 @@ function StaffView() {
       );
     }
   }, [matches]);
+
+  function submitResult() {}
+
+  function submitResultClicked(clickedMatch: Match) {
+    setModal({
+      show: true,
+      onHide: () => null,
+      heading: "Submit result",
+      actionText: "Confirm result",
+      actionFunction: submitResult,
+      match: clickedMatch,
+    });
+  }
 
   if (user && currentRound && timeRemaining && matches) {
     return (
@@ -149,7 +181,11 @@ function StaffView() {
                     {match.player1GamesWon} – {match.player2GamesWon}
                   </td>
                   <td>
-                    <Button variant="primary" type="submit">
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      onClick={() => submitResultClicked(match)}
+                    >
                       Submit result
                     </Button>
                   </td>
@@ -158,6 +194,19 @@ function StaffView() {
             </tbody>
           </Table>
         </Row>
+        <ResultsInputModal
+          show={modal.show}
+          onHide={() =>
+            setModal({
+              ...modal,
+              show: false,
+            })
+          }
+          heading={modal.heading}
+          actionText={modal.actionText}
+          actionFunction={modal.actionFunction}
+          match={modal.match}
+        />
       </Container>
     );
   }

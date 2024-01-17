@@ -7,15 +7,30 @@ import { Col, Container, Button } from "react-bootstrap";
 import RoundOngoing from "../../components/tournament/RoundOngoing";
 import DraftOngoing from "../../components/tournament/DraftOngoing";
 import { BoxArrowInLeft } from "react-bootstrap-icons";
-import { Draft, Match, Round } from "../../types/Tournament";
+import { Draft, Match, Round, Tournament } from "../../types/Tournament";
 
 const Ongoing = () => {
   const { tournamentId } = useParams();
+  const [tournament, setTournament] = useState<Tournament>();
   const user = useContext(UserInfoContext);
-  const [ongoingStatus, setOngoingStatus] = useState("round");
+  // todo: change this to get state from database
+  const [ongoingStatus, setOngoingStatus] = useState("draft");
+
   const [currentRound, setCurrentRound] = useState<Round>();
   const [currentDraft, setCurrentDraft] = useState<Draft>();
   const [currentMatch, setCurrentMatch] = useState<Match>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await get(`/tournament/${tournamentId}`);
+      const tourny = (await response.json()) as Tournament;
+      setTournament(tourny);
+    };
+
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,18 +51,6 @@ const Ongoing = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await get(`/tournament/${tournamentId}/round`);
-      const testRound = (await response.json()) as Round;
-      console.log("round", JSON.stringify(testRound));
-    };
-
-    if (user) {
-      fetchData();
-    }
-  }, [user]);
-
   function changeOngoingStatus() {
     if (ongoingStatus === "round") {
       setOngoingStatus("draft");
@@ -55,29 +58,30 @@ const Ongoing = () => {
       setOngoingStatus("round");
     }
   }
-
-  return (
-    <Container className="mt-3 my-md-4">
-      <Col xs={12}>
-        <Button variant="danger" onClick={() => changeOngoingStatus()}>
-          Change ongoing round status (TEST)
-        </Button>
-      </Col>
-      <Col xs={12}>
-        <Link to={`/tournament/${tournamentId}`}>
-          <Button variant="primary">
-            <BoxArrowInLeft /> Back to tournament
+  if (tournament) {
+    return (
+      <Container className="mt-3 my-md-4">
+        <Col xs={12}>
+          <Button variant="danger" onClick={() => changeOngoingStatus()}>
+            Change ongoing round status (TEST)
           </Button>
-        </Link>
-      </Col>
-      {currentRound && currentMatch && ongoingStatus === "round" && (
-        <RoundOngoing round={currentRound} match={currentMatch} />
-      )}
-      {currentDraft && ongoingStatus === "draft" && (
-        <DraftOngoing draft={currentDraft} />
-      )}
-    </Container>
-  );
+        </Col>
+        <Col xs={12}>
+          <Link to={`/tournament/${tournamentId}`}>
+            <Button variant="primary">
+              <BoxArrowInLeft /> Back to tournament
+            </Button>
+          </Link>
+        </Col>
+        {currentRound && currentMatch && ongoingStatus === "round" && (
+          <RoundOngoing round={currentRound} match={currentMatch} />
+        )}
+        {currentDraft && ongoingStatus === "draft" && (
+          <DraftOngoing draft={currentDraft} tournament={tournament} />
+        )}
+      </Container>
+    );
+  }
 };
 
 export default Ongoing;

@@ -24,6 +24,7 @@ const TournamentView = () => {
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const [staff, setStaff] = useState<boolean>(false);
   const [ongoingRound, setOngoingRound] = useState<Round>();
+  const [freeSeats, setFreeSeats] = useState<number>(0);
 
   function checkEnrolled(enrollment: Enrollment) {
     if (enrollment && enrollment.player.id === user?.id) {
@@ -38,8 +39,10 @@ const TournamentView = () => {
       );
       // TODO types + view
       const { tournament, enrollment, preferences } = await response.json();
+      console.log(JSON.stringify(enrollment));
       sessionStorage.setItem("currentTournament", tournament.id);
       setActiveTournament(tournament);
+      setFreeSeats(tournament.totalSeats);
       const now = dayjs();
       const tournyStartDate = dayjs(tournament.startDate);
       const tournyEndDate = dayjs(tournament.endDate);
@@ -95,6 +98,10 @@ const TournamentView = () => {
     fetchData();
   }, [tournamentId]);
 
+  function freeSeatsUpdater(increase: number) {
+    setFreeSeats(freeSeats + increase);
+  }
+
   return activeTournament && user ? (
     <Container className="mt-3 my-md-4">
       <Row>
@@ -140,9 +147,11 @@ const TournamentView = () => {
       {tournamentStatus === "future" && (
         <Enroll
           isEnrolled={isEnrolled}
-          tournamentId={activeTournament.id}
           userId={user?.id}
           enrolledChanger={setIsEnrolled}
+          freeSeats={freeSeats}
+          freeSeatsUpdater={freeSeatsUpdater}
+          tournament={activeTournament}
         />
       )}
       {staff && <Staff tournamentId={activeTournament.id} />}

@@ -25,6 +25,10 @@ import {
   submitResult,
   getMatchesForRound,
 } from "../controller/match.controller";
+import {
+  getPodsForDraft,
+  getSeatsForPod,
+} from "../controller/draft.controller";
 
 export const userRouter = express.Router();
 
@@ -81,6 +85,14 @@ userRouter.get("/cube", async (req, res) => {
 
 userRouter.get("/cube/:id", async (req, res) => {
   res.send(await getCube(req));
+});
+
+userRouter.get("/draft/pods/:draftId", async (req, res) => {
+  res.send(await getPodsForDraft(req));
+});
+
+userRouter.get("/draft/seats/:draftPodId", async (req, res) => {
+  res.send(await getSeatsForPod(req));
 });
 
 userRouter.get("/tournaments", async (req, res) => {

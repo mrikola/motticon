@@ -14,6 +14,7 @@ export class DraftService {
     return await this.appDataSource
       .getRepository(DraftPod)
       .createQueryBuilder("pod")
+      .leftJoinAndSelect("pod.cube", "cube")
       .where('pod."draftId" = :draftId', { draftId })
       .getMany();
   }

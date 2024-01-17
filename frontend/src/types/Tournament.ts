@@ -8,7 +8,28 @@ export type Round = {
 };
 
 export type Draft = {
+  id: number;
   draftNumber: number;
+};
+
+export type DraftPod = {
+  id: number;
+  draftId: number;
+  draft: Draft;
+  podNumber: number;
+  cubeId: number;
+  cube: Cube;
+  seats: DraftPodSeat[];
+};
+
+export type DraftPodSeat = {
+  id: number;
+  podId: number;
+  pod: DraftPod;
+  playerId: number;
+  player: User;
+  seat: number;
+  deckPhotoUrl: string;
 };
 
 export type Match = {
@@ -26,6 +47,10 @@ export type Tournament = {
   description: string;
   startDate: Date;
   endDate: Date;
+  entryFee: number;
+  totalSeats: number;
+  preferencesRequired: number;
+  status: string;
   cubes: Cube[];
   staffMembers: User[];
 };
