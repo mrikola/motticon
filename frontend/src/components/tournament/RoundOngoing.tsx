@@ -21,8 +21,9 @@ type Props = {
 };
 
 function RoundOngoing({ round, match }: Props) {
-  // VIEW TODO: move radio buttons to element, disable radio buttons if result has been reported
-
+  // VIEW TODO: disable radio buttons if result has been reported
+  // console.log(JSON.stringify(round));
+  // console.log(JSON.stringify(match));
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
   const [roundStart, setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
@@ -47,6 +48,7 @@ function RoundOngoing({ round, match }: Props) {
     lastName: "Lastname",
   });
 
+  // handle result submission
   const submitResult = () => {
     const matchId = match.id;
     const resultSubmittedBy = user?.id;
@@ -70,6 +72,7 @@ function RoundOngoing({ round, match }: Props) {
     });
   };
 
+  // set modal information when user clicks "submit"
   function handleSubmitClicked() {
     setModal({
       show: true,
@@ -94,6 +97,7 @@ function RoundOngoing({ round, match }: Props) {
     });
   }
 
+  // timer
   useEffect(() => {
     const now = dayjs();
     const endTime = roundStart.add(50, "m");
@@ -101,6 +105,7 @@ function RoundOngoing({ round, match }: Props) {
     setTimeRemaining(diff);
   }, [user, roundStart, timeRemaining]);
 
+  // get all matches for round (for progress bar)
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(`/match/round/${round.id}`);
@@ -112,6 +117,7 @@ function RoundOngoing({ round, match }: Props) {
     }
   }, [round]);
 
+  // set total matches for progress bar
   useEffect(() => {
     if (matches) {
       setTotalMatches(matches.length);
@@ -120,6 +126,7 @@ function RoundOngoing({ round, match }: Props) {
 
   const [resultsMissing, setResultsMissing] = useState<number>(0);
 
+  // ongoing matches for progress bar
   useEffect(() => {
     if (matches) {
       // player1GamesWon as placeholder, need some type of "resultReported" boolean in the future

@@ -14,11 +14,13 @@ const Ongoing = () => {
   const [tournament, setTournament] = useState<Tournament>();
   const user = useContext(UserInfoContext);
   // todo: change this to get state from database
-  const [ongoingStatus, setOngoingStatus] = useState("draft");
+  const [ongoingStatus, setOngoingStatus] = useState<string>();
 
   const [currentRound, setCurrentRound] = useState<Round>();
   const [currentDraft, setCurrentDraft] = useState<Draft>();
   const [currentMatch, setCurrentMatch] = useState<Match>();
+  const [roundStatus, setRoundStatus] = useState<string>();
+  const [draftStatus, setDraftStatus] = useState<string>();
 
   useEffect(() => {
     if (!tournament) {
@@ -42,6 +44,10 @@ const Ongoing = () => {
       setCurrentRound(round);
       setCurrentMatch(match);
       setCurrentDraft(draft);
+
+      setDraftStatus(draft.status);
+
+      setRoundStatus(round.status);
       // console.log("draft", JSON.stringify(draft));
       // console.log("round", JSON.stringify(round));
       // console.log("match", JSON.stringify(match));
@@ -52,6 +58,18 @@ const Ongoing = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (roundStatus && draftStatus) {
+      if (draftStatus == "pending" && roundStatus == "started") {
+        setOngoingStatus("round");
+      } else if (draftStatus == "started" && roundStatus == "pending") {
+        setOngoingStatus("draft");
+      } else {
+        // error checking here
+      }
+    }
+  }, [currentRound, currentDraft, draftStatus, roundStatus]);
+
   function changeOngoingStatus() {
     if (ongoingStatus === "round") {
       setOngoingStatus("draft");
@@ -59,7 +77,7 @@ const Ongoing = () => {
       setOngoingStatus("round");
     }
   }
-  if (tournament) {
+  if (tournament && ongoingStatus) {
     return (
       <Container className="mt-3 my-md-4">
         <Col xs={12}>
