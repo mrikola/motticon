@@ -21,14 +21,15 @@ const Ongoing = () => {
   const [currentMatch, setCurrentMatch] = useState<Match>();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await get(`/tournament/${tournamentId}`);
-      const tourny = (await response.json()) as Tournament;
-      setTournament(tourny);
-    };
-
-    if (user) {
-      fetchData();
+    if (!tournament) {
+      const fetchData = async () => {
+        const response = await get(`/tournament/${tournamentId}`);
+        const tourny = (await response.json()) as Tournament;
+        setTournament(tourny);
+      };
+      if (user) {
+        fetchData();
+      }
     }
   }, [user]);
 

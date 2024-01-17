@@ -39,7 +39,6 @@ const TournamentView = () => {
       );
       // TODO types + view
       const { tournament, enrollment, preferences } = await response.json();
-      console.log(JSON.stringify(enrollment));
       sessionStorage.setItem("currentTournament", tournament.id);
       setActiveTournament(tournament);
       setFreeSeats(tournament.totalSeats);

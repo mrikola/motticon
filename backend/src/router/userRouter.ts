@@ -99,7 +99,7 @@ userRouter.get("/tournaments", async (req, res) => {
   res.send(await getAllTournaments());
 });
 
-userRouter.get("/tournament/:id", async (req, res) => {
+userRouter.get("/tournament/:tournamentId", async (req, res) => {
   res.send(await getTournament(req));
 });
 
