@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { get } from "../../services/ApiService";
+import { get, post } from "../../services/ApiService";
 import { Card, Col, Container, Row, Table, Button } from "react-bootstrap";
 import { BoxArrowInLeft, SquareFill } from "react-bootstrap-icons";
 import CardCountdownTimer from "../../components/general/CardCountdownTimer";
@@ -100,7 +100,30 @@ function StaffView() {
     }
   }, [matches]);
 
-  function submitResult() {}
+  const submitResult = (
+    match: Match,
+    player1GamesWon: number,
+    player2GamesWon: number
+  ) => {
+    const matchId = match.id;
+    const resultSubmittedBy = user?.id;
+    post(`/submitResult`, {
+      matchId,
+      resultSubmittedBy,
+      player1GamesWon,
+      player2GamesWon,
+    }).then(async (resp) => {
+      const jwt = await resp.text();
+      if (jwt !== null) {
+        console.log(jwt);
+        setModal({
+          ...modal,
+          show: false,
+        });
+        // todo: do stuff here
+      }
+    });
+  };
 
   function submitResultClicked(clickedMatch: Match) {
     setModal({
@@ -108,7 +131,7 @@ function StaffView() {
       onHide: () => null,
       heading: "Submit result",
       actionText: "Confirm result",
-      actionFunction: submitResult,
+      actionFunction: submitResult(clickedMatch),
       match: clickedMatch,
     });
   }

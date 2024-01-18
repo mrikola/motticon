@@ -1,6 +1,6 @@
 import { Button, Col, Modal, Row } from "react-bootstrap";
 import MatchResultRadioButtons from "./MatchResultRadioButtons";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Match } from "../../types/Tournament";
 import { Player } from "../../types/User";
 
@@ -58,6 +58,7 @@ function ResultsInputModal({
             name={"player-radio"}
             value={playerRadioValue}
             updateFunction={setPlayerRadioValue}
+            disabled={false}
           />
           <Col xs={12} className="text-center">
             <h2>
@@ -76,6 +77,7 @@ function ResultsInputModal({
             name={"opponent-radio"}
             value={opponentRadioValue}
             updateFunction={setOpponentRadioValue}
+            disabled={false}
           />
           <div className="d-grid gap-2 my-3">
             <Button

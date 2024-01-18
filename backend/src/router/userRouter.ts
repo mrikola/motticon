@@ -8,6 +8,9 @@ import {
   enrollIntoTournament,
   cancelEnrollment,
   dropFromTournament,
+  getFutureTournaments,
+  getPastTournaments,
+  getOngoingTournaments,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -97,6 +100,18 @@ userRouter.get("/draft/seats/:draftPodId", async (req, res) => {
 
 userRouter.get("/tournaments", async (req, res) => {
   res.send(await getAllTournaments());
+});
+
+userRouter.get("/tournaments/future", async (req, res) => {
+  res.send(await getFutureTournaments());
+});
+
+userRouter.get("/tournaments/past", async (req, res) => {
+  res.send(await getPastTournaments());
+});
+
+userRouter.get("/tournaments/ongoing", async (req, res) => {
+  res.send(await getOngoingTournaments());
 });
 
 userRouter.get("/tournament/:tournamentId", async (req, res) => {

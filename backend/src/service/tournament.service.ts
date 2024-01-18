@@ -6,14 +6,17 @@ import { TournamentsByType } from "../dto/tournaments.dto";
 import { Round } from "../entity/Round";
 import { Draft } from "../entity/Draft";
 import { DraftWithRoundNumber } from "../dto/draft.dto";
+import { MatchService } from "./match.service";
 
 export class TournamentService {
   private appDataSource: DataSource;
   private repository: Repository<Tournament>;
+  private matchService: MatchService;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(Tournament);
+    this.matchService = new MatchService();
   }
 
   async getAllTournaments(): Promise<TournamentsByType> {
@@ -34,6 +37,39 @@ export class TournamentService {
       ongoing,
       future,
     };
+  }
+
+  async getOngoingTournaments(): Promise<any> {
+    // temporary hackjob
+    const allTournaments = await this.repository.find();
+
+    const today = new Date();
+    const [past, notPast] = partition(
+      allTournaments,
+      (tournament) => tournament.endDate < today
+    );
+    const [future, ongoing] = partition(
+      notPast,
+      (tournament) => tournament.startDate > today
+    );
+
+    return ongoing;
+  }
+
+  async getFutureTournaments(): Promise<any> {
+    const today = new Date();
+    return await this.repository
+      .createQueryBuilder("tournament")
+      .where("tournament.endDate > :today", { today })
+      .getMany();
+  }
+
+  async getPastTournaments(): Promise<any> {
+    const today = new Date();
+    return await this.repository
+      .createQueryBuilder("tournament")
+      .where("tournament.endDate < :today", { today })
+      .getMany();
   }
 
   async getTournament(id: number): Promise<Tournament> {
@@ -85,5 +121,18 @@ export class TournamentService {
     });
 
     return { ...currentDraft, roundInDraft };
+  }
+
+  async resetRecentMatchesForTournament(tournamentId: number) {
+    const round = await this.getCurrentRound(tournamentId);
+    if (round) {
+      const matches = await this.matchService.getMatchesForRound(round.id);
+      matches.forEach((match) => {
+        this.matchService.submitResult(match.id, null, 0, 0);
+      });
+      return true;
+    } else {
+      return;
+    }
   }
 }

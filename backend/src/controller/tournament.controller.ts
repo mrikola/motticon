@@ -8,6 +8,18 @@ export const getAllTournaments = async () => {
   return await tournamentService.getAllTournaments();
 };
 
+export const getOngoingTournaments = async () => {
+  return await tournamentService.getOngoingTournaments();
+};
+
+export const getFutureTournaments = async () => {
+  return await tournamentService.getFutureTournaments();
+};
+
+export const getPastTournaments = async () => {
+  return await tournamentService.getPastTournaments();
+};
+
 export const getTournament = async (req) => {
   const { tournamentId } = req.params;
   return await tournamentService.getTournament(tournamentId as number);
@@ -21,6 +33,13 @@ export const getCurrentDraft = async (req) => {
 export const getCurrentRound = async (req) => {
   const { tournamentId } = req.params;
   return await tournamentService.getCurrentRound(tournamentId as number);
+};
+
+export const resetRecentMatchesForTournament = async (req) => {
+  const { tournamentId } = req.params;
+  return await tournamentService.resetRecentMatchesForTournament(
+    tournamentId as number
+  );
 };
 
 export const enrollIntoTournament = async (req) => {
