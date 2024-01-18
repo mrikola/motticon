@@ -7,6 +7,7 @@ import { Round } from "../entity/Round";
 import { Draft } from "../entity/Draft";
 import { DraftWithRoundNumber } from "../dto/draft.dto";
 import { MatchService } from "./match.service";
+import { Cube } from "../entity/Cube";
 
 export class TournamentService {
   private appDataSource: DataSource;
@@ -17,6 +18,49 @@ export class TournamentService {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(Tournament);
     this.matchService = new MatchService();
+  }
+
+  async createTournament(
+    name: string,
+    description: string,
+    price: number,
+    players: number,
+    drafts: number,
+    preferencesRequired: number,
+    startDate: Date,
+    endDate: Date,
+    cubeIds: number[]
+  ): Promise<Tournament> {
+    const cubes: Cube[] = await this.appDataSource
+      .getRepository(Cube)
+      .createQueryBuilder()
+      .whereInIds(cubeIds)
+      .getMany();
+
+    const tournament: Tournament = await this.repository.save({
+      name,
+      description,
+      entryFee: price,
+      totalSeats: players,
+      preferencesRequired,
+      startDate,
+      endDate,
+      cubes,
+    });
+
+    for (let index = 0; index < drafts; ++index) {
+      await this.appDataSource
+        .createQueryBuilder()
+        .insert()
+        .into(Draft)
+        .values({
+          draftNumber: index + 1,
+          tournament,
+          rounds: 3,
+        })
+        .execute();
+    }
+    return tournament;
   }
 
   async getAllTournaments(): Promise<TournamentsByType> {

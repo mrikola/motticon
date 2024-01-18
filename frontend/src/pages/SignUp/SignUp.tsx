@@ -22,9 +22,8 @@ function SignUp() {
 
   function createAccount({ firstName, lastName, email, password }: SignupForm) {
     post("/signup", { firstName, lastName, email, password }).then(
-      async (resp) => {
-        const foo = await resp.text();
-        console.log(foo);
+      async (_resp) => {
+        // TODO show some kind of success thing
         navigate("/login");
       }
     );
