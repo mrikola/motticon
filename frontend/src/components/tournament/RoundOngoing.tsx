@@ -138,9 +138,8 @@ function RoundOngoing({ round, match }: Props) {
   // ongoing matches for progress bar
   useEffect(() => {
     if (matches) {
-      // player1GamesWon as placeholder, need some type of "resultReported" boolean in the future
       setResultsMissing(
-        matches.filter((match) => match.player1GamesWon == 0).length
+        matches.filter((match) => match.resultSubmittedBy == null).length
       );
     }
   }, [matches]);

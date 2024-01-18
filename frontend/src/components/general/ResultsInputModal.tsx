@@ -1,15 +1,17 @@
 import { Button, Col, Modal, Row } from "react-bootstrap";
 import MatchResultRadioButtons from "./MatchResultRadioButtons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Match } from "../../types/Tournament";
-import { Player } from "../../types/User";
 
 export type ModalProps = {
   show: boolean;
   onHide: () => void;
   heading: string;
-  actionFunction: () => void;
-  actionText: string;
+  actionFunction: (
+    match: Match,
+    player1GamesWon: string,
+    player2GamesWon: string
+  ) => void;
   match: Match;
 };
 
@@ -18,7 +20,6 @@ function ResultsInputModal({
   onHide,
   heading,
   actionFunction,
-  actionText,
   match,
 }: ModalProps) {
   const [playerRadioValue, setPlayerRadioValue] = useState<string>(
@@ -28,19 +29,10 @@ function ResultsInputModal({
     match.player2GamesWon.toString()
   );
 
-  // useEffect(() => {
-  //   setPlayerRadioValue(match.player1GamesWon.toString());
-  //   setOpponentRadioValue();
-  // }, [match]);
-
-  function handleModalSubmitClicked() {
-    console.log("modal submit clicked");
-  }
-
-  function resetModal() {
+  useEffect(() => {
     setPlayerRadioValue(match.player1GamesWon.toString());
     setOpponentRadioValue(match.player2GamesWon.toString());
-  }
+  }, [show]);
 
   return (
     <Modal
@@ -48,8 +40,9 @@ function ResultsInputModal({
       aria-labelledby="contained-modal-title-vcenter"
       centered
       show={show}
+      onHide={onHide}
     >
-      <Modal.Header>
+      <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">{heading}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -84,19 +77,15 @@ function ResultsInputModal({
               variant="primary"
               className="btn-lg"
               type="submit"
-              onClick={() => handleModalSubmitClicked()}
+              onClick={() =>
+                actionFunction(match, playerRadioValue, opponentRadioValue)
+              }
             >
               Submit result
             </Button>
           </div>
         </Row>
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={onHide} variant="danger">
-          Back
-        </Button>
-        <Button onClick={resetModal}>Reset</Button>
-      </Modal.Footer>
     </Modal>
   );
 }

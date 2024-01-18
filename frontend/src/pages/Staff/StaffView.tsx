@@ -28,7 +28,6 @@ function StaffView() {
     show: false,
     onHide: () => null,
     heading: "",
-    actionText: "",
     actionFunction: () => {},
     match: {
       id: 1,
@@ -37,6 +36,7 @@ function StaffView() {
       player2GamesWon: 0,
       player1: {} as Player,
       player2: {} as Player,
+      resultSubmittedBy: {} as Player,
     },
   });
 
@@ -76,7 +76,6 @@ function StaffView() {
       // sort by table number, descending
       mtchs.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1));
       setMatches(mtchs);
-      console.log(mtchs);
     };
     if (currentRound) {
       fetchData();
@@ -93,18 +92,17 @@ function StaffView() {
 
   useEffect(() => {
     if (matches) {
-      // player1GamesWon as placeholder, need some type of "resultReported" boolean in the future
       setResultsMissing(
-        matches.filter((match) => match.player1GamesWon == 0).length
+        matches.filter((match) => match.resultSubmittedBy == null).length
       );
     }
   }, [matches]);
 
-  const submitResult = (
+  function submitResult(
     match: Match,
     player1GamesWon: number,
     player2GamesWon: number
-  ) => {
+  ) {
     const matchId = match.id;
     const resultSubmittedBy = user?.id;
     post(`/submitResult`, {
@@ -123,15 +121,14 @@ function StaffView() {
         // todo: do stuff here
       }
     });
-  };
+  }
 
   function submitResultClicked(clickedMatch: Match) {
     setModal({
       show: true,
       onHide: () => null,
       heading: "Submit result",
-      actionText: "Confirm result",
-      actionFunction: submitResult(clickedMatch),
+      actionFunction: submitResult,
       match: clickedMatch,
     });
   }
@@ -230,7 +227,6 @@ function StaffView() {
             })
           }
           heading={modal.heading}
-          actionText={modal.actionText}
           actionFunction={modal.actionFunction}
           match={modal.match}
         />
