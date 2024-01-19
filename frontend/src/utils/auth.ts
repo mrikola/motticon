@@ -40,7 +40,11 @@ export const useIsTournamentStaff = (tournamentId: number) => {
   const user = useContext(UserInfoContext);
   const navigate = useNavigate();
 
-  if (user && !user.tournamentsStaffed.includes(tournamentId)) {
+  if (
+    user &&
+    !user.isAdmin &&
+    !user.tournamentsStaffed.includes(tournamentId)
+  ) {
     navigate("/");
   }
   return user;

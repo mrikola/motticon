@@ -135,7 +135,7 @@ export class TournamentService {
 
   async getCurrentDraft(id: number): Promise<DraftWithRoundNumber> {
     const currentRound = await this.getCurrentRound(id);
-    return this.getDraftByRoundNumber(id, currentRound.roundNumber);
+    return this.getDraftByRoundNumber(id, currentRound?.roundNumber);
   }
 
   async getDraftByRoundNumber(
