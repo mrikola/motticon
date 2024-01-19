@@ -4,6 +4,31 @@ import { TournamentService } from "../service/tournament.service";
 const tournamentService = new TournamentService();
 const enrollmentService = new EnrollmentService();
 
+export const createTournament = async (req) => {
+  const {
+    name,
+    description,
+    price,
+    players,
+    drafts,
+    preferencesRequired,
+    startDate,
+    endDate,
+    cubeIds,
+  } = req.body;
+  return await tournamentService.createTournament(
+    name,
+    description,
+    price,
+    players,
+    drafts,
+    preferencesRequired,
+    startDate,
+    endDate,
+    cubeIds
+  );
+};
+
 export const getAllTournaments = async () => {
   return await tournamentService.getAllTournaments();
 };

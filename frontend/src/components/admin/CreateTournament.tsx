@@ -20,8 +20,10 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 type TournamentForm = {
   name: string;
   description: string;
+  price: number;
   players: number;
   drafts: number;
+  preferencesRequired: number;
   startDate: Date;
   endDate: Date;
   cubeIds: number[];
@@ -49,42 +51,17 @@ const CreateTournament = () => {
       description: "",
       players: 8,
       drafts: 1,
+      preferencesRequired: 0,
       startDate: undefined,
       endDate: undefined,
       cubeIds: [],
     },
   });
 
-  function doCreateTournament({
-    name,
-    description,
-    players,
-    drafts,
-    startDate,
-    endDate,
-    cubeIds,
-  }: TournamentForm) {
-    console.log(
-      "vormi",
-      name,
-      description,
-      players,
-      drafts,
-      startDate,
-      endDate,
-      cubeIds
-    );
-    post("/tournament/create", {
-      name,
-      description,
-      players,
-      drafts,
-      startDate,
-      endDate,
-      cubeIds,
-    }).then(async (resp) => {
-      const foo = await resp.text();
-      console.log(foo);
+  function doCreateTournament(form: TournamentForm) {
+    post("/tournament/create", form).then(async (resp) => {
+      const foo = await resp.json();
+      console.log(foo.id);
       navigate("/admin");
     });
   }
@@ -127,6 +104,19 @@ const CreateTournament = () => {
                 {...register("description")}
                 type="text"
                 placeholder="Description"
+              />
+            </FloatingLabel>
+          </Col>
+          <Col xs={12}>
+            <FloatingLabel
+              controlId="price"
+              label="Price (in €)"
+              className="mb-3"
+            >
+              <Form.Control
+                {...register("price")}
+                type="text"
+                placeholder="0"
               />
             </FloatingLabel>
           </Col>
@@ -197,6 +187,16 @@ const CreateTournament = () => {
               {cubes.map((cube) => (
                 <option key={cube.id} value={cube.id}>
                   {cube.title}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
+          <Col xs={6}>
+            <Form.Label>Cube preferences required</Form.Label>
+            <Form.Select {...register("preferencesRequired")} className="mb-3">
+              {[0, 1, 2, 3, 4, 5].map((count) => (
+                <option key={count} value={count}>
+                  {count}
                 </option>
               ))}
             </Form.Select>
