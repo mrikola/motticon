@@ -22,3 +22,20 @@ export const submitResult = async (req) => {
     player2GamesWon
   );
 };
+
+export const staffSubmitResult = async (req) => {
+  const {
+    roundId,
+    matchId,
+    resultSubmittedBy,
+    player1GamesWon,
+    player2GamesWon,
+  } = req.body;
+  return await matchService.staffSubmitResult(
+    roundId,
+    matchId,
+    resultSubmittedBy,
+    player1GamesWon,
+    player2GamesWon
+  );
+};

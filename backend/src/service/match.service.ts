@@ -60,6 +60,27 @@ export class MatchService {
       .execute();
   }
 
+  async staffSubmitResult(
+    roundId: number,
+    matchId: number,
+    resultSubmittedBy: number,
+    player1GamesWon: number,
+    player2GamesWon: number
+  ) {
+    await this.repository
+      .createQueryBuilder("match")
+      .update(Match)
+      .set({
+        player1GamesWon,
+        player2GamesWon,
+        resultSubmittedBy: { id: resultSubmittedBy },
+      })
+      .where("id = :matchId", { matchId })
+      .execute();
+    const matches = this.getMatchesForRound(roundId);
+    return matches;
+  }
+
   async getPlayerMatchHistory(userId, tournamentId) {
     return await this.repository
       .createQueryBuilder("match")

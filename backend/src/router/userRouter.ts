@@ -26,6 +26,7 @@ import {
 import {
   getPlayerMatchHistory,
   submitResult,
+  staffSubmitResult,
   getMatchesForRound,
 } from "../controller/match.controller";
 import {
@@ -76,6 +77,17 @@ userRouter.post("/submitResult", async (req, res) => {
   const { matchId, resultSubmittedBy, player1GamesWon, player2GamesWon } =
     req.body;
   res.send(await submitResult(req));
+});
+
+userRouter.post("/staff/submitResult", async (req, res) => {
+  const {
+    roundId,
+    matchId,
+    resultSubmittedBy,
+    player1GamesWon,
+    player2GamesWon,
+  } = req.body;
+  res.send(await staffSubmitResult(req));
 });
 
 userRouter.get("/user/:userId/staff", async (req, res) => {

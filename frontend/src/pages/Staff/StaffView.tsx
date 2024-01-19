@@ -76,6 +76,7 @@ function StaffView() {
       // sort by table number, descending
       mtchs.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1));
       setMatches(mtchs);
+      console.log(currentRound?.id);
     };
     if (currentRound) {
       fetchData();
@@ -105,20 +106,22 @@ function StaffView() {
   ) {
     const matchId = match.id;
     const resultSubmittedBy = user?.id;
-    post(`/submitResult`, {
+    const roundId = currentRound?.id;
+    post(`/staff/submitResult`, {
+      roundId,
       matchId,
       resultSubmittedBy,
       player1GamesWon,
       player2GamesWon,
     }).then(async (resp) => {
-      const jwt = await resp.text();
+      const jwt = await resp.json();
       if (jwt !== null) {
         console.log(jwt);
+        setMatches(jwt);
         setModal({
           ...modal,
           show: false,
         });
-        // todo: do stuff here
       }
     });
   }
