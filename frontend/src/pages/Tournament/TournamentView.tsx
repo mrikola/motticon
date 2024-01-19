@@ -24,7 +24,7 @@ const TournamentView = () => {
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const [staff, setStaff] = useState<boolean>(false);
   const [ongoingRound, setOngoingRound] = useState<Round>();
-  const [freeSeats, setFreeSeats] = useState<number>(0);
+  const [freeSeats, setFreeSeats] = useState<number>();
 
   function checkEnrolled(enrollment: Enrollment) {
     if (enrollment && enrollment.player.id === user?.id) {
@@ -37,11 +37,10 @@ const TournamentView = () => {
       const response = await get(
         `/user/${user?.id}/tournament/${tournamentId}`
       );
-      // TODO types + view
       const { tournament, enrollment, preferences } = await response.json();
       sessionStorage.setItem("currentTournament", tournament.id);
       setActiveTournament(tournament);
-      setFreeSeats(tournament.totalSeats);
+      setFreeSeats(tournament.totalSeats - tournament.enrollments.length);
       const now = dayjs();
       const tournyStartDate = dayjs(tournament.startDate);
       const tournyEndDate = dayjs(tournament.endDate);

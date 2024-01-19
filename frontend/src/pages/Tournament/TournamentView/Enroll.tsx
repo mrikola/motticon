@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { post } from "../../../services/ApiService";
 import { Col, Row, Button } from "react-bootstrap";
-import { CheckSquare, CheckSquareFill, XLg } from "react-bootstrap-icons";
+import {
+  CheckSquare,
+  CheckSquareFill,
+  XLg,
+  ExclamationTriangleFill,
+} from "react-bootstrap-icons";
 import VerticallyCenteredModal, {
   ModalProps,
 } from "../../../components/general/VerticallyCenteredModal";
@@ -32,6 +37,21 @@ function Enroll({
     actionText: "",
     actionFunction: () => {},
   });
+  const [enrollButtonText, setEnrollButtonText] = useState<string>();
+  const [enrollButtonIcon, setEnrollButtonIcon] = useState < icon();
+
+  useEffect(() => {
+    if (isEnrolled) {
+      setEnrollButtonText("Enrolled");
+      setEnrollButtonIcon(<CheckSquareFill />);
+    } else if (!isEnrolled && freeSeats > 0) {
+      setEnrollButtonText("Enroll");
+      setEnrollButtonIcon(<CheckSquare />);
+    } else if (freeSeats === 0) {
+      setEnrollButtonText("Tournament full");
+      setEnrollButtonIcon(<ExclamationTriangleFill />);
+    }
+  }, []);
 
   const doEnroll = () => {
     post(`/tournament/${tournament.id}/enroll/${userId}`, {}).then(
@@ -105,17 +125,9 @@ function Enroll({
             className="btn-lg"
             type="submit"
             onClick={() => handleEnrollClick()}
-            disabled={isEnrolled}
+            disabled={isEnrolled || freeSeats === 0 ? true : false}
           >
-            {!isEnrolled ? (
-              <>
-                <CheckSquare /> Enroll
-              </>
-            ) : (
-              <>
-                <CheckSquareFill /> Enrolled
-              </>
-            )}
+            {enrollButtonIcon} {enrollButtonText}
           </Button>
           {isEnrolled && (
             <Button
@@ -128,7 +140,6 @@ function Enroll({
             </Button>
           )}
         </Col>
-
         <VerticallyCenteredModal
           show={modal.show}
           onHide={() =>
