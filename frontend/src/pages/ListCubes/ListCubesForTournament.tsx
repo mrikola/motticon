@@ -13,10 +13,10 @@ import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import styles from "./ListCubes.module.css";
 import Loading from "../../components/general/Loading";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const ListCubesForTournament = () => {
   const { tournamentId } = useParams();
-  const user = useContext(UserInfoContext);
   const [cubes, setCubes] = useState<Cube[]>([]);
   const [tournament, setTournament] = useState<Tournament>();
 
@@ -40,6 +40,11 @@ const ListCubesForTournament = () => {
 
   return tournament ? (
     <Container className="mt-3 my-md-4">
+      <HelmetProvider>
+        <Helmet>
+          <title>MottiCon &#9632; {tournament.name} Cubes</title>
+        </Helmet>
+      </HelmetProvider>
       <Row>
         <Link to={`/tournament/${tournamentId}`}>
           <Button variant="primary">

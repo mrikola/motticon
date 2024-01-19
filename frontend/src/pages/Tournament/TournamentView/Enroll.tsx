@@ -38,7 +38,8 @@ function Enroll({
     actionFunction: () => {},
   });
   const [enrollButtonText, setEnrollButtonText] = useState<string>();
-  const [enrollButtonIcon, setEnrollButtonIcon] = useState < icon();
+  // consider creating an Icon component and passing it the icon name as a prop
+  const [enrollButtonIcon, setEnrollButtonIcon] = useState();
 
   useEffect(() => {
     if (isEnrolled) {

@@ -12,7 +12,6 @@ import ListCubesForTournament from "./pages/ListCubes/ListCubesForTournament";
 import Standings from "./pages/Standings/Standings";
 import PublicProfile from "./pages/PublicProfile/PublicProfile";
 import Ongoing from "./pages/Tournament/Ongoing";
-import TournamentStaffView from "./pages/Tournament/TournamentStaffView";
 import Landing from "./pages/Landing/Landing";
 import StaffView from "./pages/Staff/StaffView";
 import Tournaments from "./pages/Tournament/Tournaments";

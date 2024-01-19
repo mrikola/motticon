@@ -4,6 +4,7 @@ import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { get } from "../../services/ApiService";
 import { Tournament, UsersTournaments } from "../../types/Tournament";
 import { Link } from "react-router-dom";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Landing = () => {
   const [tournaments, setTournaments] = useState<UsersTournaments>();
@@ -58,6 +59,11 @@ const Landing = () => {
 
   return user && tournaments && tournamentsStaffedIds ? (
     <Container className="mt-3 my-md-4">
+      <HelmetProvider>
+        <Helmet>
+          <title>MottiCon &#9632; Home</title>
+        </Helmet>
+      </HelmetProvider>
       <Col>
         <h1 className="display-1">
           Welcome, {user?.firstName} {user?.lastName}

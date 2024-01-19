@@ -5,6 +5,7 @@ import DeckImage from "/img/draft_pool.png";
 import { Cube } from "../../types/Cube";
 import { get } from "../../services/ApiService";
 import { Image, List, PenFill, BoxArrowInLeft } from "react-bootstrap-icons";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const ViewCube = () => {
   const { cubeId, tournamentId } = useParams();
@@ -53,6 +54,11 @@ const ViewCube = () => {
   if (cube) {
     return (
       <>
+        <HelmetProvider>
+          <Helmet>
+            <title>MottiCon &#9632; {cube.title}</title>
+          </Helmet>
+        </HelmetProvider>
         <div
           className="cube-masthead text-light mb-3"
           style={{ backgroundImage: `url(${ImageURL})` }}

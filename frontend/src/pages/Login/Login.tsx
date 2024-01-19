@@ -11,6 +11,8 @@ import {
 } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { BoxArrowInRight, PersonPlusFill } from "react-bootstrap-icons";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 type LoginForm = {
   email: string;
@@ -38,10 +40,19 @@ const Login = () => {
   };
 
   return (
-    <Container>
+    <Container className="mt-3 my-md-4">
+      <HelmetProvider>
+        <Helmet>
+          <title>MottiCon &#9632; Login</title>
+        </Helmet>
+      </HelmetProvider>
       <Row>
-        <Col>
-          <Form onSubmit={handleSubmit(doLogin)}>
+        <h1 className="display-1">MottiCon</h1>
+      </Row>
+      <Row>
+        <Form onSubmit={handleSubmit(doLogin)}>
+          <h2>Already have an account? Log in.</h2>
+          <Col xs={12}>
             <FloatingLabel
               controlId="email"
               label="Email address"
@@ -53,6 +64,8 @@ const Login = () => {
                 placeholder="Enter email"
               />
             </FloatingLabel>
+          </Col>
+          <Col xs={12}>
             <FloatingLabel
               controlId="password"
               label="Password"
@@ -64,14 +77,21 @@ const Login = () => {
                 placeholder="Password"
               />
             </FloatingLabel>
+          </Col>
+          <Col xs={12} className="d-grid">
             <Button variant="primary" type="submit">
-              Login
+              <BoxArrowInRight className="fs-4" /> Login
             </Button>
-          </Form>
-        </Col>
+          </Col>
+        </Form>
       </Row>
-      <Row>
-        <Link to="/signup">Sign up</Link>
+      <Row className="my-3">
+        <Col xs={12} className="d-grid">
+          <h2>No account yet? Sign up.</h2>
+          <Link to="/signup" className="btn btn-primary">
+            <PersonPlusFill className="fs-4" /> Sign up
+          </Link>
+        </Col>
       </Row>
     </Container>
   );

@@ -2,12 +2,15 @@ import { Table, Container, Row, Button } from "react-bootstrap";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { BoxArrowInLeft } from "react-bootstrap-icons";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 function Standings() {
   const { roundNumber, tournamentId } = useParams();
   const players = [];
   const max = 15;
   const min = 0;
+
+  // TODO: get actual standings
 
   for (let n = 1; n <= 50; n++) {
     //generate random match points that are multiples of 3
@@ -25,6 +28,11 @@ function Standings() {
 
   return (
     <Container className="mt-3 my-md-4">
+      <HelmetProvider>
+        <Helmet>
+          <title>MottiCon &#9632; Standings Round {roundNumber}</title>
+        </Helmet>
+      </HelmetProvider>
       <Row>
         <Link to={`/tournament/${tournamentId}`}>
           <Button variant="primary">

@@ -9,6 +9,7 @@ import {
 import { useForm } from "react-hook-form";
 import { post } from "../../services/ApiService";
 import { useNavigate } from "react-router";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 type SignupForm = {
   firstName: string;
@@ -40,6 +41,11 @@ function SignUp() {
 
   return (
     <Container className="mt-3 my-md-4">
+      <HelmetProvider>
+        <Helmet>
+          <title>MottiCon &#9632; Sign up</title>
+        </Helmet>
+      </HelmetProvider>
       <Col>
         <h1 className="display-1">Create account</h1>
       </Col>
