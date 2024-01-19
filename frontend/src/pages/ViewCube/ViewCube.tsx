@@ -80,7 +80,7 @@ const ViewCube = () => {
                 <Col className="text-center">
                   <h1 className="display-1">{cube.title}</h1>
                   <p className="lead">
-                    <PenFill /> Cube Designer: John Doe
+                    <PenFill /> Cube Designer: {cube.owner}
                   </p>
                   <p>{cube.description}</p>
                   <div className="d-grid gap-2">

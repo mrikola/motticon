@@ -48,7 +48,7 @@ const ListCubes = () => {
                     </Card.Title>
                     <Card.Text>{cube.description}</Card.Text>
                     <div className="cube-designer mb-2">
-                      <small>Designed by Timo Tuuttari</small>
+                      <small>Designed by {cube.owner}</small>
                     </div>
                     <Link to={`/cube/${cube.id}`}>
                       <Button variant="primary">

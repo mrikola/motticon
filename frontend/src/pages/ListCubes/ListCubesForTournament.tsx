@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import {
@@ -10,7 +10,6 @@ import { get } from "../../services/ApiService";
 import { Cube } from "../../types/Cube";
 import { Tournament } from "../../types/Tournament";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
-import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import styles from "./ListCubes.module.css";
 import Loading from "../../components/general/Loading";
 import { Helmet, HelmetProvider } from "react-helmet-async";
@@ -76,7 +75,7 @@ const ListCubesForTournament = () => {
                     </Card.Title>
                     <Card.Text>{cube.description}</Card.Text>
                     <div className="cube-designer mb-2">
-                      <small>Designed by Timo Tuuttari</small>
+                      <small>Designed by {cube.owner}</small>
                     </div>
                     <Link to={`/tournament/${tournamentId}/cubes/${cube.id}`}>
                       <Button variant="primary">
