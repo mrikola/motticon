@@ -30,7 +30,7 @@ export class User {
   @Column()
   isAdmin: boolean;
 
-  @Column({ type: "decimal" })
+  @Column({ type: "decimal", nullable: true })
   rating: number;
 
   @OneToMany(() => Enrollment, (enrollment) => enrollment.player)
