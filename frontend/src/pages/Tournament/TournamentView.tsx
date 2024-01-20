@@ -23,9 +23,11 @@ const TournamentView = () => {
   const [cubes, setCubes] = useState<Cube[]>([]);
   const [tournamentStatus, setTournamentStatus] = useState<string>();
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
-  const [staff, setStaff] = useState<boolean>(false);
   const [ongoingRound, setOngoingRound] = useState<Round>();
   const [freeSeats, setFreeSeats] = useState<number>();
+
+  const isStaff =
+    user?.isAdmin || user?.tournamentsStaffed.includes(Number(tournamentId));
 
   function checkEnrolled(enrollment: Enrollment) {
     if (enrollment && enrollment.player.id === user?.id) {
@@ -59,22 +61,6 @@ const TournamentView = () => {
       fetchData();
     }
   }, [user, tournamentId]);
-
-  // check if user is staff
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await get(`/user/${user?.id}/staff`);
-      const staffed = (await response.json()) as Tournament[];
-      staffed.map((tournament) => {
-        if (tournament.id === Number(tournamentId)) {
-          setStaff(true);
-        }
-      });
-    };
-    if (user) {
-      fetchData();
-    }
-  }, [user]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -159,7 +145,7 @@ const TournamentView = () => {
           tournament={activeTournament}
         />
       )}
-      {staff && <Staff tournamentId={activeTournament.id} />}
+      {isStaff && <Staff tournamentId={activeTournament.id} />}
       {tournamentStatus != "future" && (
         <Standings roundNumber={5} tournamentId={activeTournament.id} />
       )}
