@@ -671,6 +671,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/elo-rank@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@types/elo-rank/-/elo-rank-1.0.3.tgz#a5d5c7568a0317ab7f28f3a50ccb2c309198e5af"
+  integrity sha512-5I0+wFg+6+U7lzNjCSiJYX2YJR2UN/0QWFguaO54SM5uJ4HiZvI73QEoXUOXotPg/Ms9zRtNBHDxOcp07uKktg==
+
 "@types/express-serve-static-core@^4.17.33":
   version "4.17.41"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.41.tgz#5077defa630c2e8d28aa9ffc2c01c157c305bef6"
@@ -1447,6 +1452,11 @@ electron-to-chromium@^1.4.601:
   version "1.4.618"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.618.tgz#98899b3c78495157cc2fe4944316f686939a435d"
   integrity sha512-mTM2HieHLxs1RbD/R/ZoQLMsGI8lWIkP17G7cx32mJRBJt9wlNPkXwE3sYg/OnNb5GBkus98lXatSthoL8Y5Ag==
+
+elo-rank@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/elo-rank/-/elo-rank-1.0.4.tgz#dd6b62f730a7d26210750c34d5b9057d20885df6"
+  integrity sha512-K1nDpqC2AzWx7EykoOnTwbci50xZPYBsfyR2Tk4h/tVnqvr6n1+8gOlWzK3pxetN5Cmx7XbPT9D0Zam2ikM6Bw==
 
 emoji-regex@^8.0.0:
   version "8.0.0"

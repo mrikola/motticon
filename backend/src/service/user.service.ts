@@ -10,6 +10,7 @@ import {
 import { TournamentService } from "./tournament.service";
 import { Match } from "../entity/Match";
 import { encodePassword } from "../auth/auth";
+import EloRank = require("elo-rank");
 
 export class UserService {
   private appDataSource: DataSource;
@@ -41,6 +42,12 @@ export class UserService {
     } catch {
       return false;
     }
+  }
+
+  async getUser(id: number): Promise<User> {
+    return await this.repository.findOne({
+      where: { id },
+    });
   }
 
   async getUserByEmail(email: string): Promise<User> {
@@ -125,5 +132,67 @@ export class UserService {
       .getOne();
 
     return { round, draft, match };
+  }
+
+  async setUserRating(rating: number, userId: number) {
+    const user = await this.repository
+      .createQueryBuilder()
+      .update(User)
+      .set({
+        rating: rating as number,
+      })
+      .where("id = :userId", { userId })
+      .execute();
+  }
+
+  async resetEloForUser(userId: number) {
+    const user = await this.repository
+      .createQueryBuilder()
+      .update(User)
+      .set({
+        rating: 1600,
+      })
+      .where("id = :userId", { userId })
+      .execute();
+    return user;
+  }
+
+  async updateElo(player1Id: number, player2Id: number) {
+    // create object with K-Factor (without it defaults to 32)
+    const elo = new EloRank(8);
+
+    const playerA = await this.getUser(player1Id);
+    const playerB = await this.getUser(player2Id);
+    const playerARating = playerA.rating;
+    const playerBRating = playerB.rating;
+
+    // Gets expected score for first parameter
+    const expectedScoreA = elo.getExpected(
+      playerARating as number,
+      playerBRating as number
+    );
+    const expectedScoreB = elo.getExpected(
+      playerBRating,
+      playerARating
+    ) as number;
+
+    // update score, 1 if won 0 if lost
+    const playerANewRating = elo.updateRating(expectedScoreA, 1, playerARating);
+    const playerBNewRating = elo.updateRating(expectedScoreB, 0, playerBRating);
+
+    this.setUserRating(playerANewRating, playerA.id);
+    this.setUserRating(playerBNewRating, playerB.id);
+    return [
+      {
+        playerId: player1Id,
+        ratingNew: playerANewRating,
+        exp: expectedScoreA,
+      },
+      {
+        playerId: player2Id,
+        ratingNew: playerBNewRating,
+        exp: expectedScoreB,
+      },
+    ];
   }
 }

@@ -22,6 +22,7 @@ import {
   getUsersTournaments,
   getTournamentsStaffed,
   getCurrentDraftAndMatch,
+  getUser,
 } from "../controller/user.controller";
 import {
   getPlayerMatchHistory,
@@ -92,6 +93,10 @@ userRouter.post("/staff/submitResult", async (req, res) => {
 
 userRouter.get("/user/:userId/staff", async (req, res) => {
   res.send(await getTournamentsStaffed(req));
+});
+
+userRouter.get("/user/:id", async (req, res) => {
+  res.send(await getUser(req));
 });
 
 userRouter.get("/cube", async (req, res) => {

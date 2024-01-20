@@ -4,6 +4,7 @@ import {
   createTournament,
   resetRecentMatchesForTournament,
 } from "../controller/tournament.controller";
+import { resetEloForUser, updateElo } from "../controller/user.controller";
 
 export const adminRouter = express.Router();
 
@@ -24,4 +25,13 @@ adminRouter.post("/admin/reset/tournament/:tournamentId", async (req, res) => {
 
 adminRouter.post("/tournament/create", async (req, res) => {
   res.send(await createTournament(req));
+});
+
+// just here for testing purposes
+adminRouter.post("/updateElo", async (req, res) => {
+  res.send(await updateElo(req));
+});
+
+adminRouter.get("/resetElo/:playerId", async (req, res) => {
+  res.send(await resetEloForUser(req));
 });

@@ -32,27 +32,27 @@ TRUNCATE "user" CASCADE;
 TRUNCATE tournament CASCADE;
 TRUNCATE cube CASCADE;
 
-INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
-  values('Markku', 'Rikola', 'markku.rikola@gmail.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', true) returning id into markku_id;
-INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
-  values('Pekka', 'Pelaaja', 'pekka.pelaaja@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into pekka_id;
-INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
-  values('Sakari', 'Staffer', 'sakari.staff@motticon.fi', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into sakari_id;
+INSERT INTO "user"("firstName", "lastName", email, password, rating, "isAdmin") 
+  values('Markku', 'Rikola', 'markku.rikola@gmail.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', 1600, true) returning id into markku_id;
+INSERT INTO "user"("firstName", "lastName", email, password, rating, "isAdmin") 
+  values('Pekka', 'Pelaaja', 'pekka.pelaaja@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', 1600, false) returning id into pekka_id;
+INSERT INTO "user"("firstName", "lastName", email, password, rating, "isAdmin") 
+  values('Sakari', 'Staffer', 'sakari.staff@motticon.fi', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', 1600, false) returning id into sakari_id;
 -- more players to fill 8-player draft
-INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
-  values('Timo', 'Tuuttari', 'timo.tuuttari@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into timo_id;
-INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
-  values('Tiina', 'Tuuttari', 'tiina.tuuttari@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into tiina_id;
-INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
-  values('John', 'Doe', 'john.doe@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into john_id;
-INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
-  values('Jane', 'Doe', 'jane.doe@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into jane_id;
-INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
-  values('Timmy', 'Steaks', 'timmy.steaks@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into timmy_id;
-INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
-  values('Spike', 'von Spike', 'spike.von.spike@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into spike_id;
-INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
-  values('Johnny', 'McJohnny', 'johnny.mcjohnny@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into johnny_id;
+INSERT INTO "user"("firstName", "lastName", email, password, rating, "isAdmin") 
+  values('Timo', 'Tuuttari', 'timo.tuuttari@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', 1600, false) returning id into timo_id;
+INSERT INTO "user"("firstName", "lastName", email, password, rating, "isAdmin") 
+  values('Tiina', 'Tuuttari', 'tiina.tuuttari@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', 1600, false) returning id into tiina_id;
+INSERT INTO "user"("firstName", "lastName", email, password, rating, "isAdmin") 
+  values('John', 'Doe', 'john.doe@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', 1600, false) returning id into john_id;
+INSERT INTO "user"("firstName", "lastName", email, password, rating, "isAdmin") 
+  values('Jane', 'Doe', 'jane.doe@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', 1600, false) returning id into jane_id;
+INSERT INTO "user"("firstName", "lastName", email, password, rating, "isAdmin") 
+  values('Timmy', 'Steaks', 'timmy.steaks@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', 1600, false) returning id into timmy_id;
+INSERT INTO "user"("firstName", "lastName", email, password, rating, "isAdmin") 
+  values('Spike', 'von Spike', 'spike.von.spike@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', 1600, false) returning id into spike_id;
+INSERT INTO "user"("firstName", "lastName", email, password, rating, "isAdmin") 
+  values('Johnny', 'McJohnny', 'johnny.mcjohnny@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', 1600, false) returning id into johnny_id;
 
 INSERT INTO cube(title, description, url, owner) values('Monoblue', 'Pelkkää sinistä', 'https://cubecobra.com/cube/list/0de5c855-ad9a-4ce1-8a8c-d8f846e96712', 'Sakari Castrén') RETURNING id INTO monoblue_id;
 INSERT INTO cube(title, description, url) values('Vintage cube', 'Powerit löytyy', 'https://cubecobra.com/cube/list/r47');

@@ -10,6 +10,11 @@ export const signup = async (req) => {
   return await userService.createUser(firstName, lastName, email, password);
 };
 
+export const getUser = async (req) => {
+  const { id } = req.params;
+  return await userService.getUser(id as number);
+};
+
 export const getUsersTournaments = async (req) => {
   const { id } = req.params;
   return await userService.getUsersTournaments(id as number);
@@ -34,4 +39,14 @@ export const getCurrentDraftAndMatch = async (req) => {
     userId,
     tournamentId as number
   );
+};
+
+export const updateElo = async (req) => {
+  const { player1Id, player2Id } = req.body;
+  return await userService.updateElo(player1Id, player2Id);
+};
+
+export const resetEloForUser = async (req) => {
+  const { playerId } = req.params;
+  return await userService.resetEloForUser(playerId);
 };
