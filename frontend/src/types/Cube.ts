@@ -3,6 +3,7 @@ export type Cube = {
   title: string;
   description: string;
   url: string;
+  owner: string;
 };
 
 export type CubeSelection = {

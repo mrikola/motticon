@@ -54,7 +54,7 @@ INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin")
 INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
   values('Johnny', 'McJohnny', 'johnny.mcjohnny@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into johnny_id;
 
-INSERT INTO cube(title, description, url) values('Monoblue', 'Pelkkää sinistä', 'https://cubecobra.com/cube/list/0de5c855-ad9a-4ce1-8a8c-d8f846e96712') RETURNING id INTO monoblue_id;
+INSERT INTO cube(title, description, url, owner) values('Monoblue', 'Pelkkää sinistä', 'https://cubecobra.com/cube/list/0de5c855-ad9a-4ce1-8a8c-d8f846e96712', 'Sakari Castrén') RETURNING id INTO monoblue_id;
 INSERT INTO cube(title, description, url) values('Vintage cube', 'Powerit löytyy', 'https://cubecobra.com/cube/list/r47');
 INSERT INTO cube(title, description, url) values('Allun faksicube', 'Faksit on parhaita', 'https://cubecobra.com/cube/list/et9');
 INSERT INTO cube(title, description, url) values('The B-Team', 'Second rate heroes', 'https://cubecobra.com/cube/list/thebteam');

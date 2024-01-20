@@ -4,7 +4,12 @@ import { Button, Col, Container, Row, Modal } from "react-bootstrap";
 import DeckImage from "/img/draft_pool.png";
 import { Cube } from "../../types/Cube";
 import { get } from "../../services/ApiService";
-import { Image, List, PenFill, BoxArrowInLeft } from "react-bootstrap-icons";
+import {
+  Image,
+  PenFill,
+  BoxArrowInLeft,
+  BoxArrowUpRight,
+} from "react-bootstrap-icons";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const ViewCube = () => {
@@ -80,7 +85,7 @@ const ViewCube = () => {
                 <Col className="text-center">
                   <h1 className="display-1">{cube.title}</h1>
                   <p className="lead">
-                    <PenFill /> Cube Designer: John Doe
+                    <PenFill /> Cube Designer: {cube.owner}
                   </p>
                   <p>{cube.description}</p>
                   <div className="d-grid gap-2">
@@ -89,7 +94,7 @@ const ViewCube = () => {
                       target="_blank"
                       className="btn btn-primary"
                     >
-                      <List /> View list on Cube Cobra
+                      <BoxArrowUpRight className="fs-4" /> View list
                     </a>
                   </div>
                 </Col>
