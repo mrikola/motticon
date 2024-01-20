@@ -3,10 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from "typeorm";
 import { User } from "./User";
 import { Tournament } from "./Tournament";
