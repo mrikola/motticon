@@ -54,12 +54,12 @@ INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin")
 INSERT INTO "user"("firstName", "lastName", email, password, "isAdmin") 
   values('Johnny', 'McJohnny', 'johnny.mcjohnny@outlook.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', false) returning id into johnny_id;
 
-INSERT INTO cube(title, description, owner, url) values('Monoblue', 'Pelkkää sinistä', 'Sakari Castren', 'https://cubecobra.com/cube/list/0de5c855-ad9a-4ce1-8a8c-d8f846e96712') RETURNING id INTO monoblue_id;
-INSERT INTO cube(title, description, owner, url) values('Vintage cube', 'Powerit löytyy', 'Max Sjöblom', 'https://cubecobra.com/cube/list/r47');
-INSERT INTO cube(title, description, owner, url) values('Allun faksicube', 'Faksit on parhaita', 'Aleksi Väänänen', 'https://cubecobra.com/cube/list/et9');
-INSERT INTO cube(title, description, owner, url) values('The B-Team', 'Second rate heroes', 'Max Sjöblom', 'https://cubecobra.com/cube/list/thebteam');
-INSERT INTO cube(title, description, owner, url) values('Universes Beyond', 'Like Garfield intended', 'Aleksi Väänänen', 'https://cubecobra.com/cube/list/SoNotUniversesBeyondCube');
-INSERT INTO cube(title, description, owner, url) values('Oops, All Creatures', 'It''s creatures all the way down', 'Max Sjöblom', 'https://cubecobra.com/cube/list/1o7yb');
+INSERT INTO cube(title, description, url, owner) values('Monoblue', 'Pelkkää sinistä', 'https://cubecobra.com/cube/list/0de5c855-ad9a-4ce1-8a8c-d8f846e96712', 'Sakari Castrén') RETURNING id INTO monoblue_id;
+INSERT INTO cube(title, description, url) values('Vintage cube', 'Powerit löytyy', 'https://cubecobra.com/cube/list/r47');
+INSERT INTO cube(title, description, url) values('Allun faksicube', 'Faksit on parhaita', 'https://cubecobra.com/cube/list/et9');
+INSERT INTO cube(title, description, url) values('The B-Team', 'Second rate heroes', 'https://cubecobra.com/cube/list/thebteam');
+INSERT INTO cube(title, description, url) values('Universes Beyond', 'Like Garfield intended', 'https://cubecobra.com/cube/list/SoNotUniversesBeyondCube');
+INSERT INTO cube(title, description, url) values('Oops, All Creatures', 'It''s creatures all the way down', 'https://cubecobra.com/cube/list/1o7yb');
 
 INSERT INTO tournament(name, description, "startDate", "endDate") values('MottiCon 2023', 'Servin Mökki 4.-5.5.2024', '2024-05-04', '2024-05-05') RETURNING id INTO motticon_id;
 INSERT INTO tournament(name, description, "startDate", "endDate") values('Pikadrafti', 'Tänään', date_trunc('day', now()), date_trunc('day', now()) + time '23:59:59.999999') RETURNING id INTO pikadrafti_id;

@@ -93,7 +93,11 @@ const Ongoing = () => {
           </Link>
         </Col>
         {currentRound && currentMatch && ongoingStatus === "round" && (
-          <RoundOngoing round={currentRound} match={currentMatch} />
+          <RoundOngoing
+            tournament={tournament}
+            round={currentRound}
+            match={currentMatch}
+          />
         )}
         {currentDraft && ongoingStatus === "draft" && (
           <DraftOngoing draft={currentDraft} tournament={tournament} />

@@ -10,18 +10,20 @@ dayjs.extend(duration);
 import CountdownTimer from "../general/CountdownTimer";
 import MatchesRemainingProgressBar from "../general/MatchesRemainingProgressBar";
 import MatchResultRadioButtons from "../general/MatchResultRadioButtons";
-import { Match, Round } from "../../types/Tournament";
+import { Match, Round, Tournament } from "../../types/Tournament";
 import VerticallyCenteredModal, {
   ModalProps,
 } from "../general/VerticallyCenteredModal";
 import { Player } from "../../types/User";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 type Props = {
+  tournament: Tournament;
   round: Round;
   match: Match;
 };
 
-function RoundOngoing({ round, match }: Props) {
+function RoundOngoing({ tournament, round, match }: Props) {
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
   const [roundStart, setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
@@ -147,6 +149,14 @@ function RoundOngoing({ round, match }: Props) {
   if (user && timeRemaining && player && opponent) {
     return (
       <Container className="mt-3 my-md-4">
+        <HelmetProvider>
+          <Helmet>
+            <title>
+              MottiCon &#9632; {tournament.name} Round{" "}
+              {round.roundNumber.toString()}
+            </title>
+          </Helmet>
+        </HelmetProvider>
         <Row>
           <h1 className="display-1">Round: {round.roundNumber}</h1>
           <h2>Started: {dayjs(roundStart).format("HH:mm")}</h2>

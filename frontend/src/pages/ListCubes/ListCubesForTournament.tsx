@@ -5,6 +5,7 @@ import {
   Box,
   ExclamationCircleFill,
   BoxArrowInLeft,
+  PenFill,
 } from "react-bootstrap-icons";
 import { get } from "../../services/ApiService";
 import { Cube } from "../../types/Cube";
@@ -24,6 +25,7 @@ const ListCubesForTournament = () => {
       const resp = await get(`/tournament/${tournamentId}/cubes`);
       const tournamentCubes = (await resp.json()) as Cube[];
       setCubes(tournamentCubes);
+      console.log(tournamentCubes);
     };
     fetchData();
   }, []);
@@ -55,7 +57,7 @@ const ListCubesForTournament = () => {
       <Row xs={1} sm={1} md={2}>
         {cubes.map((cube, index) => (
           <Col key={cube.id} className={cube.id.toString()}>
-            <Card className={styles.cubeCard}>
+            <Card className="my-1">
               <Row>
                 <Col
                   xs={6}
@@ -65,22 +67,24 @@ const ListCubesForTournament = () => {
                       'url("/img/masthead_' + (index + 1) + '.jpeg")',
                   }}
                 ></Col>
-                <Col xs={6}>
-                  <Card.Body className={styles.cubeCardBody}>
+                <Col xs={6} className="">
+                  <Card.Body className="">
                     <Card.Title>
                       {cube.title + " "}
                       {cube.id === 1 && (
                         <ExclamationCircleFill className="text-primary" />
                       )}
                     </Card.Title>
-                    <Card.Text>{cube.description}</Card.Text>
-                    <div className="cube-designer mb-2">
-                      <small>Designed by {cube.owner}</small>
-                    </div>
-                    <Link to={`/tournament/${tournamentId}/cubes/${cube.id}`}>
-                      <Button variant="primary">
-                        <Box /> Go to cube
-                      </Button>
+                    <Card.Subtitle>
+                      <PenFill /> {cube.owner}
+                    </Card.Subtitle>
+                    <Card.Text className="mt-2">{cube.description}</Card.Text>
+
+                    <Link
+                      to={`/tournament/${tournamentId}/cubes/${cube.id}`}
+                      className="btn btn-primary"
+                    >
+                      <Box /> Go to cube
                     </Link>
                   </Card.Body>
                 </Col>

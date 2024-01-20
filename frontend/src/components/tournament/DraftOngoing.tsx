@@ -9,6 +9,7 @@ import {
 } from "../../types/Tournament";
 import { get } from "../../services/ApiService";
 import { UserInfoContext } from "../provider/UserInfoProvider";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 type Props = {
   tournament: Tournament;
@@ -57,6 +58,14 @@ function DraftOngoing({ tournament, draft }: Props) {
   if (user && draft && playerPod) {
     return (
       <Container className="mt-3 my-md-4">
+        <HelmetProvider>
+          <Helmet>
+            <title>
+              MottiCon &#9632; {tournament.name} Draft{" "}
+              {draft.draftNumber.toString()}
+            </title>
+          </Helmet>
+        </HelmetProvider>
         <Row>
           <h1 className="display-1">{tournament.name}</h1>
           <h2 className="display-2">Draft: {draft.draftNumber}</h2>

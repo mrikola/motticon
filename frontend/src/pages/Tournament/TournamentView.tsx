@@ -122,11 +122,12 @@ const TournamentView = () => {
       </Row>
       {cubes.length > 0 && (
         <Row>
-          <Col xs={12}>
-            <Link to={`/tournament/${activeTournament.id}/cubes/`}>
-              <Button variant="primary">
-                <Box /> View tournament cubes
-              </Button>
+          <Col xs={12} className="d-grid gap-2">
+            <Link
+              to={`/tournament/${activeTournament.id}/cubes/`}
+              className="btn btn-primary"
+            >
+              <Box /> View tournament cubes
             </Link>
           </Col>
         </Row>

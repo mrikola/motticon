@@ -9,11 +9,12 @@ type Props = {
 function GoToOngoing({ tournamentId }: Props) {
   return (
     <Row className="my-3">
-      <Col xs={12}>
-        <Link to={`/tournament/${tournamentId}/ongoing/`}>
-          <Button variant="primary">
-            <TrophyFill /> View ongoing
-          </Button>
+      <Col xs={12} className="d-grid">
+        <Link
+          to={`/tournament/${tournamentId}/ongoing/`}
+          className="btn btn-primary"
+        >
+          <TrophyFill /> View ongoing
         </Link>
       </Col>
     </Row>
