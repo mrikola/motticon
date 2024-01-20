@@ -157,42 +157,39 @@ export class UserService {
     return user;
   }
 
-  async updateElo(player1Id: number, player2Id: number) {
+  async updateElo(
+    kValue: number,
+    player1Id: number,
+    player2Id: number,
+    winnerNumber: number
+  ) {
+    // todo: change this to get a whole array of players to change ratings for
+
     // create object with K-Factor (without it defaults to 32)
-    const elo = new EloRank(8);
+    const elo = new EloRank(kValue);
 
     const playerA = await this.getUser(player1Id);
     const playerB = await this.getUser(player2Id);
-    const playerARating = playerA.rating;
-    const playerBRating = playerB.rating;
+    const playerARating = Number(playerA.rating);
+    const playerBRating = Number(playerB.rating);
 
     // Gets expected score for first parameter
-    const expectedScoreA = elo.getExpected(
-      playerARating as number,
-      playerBRating as number
-    );
-    const expectedScoreB = elo.getExpected(
-      playerBRating,
-      playerARating
-    ) as number;
+    const expectedScoreA = elo.getExpected(playerARating, playerBRating);
+    const expectedScoreB = elo.getExpected(playerBRating, playerARating);
 
+    // placeholders before these get defined
+    var playerANewRating: number;
+    var playerBNewRating: number;
     // update score, 1 if won 0 if lost
-    const playerANewRating = elo.updateRating(expectedScoreA, 1, playerARating);
-    const playerBNewRating = elo.updateRating(expectedScoreB, 0, playerBRating);
+    if (winnerNumber === 1) {
+      playerANewRating = elo.updateRating(expectedScoreA, 1, playerARating);
+      playerBNewRating = elo.updateRating(expectedScoreB, 0, playerBRating);
+    } else {
+      playerANewRating = elo.updateRating(expectedScoreA, 0, playerARating);
+      playerBNewRating = elo.updateRating(expectedScoreB, 1, playerBRating);
+    }
 
     this.setUserRating(playerANewRating, playerA.id);
     this.setUserRating(playerBNewRating, playerB.id);
-    return [
-      {
-        playerId: player1Id,
-        ratingNew: playerANewRating,
-        exp: expectedScoreA,
-      },
-      {
-        playerId: player2Id,
-        ratingNew: playerBNewRating,
-        exp: expectedScoreB,
-      },
-    ];
   }
 }

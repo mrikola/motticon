@@ -42,8 +42,13 @@ export const getCurrentDraftAndMatch = async (req) => {
 };
 
 export const updateElo = async (req) => {
-  const { player1Id, player2Id } = req.body;
-  return await userService.updateElo(player1Id, player2Id);
+  const { kValue, player1Id, player2Id, winnerNumber } = req.body;
+  return await userService.updateElo(
+    kValue,
+    player1Id,
+    player2Id,
+    winnerNumber
+  );
 };
 
 export const resetEloForUser = async (req) => {
