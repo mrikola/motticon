@@ -40,8 +40,10 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
 
   if (enrollments) {
     return (
-      <Container className="mt-3 my-md-4">
-        <h1>Manage tournament enrollment</h1>
+      <>
+        <Row className="mt-3">
+          <h2>Manage tournament enrollment</h2>
+        </Row>
         <Row>
           <Col xs={12}>
             <EnrollPlayers tournamentId={tournamentId} />
@@ -56,7 +58,7 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
             />
           </Col>
         </Row>
-      </Container>
+      </>
     );
   }
 };

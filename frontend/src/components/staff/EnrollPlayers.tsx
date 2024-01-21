@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { get, post } from "../../services/ApiService";
 import { Player } from "../../types/User";
-import { Button, Col, InputGroup, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import DatalistInput from "react-datalist-input";
 import "react-datalist-input/dist/styles.css";
 import { PersonPlusFill } from "react-bootstrap-icons";
@@ -13,15 +13,8 @@ type Props = {
 const EnrollPlayers = ({ tournamentId }: Props) => {
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
   const [item, setItem] = useState(); // The selected item will be stored in this state.
-
-  /**
-   * The onSelect callback function is called if the user selects one option out of the dropdown menu.
-   * @param selectedItem object (the selected item / option)
-   */
-  const onSelect = useCallback((selectedItem) => {
-    console.log("selectedItem", selectedItem);
-    setItem(selectedItem);
-  }, []);
+  const [value, setValue] = useState();
+  const [selectedPlayer, setSelectedPlayer] = useState("No player selected");
 
   // Make sure each option has an unique id and a value
   const items = useMemo(
@@ -49,19 +42,28 @@ const EnrollPlayers = ({ tournamentId }: Props) => {
 
   function enroll() {
     if (item) {
-      // todo: reset the search input
       const userId = item.id;
-      console.log("enrolling: " + item.id);
       post(`/tournament/${tournamentId}/enroll/${userId}`, {}).then(
         async (resp) => {
           // temporary solution that just checks boolean return (should be object with tournament info)
           const enrolled = await resp.text();
           if (enrolled) {
             console.log(enrolled);
+            setItem(null);
+            setSelectedPlayer("No player selected");
           }
         }
       );
+    } else {
+      console.log("no player selected");
     }
+  }
+
+  function handleSelection(item) {
+    setItem(item);
+    console.log(item);
+    setSelectedPlayer("Enroll: " + item.value);
+    setValue(""); // Custom behavior: Clear input field once a value has been selected
   }
 
   if (allPlayers) {
@@ -72,12 +74,18 @@ const EnrollPlayers = ({ tournamentId }: Props) => {
             label="Enroll player"
             placeholder="Type to search..."
             items={items}
-            onSelect={onSelect}
+            // onSelect={onSelect}
+            selectedItem={item}
+            value={value}
+            setValue={setValue}
+            onSelect={(item) => {
+              handleSelection(item);
+            }}
           />
         </Col>
         <Col xs={12} className="my-3 d-grid">
           <Button variant="primary" onClick={enroll}>
-            <PersonPlusFill className="fs-4" /> Enroll player
+            <PersonPlusFill className="fs-4" /> {selectedPlayer}
           </Button>
         </Col>
       </Row>
