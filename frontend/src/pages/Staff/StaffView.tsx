@@ -7,7 +7,7 @@ import { BoxArrowInLeft } from "react-bootstrap-icons";
 import dayjs from "dayjs";
 import * as duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
-import { Draft, Round } from "../../types/Tournament";
+import { Draft, Round, Tournament } from "../../types/Tournament";
 import { useIsTournamentStaff } from "../../utils/auth";
 import Loading from "../../components/general/Loading";
 import ManageRound from "../../components/staff/ManageRound";
@@ -20,6 +20,7 @@ function StaffView() {
   const user = useIsTournamentStaff(Number(tournamentId));
   const [currentRound, setCurrentRound] = useState<Round>();
   const [currentDraft, setCurrentDraft] = useState<Draft>();
+  const [tournament, setTournament] = useState<Tournament>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,7 +48,20 @@ function StaffView() {
     }
   }, [user]);
 
-  return user ? (
+  useEffect(() => {
+    if (!tournament) {
+      const fetchData = async () => {
+        const response = await get(`/tournament/${tournamentId}`);
+        const tourny = (await response.json()) as Tournament;
+        setTournament(tourny);
+      };
+      if (user) {
+        fetchData();
+      }
+    }
+  }, [user]);
+
+  return user && tournament ? (
     <Container className="mt-3 my-md-4">
       <Col xs={12}>
         <Link to={`/tournament/${tournamentId}`}>
@@ -60,10 +74,11 @@ function StaffView() {
         <h1 className="display-1">
           Hey {user.firstName} {user.lastName}
         </h1>
+        <h2>{tournament.name}</h2>
       </Row>
       {currentRound && <ManageRound currentRound={currentRound} />}
       {!currentRound && currentDraft && (
-        <ManageDraft currentDraft={currentDraft} />
+        <ManageDraft currentDraft={currentDraft} placeholderId={1} />
       )}
       {!currentRound && !currentDraft && (
         <>

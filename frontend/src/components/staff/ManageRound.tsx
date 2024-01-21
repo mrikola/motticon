@@ -57,7 +57,6 @@ const ManageRound = ({ currentRound }: Props) => {
       // sort by table number, descending
       mtchs.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1));
       setMatches(mtchs);
-      console.log(currentRound?.id);
     };
     if (currentRound) {
       fetchData();
