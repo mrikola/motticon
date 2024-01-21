@@ -12,6 +12,8 @@ import {
   getPastTournaments,
   getOngoingTournaments,
   getTournamentAndDrafts,
+  getTournamentEnrollments,
+  staffCancelEnrollment,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -24,6 +26,7 @@ import {
   getTournamentsStaffed,
   getCurrentDraftAndMatch,
   getUser,
+  getAllUsers,
 } from "../controller/user.controller";
 import {
   getPlayerMatchHistory,
@@ -96,6 +99,10 @@ userRouter.get("/user/:id", async (req, res) => {
   res.send(await getUser(req));
 });
 
+userRouter.get("/user", async (req, res) => {
+  res.send(await getAllUsers());
+});
+
 userRouter.get("/cube", async (req, res) => {
   res.send(await getAllCubes());
 });
@@ -132,6 +139,10 @@ userRouter.get("/tournament/:tournamentId", async (req, res) => {
   res.send(await getTournament(req));
 });
 
+userRouter.get("/tournament/:tournamentId/enrollment", async (req, res) => {
+  res.send(await getTournamentEnrollments(req));
+});
+
 userRouter.get("/tournament/:tournamentId/drafts", async (req, res) => {
   res.send(await getTournamentAndDrafts(req));
 });
@@ -160,6 +171,13 @@ userRouter.post(
   "/tournament/:tournamentId/cancel/:userId",
   async (req, res) => {
     res.send(await cancelEnrollment(req));
+  }
+);
+
+userRouter.post(
+  "/staff/tournament/:tournamentId/cancel/:userId",
+  async (req, res) => {
+    res.send(await staffCancelEnrollment(req));
   }
 );
 

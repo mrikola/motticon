@@ -92,6 +92,7 @@ function App() {
               path: "tournament/:tournamentId/staff",
               Component: StaffView,
             },
+
             {
               path: "admin",
               Component: AdminPage,

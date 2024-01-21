@@ -4,14 +4,17 @@ import { Enrollment } from "../entity/Enrollment";
 import { Preference } from "../entity/Preference";
 import { Tournament } from "../entity/Tournament";
 import { PlayerTournamentInfo } from "../dto/tournaments.dto";
+import { TournamentService } from "./tournament.service";
 
 export class EnrollmentService {
   private appDataSource: DataSource;
   private repository: Repository<Enrollment>;
+  private tournamentService: TournamentService;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(Enrollment);
+    this.tournamentService = new TournamentService();
   }
 
   async enrollIntoTournament(
@@ -49,6 +52,26 @@ export class EnrollmentService {
         .andWhere("playerId = :userId", { userId })
         .execute();
       return true;
+    } catch (err: unknown) {
+      return false;
+    }
+  }
+
+  async staffCancelEnrollment(
+    tournamentId: number,
+    userId: number
+  ): Promise<any> {
+    try {
+      this.appDataSource
+        .createQueryBuilder()
+        .delete()
+        .from(Enrollment)
+        .where("tournamentId = :tournamentId", { tournamentId })
+        .andWhere("playerId = :userId", { userId })
+        .execute();
+      const tournament =
+        this.tournamentService.getTournamentEnrollments(tournamentId);
+      return tournament;
     } catch (err: unknown) {
       return false;
     }

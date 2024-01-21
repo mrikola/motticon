@@ -16,6 +16,7 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.2",
     "react-bootstrap-icons": "^1.10.3",
+    "react-datalist-input": "^3.2.1",
     "react-datepicker": "^4.25.0",
     "react-dom": "^18.2.0",
     "react-helmet-async": "^2.0.4",

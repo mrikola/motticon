@@ -12,6 +12,7 @@ import { useIsTournamentStaff } from "../../utils/auth";
 import Loading from "../../components/general/Loading";
 import ManageRound from "../../components/staff/ManageRound";
 import ManageDraft from "../../components/staff/ManageDraft";
+import ManageEnrollments from "../../components/staff/ManageEnrollments";
 import NextDraft from "../../components/staff/NextDraft";
 
 function StaffView() {
@@ -65,10 +66,13 @@ function StaffView() {
         <ManageDraft currentDraft={currentDraft} />
       )}
       {!currentRound && !currentDraft && (
-        <NextDraft
-          tournamentId={Number(tournamentId)}
-          setCurrentDraft={setCurrentDraft}
-        />
+        <>
+          <NextDraft
+            tournamentId={Number(tournamentId)}
+            setCurrentDraft={setCurrentDraft}
+          />
+          <ManageEnrollments tournamentId={Number(tournamentId)} />
+        </>
       )}
     </Container>
   ) : (

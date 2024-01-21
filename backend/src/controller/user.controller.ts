@@ -15,6 +15,10 @@ export const getUser = async (req) => {
   return await userService.getUser(id as number);
 };
 
+export const getAllUsers = async () => {
+  return await userService.getAllUsers();
+};
+
 export const getUsersTournaments = async (req) => {
   const { id } = req.params;
   return await userService.getUsersTournaments(id as number);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Draft, Tournament } from "../../types/Tournament";
 import { get } from "../../services/ApiService";
-import { Container, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 
 type Props = {
   tournamentId: number;
@@ -42,26 +42,26 @@ const NextDraft = ({ tournamentId, setCurrentDraft }: Props) => {
   // next = (latest completed ?? 0) + 1
 
   return (
-    <Container>
-      <Row>
+    <Row>
+      <Col xs={12}>
         <p>Last completed draft: {lastCompletedDraft?.draftNumber ?? "N/A"}</p>
         <p>Next pending draft: {firstPendingDraft?.draftNumber ?? "N/A"}</p>
         <p>How many drafts: {tournament?.drafts.length ?? "N/A"}</p>
         {lastCompletedDraft?.draftNumber === tournament?.drafts.length ? (
-          <>The tournament is over</>
+          <p>The tournament is over</p>
         ) : firstPendingDraft ? (
           <>
             {firstPendingDraft.pods.length ? (
-              <>Start next draft</>
+              <Button>Start next draft</Button>
             ) : (
-              <>Generate draft pods</>
+              <Button variant="primary">Generate draft pods</Button>
             )}
           </>
         ) : (
-          <>Generate next draft</>
+          <Button>Generate next draft</Button>
         )}
-      </Row>
-    </Container>
+      </Col>
+    </Row>
   );
 };
 

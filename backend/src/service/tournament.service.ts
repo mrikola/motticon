@@ -122,6 +122,15 @@ export class TournamentService {
     });
   }
 
+  async getTournamentEnrollments(id: number) {
+    return await this.repository
+      .createQueryBuilder("tournament")
+      .leftJoinAndSelect("tournament.enrollments", "enrollments")
+      .leftJoinAndSelect("enrollments.player", "player")
+      .where("tournament.id = :id", { id })
+      .getOne();
+  }
+
   async getTournamentAndDrafts(id: number): Promise<Tournament> {
     return await this.repository
       .createQueryBuilder("tournament")

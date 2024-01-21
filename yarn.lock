@@ -2737,6 +2737,11 @@ react-bootstrap@^2.9.2:
     uncontrollable "^7.2.1"
     warning "^4.0.3"
 
+react-datalist-input@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/react-datalist-input/-/react-datalist-input-3.2.1.tgz#7b1be6ed5648c7964acb72a6d5ac0a207c337d34"
+  integrity sha512-5aJu+DG7/j9TwKmNIU6fizr6t03N2esu/A+Zdv1gRCUgWCkrBueYeC4TEGbKNgSEMk/66lXtQXp3qEDRdl7lVg==
+
 react-datepicker@^4.25.0:
   version "4.25.0"
   resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-4.25.0.tgz#86b3ee8ac764bad1650046d0cf9280837bf6d845"

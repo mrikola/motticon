@@ -176,3 +176,6 @@ nav {
 .cubeCardBody {
   padding: 16px 0px;
 }
+.react-datalist-input__textbox {
+  @extend .form-control;
+}

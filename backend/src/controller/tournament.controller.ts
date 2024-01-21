@@ -50,6 +50,13 @@ export const getTournament = async (req) => {
   return await tournamentService.getTournament(tournamentId as number);
 };
 
+export const getTournamentEnrollments = async (req) => {
+  const { tournamentId } = req.params;
+  return await tournamentService.getTournamentEnrollments(
+    tournamentId as number
+  );
+};
+
 export const getTournamentAndDrafts = async (req) => {
   const { tournamentId } = req.params;
   return await tournamentService.getTournamentAndDrafts(tournamentId as number);
@@ -83,6 +90,14 @@ export const enrollIntoTournament = async (req) => {
 export const cancelEnrollment = async (req) => {
   const { tournamentId, userId } = req.params;
   return await enrollmentService.cancelEnrollment(
+    tournamentId as number,
+    userId as number
+  );
+};
+
+export const staffCancelEnrollment = async (req) => {
+  const { tournamentId, userId } = req.params;
+  return await enrollmentService.staffCancelEnrollment(
     tournamentId as number,
     userId as number
   );

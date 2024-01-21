@@ -13,9 +13,7 @@ const Ongoing = () => {
   const { tournamentId } = useParams();
   const [tournament, setTournament] = useState<Tournament>();
   const user = useContext(UserInfoContext);
-  // todo: change this to get state from database
   const [ongoingStatus, setOngoingStatus] = useState<string>();
-
   const [currentRound, setCurrentRound] = useState<Round>();
   const [currentDraft, setCurrentDraft] = useState<Draft>();
   const [currentMatch, setCurrentMatch] = useState<Match>();
@@ -44,13 +42,8 @@ const Ongoing = () => {
       setCurrentRound(round);
       setCurrentMatch(match);
       setCurrentDraft(draft);
-
       setDraftStatus(draft.status);
-
       setRoundStatus(round.status);
-      // console.log("draft", JSON.stringify(draft));
-      // console.log("round", JSON.stringify(round));
-      // console.log("match", JSON.stringify(match));
     };
 
     if (user) {
