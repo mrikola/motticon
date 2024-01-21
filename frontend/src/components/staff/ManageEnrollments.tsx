@@ -1,4 +1,4 @@
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { Tournament } from "../../types/Tournament";
 import EnrollPlayers from "./EnrollPlayers";
 import EnrolledPlayersTable from "./EnrolledPlayersTable";
@@ -12,17 +12,16 @@ type Props = {
 
 const ManageEnrollments = ({ tournamentId }: Props) => {
   const [enrollments, setEnrollments] = useState<Enrollment[]>();
+  const [playersEnrolled, setPlayersEnrolled] = useState<number>();
 
   function dropPlayer(player: Player) {
     const playerId = player.id;
     post(`/staff/tournament/${tournamentId}/cancel/${playerId}`, {}).then(
       async (resp) => {
-        const jwt = await resp.json();
-        if (jwt !== null) {
-          console.log(jwt);
-          //const enrollments = tournament.enrollments as Enrollment[];
-          //setEnrollments(enrollments);
-          // freeSeatsUpdater(1);
+        const tournament = await resp.json();
+        if (tournament !== null) {
+          console.log(tournament);
+          setEnrollments(tournament.enrollments);
         }
       }
     );
@@ -38,6 +37,12 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (enrollments) {
+      setPlayersEnrolled(enrollments?.length);
+    }
+  }, [enrollments]);
+
   if (enrollments) {
     return (
       <>
@@ -50,7 +55,7 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
           </Col>
         </Row>
         <Row>
-          <h2>{enrollments.length} enrolled players:</h2>
+          <h2>{playersEnrolled} enrolled players:</h2>
           <Col xs={12}>
             <EnrolledPlayersTable
               enrollments={enrollments}

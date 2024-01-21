@@ -74,7 +74,6 @@ const EnrollPlayers = ({ tournamentId }: Props) => {
             label="Enroll player"
             placeholder="Type to search..."
             items={items}
-            // onSelect={onSelect}
             selectedItem={item}
             value={value}
             setValue={setValue}
