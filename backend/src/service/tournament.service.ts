@@ -5,19 +5,25 @@ import { partition } from "lodash";
 import { TournamentsByType } from "../dto/tournaments.dto";
 import { Round } from "../entity/Round";
 import { Draft } from "../entity/Draft";
-import { DraftWithRoundNumber } from "../dto/draft.dto";
 import { MatchService } from "./match.service";
 import { Cube } from "../entity/Cube";
+import { Enrollment } from "../entity/Enrollment";
+import { DraftPod } from "../entity/DraftPod";
+import { CubeService } from "./cube.service";
+import { User } from "../entity/User";
+import { DraftPodSeat } from "../entity/DraftPodSeat";
 
 export class TournamentService {
   private appDataSource: DataSource;
   private repository: Repository<Tournament>;
   private matchService: MatchService;
+  private cubeService: CubeService;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(Tournament);
     this.matchService = new MatchService();
+    this.cubeService = new CubeService();
   }
 
   async createTournament(
@@ -136,6 +142,8 @@ export class TournamentService {
       .createQueryBuilder("tournament")
       .leftJoinAndSelect("tournament.drafts", "draft")
       .leftJoinAndSelect("draft.pods", "pod")
+      .leftJoinAndSelect("pod.seats", "seat")
+      .leftJoinAndSelect("seat.player", "player")
       .where("tournament.id = :id", { id })
       .getOne();
   }
@@ -151,41 +159,91 @@ export class TournamentService {
       .getOne();
   }
 
-  async getCurrentDraft(tournamentId: number): Promise<DraftWithRoundNumber> {
-    const currentRound = await this.getCurrentRound(tournamentId);
-    return this.getDraftByRoundNumber(tournamentId, currentRound?.roundNumber);
-  }
-
-  async getDraftByRoundNumber(
-    id: number,
-    roundNumber: number
-  ): Promise<DraftWithRoundNumber> {
-    if (!roundNumber) {
-      return null;
-    }
-    const drafts = await this.appDataSource
+  async getCurrentDraft(tournamentId: number): Promise<Draft> {
+    return await this.appDataSource
       .getRepository(Draft)
       .createQueryBuilder("draft")
       .leftJoin("draft.tournament", "tournament")
-      .where("tournament.id = :id", { id })
-      .orderBy('"draftNumber"', "ASC")
-      .getMany();
+      .where("draft.status = 'started'")
+      .andWhere("tournament.id = :tournamentId", { tournamentId })
+      .orderBy('"draftNumber"', "DESC")
+      .getOne();
+  }
 
-    let roundsAllocated = 0;
-    let roundInDraft = 0;
-    let currentDraft;
-    drafts.forEach((draft) => {
-      if (
-        roundsAllocated < roundNumber &&
-        roundsAllocated + draft.rounds >= roundNumber
-      ) {
-        currentDraft = draft;
-        roundInDraft = roundNumber - roundsAllocated;
-      }
-      roundsAllocated += draft.rounds;
+  async startTournament(tournamentId: number) {
+    await this.repository
+      .createQueryBuilder("tournament")
+      .update()
+      .set({ status: "started" })
+      .where({ id: tournamentId })
+      .execute();
+
+    return await this.getTournamentAndDrafts(tournamentId);
+  }
+
+  async generateDraftSeatings(pods: DraftPod[], players: User[]) {
+    pods.forEach((pod, podIndex) => {
+      const podPlayers = players.slice(podIndex * 8, (podIndex + 1) * 8);
+      podPlayers.forEach(async (player, playerIndex) => {
+        await this.appDataSource.getRepository(DraftPodSeat).insert({
+          pod,
+          seat: playerIndex + 1,
+          player,
+        });
+      });
     });
+  }
 
-    return { ...currentDraft, roundInDraft };
+  async generateDrafts(tournamentId: number) {
+    // TODO this just randomizes players and cubes + assigns them afterwards
+    // better algorithms suggested and required for production use
+
+    const tournament = await this.getTournamentAndDrafts(tournamentId);
+    const players = (
+      await this.getTournamentEnrollments(tournamentId)
+    ).enrollments
+      .map((enr) => enr.player)
+      .sort((_a, __b) => 0.5 - Math.random());
+    const cubes = (
+      await this.cubeService.getCubesForTournament(tournamentId)
+    ).sort((_a, __b) => 0.5 - Math.random());
+    const podsPerDraft = tournament.totalSeats / 8;
+
+    if (players.length !== tournament.totalSeats) {
+      console.log("not all seats will be filled");
+    }
+    if (cubes.length < podsPerDraft) {
+      console.log("not enough cubes for all draft pods");
+    }
+
+    await Promise.all(
+      tournament.drafts.map(async (draft) => {
+        const draftPods: DraftPod[] = [];
+        for (let index = 0; index < podsPerDraft; ++index) {
+          draftPods.push(
+            await this.appDataSource.getRepository(DraftPod).save({
+              podNumber: index + 1,
+              draft,
+              cube: cubes[index],
+            })
+          );
+        }
+        await this.generateDraftSeatings(draftPods, players);
+      })
+    );
+    return await this.getTournamentAndDrafts(tournamentId);
+  }
+
+  async startDraft(tournamentId: number, draftId: number) {
+    await this.appDataSource
+      .getRepository(Draft)
+      .createQueryBuilder("draft")
+      .update()
+      .set({ status: "started" })
+      .where({ id: draftId })
+      .execute();
+
+    return await this.getTournamentAndDrafts(tournamentId);
   }
 
   async resetRecentMatchesForTournament(tournamentId: number) {

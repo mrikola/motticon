@@ -1,9 +1,3 @@
-import { Draft } from "../entity/Draft";
-
-export type DraftWithRoundNumber = Draft & {
-  roundInDraft: number;
-};
-
 export type PodDraftMatch =
   | "1v5"
   | "2v6"

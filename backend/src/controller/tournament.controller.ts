@@ -79,6 +79,24 @@ export const resetRecentMatchesForTournament = async (req) => {
   );
 };
 
+export const startTournament = async (req) => {
+  const { tournamentId } = req.params;
+  return await tournamentService.startTournament(tournamentId as number);
+};
+
+export const generateDrafts = async (req) => {
+  const { tournamentId } = req.params;
+  return await tournamentService.generateDrafts(tournamentId as number);
+};
+
+export const startDraft = async (req) => {
+  const { tournamentId, draftId } = req.params;
+  return await tournamentService.startDraft(
+    tournamentId as number,
+    draftId as number
+  );
+};
+
 export const enrollIntoTournament = async (req) => {
   const { tournamentId, userId } = req.params;
   return await enrollmentService.enrollIntoTournament(

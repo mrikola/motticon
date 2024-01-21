@@ -18,7 +18,7 @@ const ManageDraft = ({ currentDraft, placeholderId }: Props) => {
       const response = await get(`/match/round/${placeholderId}`);
       const mtchs = (await response.json()) as Match[];
       // sort by table number, descending
-      mtchs.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1));
+      mtchs.sort((a, b) => a.tableNumber - b.tableNumber);
       setMatches(mtchs);
     };
     fetchData();

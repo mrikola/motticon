@@ -14,6 +14,9 @@ import {
   getTournamentAndDrafts,
   getTournamentEnrollments,
   staffCancelEnrollment,
+  startTournament,
+  generateDrafts,
+  startDraft,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -75,19 +78,10 @@ userRouter.get(
 );
 
 userRouter.post("/submitResult", async (req, res) => {
-  const { matchId, resultSubmittedBy, player1GamesWon, player2GamesWon } =
-    req.body;
   res.send(await submitResult(req));
 });
 
 userRouter.post("/staff/submitResult", async (req, res) => {
-  const {
-    roundId,
-    matchId,
-    resultSubmittedBy,
-    player1GamesWon,
-    player2GamesWon,
-  } = req.body;
   res.send(await staffSubmitResult(req));
 });
 
@@ -158,6 +152,24 @@ userRouter.get("/tournament/:tournamentId/draft", async (req, res) => {
 userRouter.get("/tournament/:id/cubes", async (req, res) => {
   res.send(await getCubesForTournament(req));
 });
+
+userRouter.put("/tournament/:tournamentId/start", async (req, res) => {
+  res.send(await startTournament(req));
+});
+
+userRouter.post(
+  "/tournament/:tournamentId/draft/generate",
+  async (req, res) => {
+    res.send(await generateDrafts(req));
+  }
+);
+
+userRouter.put(
+  "/tournament/:tournamentId/draft/:draftId/start",
+  async (req, res) => {
+    res.send(await startDraft(req));
+  }
+);
 
 // todo: move tournament stuff to own router
 userRouter.post(

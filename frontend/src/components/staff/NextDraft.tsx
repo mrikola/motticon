@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Draft, Tournament } from "../../types/Tournament";
-import { get } from "../../services/ApiService";
+import { get, post, put } from "../../services/ApiService";
 import { Button, Col, Row } from "react-bootstrap";
 
 type Props = {
   tournamentId: number;
-  setCurrentDraft: (draft: Draft) => void;
+  setCurrentDraft: (draft?: Draft) => void;
 };
 
 const NextDraft = ({ tournamentId, setCurrentDraft }: Props) => {
@@ -34,7 +34,31 @@ const NextDraft = ({ tournamentId, setCurrentDraft }: Props) => {
     };
 
     fetchData();
-  }, [tournamentId, firstPendingDraft?.id]);
+  }, [tournamentId, JSON.stringify(tournament)]);
+
+  const generateDraft = async () => {
+    const response = await post(
+      `/tournament/${tournamentId}/draft/generate`,
+      {}
+    );
+    const updatedTournament = (await response.json()) as Tournament;
+
+    setTournament({ ...tournament, ...updatedTournament });
+  };
+
+  const startDraft = async () => {
+    const response = await put(
+      `/tournament/${tournamentId}/draft/${firstPendingDraft?.id}/start`,
+      {}
+    );
+    const updatedTournament = (await response.json()) as Tournament;
+
+    setCurrentDraft(
+      updatedTournament.drafts.find(
+        (draft) => draft.id === firstPendingDraft?.id
+      )
+    );
+  };
 
   // if latest draft completed == tournament draft count, tournament is over (minus top 8)
   // else if next draft pending == null, we need to generate the draft and pods
@@ -48,17 +72,26 @@ const NextDraft = ({ tournamentId, setCurrentDraft }: Props) => {
         <p>Next pending draft: {firstPendingDraft?.draftNumber ?? "N/A"}</p>
         <p>How many drafts: {tournament?.drafts.length ?? "N/A"}</p>
         {lastCompletedDraft?.draftNumber === tournament?.drafts.length ? (
-          <p>The tournament is over</p>
+          <p>
+            The tournament is over.
+            <Button variant="primary">Complete tournament</Button>
+          </p>
         ) : firstPendingDraft ? (
           <>
             {firstPendingDraft.pods.length ? (
-              <Button>Start next draft</Button>
+              <Button variant="primary" onClick={() => startDraft()}>
+                Start next draft
+              </Button>
             ) : (
-              <Button variant="primary">Generate draft pods</Button>
+              <Button variant="primary" onClick={() => generateDraft()}>
+                Generate draft pods
+              </Button>
             )}
           </>
         ) : (
-          <Button>Generate next draft</Button>
+          <Button variant="primary" onClick={() => generateDraft()}>
+            Generate drafts
+          </Button>
         )}
       </Col>
     </Row>

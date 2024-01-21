@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { get } from "../../services/ApiService";
+import { get, put } from "../../services/ApiService";
 import { Col, Container, Row, Button } from "react-bootstrap";
 import { BoxArrowInLeft } from "react-bootstrap-icons";
 import dayjs from "dayjs";
@@ -61,6 +61,12 @@ function StaffView() {
     }
   }, [user]);
 
+  const startTournament = async () => {
+    const resp = await put(`/tournament/${tournamentId}/start`);
+    const updatedTournament = (await resp.json()) as Tournament;
+    setTournament({ ...tournament, ...updatedTournament });
+  };
+
   return user && tournament ? (
     <Container className="mt-3 my-md-4">
       <Col xs={12}>
@@ -76,19 +82,31 @@ function StaffView() {
         </h1>
         <h2>{tournament.name}</h2>
       </Row>
-      {currentRound && <ManageRound currentRound={currentRound} />}
-      {!currentRound && currentDraft && (
-        <ManageDraft currentDraft={currentDraft} placeholderId={1} />
-      )}
-      {!currentRound && !currentDraft && (
+      {tournament.status === "started" && (
         <>
-          <NextDraft
-            tournamentId={Number(tournamentId)}
-            setCurrentDraft={setCurrentDraft}
-          />
-          <ManageEnrollments tournamentId={Number(tournamentId)} />
+          {currentRound && <ManageRound currentRound={currentRound} />}
+          {!currentRound && currentDraft && (
+            <ManageDraft currentDraft={currentDraft} placeholderId={1} />
+          )}
+          {!currentRound && !currentDraft && (
+            <>
+              <NextDraft
+                tournamentId={Number(tournamentId)}
+                setCurrentDraft={setCurrentDraft}
+              />
+            </>
+          )}
         </>
       )}
+      {tournament.status === "pending" && (
+        <>
+          <ManageEnrollments tournamentId={Number(tournamentId)} />
+          <Button variant="primary" onClick={() => startTournament()}>
+            Start tournament
+          </Button>
+        </>
+      )}
+      {tournament.status === "completed" && <>The tournament is completed.</>}
     </Container>
   ) : (
     <Loading />
