@@ -1,6 +1,8 @@
 import { Cube } from "./Cube";
 import { Player, User } from "./User";
 
+export type Status = "pending" | "started" | "completed";
+
 export type Round = {
   id: number;
   roundNumber: number;
@@ -10,6 +12,8 @@ export type Round = {
 export type Draft = {
   id: number;
   draftNumber: number;
+  status: Status;
+  pods: DraftPod[];
 };
 
 export type DraftPod = {
@@ -52,6 +56,7 @@ export type Tournament = {
   totalSeats: number;
   preferencesRequired: number;
   status: string;
+  drafts: Draft[];
   cubes: Cube[];
   staffMembers: User[];
 };

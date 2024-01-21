@@ -10,6 +10,7 @@ import { Enrollment } from "./Enrollment";
 import { User } from "./User";
 import { Cube } from "./Cube";
 import { TournamentStatus } from "../dto/general.dto";
+import { Draft } from "./Draft";
 
 @Entity()
 export class Tournament {
@@ -39,6 +40,9 @@ export class Tournament {
 
   @Column({ default: "pending" })
   status: TournamentStatus;
+
+  @OneToMany(() => Draft, (draft) => draft.tournament)
+  drafts: Draft[];
 
   @OneToMany(() => Enrollment, (enrollment) => enrollment.tournament)
   enrollments: Enrollment[];

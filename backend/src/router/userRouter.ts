@@ -11,6 +11,7 @@ import {
   getFutureTournaments,
   getPastTournaments,
   getOngoingTournaments,
+  getTournamentAndDrafts,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -42,10 +43,6 @@ userRouter.use((req, res, next) => {
     return res.sendStatus(401);
   }
   next();
-});
-
-userRouter.get("/user/profile", (req, res) => {
-  res.send("you da man now dawg");
 });
 
 userRouter.get("/user/:id/tournaments", async (req, res) => {
@@ -133,6 +130,10 @@ userRouter.get("/tournaments/ongoing", async (req, res) => {
 
 userRouter.get("/tournament/:tournamentId", async (req, res) => {
   res.send(await getTournament(req));
+});
+
+userRouter.get("/tournament/:tournamentId/drafts", async (req, res) => {
+  res.send(await getTournamentAndDrafts(req));
 });
 
 userRouter.get("/tournament/:tournamentId/round", async (req, res) => {

@@ -5,7 +5,7 @@ type Props = {
 };
 
 const ManageDraft = ({ currentDraft }: Props) => {
-  return <p>TODO: manage draft {currentDraft.id}</p>;
+  return <p>TODO: manage ongoing draft {currentDraft.id}</p>;
 };
 
 export default ManageDraft;

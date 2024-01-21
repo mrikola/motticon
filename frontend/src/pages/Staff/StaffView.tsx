@@ -12,6 +12,7 @@ import { useIsTournamentStaff } from "../../utils/auth";
 import Loading from "../../components/general/Loading";
 import ManageRound from "../../components/staff/ManageRound";
 import ManageDraft from "../../components/staff/ManageDraft";
+import NextDraft from "../../components/staff/NextDraft";
 
 function StaffView() {
   const { tournamentId } = useParams();
@@ -63,7 +64,12 @@ function StaffView() {
       {!currentRound && currentDraft && (
         <ManageDraft currentDraft={currentDraft} />
       )}
-      {!currentRound && !currentDraft && <p>TODO: need to start next draft</p>}
+      {!currentRound && !currentDraft && (
+        <NextDraft
+          tournamentId={Number(tournamentId)}
+          setCurrentDraft={setCurrentDraft}
+        />
+      )}
     </Container>
   ) : (
     <Loading />

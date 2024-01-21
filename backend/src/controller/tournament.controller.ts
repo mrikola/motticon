@@ -50,6 +50,11 @@ export const getTournament = async (req) => {
   return await tournamentService.getTournament(tournamentId as number);
 };
 
+export const getTournamentAndDrafts = async (req) => {
+  const { tournamentId } = req.params;
+  return await tournamentService.getTournamentAndDrafts(tournamentId as number);
+};
+
 export const getCurrentDraft = async (req) => {
   const { tournamentId } = req.params;
   return await tournamentService.getCurrentDraft(tournamentId as number);

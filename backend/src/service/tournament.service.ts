@@ -122,26 +122,38 @@ export class TournamentService {
     });
   }
 
-  async getCurrentRound(id: number): Promise<Round> {
+  async getTournamentAndDrafts(id: number): Promise<Tournament> {
+    return await this.repository
+      .createQueryBuilder("tournament")
+      .leftJoinAndSelect("tournament.drafts", "draft")
+      .leftJoinAndSelect("draft.pods", "pod")
+      .where("tournament.id = :id", { id })
+      .getOne();
+  }
+
+  async getCurrentRound(tournamentId: number): Promise<Round> {
     return await this.appDataSource
       .getRepository(Round)
       .createQueryBuilder("round")
       .leftJoin("round.tournament", "tournament")
       .where("round.status = 'started'")
-      .andWhere("tournament.id = :id", { id })
+      .andWhere("tournament.id = :tournamentId", { tournamentId })
       .orderBy('"roundNumber"', "DESC")
       .getOne();
   }
 
-  async getCurrentDraft(id: number): Promise<DraftWithRoundNumber> {
-    const currentRound = await this.getCurrentRound(id);
-    return this.getDraftByRoundNumber(id, currentRound?.roundNumber);
+  async getCurrentDraft(tournamentId: number): Promise<DraftWithRoundNumber> {
+    const currentRound = await this.getCurrentRound(tournamentId);
+    return this.getDraftByRoundNumber(tournamentId, currentRound?.roundNumber);
   }
 
   async getDraftByRoundNumber(
     id: number,
     roundNumber: number
   ): Promise<DraftWithRoundNumber> {
+    if (!roundNumber) {
+      return null;
+    }
     const drafts = await this.appDataSource
       .getRepository(Draft)
       .createQueryBuilder("draft")
