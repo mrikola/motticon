@@ -69,12 +69,13 @@ export class EnrollmentService {
         .where("tournamentId = :tournamentId", { tournamentId })
         .andWhere("playerId = :userId", { userId })
         .execute();
-      const tournament =
-        this.tournamentService.getTournamentEnrollments(tournamentId);
-      return tournament;
     } catch (err: unknown) {
       return false;
     }
+    const tournament = await this.tournamentService.getTournamentEnrollments(
+      tournamentId
+    );
+    return tournament;
   }
 
   async dropFromTournament(tournamentId: number, userId: number): Promise<any> {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { get, post } from "../../services/ApiService";
 import { Player } from "../../types/User";
 import { Button, Col, Row } from "react-bootstrap";
