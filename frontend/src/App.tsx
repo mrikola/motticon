@@ -18,6 +18,7 @@ import Tournaments from "./pages/Tournament/Tournaments";
 import TournamentView from "./pages/Tournament/TournamentView";
 import AdminPage from "./pages/Admin/AdminPage";
 import CreateTournament from "./components/admin/CreateTournament";
+import AutocompleteTest from "./pages/Test/AutocompleteTest";
 
 function App() {
   const routes: RouteObject[] = [
@@ -31,6 +32,11 @@ function App() {
               path: "/",
               index: true,
               Component: Landing,
+            },
+            {
+              path: "/test",
+              index: true,
+              Component: AutocompleteTest,
             },
             {
               path: "login",
