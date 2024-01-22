@@ -1,6 +1,5 @@
 import { Container, Navbar, Nav } from "react-bootstrap";
 import {
-  PersonFill,
   BoxArrowRight,
   HouseFill,
   TrophyFill,
@@ -56,12 +55,6 @@ const Layout = () => {
                   <Link className="nav-link" to="/tournaments">
                     <TrophyFill />
                     Tournaments
-                  </Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Link className="nav-link" to="/players/1">
-                    <PersonFill />
-                    Public Profile
                   </Link>
                 </Nav.Item>
               </Nav>
