@@ -59,7 +59,7 @@ const ListCubesForTournament = () => {
       </Row>
       <Row xs={1} sm={1} md={2} lg={3} className="g-3">
         {cubes.map((cube, index) => (
-          <Col key={cube.id} xs={12}>
+          <Col key={cube.id} xs={12} className="cube-card">
             <Card
               className="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 cube-card-image"
               border="light"

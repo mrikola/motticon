@@ -27,16 +27,18 @@ $card-spacer-x: 0.5rem;
   }
 }
 
-.card-link {
-  text-decoration: none;
-}
+.cube-card {
+  .card-link {
+    text-decoration: none;
+  }
 
-.card-body {
-  padding: 1rem 0;
-}
+  .card-body {
+    padding: 1rem 0;
+  }
 
-.card-text {
-  min-height: 3rem;
+  .card-text {
+    min-height: 3rem;
+  }
 }
 
 .mask {
