@@ -1,7 +1,7 @@
 import { DataSource, Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Tournament } from "../entity/Tournament";
-import { partition } from "lodash";
+import { partition, round } from "lodash";
 import { TournamentsByType } from "../dto/tournaments.dto";
 import { Round } from "../entity/Round";
 import { Draft } from "../entity/Draft";
@@ -54,18 +54,29 @@ export class TournamentService {
       cubes,
     });
 
-    for (let index = 0; index < drafts; ++index) {
+    for (let draftIndex = 0; draftIndex < drafts; ++draftIndex) {
       await this.appDataSource
         .createQueryBuilder()
         .insert()
         .into(Draft)
         .values({
-          draftNumber: index + 1,
+          draftNumber: draftIndex + 1,
           tournament,
-          firstRound: index * 3 + 1,
-          lastRound: index * 3 + 3,
+          firstRound: draftIndex * 3 + 1,
+          lastRound: draftIndex * 3 + 3,
         })
         .execute();
+      for (let roundIndex = 0; roundIndex < 3; ++roundIndex) {
+        await this.appDataSource
+          .createQueryBuilder()
+          .insert()
+          .into(Round)
+          .values({
+            roundNumber: draftIndex * 3 + roundIndex + 1,
+            tournament,
+          })
+          .execute();
+      }
     }
     return tournament;
   }
@@ -245,6 +256,18 @@ export class TournamentService {
       .execute();
 
     return await this.getTournamentAndDrafts(tournamentId);
+  }
+
+  async startRound(tournamentId: number, roundId: number) {
+    await this.appDataSource
+      .getRepository(Round)
+      .createQueryBuilder("round")
+      .update()
+      .set({ startTime: new Date(), status: "started" })
+      .where({ id: roundId })
+      .execute();
+
+    return await this.getCurrentRound(tournamentId);
   }
 
   async resetRecentMatchesForTournament(tournamentId: number) {

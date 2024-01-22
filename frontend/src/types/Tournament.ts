@@ -7,6 +7,8 @@ export type Round = {
   id: number;
   roundNumber: number;
   startTime: Date;
+  status: Status;
+  matches: Match[];
 };
 
 export type Draft = {
@@ -14,6 +16,8 @@ export type Draft = {
   draftNumber: number;
   status: Status;
   pods: DraftPod[];
+  firstRound: number;
+  lastRound: number;
 };
 
 export type DraftPod = {
@@ -55,7 +59,7 @@ export type Tournament = {
   entryFee: number;
   totalSeats: number;
   preferencesRequired: number;
-  status: string;
+  status: Status;
   drafts: Draft[];
   cubes: Cube[];
   staffMembers: User[];

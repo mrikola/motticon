@@ -86,7 +86,10 @@ function StaffView() {
         <>
           {currentRound && <ManageRound currentRound={currentRound} />}
           {!currentRound && currentDraft && (
-            <ManageDraft currentDraft={currentDraft} placeholderId={1} />
+            <ManageDraft
+              currentDraft={currentDraft}
+              setCurrentRound={setCurrentRound}
+            />
           )}
           {!currentRound && !currentDraft && (
             <>

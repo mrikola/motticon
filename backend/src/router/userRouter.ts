@@ -17,6 +17,7 @@ import {
   startTournament,
   generateDrafts,
   startDraft,
+  startRound,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -39,8 +40,10 @@ import {
 } from "../controller/match.controller";
 import {
   getPodsForDraft,
+  getRoundsForDraft,
   getSeatsForPod,
 } from "../controller/draft.controller";
+import { generatePairings } from "../controller/pairings.controller";
 
 export const userRouter = express.Router();
 
@@ -168,6 +171,31 @@ userRouter.put(
   "/tournament/:tournamentId/draft/:draftId/start",
   async (req, res) => {
     res.send(await startDraft(req));
+  }
+);
+
+userRouter.get("/draft/:draftId/rounds", async (req, res) => {
+  res.send(await getRoundsForDraft(req));
+});
+
+userRouter.put(
+  "/tournament/:tournamentId/round/:roundId/start",
+  async (req, res) => {
+    res.send(await startRound(req));
+  }
+);
+
+userRouter.put(
+  "/tournament/:tournamentId/draft/:draftId/round/:roundId/pairings",
+  async (req, res) => {
+    const { tournamentId, draftId, roundId } = req.params;
+    res.send(
+      await generatePairings(
+        Number(tournamentId),
+        Number(draftId),
+        Number(roundId)
+      )
+    );
   }
 );
 
