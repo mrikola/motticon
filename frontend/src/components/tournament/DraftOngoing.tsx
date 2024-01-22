@@ -41,18 +41,18 @@ function DraftOngoing({ tournament, draft }: Props) {
   // get seats for pod
   useEffect(() => {
     const fetchData = async () => {
-      const id = playerPod.id;
-      const response = await get(`/draft/seats/${id}`);
-      const draftSeats = (await response.json()) as DraftPodSeat[];
-      draftSeats.forEach((seat) => {
-        if (seat.id === user?.id) {
-          setPlayerSeats(seat.seat);
-        }
-      });
+      if (playerPod) {
+        const id = playerPod.id;
+        const response = await get(`/draft/seats/${id}`);
+        const draftSeats = (await response.json()) as DraftPodSeat[];
+        draftSeats.forEach((seat) => {
+          if (seat.id === user?.id) {
+            setPlayerSeats(seat.seat);
+          }
+        });
+      }
     };
-    if (playerPod) {
-      fetchData();
-    }
+    fetchData();
   }, [playerPod, user]);
 
   if (user && draft && playerPod) {

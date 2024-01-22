@@ -10,7 +10,6 @@ import ViewCube from "./pages/ViewCube/ViewCube";
 import ListCubes from "./pages/ListCubes/ListCubes";
 import ListCubesForTournament from "./pages/ListCubes/ListCubesForTournament";
 import Standings from "./pages/Standings/Standings";
-import PublicProfile from "./pages/PublicProfile/PublicProfile";
 import Ongoing from "./pages/Tournament/Ongoing";
 import Landing from "./pages/Landing/Landing";
 import StaffView from "./pages/Staff/StaffView";
@@ -65,10 +64,6 @@ function App() {
             {
               path: "standings",
               Component: Standings,
-            },
-            {
-              path: "players/:playerId",
-              Component: PublicProfile,
             },
             {
               path: "tournaments",

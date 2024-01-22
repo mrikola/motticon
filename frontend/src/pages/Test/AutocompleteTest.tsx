@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import DatalistInput from "react-datalist-input";
+import DatalistInput, { Item } from "react-datalist-input";
 import "react-datalist-input/dist/styles.css";
 import { PersonPlusFill } from "react-bootstrap-icons";
 
@@ -28,7 +28,7 @@ const AutocompleteTest = () => {
     console.log("submitted: " + selectedCard);
   }
 
-  function handleSelection(item) {
+  function handleSelection(item: Item) {
     setItem(item);
     console.log(item);
     setSelectedCard("Choose: " + item.value);
@@ -38,7 +38,7 @@ const AutocompleteTest = () => {
     setCards([]);
   }
 
-  function cbf(value) {
+  function cbf(value: string) {
     const scryfallAutocompleteUrl = `https://api.scryfall.com/cards/autocomplete?q=`;
     const origin = "http://localhost:3000/";
     if (value.length > 1) {

@@ -1,7 +1,5 @@
 import { Button, Col, Row } from "react-bootstrap";
-import { Draft, Match, Round, Tournament } from "../../types/Tournament";
-import DecksSubmittedProgressBar from "./DecksSubmittedProgressBar";
-import DecksSubmittedTable from "./DecksSubmittedTable";
+import { Draft, Match, Round } from "../../types/Tournament";
 import { useEffect, useState } from "react";
 import { get, put } from "../../services/ApiService";
 import { useParams } from "react-router";

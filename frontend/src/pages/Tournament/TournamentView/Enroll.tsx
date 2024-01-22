@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { post } from "../../../services/ApiService";
 import { Col, Row, Button } from "react-bootstrap";
 import {
@@ -39,7 +39,7 @@ function Enroll({
   });
   const [enrollButtonText, setEnrollButtonText] = useState<string>();
   // consider creating an Icon component and passing it the icon name as a prop
-  const [enrollButtonIcon, setEnrollButtonIcon] = useState();
+  const [enrollButtonIcon, setEnrollButtonIcon] = useState<ReactNode>();
 
   useEffect(() => {
     if (isEnrolled) {

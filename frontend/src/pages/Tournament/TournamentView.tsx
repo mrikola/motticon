@@ -23,8 +23,8 @@ const TournamentView = () => {
   const [cubes, setCubes] = useState<Cube[]>([]);
   const [tournamentStatus, setTournamentStatus] = useState<string>();
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
-  const [ongoingRound, setOngoingRound] = useState<Round>();
-  const [freeSeats, setFreeSeats] = useState<number>();
+  const [_ongoingRound, setOngoingRound] = useState<Round>();
+  const [freeSeats, setFreeSeats] = useState<number>(0);
 
   const isStaff =
     user?.isAdmin || user?.tournamentsStaffed.includes(Number(tournamentId));
@@ -40,7 +40,7 @@ const TournamentView = () => {
       const response = await get(
         `/user/${user?.id}/tournament/${tournamentId}`
       );
-      const { tournament, enrollment, preferences } = await response.json();
+      const { tournament, enrollment } = await response.json();
       sessionStorage.setItem("currentTournament", tournament.id);
       setActiveTournament(tournament);
       setFreeSeats(tournament.totalSeats - tournament.enrollments.length);

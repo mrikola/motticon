@@ -1,20 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import {
-  Box,
-  ExclamationCircleFill,
-  BoxArrowInLeft,
-  PenFill,
-  GeoFill,
-  Calendar,
-  Calendar3,
-} from "react-bootstrap-icons";
+import { BoxArrowInLeft, PenFill } from "react-bootstrap-icons";
 import { get } from "../../services/ApiService";
 import { Cube } from "../../types/Cube";
 import { Tournament } from "../../types/Tournament";
 import { Badge, Button, Card, Col, Container, Row } from "react-bootstrap";
-import styles from "./ListCubes.module.css";
 import Loading from "../../components/general/Loading";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 

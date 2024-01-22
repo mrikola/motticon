@@ -26,7 +26,7 @@ type Props = {
 function RoundOngoing({ tournament, round, match }: Props) {
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
-  const [roundStart, setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
+  const [roundStart, _setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
   const [totalMatches, setTotalMatches] = useState<number>(0);
   const [matches, setMatches] = useState<Match[]>();
   const [playerRadioValue, setPlayerRadioValue] = useState<string>();
@@ -99,9 +99,9 @@ function RoundOngoing({ tournament, round, match }: Props) {
         " – " +
         opponentRadioValue +
         " " +
-        opponent.firstName +
+        opponent!.firstName +
         " " +
-        opponent.lastName,
+        opponent!.lastName,
       text3: "Is this correct?",
       actionText: "Confirm result",
       actionFunction: submitResult,
@@ -194,7 +194,7 @@ function RoundOngoing({ tournament, round, match }: Props) {
         <Row>
           <MatchResultRadioButtons
             name={"player-radio"}
-            value={playerRadioValue}
+            value={playerRadioValue ?? ""}
             updateFunction={setPlayerRadioValue}
             disabled={match.resultSubmittedBy ? true : false}
           />
@@ -213,7 +213,7 @@ function RoundOngoing({ tournament, round, match }: Props) {
           </Col>
           <MatchResultRadioButtons
             name={"opponent-radio"}
-            value={opponentRadioValue}
+            value={opponentRadioValue ?? ""}
             updateFunction={setOpponentRadioValue}
             disabled={match.resultSubmittedBy ? true : false}
           />

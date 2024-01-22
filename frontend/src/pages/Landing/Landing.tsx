@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Badge, Card, Col, Container, Row } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { get } from "../../services/ApiService";
 import { Tournament, UsersTournaments } from "../../types/Tournament";

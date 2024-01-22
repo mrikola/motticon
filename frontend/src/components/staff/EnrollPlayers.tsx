@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { get, post } from "../../services/ApiService";
 import { Player } from "../../types/User";
 import { Button, Col, Row } from "react-bootstrap";
-import DatalistInput from "react-datalist-input";
+import DatalistInput, { Item } from "react-datalist-input";
 import "react-datalist-input/dist/styles.css";
 import { PersonPlusFill } from "react-bootstrap-icons";
 
@@ -12,8 +12,8 @@ type Props = {
 
 const EnrollPlayers = ({ tournamentId }: Props) => {
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
-  const [item, setItem] = useState(); // The selected item will be stored in this state.
-  const [value, setValue] = useState();
+  const [item, setItem] = useState<Item>(); // The selected item will be stored in this state.
+  const [value, setValue] = useState<string>();
   const [selectedPlayer, setSelectedPlayer] = useState("No player selected");
 
   // Make sure each option has an unique id and a value
@@ -21,7 +21,6 @@ const EnrollPlayers = ({ tournamentId }: Props) => {
     () =>
       allPlayers.map((player) => ({
         // required: id and value
-        id: player.id,
         value: player.firstName + " " + player.lastName,
         // optional: label, node
         // label: option.name, // use a custom label instead of the value
@@ -49,7 +48,7 @@ const EnrollPlayers = ({ tournamentId }: Props) => {
           const enrolled = await resp.text();
           if (enrolled) {
             console.log(enrolled);
-            setItem(null);
+            setItem(undefined);
             setSelectedPlayer("No player selected");
           }
         }
@@ -59,11 +58,11 @@ const EnrollPlayers = ({ tournamentId }: Props) => {
     }
   }
 
-  function handleSelection(item) {
+  function handleSelection(item: Item) {
     setItem(item);
     console.log(item);
     setSelectedPlayer("Enroll: " + item.value);
-    setValue(""); // Custom behavior: Clear input field once a value has been selected
+    setValue(undefined); // Custom behavior: Clear input field once a value has been selected
   }
 
   if (allPlayers) {
@@ -76,7 +75,7 @@ const EnrollPlayers = ({ tournamentId }: Props) => {
             items={items}
             selectedItem={item}
             value={value}
-            setValue={setValue}
+            setValue={(value) => setValue(value)}
             onSelect={(item) => {
               handleSelection(item);
             }}
