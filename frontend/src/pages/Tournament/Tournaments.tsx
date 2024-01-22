@@ -39,7 +39,7 @@ function Tournaments() {
             const tourneys = tournaments[type];
             tourneys.sort((a, b) => (a.startDate < b.startDate ? -1 : 1));
             return tourneys.length > 0 ? (
-              <>
+              <div key={index}>
                 <h2 className="text-capitalize mt-2">{type} tournaments</h2>
                 <Row key={index} className="row-cols-1 row-cols-md-2 g-2">
                   {tourneys.map((tournament) => {
@@ -78,10 +78,10 @@ function Tournaments() {
                     );
                   })}
                 </Row>
-              </>
+              </div>
             ) : (
-              <Row>
-                <Col xs={12} key={index}>
+              <Row key={index}>
+                <Col xs={12}>
                   <h2 className="text-capitalize mt-2">
                     No {type} tournaments
                   </h2>
