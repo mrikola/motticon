@@ -21,6 +21,16 @@ $card-spacer-x: 0.5rem;
   background-repeat: no-repeat;
 }
 
+.card {
+  hr {
+    margin: 0.5rem 0;
+  }
+}
+
+.card-link {
+  text-decoration: none;
+}
+
 .card-body {
   padding: 1rem 0;
 }

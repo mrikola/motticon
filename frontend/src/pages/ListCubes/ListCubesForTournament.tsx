@@ -6,11 +6,14 @@ import {
   ExclamationCircleFill,
   BoxArrowInLeft,
   PenFill,
+  GeoFill,
+  Calendar,
+  Calendar3,
 } from "react-bootstrap-icons";
 import { get } from "../../services/ApiService";
 import { Cube } from "../../types/Cube";
 import { Tournament } from "../../types/Tournament";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import { Badge, Button, Card, Col, Container, Row } from "react-bootstrap";
 import styles from "./ListCubes.module.css";
 import Loading from "../../components/general/Loading";
 import { Helmet, HelmetProvider } from "react-helmet-async";
@@ -54,41 +57,51 @@ const ListCubesForTournament = () => {
         </Link>
         <h1 className="display-1">{tournament.name} cubes</h1>
       </Row>
-      <Row xs={1} sm={1} md={2}>
+      <Row xs={1} sm={1} md={2} lg={3} className="g-3">
         {cubes.map((cube, index) => (
-          <Col key={cube.id} className={cube.id.toString()}>
-            <Card className="my-1">
-              <Row>
-                <Col
-                  xs={6}
-                  className="cube-card-image rounded-start"
-                  style={{
-                    backgroundImage:
-                      'url("/img/masthead_' + (index + 1) + '.jpeg")',
-                  }}
-                ></Col>
-                <Col xs={6} className="">
-                  <Card.Body className="">
-                    <Card.Title>
-                      {cube.title + " "}
-                      {cube.id === 1 && (
-                        <ExclamationCircleFill className="text-primary" />
-                      )}
-                    </Card.Title>
-                    <Card.Subtitle>
-                      <PenFill /> {cube.owner}
-                    </Card.Subtitle>
-                    <Card.Text className="mt-2">{cube.description}</Card.Text>
+          <Col key={cube.id} xs={12}>
+            <Card
+              className="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 cube-card-image"
+              border="light"
+              style={{
+                backgroundImage:
+                  'url("/img/masthead_' + (index + 1) + '.jpeg")',
+              }}
+            >
+              <Link
+                to={`/tournament/${tournamentId}/cubes/${cube.id}`}
+                className="card-link h-100"
+              >
+                <div
+                  className="mask"
+                  style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+                >
+                  <div className="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                    {cube.id === 1 ? (
+                      <>
+                        <p className="mt-auto pt-4">
+                          <Badge bg="primary" className="py-2">
+                            You are playing this cube
+                          </Badge>
+                        </p>
+                        <h3 className="mb-4 display-4 lh-1">
+                          {cube.title + " "}
+                        </h3>
+                      </>
+                    ) : (
+                      <h3 className="pt-4 mt-5 mb-4 display-4 lh-1">
+                        {cube.title + " "}
+                      </h3>
+                    )}
 
-                    <Link
-                      to={`/tournament/${tournamentId}/cubes/${cube.id}`}
-                      className="btn btn-primary"
-                    >
-                      <Box /> Go to cube
-                    </Link>
-                  </Card.Body>
-                </Col>
-              </Row>
+                    <Card.Subtitle className="icon-link">
+                      <PenFill /> {cube.owner ? cube.owner : "Placeholder Name"}
+                    </Card.Subtitle>
+                    <hr></hr>
+                    <p className="mb-0">Click to see more</p>
+                  </div>
+                </div>
+              </Link>
             </Card>
           </Col>
         ))}
