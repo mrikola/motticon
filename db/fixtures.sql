@@ -94,10 +94,10 @@ INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(draft_8
 INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(draft_8_man_2_2024_id, spike_id, false, false);
 INSERT INTO enrollment("tournamentId", "playerId", paid, dropped) values(draft_8_man_2_2024_id, timmy_id, false, false);
 
-INSERT INTO draft("tournamentId", "draftNumber", "rounds") values(motticon_id, 1, 3) RETURNING id into motticon_draft_id;
-INSERT INTO draft("tournamentId", "draftNumber", "rounds") values(draft_8_man_2_2024_id, 1, 3);
+INSERT INTO draft("tournamentId", "draftNumber") values(motticon_id, 1) RETURNING id into motticon_draft_id;
+INSERT INTO draft("tournamentId", "draftNumber") values(draft_8_man_2_2024_id, 1);
 
-INSERT INTO draft("tournamentId", "draftNumber", "rounds") values(pikadrafti_id, 1, 3) RETURNING id into pikadrafti_draft_id;
+INSERT INTO draft("tournamentId", "draftNumber") values(pikadrafti_id, 1) RETURNING id into pikadrafti_draft_id;
 INSERT INTO draft_pod("draftId", "cubeId", "podNumber") values(pikadrafti_draft_id, monoblue_id, 1) RETURNING id into pikadrafti_pod_id;
 
 INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, pekka_id, 1);

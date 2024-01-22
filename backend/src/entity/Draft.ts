@@ -24,8 +24,11 @@ export class Draft {
   @Column("smallint")
   draftNumber: number;
 
-  @Column("smallint")
-  rounds: number;
+  @Column("smallint", { default: 1 })
+  firstRound: number;
+
+  @Column("smallint", { default: 3 })
+  lastRound: number;
 
   @Column({ default: "pending" })
   status: DraftStatus;

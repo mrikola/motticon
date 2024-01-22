@@ -62,7 +62,8 @@ export class TournamentService {
         .values({
           draftNumber: index + 1,
           tournament,
-          rounds: 3,
+          firstRound: index * 3 + 1,
+          lastRound: index * 3 + 3,
         })
         .execute();
     }
