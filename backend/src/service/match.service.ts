@@ -1,4 +1,4 @@
-import { DataSource, Repository } from "typeorm";
+import { Brackets, DataSource, Repository } from "typeorm";
 import { Match } from "../entity/Match";
 import { AppDataSource } from "../data-source";
 
@@ -23,20 +23,19 @@ export class MatchService {
     return matches;
   }
 
-  async getMatchesForRoundByPlayers(
-    tournamentId: number,
-    roundNumber: number,
-    playerIds: number[]
-  ) {
+  async getMatchesForRoundByPlayers(roundId: number, playerIds: number[]) {
     const matches = await this.repository
       .createQueryBuilder("match")
       .leftJoinAndSelect("match.round", "round")
-      .where('round."roundNumber" = :roundNumber', { roundNumber })
-      .andWhere('round."tournamentId" = :tournamentId', { tournamentId })
-      .andWhere((qb) =>
-        qb
-          .where('match."player1Id" in (:...playerIds)', { playerIds })
-          .orWhere('match."player2Id" in (:...playerIds)', { playerIds })
+      .leftJoinAndSelect("match.player1", "player1")
+      .leftJoinAndSelect("match.player2", "player2")
+      .where("round.id = :roundId", { roundId })
+      .andWhere(
+        new Brackets((qb) =>
+          qb
+            .where('match."player1Id" in (:...playerIds)', { playerIds })
+            .orWhere('match."player2Id" in (:...playerIds)', { playerIds })
+        )
       )
       .getMany();
     return matches;
