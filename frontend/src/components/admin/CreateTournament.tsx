@@ -180,7 +180,7 @@ const CreateTournament = () => {
             <Form.Label>Cubes used</Form.Label>
             <Form.Select
               {...register("cubeIds")}
-              htmlSize={cubes.length}
+              size="lg"
               multiple
               className="mb-3"
             >
