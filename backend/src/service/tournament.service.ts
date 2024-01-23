@@ -258,12 +258,36 @@ export class TournamentService {
     return await this.getTournamentAndDrafts(tournamentId);
   }
 
+  async endDraft(tournamentId: number, draftId: number) {
+    await this.appDataSource
+      .getRepository(Draft)
+      .createQueryBuilder("draft")
+      .update()
+      .set({ status: "completed" })
+      .where({ id: draftId })
+      .execute();
+
+    return await this.getTournamentAndDrafts(tournamentId);
+  }
+
   async startRound(tournamentId: number, roundId: number) {
     await this.appDataSource
       .getRepository(Round)
       .createQueryBuilder("round")
       .update()
       .set({ startTime: new Date(), status: "started" })
+      .where({ id: roundId })
+      .execute();
+
+    return await this.getCurrentRound(tournamentId);
+  }
+
+  async endRound(tournamentId: number, roundId: number) {
+    await this.appDataSource
+      .getRepository(Round)
+      .createQueryBuilder("round")
+      .update()
+      .set({ status: "completed" })
       .where({ id: roundId })
       .execute();
 

@@ -18,6 +18,8 @@ import {
   generateDrafts,
   startDraft,
   startRound,
+  endRound,
+  endDraft,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -174,6 +176,13 @@ userRouter.put(
   }
 );
 
+userRouter.put(
+  "/tournament/:tournamentId/draft/:draftId/end",
+  async (req, res) => {
+    res.send(await endDraft(req));
+  }
+);
+
 userRouter.get("/draft/:draftId/rounds", async (req, res) => {
   res.send(await getRoundsForDraft(req));
 });
@@ -182,6 +191,13 @@ userRouter.put(
   "/tournament/:tournamentId/round/:roundId/start",
   async (req, res) => {
     res.send(await startRound(req));
+  }
+);
+
+userRouter.put(
+  "/tournament/:tournamentId/round/:roundId/end",
+  async (req, res) => {
+    res.send(await endRound(req));
   }
 );
 

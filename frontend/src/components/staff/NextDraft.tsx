@@ -64,32 +64,49 @@ const NextDraft = ({ tournamentId, setCurrentDraft }: Props) => {
   // else if next draft pending == null, we need to generate the draft and pods
   // else we can start the next draft
   // next = (latest completed ?? 0) + 1
-
+  <Col xs={10} sm={8} className="d-grid gap-2 mx-auto"></Col>;
   return (
     <Row>
       <Col xs={12}>
         <p>Last completed draft: {lastCompletedDraft?.draftNumber ?? "N/A"}</p>
         <p>Next pending draft: {firstPendingDraft?.draftNumber ?? "N/A"}</p>
         <p>How many drafts: {tournament?.drafts.length ?? "N/A"}</p>
+
         {lastCompletedDraft?.draftNumber === tournament?.drafts.length ? (
-          <p>
-            The tournament is over.
-            <Button variant="primary">Complete tournament</Button>
-          </p>
-        ) : firstPendingDraft ? (
           <>
-            {firstPendingDraft.pods.length ? (
-              <Button variant="primary" onClick={() => startDraft()}>
-                Start next draft
-              </Button>
-            ) : (
-              <Button variant="primary" onClick={() => generateDraft()}>
-                Generate draft pods
-              </Button>
-            )}
+            <p>The tournament is over.</p>
+            <Button variant="primary" className="btn-lg">
+              Complete tournament
+            </Button>
           </>
+        ) : firstPendingDraft ? (
+          <Row>
+            <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+              {firstPendingDraft.pods.length ? (
+                <Button
+                  variant="primary"
+                  className="btn-lg"
+                  onClick={() => startDraft()}
+                >
+                  Start next draft
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  className="btn-lg"
+                  onClick={() => generateDraft()}
+                >
+                  Generate draft pods
+                </Button>
+              )}
+            </Col>
+          </Row>
         ) : (
-          <Button variant="primary" onClick={() => generateDraft()}>
+          <Button
+            variant="primary"
+            className="btn-lg"
+            onClick={() => generateDraft()}
+          >
             Generate drafts
           </Button>
         )}

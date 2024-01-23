@@ -97,9 +97,25 @@ export const startDraft = async (req) => {
   );
 };
 
+export const endDraft = async (req) => {
+  const { tournamentId, draftId } = req.params;
+  return await tournamentService.endDraft(
+    tournamentId as number,
+    draftId as number
+  );
+};
+
 export const startRound = async (req) => {
   const { tournamentId, roundId } = req.params;
   return await tournamentService.startRound(
+    tournamentId as number,
+    roundId as number
+  );
+};
+
+export const endRound = async (req) => {
+  const { tournamentId, roundId } = req.params;
+  return await tournamentService.endRound(
     tournamentId as number,
     roundId as number
   );

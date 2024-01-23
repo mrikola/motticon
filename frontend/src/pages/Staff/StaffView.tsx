@@ -71,7 +71,7 @@ function StaffView() {
     <Container className="mt-3 my-md-4">
       <Col xs={12}>
         <Link to={`/tournament/${tournamentId}`}>
-          <Button variant="primary">
+          <Button variant="primary" className="icon-link">
             <BoxArrowInLeft /> Back to tournament
           </Button>
         </Link>

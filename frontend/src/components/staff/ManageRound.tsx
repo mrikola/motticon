@@ -3,13 +3,14 @@ import { Match, Round } from "../../types/Tournament";
 import dayjs, { Dayjs } from "dayjs";
 import ResultsInputModal, { ModalProps } from "../general/ResultsInputModal";
 import { Player } from "../../types/User";
-import { get, post } from "../../services/ApiService";
+import { get, post, put } from "../../services/ApiService";
 import { UserInfoContext } from "../provider/UserInfoProvider";
-import { Card, Col, Container, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { SquareFill } from "react-bootstrap-icons";
 import CardCountdownTimer from "../general/CardCountdownTimer";
 import MatchesRemainingProgressBar from "../general/MatchesRemainingProgressBar";
 import MatchTable from "./MatchTable";
+import { useParams } from "react-router";
 
 type Props = {
   currentRound: Round;
@@ -17,6 +18,7 @@ type Props = {
 
 const ManageRound = ({ currentRound }: Props) => {
   const user = useContext(UserInfoContext);
+  const { tournamentId } = useParams();
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const [matches, setMatches] = useState<Match[]>();
   const [totalMatches, setTotalMatches] = useState<number>(0);
@@ -57,6 +59,7 @@ const ManageRound = ({ currentRound }: Props) => {
       // sort by table number, descending
       mtchs.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1));
       setMatches(mtchs);
+      console.log(mtchs);
     };
     if (currentRound) {
       fetchData();
@@ -116,6 +119,16 @@ const ManageRound = ({ currentRound }: Props) => {
     });
   }
 
+  const endRound = async () => {
+    const response = await put(
+      `/tournament/${tournamentId}/round/${currentRound.id}/end`,
+      {}
+    );
+    const round = (await response.json()) as Round;
+    console.log(round);
+    // do some actual stuff here
+  };
+
   if (user && currentRound && timeRemaining && matches) {
     return (
       <>
@@ -148,6 +161,18 @@ const ManageRound = ({ currentRound }: Props) => {
               />
             </Col>
           </Container>
+        </Row>
+        <Row>
+          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto my-3">
+            <Button
+              variant="primary"
+              className="btn-large"
+              disabled={resultsMissing > 0}
+              onClick={endRound}
+            >
+              End round
+            </Button>
+          </Col>
         </Row>
         <Row>
           <MatchTable
