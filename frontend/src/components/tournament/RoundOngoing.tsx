@@ -12,7 +12,7 @@ import MatchesRemainingProgressBar from "../general/MatchesRemainingProgressBar"
 import MatchResultRadioButtons from "../general/MatchResultRadioButtons";
 import { Match, Round, Tournament } from "../../types/Tournament";
 import VerticallyCenteredModal, {
-  ModalProps,
+  VerticallyCenteredModalProps,
 } from "../general/VerticallyCenteredModal";
 import { Player } from "../../types/User";
 import { Helmet, HelmetProvider } from "react-helmet-async";
@@ -31,7 +31,7 @@ function RoundOngoing({ tournament, round, match }: Props) {
   const [matches, setMatches] = useState<Match[]>();
   const [playerRadioValue, setPlayerRadioValue] = useState<string>();
   const [opponentRadioValue, setOpponentRadioValue] = useState<string>();
-  const [modal, setModal] = useState<ModalProps>({
+  const [modal, setModal] = useState<VerticallyCenteredModalProps>({
     show: false,
     onHide: () => null,
     heading: "",

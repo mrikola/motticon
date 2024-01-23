@@ -37,14 +37,18 @@ const Layout = () => {
             <Navbar.Collapse id="navbarSupportedContent">
               <Nav className="me-auto">
                 <Nav.Item>
-                  <Link className="nav-link active" aria-current="page" to="/">
+                  <Link
+                    className="nav-link icon-link active"
+                    aria-current="page"
+                    to="/"
+                  >
                     <HouseFill />
                     Home
                   </Link>
                 </Nav.Item>
                 {user?.isAdmin && (
                   <Nav.Item>
-                    <Link className="nav-link" to="/admin">
+                    <Link className="nav-link icon-link" to="/admin">
                       <PersonFillCheck />
                       Admin
                     </Link>
@@ -52,7 +56,7 @@ const Layout = () => {
                 )}
 
                 <Nav.Item>
-                  <Link className="nav-link" to="/tournaments">
+                  <Link className="nav-link icon-link" to="/tournaments">
                     <TrophyFill />
                     Tournaments
                   </Link>
@@ -62,7 +66,7 @@ const Layout = () => {
                 <div className="vr d-none d-lg-block"></div>
                 <hr className="d-xs d-lg-none w-100" />
                 <Nav.Item>
-                  <Link className="nav-link" to={"/logout"}>
+                  <Link className="nav-link icon-link" to={"/logout"}>
                     <BoxArrowRight />
                     Log out
                   </Link>

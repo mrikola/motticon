@@ -193,6 +193,17 @@ export class TournamentService {
     return await this.getTournamentAndDrafts(tournamentId);
   }
 
+  async endTournament(tournamentId: number) {
+    await this.repository
+      .createQueryBuilder("tournament")
+      .update()
+      .set({ status: "completed" })
+      .where({ id: tournamentId })
+      .execute();
+
+    return await this.getTournamentAndDrafts(tournamentId);
+  }
+
   async generateDraftSeatings(pods: DraftPod[], players: User[]) {
     pods.forEach((pod, podIndex) => {
       const podPlayers = players.slice(podIndex * 8, (podIndex + 1) * 8);
@@ -270,7 +281,7 @@ export class TournamentService {
     return await this.getTournamentAndDrafts(tournamentId);
   }
 
-  async startRound(tournamentId: number, roundId: number) {
+  async startRound(tournamentId: number, roundId: number): Promise<Round> {
     await this.appDataSource
       .getRepository(Round)
       .createQueryBuilder("round")
@@ -282,7 +293,7 @@ export class TournamentService {
     return await this.getCurrentRound(tournamentId);
   }
 
-  async endRound(tournamentId: number, roundId: number) {
+  async endRound(tournamentId: number, roundId: number): Promise<Round> {
     await this.appDataSource
       .getRepository(Round)
       .createQueryBuilder("round")

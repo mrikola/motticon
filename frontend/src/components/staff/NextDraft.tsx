@@ -60,58 +60,74 @@ const NextDraft = ({ tournamentId, setCurrentDraft }: Props) => {
     );
   };
 
+  const completeTournament = async () => {
+    const resp = await put(`/tournament/${tournamentId}/end`);
+    const updatedTournament = (await resp.json()) as Tournament;
+    setTournament({ ...tournament, ...updatedTournament });
+    console.log(updatedTournament);
+  };
+
   // if latest draft completed == tournament draft count, tournament is over (minus top 8)
   // else if next draft pending == null, we need to generate the draft and pods
   // else we can start the next draft
   // next = (latest completed ?? 0) + 1
-  <Col xs={10} sm={8} className="d-grid gap-2 mx-auto"></Col>;
-  return (
-    <Row>
-      <Col xs={12}>
-        <p>Last completed draft: {lastCompletedDraft?.draftNumber ?? "N/A"}</p>
-        <p>Next pending draft: {firstPendingDraft?.draftNumber ?? "N/A"}</p>
-        <p>How many drafts: {tournament?.drafts.length ?? "N/A"}</p>
 
-        {lastCompletedDraft?.draftNumber === tournament?.drafts.length ? (
-          <>
-            <p>The tournament is over.</p>
-            <Button variant="primary" className="btn-lg">
+  return (
+    <>
+      <Row>
+        <Col xs={12}>
+          <p>
+            Last completed draft: {lastCompletedDraft?.draftNumber ?? "N/A"}
+          </p>
+          <p>Next pending draft: {firstPendingDraft?.draftNumber ?? "N/A"}</p>
+          <p>How many drafts: {tournament?.drafts.length ?? "N/A"}</p>
+        </Col>
+      </Row>
+      {lastCompletedDraft?.draftNumber === tournament?.drafts.length ? (
+        <Row>
+          <h3>The tournament is over.</h3>
+          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+            <Button
+              variant="primary"
+              className="btn-lg"
+              onClick={() => completeTournament()}
+            >
               Complete tournament
             </Button>
-          </>
-        ) : firstPendingDraft ? (
-          <Row>
-            <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
-              {firstPendingDraft.pods.length ? (
-                <Button
-                  variant="primary"
-                  className="btn-lg"
-                  onClick={() => startDraft()}
-                >
-                  Start next draft
-                </Button>
-              ) : (
-                <Button
-                  variant="primary"
-                  className="btn-lg"
-                  onClick={() => generateDraft()}
-                >
-                  Generate draft pods
-                </Button>
-              )}
-            </Col>
-          </Row>
-        ) : (
-          <Button
-            variant="primary"
-            className="btn-lg"
-            onClick={() => generateDraft()}
-          >
-            Generate drafts
-          </Button>
-        )}
-      </Col>
-    </Row>
+          </Col>
+        </Row>
+      ) : firstPendingDraft ? (
+        <Row>
+          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+            {firstPendingDraft.pods.length ? (
+              <Button
+                variant="primary"
+                className="btn-lg"
+                onClick={() => startDraft()}
+              >
+                Start next draft
+              </Button>
+            ) : (
+              <Button
+                variant="primary"
+                className="btn-lg"
+                onClick={() => generateDraft()}
+              >
+                Generate draft pods
+              </Button>
+            )}
+          </Col>
+        </Row>
+      ) : (
+        <Button
+          variant="primary"
+          className="btn-lg"
+          onClick={() => generateDraft()}
+        >
+          Generate drafts
+        </Button>
+      )}
+    </>
   );
 };
 

@@ -11,6 +11,9 @@ import CardCountdownTimer from "../general/CardCountdownTimer";
 import MatchesRemainingProgressBar from "../general/MatchesRemainingProgressBar";
 import MatchTable from "./MatchTable";
 import { useParams } from "react-router";
+import VerticallyCenteredModal, {
+  VerticallyCenteredModalProps,
+} from "../general/VerticallyCenteredModal";
 
 type Props = {
   currentRound: Round;
@@ -38,6 +41,15 @@ const ManageRound = ({ currentRound }: Props) => {
       resultSubmittedBy: {} as Player,
     },
   });
+  const [endRoundModal, setEndRoundModal] =
+    useState<VerticallyCenteredModalProps>({
+      show: false,
+      onHide: () => null,
+      heading: "",
+      text: "",
+      actionText: "",
+      actionFunction: () => {},
+    });
 
   useEffect(() => {
     if (currentRound) {
@@ -129,6 +141,17 @@ const ManageRound = ({ currentRound }: Props) => {
     // do some actual stuff here
   };
 
+  function handleEndRoundClick() {
+    setEndRoundModal({
+      show: true,
+      onHide: () => null,
+      heading: "Confirm round end",
+      text: "Are you sure you want to end this round?",
+      actionText: "Confirm round end",
+      actionFunction: endRound,
+    });
+  }
+
   if (user && currentRound && timeRemaining && matches) {
     return (
       <>
@@ -166,20 +189,31 @@ const ManageRound = ({ currentRound }: Props) => {
           <Col xs={10} sm={8} className="d-grid gap-2 mx-auto my-3">
             <Button
               variant="primary"
-              className="btn-large"
+              className="btn-lg"
               disabled={resultsMissing > 0}
-              onClick={endRound}
+              onClick={() => handleEndRoundClick()}
             >
               End round
             </Button>
           </Col>
         </Row>
-        <Row>
-          <MatchTable
-            matches={matches}
-            submitResultClicked={submitResultClicked}
-          />
-        </Row>
+        <MatchTable
+          matches={matches}
+          submitResultClicked={submitResultClicked}
+        />
+        <VerticallyCenteredModal
+          show={endRoundModal.show}
+          onHide={() =>
+            setEndRoundModal({
+              ...endRoundModal,
+              show: false,
+            })
+          }
+          heading={endRoundModal.heading}
+          text={endRoundModal.text}
+          actionText={endRoundModal.actionText}
+          actionFunction={endRoundModal.actionFunction}
+        />
         <ResultsInputModal
           show={modal.show}
           onHide={() =>

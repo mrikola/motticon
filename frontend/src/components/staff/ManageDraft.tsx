@@ -1,5 +1,5 @@
 import { Button, Col, Row } from "react-bootstrap";
-import { Draft, Match, Round } from "../../types/Tournament";
+import { Draft, Match, Round, Tournament } from "../../types/Tournament";
 import { useEffect, useState } from "react";
 import { get, put } from "../../services/ApiService";
 import { useParams } from "react-router";
@@ -62,36 +62,69 @@ const ManageDraft = ({ currentDraft, setCurrentRound }: Props) => {
     }
   };
 
+  const completeDraft = async () => {
+    const response = await put(
+      `/tournament/${tournamentId}/draft/${currentDraft.id}/end`,
+      {}
+    );
+    const updatedTournament = (await response.json()) as Tournament;
+    console.log(updatedTournament);
+    // do some stuff here
+  };
+
   return (
-    <Row>
-      <Col xs={12}>
-        <p>Last completed round: {lastCompletedRound?.roundNumber ?? "N/A"}</p>
-        <p>Next pending round: {firstPendingRound?.roundNumber ?? "N/A"}</p>
-        <p>
-          Which rounds: {currentDraft.firstRound} - {currentDraft.lastRound}
-        </p>
-        {lastCompletedRound?.roundNumber === currentDraft.lastRound ? (
+    <>
+      <Row>
+        <Col xs={12}>
           <p>
-            The draft is over.
-            <Button variant="primary">Complete draft</Button>
+            Last completed round: {lastCompletedRound?.roundNumber ?? "N/A"}
           </p>
-        ) : firstPendingRound ? (
-          <>
+          <p>Next pending round: {firstPendingRound?.roundNumber ?? "N/A"}</p>
+          <p>
+            Which rounds: {currentDraft.firstRound} - {currentDraft.lastRound}
+          </p>
+        </Col>
+      </Row>
+
+      {lastCompletedRound?.roundNumber === currentDraft.lastRound ? (
+        <Row>
+          <h3>The draft is over.</h3>
+          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+            <Button
+              variant="primary"
+              className="btn-lg"
+              onClick={() => completeDraft()}
+            >
+              Complete draft
+            </Button>
+          </Col>
+        </Row>
+      ) : firstPendingRound ? (
+        <Row>
+          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
             {firstPendingRound.matches.length ? (
-              <Button variant="primary" onClick={() => startRound()}>
+              <Button
+                variant="primary"
+                className="btn-lg"
+                onClick={() => startRound()}
+              >
                 Start next round
               </Button>
             ) : (
-              <Button variant="primary" onClick={() => generatePairings()}>
+              <Button
+                variant="primary"
+                className="btn-lg"
+                onClick={() => generatePairings()}
+              >
                 Generate pairings
               </Button>
             )}
-          </>
-        ) : (
-          <p>Something's wrong, there are no rounds generated for this draft</p>
-        )}
-      </Col>
-    </Row>
+          </Col>
+        </Row>
+      ) : (
+        <p>Something's wrong, there are no rounds generated for this draft</p>
+      )}
+    </>
   );
 };
 

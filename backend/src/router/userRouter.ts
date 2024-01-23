@@ -20,6 +20,7 @@ import {
   startRound,
   endRound,
   endDraft,
+  endTournament,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -160,6 +161,10 @@ userRouter.get("/tournament/:id/cubes", async (req, res) => {
 
 userRouter.put("/tournament/:tournamentId/start", async (req, res) => {
   res.send(await startTournament(req));
+});
+
+userRouter.put("/tournament/:tournamentId/end", async (req, res) => {
+  res.send(await endTournament(req));
 });
 
 userRouter.post(

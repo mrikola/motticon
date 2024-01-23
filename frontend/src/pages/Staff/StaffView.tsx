@@ -104,12 +104,27 @@ function StaffView() {
       {tournament.status === "pending" && (
         <>
           <ManageEnrollments tournamentId={Number(tournamentId)} />
-          <Button variant="primary" onClick={() => startTournament()}>
-            Start tournament
-          </Button>
+          <Row>
+            <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+              <Button
+                variant="primary"
+                className="btn-lg"
+                onClick={() => startTournament()}
+              >
+                Start tournament
+              </Button>
+            </Col>
+          </Row>
         </>
       )}
-      {tournament.status === "completed" && <>The tournament is completed.</>}
+      {tournament.status === "completed" && (
+        <Row>
+          <Col xs={12}>
+            <h3>The tournament is completed.</h3>
+            <h4>TODO: display standings here.</h4>
+          </Col>
+        </Row>
+      )}
     </Container>
   ) : (
     <Loading />

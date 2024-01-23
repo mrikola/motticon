@@ -8,7 +8,7 @@ import {
   ExclamationTriangleFill,
 } from "react-bootstrap-icons";
 import VerticallyCenteredModal, {
-  ModalProps,
+  VerticallyCenteredModalProps,
 } from "../../../components/general/VerticallyCenteredModal";
 import { Tournament } from "../../../types/Tournament";
 
@@ -29,7 +29,7 @@ function Enroll({
   freeSeatsUpdater,
   tournament,
 }: Props) {
-  const [modal, setModal] = useState<ModalProps>({
+  const [modal, setModal] = useState<VerticallyCenteredModalProps>({
     show: false,
     onHide: () => null,
     heading: "",
