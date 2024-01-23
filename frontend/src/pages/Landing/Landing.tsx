@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Card, Col, Container, Row } from "react-bootstrap";
+import { Badge, Card, Col, Container, Row } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { get } from "../../services/ApiService";
 import { Tournament, UsersTournaments } from "../../types/Tournament";
@@ -49,6 +49,7 @@ const Landing = () => {
         ids.push(tournamentsStaffed[tournament].id);
       }
       setTournamentsStaffedIds(ids);
+      console.log(ids);
     }
   }, [tournamentsStaffed]);
 
@@ -73,48 +74,53 @@ const Landing = () => {
           tournamentTypes.map((type, index) => {
             const tourneys = tournaments[type];
             return tourneys.length > 0 ? (
-              <>
-                <h2 className="text-capitalize mt-2">
+              <div key={index}>
+                <h2 className="text-capitalize my-2">
                   Your {type} tournaments
                 </h2>
-                <Row key={index} className="row-cols-1 row-cols-md-2 g-2"></Row>
-
-                {tourneys.map((tournament) => {
-                  let date;
-                  if (
-                    dayjs(tournament.startDate).isSame(
-                      dayjs(tournament.endDate),
-                      "day"
-                    )
-                  ) {
-                    date = dayjs(tournament.startDate).format("DD/MM/YYYY");
-                  } else {
-                    date =
-                      dayjs(tournament.startDate).format("DD/MM/YYYY") +
-                      " - " +
-                      dayjs(tournament.endDate).format("DD/MM/YYYY");
-                  }
-                  return (
-                    <Col xs={12} md={6} lg={4} key={tournament.id}>
-                      <Card>
-                        <Card.Body>
-                          <Card.Title>{tournament.name}</Card.Title>
-                          <Card.Subtitle className="card-subtitle mb-2 text-body-secondary">
-                            {date}
-                          </Card.Subtitle>
-                          <Card.Text>{tournament.description}</Card.Text>
-                          <Link
-                            to={`/tournament/${tournament.id}`}
-                            className="btn btn-primary"
-                          >
-                            Go to tournament
-                          </Link>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  );
-                })}
-              </>
+                <Row className="row-cols-1 row-cols-md-2 g-2">
+                  {tourneys.map((tournament) => {
+                    let date;
+                    if (
+                      dayjs(tournament.startDate).isSame(
+                        dayjs(tournament.endDate),
+                        "day"
+                      )
+                    ) {
+                      date = dayjs(tournament.startDate).format("DD/MM/YYYY");
+                    } else {
+                      date =
+                        dayjs(tournament.startDate).format("DD/MM/YYYY") +
+                        " - " +
+                        dayjs(tournament.endDate).format("DD/MM/YYYY");
+                    }
+                    return (
+                      <Col xs={12} md={6} lg={4} key={tournament.id}>
+                        <Card>
+                          <Card.Body>
+                            <Card.Title>
+                              {tournament.name}{" "}
+                              {tournamentsStaffedIds.includes(
+                                tournament.id
+                              ) && <Badge bg="primary">Staff</Badge>}
+                            </Card.Title>
+                            <Card.Subtitle className="card-subtitle mb-2 text-body-secondary">
+                              {date}
+                            </Card.Subtitle>
+                            <Card.Text>{tournament.description}</Card.Text>
+                            <Link
+                              to={`/tournament/${tournament.id}`}
+                              className="btn btn-primary"
+                            >
+                              Go to tournament
+                            </Link>
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    );
+                  })}
+                </Row>
+              </div>
             ) : (
               <h2 key={index}>No {type} tournaments</h2>
             );

@@ -19,7 +19,6 @@ const ListCubesForTournament = () => {
       const resp = await get(`/tournament/${tournamentId}/cubes`);
       const tournamentCubes = (await resp.json()) as Cube[];
       setCubes(tournamentCubes);
-      console.log(tournamentCubes);
     };
     fetchData();
   }, []);
@@ -92,7 +91,7 @@ const ListCubesForTournament = () => {
                         </h3>
                       )}
 
-                      <Card.Subtitle className="icon-link">
+                      <Card.Subtitle className="icon-link mt-auto">
                         <PenFill />{" "}
                         {cube.owner ? cube.owner : "Placeholder Name"}
                       </Card.Subtitle>

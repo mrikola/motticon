@@ -28,4 +28,26 @@ export class CubeService {
       .where("tournament.id = :tournamentId", { tournamentId })
       .getMany();
   }
+
+  async addCube(
+    title: string,
+    description: string,
+    url: string,
+    owner: string,
+    imageUrl: string
+  ) {
+    // TODO improve return values
+    try {
+      await this.repository.insert({
+        title,
+        description,
+        url,
+        owner,
+        imageUrl,
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }

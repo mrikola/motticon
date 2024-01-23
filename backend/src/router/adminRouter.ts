@@ -5,6 +5,7 @@ import {
   resetRecentMatchesForTournament,
 } from "../controller/tournament.controller";
 import { resetEloForUser, updateElo } from "../controller/user.controller";
+import { addCube } from "../controller/cube.controller";
 
 export const adminRouter = express.Router();
 
@@ -25,6 +26,10 @@ adminRouter.post("/admin/reset/tournament/:tournamentId", async (req, res) => {
 
 adminRouter.post("/tournament/create", async (req, res) => {
   res.send(await createTournament(req));
+});
+
+adminRouter.post("/cube/add", async (req, res) => {
+  res.send(await addCube(req));
 });
 
 // just here for testing purposes

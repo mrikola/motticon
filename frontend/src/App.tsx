@@ -16,6 +16,7 @@ import StaffView from "./pages/Staff/StaffView";
 import Tournaments from "./pages/Tournament/Tournaments";
 import TournamentView from "./pages/Tournament/TournamentView";
 import AdminPage from "./pages/Admin/AdminPage";
+import AddCube from "./components/admin/AddCube";
 import CreateTournament from "./components/admin/CreateTournament";
 import AutocompleteTest from "./pages/Test/AutocompleteTest";
 
@@ -101,6 +102,10 @@ function App() {
             {
               path: "admin/create-tournament",
               Component: CreateTournament,
+            },
+            {
+              path: "admin/add-cube",
+              Component: AddCube,
             },
             {
               path: "*",
