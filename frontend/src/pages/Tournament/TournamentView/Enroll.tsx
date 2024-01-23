@@ -120,7 +120,7 @@ function Enroll({
             Seats left: {freeSeats}/{tournament.totalSeats}
           </p>
         </Col>
-        <Col xs={8} className="d-grid gap-2 mx-auto">
+        <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
           <Button
             variant="primary"
             className="btn-lg"

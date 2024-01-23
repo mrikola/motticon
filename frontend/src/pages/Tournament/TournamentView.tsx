@@ -97,7 +97,7 @@ const TournamentView = () => {
       <Row>
         <Col xs={12}>
           <Link to={`/tournaments`}>
-            <Button variant="primary">
+            <Button variant="primary" className="icon-link">
               <BoxArrowInLeft /> Back to tournaments
             </Button>
           </Link>
@@ -122,7 +122,7 @@ const TournamentView = () => {
       </Row>
       {cubes.length > 0 && (
         <Row>
-          <Col xs={8} className="d-grid gap-2 mx-auto">
+          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
             <Link
               to={`/tournament/${activeTournament.id}/cubes/`}
               className="btn btn-primary btn-lg"

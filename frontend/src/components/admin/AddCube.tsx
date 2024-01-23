@@ -89,6 +89,7 @@ function AddCube() {
 
   function setImage(item: Item) {
     setCardImageUrl(item.imageUrl);
+    setValue(undefined); // Custom behavior: Clear input field once a value has been selected
   }
 
   return user ? (
@@ -166,7 +167,7 @@ function AddCube() {
             <Col xs={6}>
               <DatalistInput
                 label="Choose display image"
-                placeholder="Type to search for card..."
+                placeholder="Type to search..."
                 items={items}
                 selectedItem={item}
                 value={value}
@@ -177,14 +178,16 @@ function AddCube() {
               />
             </Col>
             <Col xs={6}>
-              <img src={cardImageUrl} className="add-cube-image " />
+              <img src={cardImageUrl} className="add-cube-image" />
             </Col>
           </Row>
-          <Col xs={12} className="d-grid">
-            <Button variant="primary" type="submit">
-              Add cube
-            </Button>
-          </Col>
+          <Row className="mt-3">
+            <Col xs={12} className="d-grid">
+              <Button variant="primary" type="submit" className="btn-lg">
+                Add Cube
+              </Button>
+            </Col>
+          </Row>
         </Form>
       </Row>
     </Container>

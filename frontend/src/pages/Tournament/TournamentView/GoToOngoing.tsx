@@ -9,10 +9,10 @@ type Props = {
 function GoToOngoing({ tournamentId }: Props) {
   return (
     <Row className="my-3">
-      <Col xs={12} className="d-grid">
+      <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
         <Link
           to={`/tournament/${tournamentId}/ongoing/`}
-          className="btn btn-primary"
+          className="btn btn-primary btn-lg"
         >
           <TrophyFill /> View ongoing
         </Link>

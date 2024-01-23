@@ -41,7 +41,7 @@ const ListCubesForTournament = () => {
       </HelmetProvider>
       <Row>
         <Link to={`/tournament/${tournamentId}`}>
-          <Button variant="primary">
+          <Button variant="primary" className="icon-link">
             <BoxArrowInLeft /> Back to tournament
           </Button>
         </Link>

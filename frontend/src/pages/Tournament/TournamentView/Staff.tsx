@@ -8,7 +8,7 @@ type Props = {
 function Staff({ tournamentId }: Props) {
   return (
     <Row className="my-3">
-      <Col xs={8} className="d-grid gap-2 mx-auto">
+      <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
         <Button
           variant="primary"
           className="btn-lg"
