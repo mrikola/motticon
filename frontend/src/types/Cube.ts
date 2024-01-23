@@ -4,6 +4,7 @@ export type Cube = {
   description: string;
   url: string;
   owner: string;
+  imageUrl: string;
 };
 
 export type CubeSelection = {

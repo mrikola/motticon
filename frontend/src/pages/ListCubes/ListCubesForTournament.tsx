@@ -49,53 +49,62 @@ const ListCubesForTournament = () => {
         <h1 className="display-1">{tournament.name} cubes</h1>
       </Row>
       <Row xs={1} sm={1} md={2} lg={3} className="g-3">
-        {cubes.map((cube, index) => (
-          <Col key={cube.id} xs={12} className="cube-card">
-            <Card
-              className="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 cube-card-image"
-              border="light"
-              style={{
-                backgroundImage:
-                  'url("/img/masthead_' + (index + 1) + '.jpeg")',
-              }}
-            >
-              <Link
-                to={`/tournament/${tournamentId}/cubes/${cube.id}`}
-                className="card-link h-100"
+        {cubes.map((cube, index) => {
+          let imageUrl;
+          if (cube.imageUrl) {
+            imageUrl = cube.imageUrl;
+          } else {
+            imageUrl =
+              "https://cards.scryfall.io/art_crop/front/5/9/593cbbd0-6ec3-4506-be0c-a229f070ce6d.jpg";
+          }
+          return (
+            <Col key={cube.id} xs={12} className="cube-card">
+              <Card
+                className="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 cube-card-image"
+                border="light"
+                style={{
+                  backgroundImage: "url(" + imageUrl + ")",
+                }}
               >
-                <div
-                  className="mask"
-                  style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+                <Link
+                  to={`/tournament/${tournamentId}/cubes/${cube.id}`}
+                  className="card-link h-100"
                 >
-                  <div className="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                    {cube.id === 1 ? (
-                      <>
-                        <p className="mt-auto pt-4">
-                          <Badge bg="primary" className="py-2">
-                            You are playing this cube
-                          </Badge>
-                        </p>
-                        <h3 className="mb-4 display-4 lh-1">
+                  <div
+                    className="mask"
+                    style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+                  >
+                    <div className="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                      {cube.id === 1 ? (
+                        <>
+                          <p className="mt-auto pt-4">
+                            <Badge bg="primary" className="py-2">
+                              You are playing this cube
+                            </Badge>
+                          </p>
+                          <h3 className="mb-4 display-4 lh-1">
+                            {cube.title + " "}
+                          </h3>
+                        </>
+                      ) : (
+                        <h3 className="pt-4 mt-5 mb-4 display-4 lh-1">
                           {cube.title + " "}
                         </h3>
-                      </>
-                    ) : (
-                      <h3 className="pt-4 mt-5 mb-4 display-4 lh-1">
-                        {cube.title + " "}
-                      </h3>
-                    )}
+                      )}
 
-                    <Card.Subtitle className="icon-link">
-                      <PenFill /> {cube.owner ? cube.owner : "Placeholder Name"}
-                    </Card.Subtitle>
-                    <hr></hr>
-                    <p className="mb-0">Click to see more</p>
+                      <Card.Subtitle className="icon-link">
+                        <PenFill />{" "}
+                        {cube.owner ? cube.owner : "Placeholder Name"}
+                      </Card.Subtitle>
+                      <hr></hr>
+                      <p className="mb-0">Click to see more</p>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </Card>
-          </Col>
-        ))}
+                </Link>
+              </Card>
+            </Col>
+          );
+        })}
       </Row>
     </Container>
   ) : (

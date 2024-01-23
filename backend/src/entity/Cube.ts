@@ -24,6 +24,9 @@ export class Cube {
   @Column()
   url: string;
 
+  @Column({ nullable: true })
+  imageUrl: string;
+
   @ManyToMany(() => Tournament, (tournament) => tournament.cubes)
   tournaments: Tournament[];
 }
