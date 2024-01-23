@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { get } from "../../services/ApiService";
 import { TournamentsByType } from "../../types/Tournament";
 import { Col, Container, Row, Card } from "react-bootstrap";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
 function Tournaments() {

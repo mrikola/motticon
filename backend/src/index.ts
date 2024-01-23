@@ -4,12 +4,20 @@ import * as cors from "cors";
 import { adminRouter } from "./router/adminRouter";
 import { userRouter } from "./router/userRouter";
 import { notLoggedInRouter } from "./router/notLoggedInRouter";
+import { readFileSync } from "fs";
+import path = require("node:path/posix");
 
 const port = process.env.PORT || 3000;
 const app = express();
 
 AppDataSource.initialize()
   .then(async () => {
+    AppDataSource.query(
+      readFileSync(path.join(__dirname, "..", "db", "markku.sql"), "utf8")
+    );
+
+    console.log("allowing origin", process.env.FRONTEND_URL);
+
     app.use(express.json());
     app.use(
       cors({
@@ -17,7 +25,6 @@ AppDataSource.initialize()
       })
     );
 
-    // TODO add cors, router, JWT check etc.
     app.get("/", (req, res) => {
       res.send("Hello world, how are you doing");
     });

@@ -5,7 +5,7 @@ import { get, put } from "../../services/ApiService";
 import { Col, Container, Row, Button } from "react-bootstrap";
 import { BoxArrowInLeft } from "react-bootstrap-icons";
 import dayjs from "dayjs";
-import * as duration from "dayjs/plugin/duration";
+import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 import { Draft, Round, Tournament } from "../../types/Tournament";
 import { useIsTournamentStaff } from "../../utils/auth";

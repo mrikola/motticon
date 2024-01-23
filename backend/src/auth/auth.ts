@@ -34,6 +34,8 @@ export const doLogin = async (email: string, password: string) => {
     return undefined;
   }
 
+  console.log("secret", JWT_SECRET_KEY);
+
   return sign(
     {
       id: user.id,

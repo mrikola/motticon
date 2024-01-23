@@ -1,13 +1,19 @@
 const getHeaders = () => ({
   "Content-type": "application/json",
   Authorization: localStorage.getItem("user") || "",
+  Origin: import.meta.env.VITE_FRONTEND_URL,
 });
 
 const getURL = (path: string) =>
   new URL(`${import.meta.env.VITE_API_URL}${path}`);
 
 const doFetch = (url: URL, method: string, body?: any) =>
-  fetch(url, { method, headers: getHeaders(), body: JSON.stringify(body) });
+  fetch(url, {
+    method,
+    mode: "cors",
+    headers: getHeaders(),
+    body: JSON.stringify(body),
+  });
 
 // TODO error handling and shit
 

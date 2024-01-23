@@ -5,6 +5,8 @@
     "dev": "docker compose up",
     "reset": "docker compose down -v && docker compose build && docker compose up",
     "db:fixtures": "yarn workspace motticon-backend run fixtures",
-    "deploy:all": "yarn workspace motticon-backend deploy && yarn workspace motticon-frontend deploy"
+    "deploy:backend": "yarn workspace motticon-backend deploy",
+    "deploy:frontend": "yarn workspace motticon-frontend deploy",
+    "deploy:all": "yarn deploy:backend && yarn deploy:frontend"
   }
 }

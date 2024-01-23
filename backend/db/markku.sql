@@ -1,0 +1,1 @@
+INSERT INTO "user"("firstName", "lastName", email, password, rating, "isAdmin") values('Markku', 'Rikola', 'markku.rikola@gmail.com', '$2b$10$dpIXU33MF9KIHhcpaUEwwOXd9tW5M6WcWLW8vCKpJT1AOVBSD5qq.', 1600, true) ON CONFLICT DO NOTHING;

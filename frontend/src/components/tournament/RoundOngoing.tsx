@@ -5,7 +5,7 @@ import { get } from "../../services/ApiService";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { SquareFill } from "react-bootstrap-icons";
 import dayjs, { Dayjs } from "dayjs";
-import * as duration from "dayjs/plugin/duration";
+import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 import CountdownTimer from "../general/CountdownTimer";
 import MatchesRemainingProgressBar from "../general/MatchesRemainingProgressBar";

@@ -9,9 +9,6 @@ LABEL fly_launch_runtime="Node.js"
 # Node.js app lives here
 WORKDIR /app
 
-# Set production environment
-ENV NODE_ENV="production"
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
@@ -32,6 +29,9 @@ FROM base
 
 # Copy built application
 COPY --from=build /app /app
+
+# Set production environment
+ENV NODE_ENV="production"
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 4000

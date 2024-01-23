@@ -6,6 +6,9 @@
 app = "motticon-backend"
 primary_region = "arn"
 
+[env]
+  FRONTEND_URL="https://motticon.fly.dev"
+
 [build]
 
 [http_service]
@@ -15,6 +18,11 @@ primary_region = "arn"
   auto_start_machines = true
   min_machines_running = 0
   processes = ["app"]
+  [http_service.http_options.response.headers]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "*"
+    Access-Control-Allow-Headers = "*"
+
 
 [[vm]]
   cpu_kind = "shared"

@@ -20,6 +20,8 @@ type LoginForm = {
 };
 
 const Login = () => {
+  console.log("api URL", import.meta.env.VITE_API_URL);
+
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm<LoginForm>({
     defaultValues: {

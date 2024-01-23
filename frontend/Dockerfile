@@ -33,12 +33,15 @@ ENV NODE_ENV="production"
 # Remove development dependencies
 RUN npm install --omit=dev
 
-
 # Final stage for app image
 FROM nginx
 
 # Copy built application
 COPY --from=build /app/dist /usr/share/nginx/html
+
+ENV VITE_API_URL="https://motticon-backend.fly.dev/"
+RUN mkdir /etc/nginx/templates
+COPY --from=build /app/default.conf.template /etc/nginx/templates/
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
