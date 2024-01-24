@@ -55,6 +55,7 @@ const TournamentView = () => {
         setTournamentStatus("ongoing");
       }
       checkEnrolled(enrollment);
+      console.log(tournament);
     };
 
     if (user) {
@@ -111,7 +112,7 @@ const TournamentView = () => {
           <h2>Tournament info</h2>
         </Col>
         <Col xs={12}>
-          <p>
+          <p className="icon-link">
             <CalendarEvent className="display-6" />{" "}
             {dayjs(activeTournament.startDate).format("DD/MM/YYYY")} –{" "}
             {dayjs(activeTournament.endDate).format("DD/MM/YYYY")}
@@ -132,9 +133,11 @@ const TournamentView = () => {
           </Col>
         </Row>
       )}
-      {isEnrolled && tournamentStatus === "ongoing" && (
-        <GoToOngoing tournamentId={activeTournament.id} />
-      )}
+      {isEnrolled &&
+        tournamentStatus === "ongoing" &&
+        activeTournament.status != "completed" && (
+          <GoToOngoing tournamentId={activeTournament.id} />
+        )}
       {tournamentStatus === "future" && (
         <Enroll
           isEnrolled={isEnrolled}
