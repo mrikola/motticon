@@ -119,13 +119,17 @@ const NextDraft = ({ tournamentId, setCurrentDraft }: Props) => {
           </Col>
         </Row>
       ) : (
-        <Button
-          variant="primary"
-          className="btn-lg"
-          onClick={() => generateDraft()}
-        >
-          Generate drafts
-        </Button>
+        <Row>
+          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+            <Button
+              variant="primary"
+              className="btn-lg"
+              onClick={() => generateDraft()}
+            >
+              Generate drafts
+            </Button>
+          </Col>
+        </Row>
       )}
     </>
   );

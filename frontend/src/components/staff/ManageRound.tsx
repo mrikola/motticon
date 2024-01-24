@@ -136,7 +136,9 @@ const ManageRound = ({ currentRound }: Props) => {
       `/tournament/${tournamentId}/round/${currentRound.id}/end`,
       {}
     );
+    // this works but the json response is null due to no round=started
     const round = (await response.json()) as Round;
+
     console.log(round);
     // do some actual stuff here
   };

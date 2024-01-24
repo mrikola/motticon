@@ -11,6 +11,7 @@ import {
   BoxArrowUpRight,
 } from "react-bootstrap-icons";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { Link } from "react-router-dom";
 
 const ViewCube = () => {
   const { cubeId, tournamentId } = useParams();
@@ -66,7 +67,7 @@ const ViewCube = () => {
         </HelmetProvider>
         <div
           className="cube-masthead text-light mb-3"
-          style={{ backgroundImage: `url(${ImageURL})` }}
+          style={{ backgroundImage: `url(${cube.imageUrl})` }}
         >
           <div
             className="mask"
@@ -74,28 +75,30 @@ const ViewCube = () => {
           >
             <Container className="h-100">
               <Row className="mt-3 my-md-4">
-                <a
-                  href={`/tournament/${tournamentId}/cubes/`}
-                  className="btn btn-primary"
-                >
-                  <BoxArrowInLeft /> Back to tournament cubes
-                </a>
+                <Col>
+                  <Link
+                    to={`/tournament/${tournamentId}/cubes/`}
+                    className="btn btn-primary"
+                  >
+                    <BoxArrowInLeft /> Back to tournament cubes
+                  </Link>
+                </Col>
               </Row>
               <Row className="h-100 align-items-center">
                 <Col className="text-center">
                   <h1 className="display-1">{cube.title}</h1>
-                  <p className="lead">
+                  <p className="small icon-link">
                     <PenFill /> Cube Designer: {cube.owner}
                   </p>
-                  <p>{cube.description}</p>
+                  <p className="lead">{cube.description}</p>
                   <div className="d-grid gap-2">
-                    <a
-                      href={cube.url}
+                    <Link
+                      to={cube.url}
                       target="_blank"
                       className="btn btn-primary"
                     >
                       <BoxArrowUpRight className="fs-4" /> View list
-                    </a>
+                    </Link>
                   </div>
                 </Col>
               </Row>

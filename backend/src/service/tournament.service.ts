@@ -332,7 +332,7 @@ export class TournamentService {
       .set({ status: "completed" })
       .where({ id: roundId })
       .execute();
-    // todo: run the user.service updateElo() for all matches at this point
+    // run updateElo() for all matches at this point
     const matches = await this.matchService.getMatchesForRound(roundId);
     const kvalue = 8;
     console.log(matches);
@@ -346,7 +346,9 @@ export class TournamentService {
         winnerNumber
       );
     });
-    return await this.getCurrentRound(tournamentId);
+    // gets null because there is no round with status=started
+    const round = await this.getCurrentRound(tournamentId);
+    return round;
   }
 
   async resetRecentMatchesForTournament(tournamentId: number) {
