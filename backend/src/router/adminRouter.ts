@@ -4,7 +4,7 @@ import {
   createTournament,
   resetRecentMatchesForTournament,
 } from "../controller/tournament.controller";
-import { resetEloForUser, updateElo } from "../controller/user.controller";
+import { resetEloForUser, updateElo } from "../controller/rating.controller";
 import { addCube } from "../controller/cube.controller";
 
 export const adminRouter = express.Router();

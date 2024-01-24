@@ -12,18 +12,22 @@ import { DraftPod } from "../entity/DraftPod";
 import { CubeService } from "./cube.service";
 import { User } from "../entity/User";
 import { DraftPodSeat } from "../entity/DraftPodSeat";
+import { RatingService } from "./rating.service";
+import { Match } from "../entity/Match";
 
 export class TournamentService {
   private appDataSource: DataSource;
   private repository: Repository<Tournament>;
   private matchService: MatchService;
   private cubeService: CubeService;
+  private ratingService: RatingService;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(Tournament);
     this.matchService = new MatchService();
     this.cubeService = new CubeService();
+    this.ratingService = new RatingService();
   }
 
   async createTournament(
@@ -182,6 +186,33 @@ export class TournamentService {
       .getOne();
   }
 
+  async getCurrentDraftAndMatch(
+    userId: number,
+    tournamentId: number
+  ): Promise<any> {
+    const round = await this.getCurrentRound(tournamentId);
+    const draft = await this.getCurrentDraft(tournamentId);
+
+    // TODO get seat info
+
+    const match = await this.appDataSource
+      .getRepository(Match)
+      .createQueryBuilder("match")
+      .leftJoinAndSelect("match.round", "round")
+      .leftJoinAndSelect("match.resultSubmittedBy", "resultSubmittedUser")
+      .leftJoinAndSelect("match.player1", "player1")
+      .leftJoinAndSelect("match.player2", "player2")
+      .where("round.id = :roundId", { roundId: round.id })
+      .andWhere((qb) =>
+        qb
+          .where('match."player1Id" = :userId', { userId })
+          .orWhere('match."player2Id" = :userId', { userId })
+      )
+      .getOne();
+
+    return { round, draft, match };
+  }
+
   async startTournament(tournamentId: number) {
     await this.repository
       .createQueryBuilder("tournament")
@@ -301,7 +332,20 @@ export class TournamentService {
       .set({ status: "completed" })
       .where({ id: roundId })
       .execute();
-
+    // todo: run the user.service updateElo() for all matches at this point
+    const matches = await this.matchService.getMatchesForRound(roundId);
+    const kvalue = 8;
+    console.log(matches);
+    matches.forEach((match) => {
+      const winnerNumber =
+        match.player1GamesWon > match.player2GamesWon ? 1 : 2;
+      this.ratingService.updateElo(
+        kvalue,
+        match.player1.id,
+        match.player2.id,
+        winnerNumber
+      );
+    });
     return await this.getCurrentRound(tournamentId);
   }
 

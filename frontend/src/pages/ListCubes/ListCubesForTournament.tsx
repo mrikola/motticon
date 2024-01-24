@@ -48,7 +48,7 @@ const ListCubesForTournament = () => {
         <h1 className="display-1">{tournament.name} cubes</h1>
       </Row>
       <Row xs={1} sm={1} md={2} lg={3} className="g-3">
-        {cubes.map((cube, index) => {
+        {cubes.map((cube) => {
           let imageUrl;
           if (cube.imageUrl) {
             imageUrl = cube.imageUrl;
@@ -90,7 +90,6 @@ const ListCubesForTournament = () => {
                           {cube.title + " "}
                         </h3>
                       )}
-
                       <Card.Subtitle className="icon-link mt-auto">
                         <PenFill />{" "}
                         {cube.owner ? cube.owner : "Placeholder Name"}

@@ -80,7 +80,7 @@ function StaffView() {
         <h1 className="display-1">
           Hey {user.firstName} {user.lastName}
         </h1>
-        <h2>{tournament.name}</h2>
+        <h1 className="display-1">{tournament.name}</h1>
       </Row>
       {tournament.status === "started" && (
         <>

@@ -21,6 +21,7 @@ import {
   endRound,
   endDraft,
   endTournament,
+  getCurrentDraftAndMatch,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -31,7 +32,6 @@ import {
   getUserTournamentInfo,
   getUsersTournaments,
   getTournamentsStaffed,
-  getCurrentDraftAndMatch,
   getUser,
   getAllUsers,
 } from "../controller/user.controller";

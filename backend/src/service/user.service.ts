@@ -3,24 +3,16 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 import { Tournament } from "../entity/Tournament";
 import { partition, uniqBy } from "lodash";
-import {
-  PlayerTournamentInfo,
-  TournamentsByType,
-} from "../dto/tournaments.dto";
-import { TournamentService } from "./tournament.service";
-import { Match } from "../entity/Match";
+import { TournamentsByType } from "../dto/tournaments.dto";
 import { encodePassword } from "../auth/auth";
-import EloRank = require("elo-rank");
 
 export class UserService {
   private appDataSource: DataSource;
   private repository: Repository<User>;
-  private tournamentService: TournamentService;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(User);
-    this.tournamentService = new TournamentService();
   }
 
   async createUser(
@@ -109,91 +101,5 @@ export class UserService {
       ongoing,
       future,
     };
-  }
-
-  async getCurrentDraftAndMatch(
-    userId: number,
-    tournamentId: number
-  ): Promise<any> {
-    const round = await this.tournamentService.getCurrentRound(tournamentId);
-    const draft = await this.tournamentService.getCurrentDraft(tournamentId);
-
-    // TODO get seat info
-
-    const match = await this.appDataSource
-      .getRepository(Match)
-      .createQueryBuilder("match")
-      .leftJoinAndSelect("match.round", "round")
-      .leftJoinAndSelect("match.resultSubmittedBy", "resultSubmittedUser")
-      .leftJoinAndSelect("match.player1", "player1")
-      .leftJoinAndSelect("match.player2", "player2")
-      .where("round.id = :roundId", { roundId: round.id })
-      .andWhere((qb) =>
-        qb
-          .where('match."player1Id" = :userId', { userId })
-          .orWhere('match."player2Id" = :userId', { userId })
-      )
-      .getOne();
-
-    return { round, draft, match };
-  }
-
-  async setUserRating(rating: number, userId: number) {
-    const user = await this.repository
-      .createQueryBuilder()
-      .update(User)
-      .set({
-        rating: rating as number,
-      })
-      .where("id = :userId", { userId })
-      .execute();
-  }
-
-  async resetEloForUser(userId: number) {
-    const user = await this.repository
-      .createQueryBuilder()
-      .update(User)
-      .set({
-        rating: 1600,
-      })
-      .where("id = :userId", { userId })
-      .execute();
-    return user;
-  }
-
-  async updateElo(
-    kValue: number,
-    player1Id: number,
-    player2Id: number,
-    winnerNumber: number
-  ) {
-    // todo: change this to get a whole array of players to change ratings for
-
-    // create object with K-Factor (without it defaults to 32)
-    const elo = new EloRank(kValue);
-
-    const playerA = await this.getUser(player1Id);
-    const playerB = await this.getUser(player2Id);
-    const playerARating = Number(playerA.rating);
-    const playerBRating = Number(playerB.rating);
-
-    // Gets expected score for first parameter
-    const expectedScoreA = elo.getExpected(playerARating, playerBRating);
-    const expectedScoreB = elo.getExpected(playerBRating, playerARating);
-
-    // placeholders before these get defined
-    var playerANewRating: number;
-    var playerBNewRating: number;
-    // update score, 1 if won 0 if lost
-    if (winnerNumber === 1) {
-      playerANewRating = elo.updateRating(expectedScoreA, 1, playerARating);
-      playerBNewRating = elo.updateRating(expectedScoreB, 0, playerBRating);
-    } else {
-      playerANewRating = elo.updateRating(expectedScoreA, 0, playerARating);
-      playerBNewRating = elo.updateRating(expectedScoreB, 1, playerBRating);
-    }
-
-    this.setUserRating(playerANewRating, playerA.id);
-    this.setUserRating(playerBNewRating, playerB.id);
   }
 }
