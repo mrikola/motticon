@@ -47,7 +47,7 @@ function CardCountdownTimer({ initialSeconds }: Props) {
   }
 
   return (
-    <Card className="round-card mb-3">
+    <Card className="horizontal-card mb-3">
       <Row className="align-items-center">
         <Col xs={4} sm={3}>
           <span className="icon-stack countdown-timer">
@@ -56,8 +56,8 @@ function CardCountdownTimer({ initialSeconds }: Props) {
           </span>
         </Col>
         <Col xs={8} sm={9}>
-          <Card.Body className="round-card-body">
-            <Card.Title className="round-card-title-small">
+          <Card.Body className="horizontal-card-body">
+            <Card.Title className="horizontal-card-title-small">
               {cardText}
             </Card.Title>
           </Card.Body>

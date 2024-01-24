@@ -172,7 +172,7 @@ function RoundOngoing({ tournament, round, match }: Props) {
         </Row>
         <Row>
           <Container>
-            <Card className="round-card mb-3">
+            <Card className="horizontal-card mb-3">
               <Row>
                 <Col xs={3}>
                   <span className="icon-stack">
@@ -183,8 +183,10 @@ function RoundOngoing({ tournament, round, match }: Props) {
                   </span>
                 </Col>
                 <Col xs={9}>
-                  <Card.Body className="round-card-body">
-                    <Card.Title className="round-card-title">Table</Card.Title>
+                  <Card.Body className="horizontal-card-body">
+                    <Card.Title className="horizontal-card-title">
+                      Table
+                    </Card.Title>
                   </Card.Body>
                 </Col>
               </Row>

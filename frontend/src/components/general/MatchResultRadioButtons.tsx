@@ -20,18 +20,18 @@ function MatchResultsRadioButton({
   ];
 
   return (
-    <ButtonGroup className="round-radio-group">
+    <ButtonGroup className="result-entry-radio-group">
       {radios.map((radio, idx) => (
         <ToggleButton
           key={idx}
           size="lg"
           id={name + "-" + idx}
           type="radio"
-          variant="round-radio"
+          variant="result-entry-radio"
           name={name}
           value={radio.value}
           checked={value === radio.value}
-          className="round-radio"
+          className="result-entry-radio"
           onChange={(e) => updateFunction(e.currentTarget.value)}
           disabled={disabled}
         >

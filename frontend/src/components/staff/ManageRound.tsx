@@ -157,7 +157,7 @@ const ManageRound = ({ currentRound }: Props) => {
       <>
         <Row>
           <Container>
-            <Card className="round-card mb-3">
+            <Card className="horizontal-card mb-3">
               <Row className="align-items-center">
                 <Col xs={4} sm={3}>
                   <span className="icon-stack">
@@ -168,8 +168,8 @@ const ManageRound = ({ currentRound }: Props) => {
                   </span>
                 </Col>
                 <Col xs={8} sm={9}>
-                  <Card.Body className="round-card-body">
-                    <Card.Title className="round-card-title-small align-middle">
+                  <Card.Body className="horizontal-card-body">
+                    <Card.Title className="horizontal-card-title-small align-middle">
                       Round number
                     </Card.Title>
                   </Card.Body>

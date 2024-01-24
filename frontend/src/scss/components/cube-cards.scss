@@ -1,0 +1,47 @@
+.cube-card-image {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.cube-masthead {
+  height: 40vh;
+  min-height: 300px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.cube-card-image {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card {
+  hr {
+    margin: 0.5rem 0;
+  }
+}
+
+.cube-card {
+  .card-link {
+    text-decoration: none;
+  }
+
+  .card-body {
+    padding: 1rem 0;
+  }
+
+  .card-text {
+    min-height: 3rem;
+  }
+}
+
+.cubeCard {
+  margin-bottom: 8px;
+}
+
+.cubeCardBody {
+  padding: 16px 0px;
+}

@@ -72,7 +72,7 @@ function DraftOngoing({ tournament, draft }: Props) {
         </Row>
         <Row>
           <Container>
-            <Card className="round-card mb-3">
+            <Card className="horizontal-card mb-3">
               <Row className="align-items-center">
                 <Col xs={3}>
                   <span className="icon-stack">
@@ -81,15 +81,15 @@ function DraftOngoing({ tournament, draft }: Props) {
                   </span>
                 </Col>
                 <Col xs={9}>
-                  <Card.Body className="round-card-body">
-                    <Card.Title className="round-card-title-small align-middle">
+                  <Card.Body className="horizontal-card-body">
+                    <Card.Title className="horizontal-card-title-small align-middle">
                       {playerPod.cube.title}
                     </Card.Title>
                   </Card.Body>
                 </Col>
               </Row>
             </Card>
-            <Card className="round-card mb-3">
+            <Card className="horizontal-card mb-3">
               <Row>
                 <Col xs={3}>
                   <span className="icon-stack">
@@ -100,13 +100,13 @@ function DraftOngoing({ tournament, draft }: Props) {
                   </span>
                 </Col>
                 <Col xs={9}>
-                  <Card.Body className="round-card-body">
-                    <Card.Title className="round-card-title">Pod</Card.Title>
+                  <Card.Body className="horizontal-card-body">
+                    <Card.Title className="v-card-title">Pod</Card.Title>
                   </Card.Body>
                 </Col>
               </Row>
             </Card>
-            <Card className="round-card mb-3">
+            <Card className="horizontal-card mb-3">
               <Row>
                 <Col xs={3}>
                   <span className="icon-stack">
@@ -115,8 +115,10 @@ function DraftOngoing({ tournament, draft }: Props) {
                   </span>
                 </Col>
                 <Col xs={9}>
-                  <Card.Body className="round-card-body">
-                    <Card.Title className="round-card-title">Seat</Card.Title>
+                  <Card.Body className="horizontal-card-body">
+                    <Card.Title className="horizontal-card-title">
+                      Seat
+                    </Card.Title>
                   </Card.Body>
                 </Col>
               </Row>

@@ -3,44 +3,14 @@ $primary: #fdcb6e;
 // Import all of Bootstrap's CSS
 @import "bootstrap/scss/bootstrap";
 
+@import "./components/cube-cards.scss";
+@import "./components/bootstrap-calendar.scss";
+@import "./components/horizontal-card.scss";
+
 $card-spacer-y: 0.5rem;
 $card-spacer-x: 0.5rem;
 
-.cube-masthead {
-  height: 40vh;
-  min-height: 300px;
-  // background-image: url('../img/exploration.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.cube-card-image {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.card {
-  hr {
-    margin: 0.5rem 0;
-  }
-}
-
-.cube-card {
-  .card-link {
-    text-decoration: none;
-  }
-
-  .card-body {
-    padding: 1rem 0;
-  }
-
-  .card-text {
-    min-height: 3rem;
-  }
-}
-
+// mask element used for cube cards and cube masthead
 .mask {
   top: 0;
   right: 0;
@@ -56,32 +26,19 @@ nav {
   svg {
     margin-right: 5px;
   }
+  .nav-link {
+    &.active {
+      text-decoration: underline;
+    }
+  }
 }
 
+// used only in the old/placeholder cube view that shows three drafts / players / draft pool images
 .btn-player-pool-image {
   margin-right: 5px;
 }
 
-.round-card {
-  border-radius: 0.75rem;
-}
-
-.round-card-body {
-  padding: 0.5rem 0;
-}
-
-.round-card-title {
-  font-size: 3rem;
-}
-.round-card-title-small {
-  font-size: 1.5rem;
-}
-
-.round-card-icon {
-  font-size: 5.2rem;
-}
-
-.round-radio-group {
+.result-entry-radio-group {
   .btn {
     background-color: $gray-200;
     border: none;
@@ -133,6 +90,7 @@ nav {
   font-size: 5.2rem;
 }
 
+// countdown timer element
 .countdown-timer {
   font-family: "Roboto Mono", monospace;
   .over-time {
@@ -140,58 +98,17 @@ nav {
   }
 }
 
-.bootstrap-calendar {
-  font: var(--bs-body-font-family);
-  .react-datepicker__header {
-    // header color
-    background-color: $light-bg-subtle;
-  }
-  .react-datepicker__current-month {
-    // january 2024
-    color: var(--bs-heading-color);
-    font-size: calc(1.275rem + 0.3vw);
-    font-weight: normal;
-  }
-  .react-datepicker__day-name {
-    // su/mo/tue
-    color: var(--bs-heading-color);
-  }
-  .react-datepicker__day {
-    // 31.12.2024
-    color: var(--bs-heading-color);
-  }
-  .react-datepicker__day--keyboard-selected {
-    background-color: $primary;
-  }
-  .react-datepicker__navigation {
-    // left/right arrows
-    top: 14px;
-  }
-  .react-datepicker__navigation-icon::before {
-    // navigation arrow color
-    border-color: var(--bs-heading-color);
-  }
-  .react-datepicker__navigation:hover *::before {
-    // navigation arrow color on hover
-    border-color: $primary;
-  }
-}
-
+// progress bar element
 .progress {
   height: $font-size-base * 1.5;
 }
 
-.cubeCard {
-  margin-bottom: 8px;
-}
-
-.cubeCardBody {
-  padding: 16px 0px;
-}
+// copy bs form-control styling over to the autocomplete input element
 .react-datalist-input__textbox {
   @extend .form-control;
 }
 
+// image that displays when user selects display image in AddCube
 .add-cube-image {
   max-width: 100%;
 }

@@ -6,7 +6,7 @@ import {
   PersonFillCheck,
 } from "react-bootstrap-icons";
 import { Outlet, useLocation } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Footer from "./Footer";
 import { UserInfoContext } from "./provider/UserInfoProvider";
 import { useContext } from "react";
@@ -37,39 +37,39 @@ const Layout = () => {
             <Navbar.Collapse id="navbarSupportedContent">
               <Nav className="me-auto">
                 <Nav.Item>
-                  <Link
-                    className="nav-link icon-link active"
+                  <NavLink
+                    className="nav-link icon-link"
                     aria-current="page"
                     to="/"
                   >
                     <HouseFill />
                     Home
-                  </Link>
+                  </NavLink>
                 </Nav.Item>
                 {user?.isAdmin && (
                   <Nav.Item>
-                    <Link className="nav-link icon-link" to="/admin">
+                    <NavLink className="nav-link icon-link" to="/admin">
                       <PersonFillCheck />
                       Admin
-                    </Link>
+                    </NavLink>
                   </Nav.Item>
                 )}
 
                 <Nav.Item>
-                  <Link className="nav-link icon-link" to="/tournaments">
+                  <NavLink className="nav-link icon-link" to="/tournaments">
                     <TrophyFill />
                     Tournaments
-                  </Link>
+                  </NavLink>
                 </Nav.Item>
               </Nav>
               <Nav className="flex-row flex-wrap ms-md-auto">
                 <div className="vr d-none d-lg-block"></div>
                 <hr className="d-xs d-lg-none w-100" />
                 <Nav.Item>
-                  <Link className="nav-link icon-link" to={"/logout"}>
+                  <NavLink className="nav-link icon-link" to={"/logout"}>
                     <BoxArrowRight />
                     Log out
-                  </Link>
+                  </NavLink>
                 </Nav.Item>
               </Nav>
             </Navbar.Collapse>
