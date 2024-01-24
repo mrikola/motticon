@@ -51,7 +51,10 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
         </Row>
         <Row>
           <Col xs={12}>
-            <EnrollPlayers tournamentId={tournamentId} />
+            <EnrollPlayers
+              enrollments={enrollments}
+              tournamentId={tournamentId}
+            />
           </Col>
         </Row>
         <Row>

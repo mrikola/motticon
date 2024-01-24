@@ -1,25 +1,42 @@
 import { useEffect, useMemo, useState } from "react";
 import { get, post } from "../../services/ApiService";
-import { Player } from "../../types/User";
+import { Enrollment, Player } from "../../types/User";
 import { Button, Col, Row } from "react-bootstrap";
 import DatalistInput, { Item } from "react-datalist-input";
 import "react-datalist-input/dist/styles.css";
 import { PersonPlusFill } from "react-bootstrap-icons";
 
 type Props = {
+  enrollments: Enrollment[];
   tournamentId: number;
 };
 
-const EnrollPlayers = ({ tournamentId }: Props) => {
+const EnrollPlayers = ({ enrollments, tournamentId }: Props) => {
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
+  const [availablePlayers, setAvailablePlayers] = useState<Player[]>([]);
   const [item, setItem] = useState<Item>(); // The selected item will be stored in this state.
   const [value, setValue] = useState<string>();
   const [selectedPlayer, setSelectedPlayer] = useState("No player selected");
 
+  // set data list options based on enrolled players
+  useEffect(() => {
+    if (allPlayers.length > 0) {
+      const players: Player[] = [];
+      for (let i = 0; i < enrollments.length; i++) {
+        players.push(enrollments[i].player);
+      }
+      const playersIdOnly = players.map((x) => x.id);
+      const notEnrolled = allPlayers.filter(
+        (item) => !playersIdOnly.includes(item.id)
+      );
+      setAvailablePlayers(notEnrolled);
+    }
+  }, [allPlayers]);
+
   // Make sure each option has an unique id and a value
   const items = useMemo(
     () =>
-      allPlayers.map((player) => ({
+      availablePlayers.map((player) => ({
         // required: id and value
         value: player.firstName + " " + player.lastName,
         // optional: label, node
@@ -27,7 +44,7 @@ const EnrollPlayers = ({ tournamentId }: Props) => {
         // node: option.name, // use a custom ReactNode to display the option
         ...player, // pass along any other properties to access in your onSelect callback
       })),
-    [allPlayers]
+    [availablePlayers]
   );
 
   useEffect(() => {
