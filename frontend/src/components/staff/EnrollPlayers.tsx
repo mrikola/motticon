@@ -5,13 +5,19 @@ import { Button, Col, Row } from "react-bootstrap";
 import DatalistInput, { Item } from "react-datalist-input";
 import "react-datalist-input/dist/styles.css";
 import { PersonPlusFill } from "react-bootstrap-icons";
+import { Tournament } from "../../types/Tournament";
 
 type Props = {
   enrollments: Enrollment[];
+  setEnrollments: (enrollments: Enrollment[]) => void;
   tournamentId: number;
 };
 
-const EnrollPlayers = ({ enrollments, tournamentId }: Props) => {
+const EnrollPlayers = ({
+  enrollments,
+  setEnrollments,
+  tournamentId,
+}: Props) => {
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
   const [availablePlayers, setAvailablePlayers] = useState<Player[]>([]);
   const [item, setItem] = useState<Item>(); // The selected item will be stored in this state.
@@ -31,7 +37,7 @@ const EnrollPlayers = ({ enrollments, tournamentId }: Props) => {
       );
       setAvailablePlayers(notEnrolled);
     }
-  }, [allPlayers]);
+  }, [allPlayers, enrollments]);
 
   // Make sure each option has an unique id and a value
   const items = useMemo(
@@ -62,11 +68,12 @@ const EnrollPlayers = ({ enrollments, tournamentId }: Props) => {
       post(`/tournament/${tournamentId}/enroll/${userId}`, {}).then(
         async (resp) => {
           // temporary solution that just checks boolean return (should be object with tournament info)
-          const enrolled = await resp.text();
-          if (enrolled) {
-            console.log(enrolled);
+          const tournament = (await resp.json()) as Tournament;
+          if (tournament) {
+            console.log(tournament.enrollments);
             setItem(undefined);
             setSelectedPlayer("No player selected");
+            setEnrollments(tournament.enrollments);
           }
         }
       );

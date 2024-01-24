@@ -140,7 +140,7 @@ export class TournamentService {
     });
   }
 
-  async getTournamentEnrollments(id: number) {
+  async getTournamentEnrollments(id: number): Promise<Tournament> {
     return await this.repository
       .createQueryBuilder("tournament")
       .leftJoinAndSelect("tournament.enrollments", "enrollments")

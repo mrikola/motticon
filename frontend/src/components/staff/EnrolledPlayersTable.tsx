@@ -1,6 +1,7 @@
 import { Button, Table } from "react-bootstrap";
 import { Enrollment, Player } from "../../types/User";
 import { XLg } from "react-bootstrap-icons";
+import { useEffect } from "react";
 
 type Props = {
   enrollments: Enrollment[];
@@ -8,6 +9,12 @@ type Props = {
 };
 
 const EnrolledPlayersTable = ({ enrollments, buttonFunction }: Props) => {
+  useEffect(() => {
+    enrollments.sort((a, b) =>
+      a.player.lastName.localeCompare(b.player.lastName)
+    );
+  }, [enrollments]);
+
   return (
     <Table striped bordered hover>
       <thead>

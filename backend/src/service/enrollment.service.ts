@@ -21,9 +21,8 @@ export class EnrollmentService {
     tournamentId: number,
     userId: number
   ): Promise<any> {
-    // placeholder returning just boolean
     try {
-      this.appDataSource
+      await this.appDataSource
         .createQueryBuilder()
         .insert()
         .into(Enrollment)
@@ -34,7 +33,10 @@ export class EnrollmentService {
           dropped: false,
         })
         .execute();
-      return true;
+      const enrollments = await this.tournamentService.getTournamentEnrollments(
+        tournamentId
+      );
+      return enrollments;
     } catch (err: unknown) {
       return false;
     }
@@ -62,7 +64,7 @@ export class EnrollmentService {
     userId: number
   ): Promise<any> {
     try {
-      this.appDataSource
+      await this.appDataSource
         .createQueryBuilder()
         .delete()
         .from(Enrollment)
