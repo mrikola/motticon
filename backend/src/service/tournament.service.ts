@@ -179,6 +179,10 @@ export class TournamentService {
     return await this.appDataSource
       .getRepository(Draft)
       .createQueryBuilder("draft")
+      .leftJoinAndSelect("draft.pods", "pod")
+      .leftJoinAndSelect("pod.seats", "seat")
+      .leftJoinAndSelect("seat.pod", "draftPod")
+      .leftJoinAndSelect("seat.player", "player")
       .leftJoin("draft.tournament", "tournament")
       .where("draft.status = 'started'")
       .andWhere("tournament.id = :tournamentId", { tournamentId })

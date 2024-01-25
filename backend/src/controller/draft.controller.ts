@@ -16,3 +16,11 @@ export const getRoundsForDraft = async (req) => {
   const { draftId } = req.params;
   return await draftService.getRoundsForDraft(draftId as number);
 };
+
+export const setDeckPhotoForUser = async (req) => {
+  const { tournamentId, seatId } = req.body;
+  return await draftService.setDeckPhotoForUser(
+    tournamentId as number,
+    seatId as number
+  );
+};

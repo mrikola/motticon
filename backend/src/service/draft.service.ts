@@ -3,12 +3,16 @@ import { AppDataSource } from "../data-source";
 import { DraftPod } from "../entity/DraftPod";
 import { DraftPodSeat } from "../entity/DraftPodSeat";
 import { Round } from "../entity/Round";
+import { TournamentService } from "./tournament.service";
+import { Draft } from "../entity/Draft";
 
 export class DraftService {
   private appDataSource: DataSource;
+  private tournamentService: TournamentService;
 
   constructor() {
     this.appDataSource = AppDataSource;
+    this.tournamentService = new TournamentService();
   }
 
   async getPodsForDraft(draftId: number): Promise<DraftPod[]> {
@@ -41,5 +45,23 @@ export class DraftService {
         'round."roundNumber" between draft."firstRound" and draft."lastRound"'
       )
       .getMany();
+  }
+
+  async setDeckPhotoForUser(
+    tournamentId: number,
+    seatId: number
+  ): Promise<Draft> {
+    // consider moving this to tournament.service
+    await this.appDataSource
+      .getRepository(DraftPodSeat)
+      .createQueryBuilder("seat")
+      .update(DraftPodSeat)
+      .set({
+        deckPhotoUrl: "blöö",
+      })
+      .where("id = :seatId", { seatId })
+      .execute();
+    const draft = await this.tournamentService.getCurrentDraft(tournamentId);
+    return draft;
   }
 }

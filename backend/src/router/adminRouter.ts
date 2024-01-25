@@ -6,6 +6,7 @@ import {
 } from "../controller/tournament.controller";
 import { resetEloForUser, updateElo } from "../controller/rating.controller";
 import { addCube } from "../controller/cube.controller";
+import { setDeckPhotoForUser } from "../controller/draft.controller";
 
 export const adminRouter = express.Router();
 
@@ -39,4 +40,8 @@ adminRouter.post("/updateElo", async (req, res) => {
 
 adminRouter.get("/resetElo/:playerId", async (req, res) => {
   res.send(await resetEloForUser(req));
+});
+
+adminRouter.post("/setDeckPhoto", async (req, res) => {
+  res.send(await setDeckPhotoForUser(req));
 });

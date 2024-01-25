@@ -1,15 +1,31 @@
-import { Button, Col, Row } from "react-bootstrap";
-import { Draft, Match, Round, Tournament } from "../../types/Tournament";
+import { Alert, Button, Col, Container, Row } from "react-bootstrap";
+import {
+  Draft,
+  DraftPodSeat,
+  Match,
+  Round,
+  Tournament,
+} from "../../types/Tournament";
 import { useEffect, useState } from "react";
-import { get, put } from "../../services/ApiService";
+import { get, post, put } from "../../services/ApiService";
 import { useParams } from "react-router";
+import CardCountdownTimer from "../general/CardCountdownTimer";
+import DraftTable from "./DraftTable";
+
+import DeckBuildingModal, { DeckBuildingModalProps } from "./DeckBuildingModal";
+import DecksSubmittedProgressBar from "./DecksSubmittedProgressBar";
 
 type Props = {
   currentDraft: Draft;
+  setCurrentDraft: (draft: Draft) => void;
   setCurrentRound: (round: Round) => void;
 };
 
-const ManageDraft = ({ currentDraft, setCurrentRound }: Props) => {
+const ManageDraft = ({
+  currentDraft,
+  setCurrentDraft,
+  setCurrentRound,
+}: Props) => {
   // get rounds for this draft, look at their statuses and matches generated
   // find last completed round and first pending round
   // if last round completed == draft last round, draft is over
@@ -19,13 +35,41 @@ const ManageDraft = ({ currentDraft, setCurrentRound }: Props) => {
   const { tournamentId } = useParams();
   const [lastCompletedRound, setLastCompletedRound] = useState<Round>();
   const [firstPendingRound, setFirstPendingRound] = useState<Round>();
+  const [allSeats, setAllSeats] = useState<DraftPodSeat[]>([]);
+  const [totalPlayers, setTotalPlayers] = useState<number>(0);
+  const [buildingRemaining, setBuildingRemaining] = useState<number>(0);
+  const [modal, setModal] = useState<DeckBuildingModalProps>({
+    show: false,
+    onHide: () => null,
+    heading: "",
+    text: "",
+    actionText: "",
+    actionFunction: () => {},
+    seat: {} as DraftPodSeat,
+  });
+
+  useEffect(() => {
+    const seats = [];
+    for (let i = 0; i < currentDraft.pods.length; i++) {
+      const pod = currentDraft.pods[i];
+      for (let j = 0; j < pod.seats.length; j++) {
+        const seat = pod.seats[j];
+        seats.push(seat);
+      }
+    }
+    seats.sort((a, b) => (a.seat > b.seat ? 1 : -1));
+    setAllSeats(seats);
+    if (totalPlayers === 0) {
+      setTotalPlayers(seats.length);
+    }
+  }, [currentDraft]);
 
   useEffect(() => {
     const fetchData = async () => {
       const resp = await get(`/draft/${currentDraft.id}/rounds`);
       const rounds: Round[] = ((await resp.json()) ?? []) as Round[];
 
-      console.log("rounds", JSON.stringify(rounds, null, 2));
+      // console.log("rounds", JSON.stringify(rounds, null, 2));
 
       setFirstPendingRound(
         rounds
@@ -72,60 +116,158 @@ const ManageDraft = ({ currentDraft, setCurrentRound }: Props) => {
     // do some stuff here
   };
 
-  return (
-    <>
-      <Row>
-        <Col xs={12}>
-          <p>
-            Last completed round: {lastCompletedRound?.roundNumber ?? "N/A"}
-          </p>
-          <p>Next pending round: {firstPendingRound?.roundNumber ?? "N/A"}</p>
-          <p>
-            Which rounds: {currentDraft.firstRound} - {currentDraft.lastRound}
-          </p>
-        </Col>
-      </Row>
+  useEffect(() => {
+    if (allSeats) {
+      setBuildingRemaining(
+        allSeats.filter((seat) => seat.deckPhotoUrl == null).length
+      );
+    }
+  }, [allSeats]);
 
-      {lastCompletedRound?.roundNumber === currentDraft.lastRound ? (
+  function markDone(seat: DraftPodSeat) {
+    if (seat) {
+      const seatId = seat.id;
+      console.log("selected seat id: " + seatId);
+      post(`/setDeckPhoto`, {
+        tournamentId,
+        seatId,
+      }).then(async (resp) => {
+        const draft = (await resp.json()) as Draft;
+        if (draft !== null) {
+          console.log(draft);
+          setCurrentDraft(draft);
+          setModal({
+            ...modal,
+            show: false,
+          });
+        }
+      });
+    } else {
+      console.log("error");
+    }
+  }
+
+  function markDoneClicked(clickedSeat: DraftPodSeat) {
+    setModal({
+      show: true,
+      onHide: () => null,
+      heading: "Confirm deck building complete",
+      text:
+        "Are you sure you want to confirm deck building complete for: " +
+        clickedSeat.player.firstName +
+        " " +
+        clickedSeat.player.lastName,
+      actionText: "Confirm complete",
+      actionFunction: markDone,
+      seat: clickedSeat,
+    });
+  }
+
+  if (currentDraft) {
+    return (
+      <>
         <Row>
-          <h3>The draft is over.</h3>
-          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
-            <Button
-              variant="primary"
-              className="btn-lg"
-              onClick={() => completeDraft()}
-            >
-              Complete draft
-            </Button>
+          <Col xs={12}>
+            <p>
+              Last completed round: {lastCompletedRound?.roundNumber ?? "N/A"}
+            </p>
+            <p>Next pending round: {firstPendingRound?.roundNumber ?? "N/A"}</p>
+            <p>
+              Which rounds: {currentDraft.firstRound} - {currentDraft.lastRound}
+            </p>
           </Col>
         </Row>
-      ) : firstPendingRound ? (
-        <Row>
-          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+
+        {lastCompletedRound?.roundNumber === currentDraft.lastRound ? (
+          <Row>
+            <h3>The draft is over.</h3>
+            <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+              <Button
+                variant="primary"
+                className="btn-lg"
+                onClick={() => completeDraft()}
+              >
+                Complete draft
+              </Button>
+            </Col>
+          </Row>
+        ) : firstPendingRound ? (
+          <>
+            <Row>
+              <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+                {firstPendingRound.matches.length ? (
+                  <>
+                    <Alert variant="success" className="fs-5 text-center">
+                      Deck building complete
+                    </Alert>
+                    <Button
+                      variant="primary"
+                      className="btn-lg"
+                      onClick={() => startRound()}
+                    >
+                      Start next round
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="primary"
+                      className="btn-lg"
+                      onClick={() => generatePairings()}
+                      disabled={buildingRemaining > 0}
+                    >
+                      Generate pairings
+                    </Button>
+                    <p className="small text-center">
+                      you can only generate pairings once deckbuilding is
+                      complete for all players
+                    </p>
+                  </>
+                )}
+              </Col>
+            </Row>
             {firstPendingRound.matches.length ? (
-              <Button
-                variant="primary"
-                className="btn-lg"
-                onClick={() => startRound()}
-              >
-                Start next round
-              </Button>
+              <></>
             ) : (
-              <Button
-                variant="primary"
-                className="btn-lg"
-                onClick={() => generatePairings()}
-              >
-                Generate pairings
-              </Button>
+              <>
+                <Row className="mt-3">
+                  <Container>
+                    <CardCountdownTimer initialSeconds={42} />
+                    <Col xs={12}>
+                      <DecksSubmittedProgressBar
+                        remainingSubmissions={buildingRemaining}
+                        totalPlayers={totalPlayers}
+                      />
+                    </Col>
+                  </Container>
+                </Row>
+                <DraftTable
+                  seats={allSeats}
+                  markDoneClicked={markDoneClicked}
+                />
+                <DeckBuildingModal
+                  show={modal.show}
+                  onHide={() =>
+                    setModal({
+                      ...modal,
+                      show: false,
+                    })
+                  }
+                  heading={modal.heading}
+                  text={modal.text}
+                  actionText={modal.actionText}
+                  actionFunction={modal.actionFunction}
+                  seat={modal.seat}
+                />
+              </>
             )}
-          </Col>
-        </Row>
-      ) : (
-        <p>Something's wrong, there are no rounds generated for this draft</p>
-      )}
-    </>
-  );
+          </>
+        ) : (
+          <p>Something's wrong, there are no rounds generated for this draft</p>
+        )}
+      </>
+    );
+  }
 };
 
 export default ManageDraft;
