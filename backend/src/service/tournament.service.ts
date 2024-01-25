@@ -7,13 +7,14 @@ import { Round } from "../entity/Round";
 import { Draft } from "../entity/Draft";
 import { MatchService } from "./match.service";
 import { Cube } from "../entity/Cube";
-import { Enrollment } from "../entity/Enrollment";
 import { DraftPod } from "../entity/DraftPod";
 import { CubeService } from "./cube.service";
 import { User } from "../entity/User";
 import { DraftPodSeat } from "../entity/DraftPodSeat";
 import { RatingService } from "./rating.service";
 import { Match } from "../entity/Match";
+import { ScoreService } from "./score.service";
+import { PlayerTournamentScore } from "../entity/PlayerTournamentScore";
 
 export class TournamentService {
   private appDataSource: DataSource;
@@ -21,6 +22,7 @@ export class TournamentService {
   private matchService: MatchService;
   private cubeService: CubeService;
   private ratingService: RatingService;
+  private scoreService: ScoreService;
 
   constructor() {
     this.appDataSource = AppDataSource;
@@ -28,6 +30,7 @@ export class TournamentService {
     this.matchService = new MatchService();
     this.cubeService = new CubeService();
     this.ratingService = new RatingService();
+    this.scoreService = new ScoreService();
   }
 
   async createTournament(
@@ -225,6 +228,16 @@ export class TournamentService {
       .where({ id: tournamentId })
       .execute();
 
+    const { enrollments } = await this.getTournamentEnrollments(tournamentId);
+
+    await Promise.all(
+      enrollments.map(async (enrollment) => {
+        await this.appDataSource
+          .getRepository(PlayerTournamentScore)
+          .insert({ tournamentId, player: enrollment.player });
+      })
+    );
+
     return await this.getTournamentAndDrafts(tournamentId);
   }
 
@@ -329,6 +342,7 @@ export class TournamentService {
   }
 
   async endRound(tournamentId: number, roundId: number): Promise<Round> {
+    const round = await this.getCurrentRound(tournamentId);
     await this.appDataSource
       .getRepository(Round)
       .createQueryBuilder("round")
@@ -340,19 +354,36 @@ export class TournamentService {
     const matches = await this.matchService.getMatchesForRound(roundId);
     const kvalue = 8;
     console.log(matches);
-    matches.forEach((match) => {
-      const winnerNumber =
-        match.player1GamesWon > match.player2GamesWon ? 1 : 2;
-      this.ratingService.updateElo(
-        kvalue,
-        match.player1.id,
-        match.player2.id,
-        winnerNumber
-      );
-    });
-    // gets null because there is no round with status=started
-    const round = await this.getCurrentRound(tournamentId);
-    return round;
+    await Promise.all(
+      matches.map(async (match) => {
+        const { player1, player2 } = match;
+        const winnerId =
+          match.player1GamesWon === match.player2GamesWon
+            ? 0
+            : match.player1GamesWon > match.player2GamesWon
+            ? player1.id
+            : player2.id;
+
+        if (winnerId !== 0) {
+          await this.scoreService.awardMatchWin(tournamentId, winnerId);
+
+          if (match.matchType === "final") {
+            await this.scoreService.awardDraftWin(tournamentId, winnerId);
+          }
+        } else {
+          await this.scoreService.awardDraw(
+            tournamentId,
+            player1.id,
+            player2.id
+          );
+        }
+
+        this.ratingService.updateElo(kvalue, player1.id, player2.id, winnerId);
+      })
+    );
+
+    this.scoreService.saveSnapshot(tournamentId, round.roundNumber);
+    return null;
   }
 
   async resetRecentMatchesForTournament(tournamentId: number) {

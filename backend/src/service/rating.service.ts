@@ -42,7 +42,7 @@ export class RatingService {
     kValue: number,
     player1Id: number,
     player2Id: number,
-    winnerNumber: number
+    winnerId: number
   ) {
     // todo: change this to get a whole array of players to change ratings for
 
@@ -72,20 +72,32 @@ export class RatingService {
         " " +
         playerB.lastName +
         ". winner: " +
-        winnerNumber
+        winnerId
     );
 
-    if (winnerNumber === 1) {
-      // update score, 1 if won 0 if lost
-      // TODO: figure out draws
-      playerANewRating = elo.updateRating(expectedScoreA, 1, playerARating);
-      playerBNewRating = elo.updateRating(expectedScoreB, 0, playerBRating);
-    } else if (winnerNumber === 2) {
-      playerANewRating = elo.updateRating(expectedScoreA, 0, playerARating);
-      playerBNewRating = elo.updateRating(expectedScoreB, 1, playerBRating);
-    } else {
-      // error
-      return;
+    switch (winnerId) {
+      case 0: {
+        // draw
+        playerANewRating = elo.updateRating(expectedScoreA, 0.5, playerARating);
+        playerBNewRating = elo.updateRating(expectedScoreB, 0.5, playerBRating);
+        break;
+      }
+      case playerA.id: {
+        // A wins
+        playerANewRating = elo.updateRating(expectedScoreA, 1, playerARating);
+        playerBNewRating = elo.updateRating(expectedScoreB, 0, playerBRating);
+        break;
+      }
+      case playerB.id: {
+        // B wins
+        playerANewRating = elo.updateRating(expectedScoreA, 0, playerARating);
+        playerBNewRating = elo.updateRating(expectedScoreB, 1, playerBRating);
+        break;
+      }
+      default: {
+        // error
+        return;
+      }
     }
 
     this.setUserRating(playerANewRating, playerA.id);
