@@ -194,6 +194,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
               variant="primary"
               className="btn-lg"
               disabled={resultsMissing > 0}
+              aria-disabled={resultsMissing > 0}
               onClick={() => handleEndRoundClick()}
             >
               End round

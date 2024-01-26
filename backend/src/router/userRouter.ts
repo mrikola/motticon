@@ -22,6 +22,7 @@ import {
   endDraft,
   endTournament,
   getCurrentDraftAndMatch,
+  getMostRecentRound,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -47,6 +48,7 @@ import {
   getSeatsForPod,
 } from "../controller/draft.controller";
 import { generatePairings } from "../controller/pairings.controller";
+import { getStandings } from "../controller/score.controller";
 
 export const userRouter = express.Router();
 
@@ -151,6 +153,10 @@ userRouter.get("/tournament/:tournamentId/round", async (req, res) => {
   res.send(await getCurrentRound(req));
 });
 
+userRouter.get("/tournament/:tournamentId/round/recent", async (req, res) => {
+  res.send(await getMostRecentRound(req));
+});
+
 userRouter.get("/tournament/:tournamentId/draft", async (req, res) => {
   res.send(await getCurrentDraft(req));
 });
@@ -217,6 +223,13 @@ userRouter.put(
         Number(roundId)
       )
     );
+  }
+);
+
+userRouter.get(
+  "/tournament/:tournamentId/standings/:roundNumber",
+  async (req, res) => {
+    res.send(await getStandings(req));
   }
 );
 

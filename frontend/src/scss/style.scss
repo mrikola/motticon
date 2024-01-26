@@ -1,4 +1,7 @@
 $primary: #fdcb6e;
+$table-bg-scale: -20%;
+$table-striped-order: odd;
+$table-striped-bg-factor: 0.03;
 
 // Import all of Bootstrap's CSS
 @import "bootstrap/scss/bootstrap";
@@ -90,6 +93,17 @@ nav {
   font-size: 5.2rem;
 }
 
+table {
+  .td-no-wrap {
+    white-space: nowrap;
+  }
+  .table-primary {
+    td {
+      --bs-table-bg-type: $primary !important;
+    }
+  }
+}
+
 // countdown timer element
 .countdown-timer {
   font-family: "Roboto Mono", monospace;
@@ -101,6 +115,9 @@ nav {
 // progress bar element
 .progress {
   height: $font-size-base * 1.5;
+  .progress-bar {
+    color: $dark;
+  }
 }
 
 // copy bs form-control styling over to the autocomplete input element
