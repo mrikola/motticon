@@ -14,6 +14,7 @@ import ManageRound from "../../components/staff/ManageRound";
 import ManageDraft from "../../components/staff/ManageDraft";
 import ManageEnrollments from "../../components/staff/ManageEnrollments";
 import NextDraft from "../../components/staff/NextDraft";
+import StandingsTable from "../../components/staff/StandingsTable";
 
 function StaffView() {
   const { tournamentId } = useParams();
@@ -21,6 +22,7 @@ function StaffView() {
   const [currentRound, setCurrentRound] = useState<Round>();
   const [currentDraft, setCurrentDraft] = useState<Draft>();
   const [tournament, setTournament] = useState<Tournament>();
+  const [latestRoundNumber, setLatestRoundNumber] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,6 +68,21 @@ function StaffView() {
     const updatedTournament = (await resp.json()) as Tournament;
     setTournament({ ...tournament, ...updatedTournament });
   };
+
+  // latestRoundNumber used for showing standings table
+  useEffect(() => {
+    if (currentRound) {
+      setLatestRoundNumber(currentRound.roundNumber);
+    } else if (tournament?.status === "completed") {
+      const fetchData = async () => {
+        const response = await get(`/tournament/${tournamentId}/round/recent`);
+        const round = (await response.json()) as Round;
+        setLatestRoundNumber(round.roundNumber);
+      };
+
+      fetchData();
+    }
+  }, [currentRound, tournament]);
 
   return user && tournament ? (
     <Container className="mt-3 my-md-4">
@@ -122,7 +139,10 @@ function StaffView() {
         <Row>
           <Col xs={12}>
             <h3>The tournament is completed.</h3>
-            <h4>TODO: display standings here.</h4>
+          </Col>
+          <Col>
+            <h3>Final standings.</h3>
+            <StandingsTable roundNumber={latestRoundNumber} />
           </Col>
         </Row>
       )}

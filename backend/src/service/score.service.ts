@@ -21,6 +21,20 @@ export class ScoreService {
     });
   }
 
+  async getStandings(
+    tournamentId: number,
+    roundNumber: number
+  ): Promise<ScoreHistory[]> {
+    const standings = await this.appDataSource
+      .getRepository(ScoreHistory)
+      .createQueryBuilder("score")
+      .leftJoinAndSelect("score.player", "player")
+      .where("score.tournamentId = :tournamentId", { tournamentId })
+      .andWhere("score.roundNumber = :roundNumber", { roundNumber })
+      .getMany();
+    return standings;
+  }
+
   async awardMatchWin(tournamentId: number, playerId: number) {
     const previousScore = await this.getPreviousScore(tournamentId, playerId);
 

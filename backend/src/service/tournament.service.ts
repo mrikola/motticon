@@ -178,6 +178,16 @@ export class TournamentService {
       .getOne();
   }
 
+  async getMostRecentRound(tournamentId: number): Promise<Round> {
+    return await this.appDataSource
+      .getRepository(Round)
+      .createQueryBuilder("round")
+      .leftJoin("round.tournament", "tournament")
+      .andWhere("tournament.id = :tournamentId", { tournamentId })
+      .orderBy('"roundNumber"', "DESC")
+      .getOne();
+  }
+
   async getCurrentDraft(tournamentId: number): Promise<Draft> {
     return await this.appDataSource
       .getRepository(Draft)

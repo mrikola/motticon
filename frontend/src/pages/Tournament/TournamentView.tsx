@@ -23,7 +23,7 @@ const TournamentView = () => {
   const [cubes, setCubes] = useState<Cube[]>([]);
   const [tournamentStatus, setTournamentStatus] = useState<string>();
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
-  const [_ongoingRound, setOngoingRound] = useState<Round>();
+  const [newestRoundNumber, setNewestRoundNumber] = useState<number>(0);
   const [freeSeats, setFreeSeats] = useState<number>(0);
 
   const isStaff =
@@ -55,7 +55,7 @@ const TournamentView = () => {
         setTournamentStatus("ongoing");
       }
       checkEnrolled(enrollment);
-      console.log(tournament);
+      //console.log(tournament);
     };
 
     if (user) {
@@ -63,16 +63,34 @@ const TournamentView = () => {
     }
   }, [user, tournamentId]);
 
+  // if tournament if over, get the last round
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await get(`/tournament/${tournamentId}/round/recent`);
+      const round = (await response.json()) as Round;
+
+      setNewestRoundNumber(round.roundNumber);
+    };
+    if (user && activeTournament?.status === "completed") {
+      fetchData();
+    }
+  }, [activeTournament]);
+
+  // if tournament is ongoing, get ongoing round
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(`/tournament/${tournamentId}/round`);
       const round = (await response.json()) as Round;
-      setOngoingRound(round);
+      setNewestRoundNumber(round.roundNumber);
     };
-    if (user && tournamentStatus === "ongoing") {
+    if (
+      user &&
+      tournamentStatus === "ongoing" &&
+      activeTournament?.status !== "completed"
+    ) {
       fetchData();
     }
-  }, [user]);
+  }, [activeTournament]);
 
   // get cubes for this tournament
   useEffect(() => {
@@ -149,8 +167,11 @@ const TournamentView = () => {
         />
       )}
       {isStaff && <Staff tournamentId={activeTournament.id} />}
-      {tournamentStatus != "future" && (
-        <Standings roundNumber={5} tournamentId={activeTournament.id} />
+      {tournamentStatus != "future" && newestRoundNumber > 0 && (
+        <Standings
+          roundNumber={newestRoundNumber}
+          tournamentId={activeTournament.id}
+        />
       )}
     </Container>
   ) : (

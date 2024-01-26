@@ -77,3 +77,15 @@ export type UsersTournaments = {
   ongoing: Tournament[];
   future: Tournament[];
 };
+
+export type ScoreHistory = {
+  id: number;
+  playerId: number;
+  tournamentId: number;
+  player: User;
+  tournament: Tournament;
+  points: number;
+  draftsWon: number;
+  opponentMatchWinPercentage: number;
+  roundNumber: number;
+};

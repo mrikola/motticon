@@ -12,13 +12,14 @@ function Standings({ roundNumber, tournamentId }: Props) {
   const [rounds, setRounds] = useState<number[]>([]);
 
   if (rounds.length === 0) {
+    const rnd = [];
     for (let i = 1; i <= roundNumber; i++) {
-      rounds.push(i);
+      rnd.push(i);
     }
-    rounds.sort((a, b) => (a > b ? -1 : 1));
+    rnd.sort((a, b) => (a > b ? -1 : 1));
+    setRounds(rnd);
   }
 
-  // todo: add generating of multiple standings based on data
   return (
     <Row className="my-3">
       <h2>
