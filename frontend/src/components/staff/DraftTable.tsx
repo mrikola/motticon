@@ -13,8 +13,8 @@ const DraftTable = ({ seats, markDoneClicked }: Props) => {
   const [incompleteSeats, setIncompleteSeats] = useState<DraftPodSeat[]>([]);
 
   useEffect(() => {
-    setIncompleteSeats(seats.filter((seat) => seat.deckPhotoUrl == null));
-    setCompleteSeats(seats.filter((seat) => seat.deckPhotoUrl != null));
+    setIncompleteSeats(seats.filter((seat) => seat.deckPhotoUrl === null));
+    setCompleteSeats(seats.filter((seat) => seat.deckPhotoUrl !== null));
   }, [seats]);
 
   if (completeSeats && incompleteSeats) {

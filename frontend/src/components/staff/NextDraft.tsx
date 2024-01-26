@@ -6,9 +6,14 @@ import { Button, Col, Row } from "react-bootstrap";
 type Props = {
   tournamentId: number;
   setCurrentDraft: (draft?: Draft) => void;
+  updateTournament: (tournament: Tournament) => void;
 };
 
-const NextDraft = ({ tournamentId, setCurrentDraft }: Props) => {
+const NextDraft = ({
+  tournamentId,
+  setCurrentDraft,
+  updateTournament,
+}: Props) => {
   const [lastCompletedDraft, setLastCompletedDraft] = useState<Draft>();
   const [firstPendingDraft, setFirstPendingDraft] = useState<Draft>();
   const [tournament, setTournament] = useState<Tournament>();
@@ -63,8 +68,8 @@ const NextDraft = ({ tournamentId, setCurrentDraft }: Props) => {
   const completeTournament = async () => {
     const resp = await put(`/tournament/${tournamentId}/end`);
     const updatedTournament = (await resp.json()) as Tournament;
-    setTournament({ ...tournament, ...updatedTournament });
-    console.log(updatedTournament);
+    setTournament({ ...updatedTournament });
+    updateTournament(updatedTournament);
   };
 
   // if latest draft completed == tournament draft count, tournament is over (minus top 8)

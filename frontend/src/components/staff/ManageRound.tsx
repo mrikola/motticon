@@ -17,9 +17,10 @@ import VerticallyCenteredModal, {
 
 type Props = {
   currentRound: Round;
+  setCurrentRound: (round?: Round) => void;
 };
 
-const ManageRound = ({ currentRound }: Props) => {
+const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
   const user = useContext(UserInfoContext);
   const { tournamentId } = useParams();
   const [timeRemaining, setTimeRemaining] = useState<number>();
@@ -136,11 +137,11 @@ const ManageRound = ({ currentRound }: Props) => {
       `/tournament/${tournamentId}/round/${currentRound.id}/end`,
       {}
     );
-    // this works but the json response is null due to no round=started
-    const round = (await response.json()) as Round;
 
-    console.log(round);
-    // do some actual stuff here
+    if (response.status === 200 || response.status === 204) {
+      // round ended successfully, tell the tournament there is no round
+      setCurrentRound(undefined);
+    }
   };
 
   function handleEndRoundClick() {

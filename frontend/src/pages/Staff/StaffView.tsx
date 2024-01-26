@@ -84,7 +84,12 @@ function StaffView() {
       </Row>
       {tournament.status === "started" && (
         <>
-          {currentRound && <ManageRound currentRound={currentRound} />}
+          {currentRound && (
+            <ManageRound
+              currentRound={currentRound}
+              setCurrentRound={setCurrentRound}
+            />
+          )}
           {!currentRound && currentDraft && (
             <ManageDraft
               currentDraft={currentDraft}
@@ -97,6 +102,7 @@ function StaffView() {
               <NextDraft
                 tournamentId={Number(tournamentId)}
                 setCurrentDraft={setCurrentDraft}
+                updateTournament={setTournament}
               />
             </>
           )}

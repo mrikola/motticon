@@ -17,7 +17,7 @@ import DecksSubmittedProgressBar from "./DecksSubmittedProgressBar";
 
 type Props = {
   currentDraft: Draft;
-  setCurrentDraft: (draft: Draft) => void;
+  setCurrentDraft: (draft?: Draft) => void;
   setCurrentRound: (round: Round) => void;
 };
 
@@ -113,6 +113,7 @@ const ManageDraft = ({
     );
     const updatedTournament = (await response.json()) as Tournament;
     console.log(updatedTournament);
+    setCurrentDraft(undefined);
     // do some stuff here
   };
 
