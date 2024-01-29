@@ -49,20 +49,22 @@ const ManageDraft = ({
   });
 
   useEffect(() => {
-    const seats = [];
+    const seats: DraftPodSeat[] = [];
     for (let i = 0; i < currentDraft.pods.length; i++) {
       const pod = currentDraft.pods[i];
       for (let j = 0; j < pod.seats.length; j++) {
         const seat = pod.seats[j];
-        seats.push(seat);
+        seats.push({ ...seat, pod });
       }
     }
-    seats.sort((a, b) => (a.seat > b.seat ? 1 : -1));
+    seats.sort((a, b) =>
+      a.seat === b.seat ? a.pod.podNumber - b.pod.podNumber : a.seat - b.seat
+    );
     setAllSeats(seats);
     if (totalPlayers === 0) {
       setTotalPlayers(seats.length);
     }
-  }, [currentDraft]);
+  }, [currentDraft.id]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -198,9 +200,12 @@ const ManageDraft = ({
               <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
                 {firstPendingRound.matches.length ? (
                   <>
-                    <Alert variant="success" className="fs-5 text-center">
-                      Deck building complete
-                    </Alert>
+                    {firstPendingRound.roundNumber ===
+                      currentDraft.firstRound && (
+                      <Alert variant="success" className="fs-5 text-center">
+                        Deck building complete
+                      </Alert>
+                    )}
                     <Button
                       variant="primary"
                       className="btn-lg"
@@ -227,41 +232,41 @@ const ManageDraft = ({
                 )}
               </Col>
             </Row>
-            {firstPendingRound.matches.length ? (
-              <></>
-            ) : (
-              <>
-                <Row className="mt-3">
-                  <Container>
-                    <CardCountdownTimer initialSeconds={42} />
-                    <Col xs={12}>
-                      <DecksSubmittedProgressBar
-                        remainingSubmissions={buildingRemaining}
-                        totalPlayers={totalPlayers}
-                      />
-                    </Col>
-                  </Container>
-                </Row>
-                <DraftTable
-                  seats={allSeats}
-                  markDoneClicked={markDoneClicked}
-                />
-                <DeckBuildingModal
-                  show={modal.show}
-                  onHide={() =>
-                    setModal({
-                      ...modal,
-                      show: false,
-                    })
-                  }
-                  heading={modal.heading}
-                  text={modal.text}
-                  actionText={modal.actionText}
-                  actionFunction={modal.actionFunction}
-                  seat={modal.seat}
-                />
-              </>
-            )}
+            {!firstPendingRound.matches.length &&
+              (lastCompletedRound?.roundNumber ?? 0) <
+                currentDraft.firstRound && (
+                <>
+                  <Row className="mt-3">
+                    <Container>
+                      <CardCountdownTimer initialSeconds={42} />
+                      <Col xs={12}>
+                        <DecksSubmittedProgressBar
+                          remainingSubmissions={buildingRemaining}
+                          totalPlayers={totalPlayers}
+                        />
+                      </Col>
+                    </Container>
+                  </Row>
+                  <DraftTable
+                    seats={allSeats}
+                    markDoneClicked={markDoneClicked}
+                  />
+                  <DeckBuildingModal
+                    show={modal.show}
+                    onHide={() =>
+                      setModal({
+                        ...modal,
+                        show: false,
+                      })
+                    }
+                    heading={modal.heading}
+                    text={modal.text}
+                    actionText={modal.actionText}
+                    actionFunction={modal.actionFunction}
+                    seat={modal.seat}
+                  />
+                </>
+              )}
           </>
         ) : (
           <p>Something's wrong, there are no rounds generated for this draft</p>

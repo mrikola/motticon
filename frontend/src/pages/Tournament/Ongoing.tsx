@@ -136,6 +136,13 @@ const Ongoing = () => {
             </Col>
           </Row>
         )}
+        {tournament.status === "completed" && (
+          <Row>
+            <Col xs={12}>
+              <h1 className="display-1">Tournament completed.</h1>
+            </Col>
+          </Row>
+        )}
       </Container>
     );
   }
