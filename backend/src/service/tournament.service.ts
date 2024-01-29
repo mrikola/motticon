@@ -183,6 +183,7 @@ export class TournamentService {
       .getRepository(Round)
       .createQueryBuilder("round")
       .leftJoin("round.tournament", "tournament")
+      .where("round.status = 'completed'")
       .andWhere("tournament.id = :tournamentId", { tournamentId })
       .orderBy('"roundNumber"', "DESC")
       .getOne();
@@ -201,6 +202,25 @@ export class TournamentService {
       .andWhere("tournament.id = :tournamentId", { tournamentId })
       .orderBy('"draftNumber"', "DESC")
       .getOne();
+  }
+
+  async getCurrentMatch(userId: number, roundId: number): Promise<Match> {
+    const match = await this.appDataSource
+      .getRepository(Match)
+      .createQueryBuilder("match")
+      .leftJoinAndSelect("match.round", "round")
+      .leftJoinAndSelect("match.resultSubmittedBy", "resultSubmittedUser")
+      .leftJoinAndSelect("match.player1", "player1")
+      .leftJoinAndSelect("match.player2", "player2")
+      .where("round.id = :roundId", { roundId })
+      .andWhere((qb) =>
+        qb
+          .where('match."player1Id" = :userId', { userId })
+          .orWhere('match."player2Id" = :userId', { userId })
+      )
+      .getOne();
+
+    return match;
   }
 
   async getCurrentDraftAndMatch(

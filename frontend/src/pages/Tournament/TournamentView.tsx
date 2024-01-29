@@ -10,10 +10,10 @@ import { Box, BoxArrowInLeft, CalendarEvent } from "react-bootstrap-icons";
 import dayjs from "dayjs";
 import { Enrollment } from "../../types/User";
 import Loading from "../../components/general/Loading";
-import Standings from "./TournamentView/Standings";
+import Standings from "./TournamentView/GoToStandings";
 import Enroll from "./TournamentView/Enroll";
 import GoToOngoing from "./TournamentView/GoToOngoing";
-import Staff from "./TournamentView/Staff";
+import Staff from "./TournamentView/GoToStaff";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const TournamentView = () => {
@@ -153,7 +153,8 @@ const TournamentView = () => {
       )}
       {isEnrolled &&
         tournamentStatus === "ongoing" &&
-        activeTournament.status != "completed" && (
+        (activeTournament.status === "started" ||
+          activeTournament.status === "pending") && (
           <GoToOngoing tournamentId={activeTournament.id} />
         )}
       {tournamentStatus === "future" && (

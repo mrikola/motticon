@@ -17,6 +17,14 @@ export const getRoundsForDraft = async (req) => {
   return await draftService.getRoundsForDraft(draftId as number);
 };
 
+export const getDraftInfoForUser = async (req) => {
+  const { draftId, userId } = req.params;
+  return await draftService.getDraftInfoForUser(
+    draftId as number,
+    userId as number
+  );
+};
+
 export const setDeckPhotoForUser = async (req) => {
   const { tournamentId, seatId } = req.body;
   return await draftService.setDeckPhotoForUser(
