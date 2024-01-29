@@ -110,6 +110,7 @@ const Ongoing = () => {
                 tournament={tournament}
                 round={currentRound}
                 match={currentMatch}
+                setCurrentMatch={setCurrentMatch}
               />
             )}
             {!currentRound && currentDraft && (

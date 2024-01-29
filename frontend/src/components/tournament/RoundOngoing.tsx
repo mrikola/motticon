@@ -21,9 +21,10 @@ type Props = {
   tournament: Tournament;
   round: Round;
   match: Match;
+  setCurrentMatch: (match: Match) => void;
 };
 
-function RoundOngoing({ tournament, round, match }: Props) {
+function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
   const [roundStart, _setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
@@ -81,22 +82,24 @@ function RoundOngoing({ tournament, round, match }: Props) {
     const matchId = match.id;
     // const matchId = 3;
     const resultSubmittedBy = user?.id;
-    const player1GamesWon = playerRadioValue;
-    const player2GamesWon = opponentRadioValue;
+    const player1GamesWon =
+      match.player1.id === user?.id ? playerRadioValue : opponentRadioValue;
+    const player2GamesWon =
+      match.player1.id === user?.id ? opponentRadioValue : playerRadioValue;
     post(`/submitResult`, {
       matchId,
       resultSubmittedBy,
       player1GamesWon,
       player2GamesWon,
     }).then(async (resp) => {
-      const jwt = await resp.text();
-      if (jwt !== null) {
-        console.log(jwt);
+      // TODO receive match status, send it back to Ongoing component
+      const updatedMatch = (await resp.json()) as Match;
+      if (updatedMatch !== null) {
         setModal({
           ...modal,
           show: false,
         });
-        // todo: do stuff here
+        setCurrentMatch({ ...match, ...updatedMatch });
       }
     });
   };

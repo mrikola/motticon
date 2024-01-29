@@ -11,6 +11,16 @@ export class MatchService {
     this.repository = this.appDataSource.getRepository(Match);
   }
 
+  async getMatch(matchId: number): Promise<Match> {
+    return await this.repository
+      .createQueryBuilder("match")
+      .leftJoinAndSelect("match.resultSubmittedBy", "resultSubmittedUser")
+      .leftJoinAndSelect("match.player1", "player1")
+      .leftJoinAndSelect("match.player2", "player2")
+      .where("match.id = :matchId", { matchId })
+      .getOne();
+  }
+
   async getMatchesForRound(roundId: number) {
     const matches = await this.repository
       .createQueryBuilder("match")
@@ -46,7 +56,7 @@ export class MatchService {
     resultSubmittedBy: number,
     player1GamesWon: number,
     player2GamesWon: number
-  ) {
+  ): Promise<Match> {
     await this.repository
       .createQueryBuilder("match")
       .update(Match)
@@ -57,6 +67,7 @@ export class MatchService {
       })
       .where("id = :matchId", { matchId })
       .execute();
+    return await this.getMatch(matchId);
   }
 
   async staffSubmitResult(
