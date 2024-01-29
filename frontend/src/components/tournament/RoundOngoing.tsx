@@ -42,6 +42,7 @@ function RoundOngoing({ tournament, round, match }: Props) {
   const [player, setPlayer] = useState<Player>();
   const [opponent, setOpponent] = useState<Player>();
   //const [currentMatch, setCurrentMatch] = useState<Match>();
+  // console.log(match);
 
   // useEffect(() => {
   //   if (!currentMatch) {

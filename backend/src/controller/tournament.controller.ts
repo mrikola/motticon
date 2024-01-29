@@ -73,10 +73,10 @@ export const getCurrentRound = async (req) => {
 };
 
 export const getCurrentMatch = async (req) => {
-  const { userId, roundId } = req.params;
+  const { roundId, userId } = req.params;
   return await tournamentService.getCurrentMatch(
-    userId as number,
-    roundId as number
+    roundId as number,
+    userId as number
   );
 };
 
