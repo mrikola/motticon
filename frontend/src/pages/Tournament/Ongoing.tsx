@@ -32,13 +32,13 @@ const Ongoing = () => {
           startTime: new Date(round.startTime),
         };
         setCurrentRound(roundParsed);
-        console.log(roundParsed);
+        // console.log(roundParsed);
       }
 
       if (Number(draftResponse.headers.get("content-length")) > 0) {
         const draft = (await draftResponse.json()) as Draft;
         setCurrentDraft(draft);
-        console.log(draft);
+        // console.log(draft);
       }
     };
 
@@ -86,7 +86,7 @@ const Ongoing = () => {
         const response = await get(`/tournament/${tournamentId}/round/recent`);
         const round = (await response.json()) as Round;
         setLatestRound(round);
-        console.log(round);
+        // console.log(round);
       };
 
       fetchData();
@@ -106,13 +106,11 @@ const Ongoing = () => {
         {tournament.status === "started" && (
           <>
             {currentRound && currentMatch && (
-              <>
-                <RoundOngoing
-                  tournament={tournament}
-                  round={currentRound}
-                  match={currentMatch}
-                />
-              </>
+              <RoundOngoing
+                tournament={tournament}
+                round={currentRound}
+                match={currentMatch}
+              />
             )}
             {!currentRound && currentDraft && (
               <>
