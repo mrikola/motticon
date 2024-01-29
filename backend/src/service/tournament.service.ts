@@ -183,6 +183,7 @@ export class TournamentService {
       .getRepository(Round)
       .createQueryBuilder("round")
       .leftJoin("round.tournament", "tournament")
+      .where("round.status = 'completed'")
       .andWhere("tournament.id = :tournamentId", { tournamentId })
       .orderBy('"roundNumber"', "DESC")
       .getOne();

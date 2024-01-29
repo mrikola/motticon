@@ -41,10 +41,26 @@ function RoundOngoing({ tournament, round, match }: Props) {
   });
   const [player, setPlayer] = useState<Player>();
   const [opponent, setOpponent] = useState<Player>();
+  //const [currentMatch, setCurrentMatch] = useState<Match>();
+
+  // useEffect(() => {
+  //   if (!currentMatch) {
+  //     const fetchData = async () => {
+  //       const response = await get(
+  //         `/tournament/${tournament?.id}/round/${round?.id}/match/${user?.id}`
+  //       );
+  //       const match = (await response.json()) as Match;
+  //       setCurrentMatch(match);
+  //     };
+  //     if (user && round) {
+  //       fetchData();
+  //     }
+  //   }
+  // }, [round]);
 
   useEffect(() => {
     // check player id's from match and set correct player & opponent objects
-    if (match) {
+    if (match && user) {
       if (match.player1.id === user?.id) {
         setPlayer(match.player1);
         setPlayerRadioValue(match.player1GamesWon.toString());
@@ -57,11 +73,12 @@ function RoundOngoing({ tournament, round, match }: Props) {
         setOpponentRadioValue(match.player1GamesWon.toString());
       }
     }
-  }, [match]);
+  }, [match, user]);
 
   // handle result submission
   const submitResult = () => {
     const matchId = match.id;
+    // const matchId = 3;
     const resultSubmittedBy = user?.id;
     const player1GamesWon = playerRadioValue;
     const player2GamesWon = opponentRadioValue;

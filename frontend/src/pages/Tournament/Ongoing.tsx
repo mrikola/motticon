@@ -14,12 +14,10 @@ const Ongoing = () => {
   const { tournamentId } = useParams();
   const [tournament, setTournament] = useState<Tournament>();
   const user = useContext(UserInfoContext);
-  // const [ongoingStatus, setOngoingStatus] = useState<string>();
   const [currentRound, setCurrentRound] = useState<Round>();
   const [currentDraft, setCurrentDraft] = useState<Draft>();
   const [currentMatch, setCurrentMatch] = useState<Match>();
-  // const [roundStatus, setRoundStatus] = useState<string>();
-  // const [draftStatus, setDraftStatus] = useState<string>();
+  const [latestRound, setLatestRound] = useState<Round>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,14 +38,14 @@ const Ongoing = () => {
       if (Number(draftResponse.headers.get("content-length")) > 0) {
         const draft = (await draftResponse.json()) as Draft;
         setCurrentDraft(draft);
-        // console.log(draft);
+        console.log(draft);
       }
     };
 
     if (user) {
       fetchData();
     }
-  }, [user]);
+  }, [tournamentId, user]);
 
   useEffect(() => {
     if (!tournament) {
@@ -55,7 +53,7 @@ const Ongoing = () => {
         const response = await get(`/tournament/${tournamentId}`);
         const tourny = (await response.json()) as Tournament;
         setTournament(tourny);
-        // console.log(tourny);
+        //console.log(tourny);
       };
       if (user) {
         fetchData();
@@ -64,7 +62,7 @@ const Ongoing = () => {
   }, [user]);
 
   useEffect(() => {
-    if (!tournament) {
+    if (!currentMatch) {
       const fetchData = async () => {
         const response = await get(
           `/tournament/${tournamentId}/round/${currentRound?.id}/match/${user?.id}`
@@ -78,43 +76,21 @@ const Ongoing = () => {
     }
   }, [currentRound]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const response = await get(
-  //       `/user/${user?.id}/tournament/${tournamentId}/current`
-  //     );
-  //     const { draft, round, match } = await response.json();
-  //     setCurrentRound(round);
-  //     setCurrentMatch(match);
-  //     setCurrentDraft(draft);
-  //     setDraftStatus(draft.status);
-  //     setRoundStatus(round.status);
-  //   };
+  // latestRoundNumber used for showing standings table
+  useEffect(() => {
+    if (currentRound) {
+      setLatestRound(currentRound);
+    } else {
+      const fetchData = async () => {
+        const response = await get(`/tournament/${tournamentId}/round/recent`);
+        const round = (await response.json()) as Round;
+        setLatestRound(round);
+        console.log(round);
+      };
 
-  //   if (user) {
-  //     fetchData();
-  //   }
-  // }, [user]);
-
-  // useEffect(() => {
-  //   if (roundStatus && draftStatus) {
-  //     if (draftStatus == "pending" && roundStatus == "started") {
-  //       setOngoingStatus("round");
-  //     } else if (draftStatus == "started" && roundStatus == "pending") {
-  //       setOngoingStatus("draft");
-  //     } else {
-  //       // error checking here
-  //     }
-  //   }
-  // }, [currentRound, currentDraft, draftStatus, roundStatus]);
-
-  // function changeOngoingStatus() {
-  //   if (ongoingStatus === "round") {
-  //     setOngoingStatus("draft");
-  //   } else {
-  //     setOngoingStatus("round");
-  //   }
-  // }
+      fetchData();
+    }
+  }, [currentRound, tournament]);
 
   if (user && tournament) {
     return (
@@ -129,16 +105,24 @@ const Ongoing = () => {
         {tournament.status === "started" && (
           <>
             {currentRound && currentMatch && (
-              <RoundOngoing
-                tournament={tournament}
-                round={currentRound}
-                match={currentMatch}
-              />
+              <>
+                <RoundOngoing
+                  tournament={tournament}
+                  round={currentRound}
+                  match={currentMatch}
+                />
+              </>
             )}
             {!currentRound && currentDraft && (
-              <DraftOngoing draft={currentDraft} tournament={tournament} />
+              <>
+                {latestRound ? (
+                  <h3>Round {latestRound.roundNumber} done.</h3>
+                ) : (
+                  <DraftOngoing draft={currentDraft} tournament={tournament} />
+                )}
+              </>
             )}
-            {!currentRound && !currentDraft && (
+            {!currentRound && !currentDraft && !latestRound && (
               <>
                 <PendingView tournamentId={Number(tournamentId)} />
               </>
