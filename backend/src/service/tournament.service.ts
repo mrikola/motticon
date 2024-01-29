@@ -1,4 +1,4 @@
-import { DataSource, Repository } from "typeorm";
+import { Brackets, DataSource, Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Tournament } from "../entity/Tournament";
 import { partition, round } from "lodash";
@@ -213,10 +213,12 @@ export class TournamentService {
       .leftJoinAndSelect("match.player1", "player1")
       .leftJoinAndSelect("match.player2", "player2")
       .where("round.id = :roundId", { roundId })
-      .andWhere((qb) =>
-        qb
-          .where('match."player1Id" = :userId', { userId })
-          .orWhere('match."player2Id" = :userId', { userId })
+      .andWhere(
+        new Brackets((qb) =>
+          qb
+            .where('match."player1Id" = :userId', { userId })
+            .orWhere('match."player2Id" = :userId', { userId })
+        )
       )
       .getOne();
 
@@ -240,10 +242,12 @@ export class TournamentService {
       .leftJoinAndSelect("match.player1", "player1")
       .leftJoinAndSelect("match.player2", "player2")
       .where("round.id = :roundId", { roundId: round.id })
-      .andWhere((qb) =>
-        qb
-          .where('match."player1Id" = :userId', { userId })
-          .orWhere('match."player2Id" = :userId', { userId })
+      .andWhere(
+        new Brackets((qb) =>
+          qb
+            .where('match."player1Id" = :userId', { userId })
+            .orWhere('match."player2Id" = :userId', { userId })
+        )
       )
       .getOne();
 

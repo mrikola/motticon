@@ -59,20 +59,21 @@ const Ongoing = () => {
         fetchData();
       }
     }
-  }, [user]);
+  }, [tournamentId, user]);
 
   useEffect(() => {
-    if (!currentMatch) {
-      const fetchData = async () => {
+    const fetchData = async () => {
+      if (currentRound && !currentMatch) {
         const response = await get(
           `/tournament/${tournamentId}/round/${currentRound?.id}/match/${user?.id}`
         );
         const match = (await response.json()) as Match;
         setCurrentMatch(match);
-      };
-      if (user && currentRound) {
-        fetchData();
       }
+    };
+
+    if (user && currentRound) {
+      fetchData();
     }
   }, [currentRound]);
 

@@ -163,6 +163,9 @@ function RoundOngoing({ tournament, round, match }: Props) {
     }
   }, [matches]);
 
+  console.log("current round", JSON.stringify(round, null, 2));
+  console.log("current match", JSON.stringify(match, null, 2));
+
   if (user && timeRemaining && player && opponent) {
     return (
       <Container className="mt-3 my-md-4">
