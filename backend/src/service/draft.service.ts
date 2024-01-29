@@ -33,6 +33,21 @@ export class DraftService {
       .getMany();
   }
 
+  async getDraftInfoForUser(
+    draftId: number,
+    userId: number
+  ): Promise<DraftPod> {
+    return await this.appDataSource
+      .getRepository(DraftPod)
+      .createQueryBuilder("pod")
+      .leftJoinAndSelect("pod.cube", "cube")
+      .leftJoinAndSelect("pod.seats", "seats")
+      .leftJoinAndSelect("seats.player", "player")
+      .where('pod."draftId" = :draftId', { draftId })
+      .andWhere("player.id = :userId", { userId })
+      .getOne();
+  }
+
   async getRoundsForDraft(draftId: number): Promise<Round[]> {
     return await this.appDataSource
       .getRepository(Round)

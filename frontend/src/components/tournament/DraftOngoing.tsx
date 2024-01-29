@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { Button, Card, Col, Container, Row, Form } from "react-bootstrap";
-import { Box, Image, SquareFill } from "react-bootstrap-icons";
+import { Card, Col, Container, Row } from "react-bootstrap";
+import { Box, SquareFill } from "react-bootstrap-icons";
 import {
   Draft,
   DraftPod,
@@ -10,6 +10,7 @@ import {
 import { get } from "../../services/ApiService";
 import { UserInfoContext } from "../provider/UserInfoProvider";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import DeckBuildingSubmission from "./DeckBuildingSubmission";
 
 type Props = {
   tournament: Tournament;
@@ -19,43 +20,29 @@ type Props = {
 function DraftOngoing({ tournament, draft }: Props) {
   const user = useContext(UserInfoContext);
   const [playerPod, setPlayerPod] = useState<DraftPod>();
-  const [playerSeat, setPlayerSeats] = useState<number>();
+  const [playerSeat, setPlayerSeat] = useState<DraftPodSeat>();
+  const [deckBuildingDone, setDeckBuildingDone] = useState<boolean>(false);
 
-  // get pods
+  // get relevant draft info
   useEffect(() => {
     const fetchData = async () => {
-      const response = await get(`/draft/pods/2`);
-      const draftPods = (await response.json()) as DraftPod[];
-      draftPods.forEach((pod) => {
-        // todo:
-        if (pod.id === 1) {
-          setPlayerPod(pod);
-        }
-      });
+      const response = await get(`/draft/${draft.id}/user/${user?.id}`);
+      const draftPod = (await response.json()) as DraftPod;
+
+      setPlayerPod(draftPod);
+      setPlayerSeat(draftPod.seats[0]);
+      draftPod.seats[0].deckPhotoUrl ? setDeckBuildingDone(true) : false;
     };
-    if (draft) {
+    if (user && draft) {
       fetchData();
     }
-  }, [draft]);
+  }, [user, draft]);
 
-  // get seats for pod
-  useEffect(() => {
-    const fetchData = async () => {
-      if (playerPod) {
-        const id = playerPod.id;
-        const response = await get(`/draft/seats/${id}`);
-        const draftSeats = (await response.json()) as DraftPodSeat[];
-        draftSeats.forEach((seat) => {
-          if (seat.id === user?.id) {
-            setPlayerSeats(seat.seat);
-          }
-        });
-      }
-    };
-    fetchData();
-  }, [playerPod, user]);
+  function doneSetter(value: boolean) {
+    setDeckBuildingDone(value);
+  }
 
-  if (user && draft && playerPod) {
+  if (user && draft && playerPod && playerSeat) {
     return (
       <Container className="mt-3 my-md-4">
         <HelmetProvider>
@@ -101,7 +88,9 @@ function DraftOngoing({ tournament, draft }: Props) {
                 </Col>
                 <Col xs={9}>
                   <Card.Body className="horizontal-card-body">
-                    <Card.Title className="v-card-title">Pod</Card.Title>
+                    <Card.Title className="horizontal-card-title">
+                      Pod
+                    </Card.Title>
                   </Card.Body>
                 </Col>
               </Row>
@@ -111,7 +100,9 @@ function DraftOngoing({ tournament, draft }: Props) {
                 <Col xs={3}>
                   <span className="icon-stack">
                     <SquareFill className="icon-stack-3x" />
-                    <p className="icon-stack-2x text-light">{playerSeat}</p>
+                    <p className="icon-stack-2x text-light">
+                      {playerSeat?.seat}
+                    </p>
                   </span>
                 </Col>
                 <Col xs={9}>
@@ -125,22 +116,13 @@ function DraftOngoing({ tournament, draft }: Props) {
             </Card>
           </Container>
         </Row>
-        <Row>
-          <h2>Draft pool submission</h2>
-          <p>
-            After the draft, please submit a photo showing all the cards you
-            have drafted.
-          </p>
-          <Form.Group controlId="formFile" className="mb-3">
-            <Form.Label>Draft pool photo</Form.Label>
-            <Form.Control type="file" />
-          </Form.Group>
-          <div className="d-grid gap-2">
-            <Button variant="primary" className="btn-lg">
-              <Image /> Submit pool photo
-            </Button>
-          </div>
-        </Row>
+
+        <DeckBuildingSubmission
+          seat={playerSeat}
+          tournamentId={tournament.id}
+          done={deckBuildingDone}
+          setDone={doneSetter}
+        />
       </Container>
     );
   }

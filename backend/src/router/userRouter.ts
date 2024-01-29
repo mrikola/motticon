@@ -23,6 +23,7 @@ import {
   endTournament,
   getCurrentDraftAndMatch,
   getMostRecentRound,
+  getCurrentMatch,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -43,9 +44,11 @@ import {
   getMatchesForRound,
 } from "../controller/match.controller";
 import {
+  getDraftInfoForUser,
   getPodsForDraft,
   getRoundsForDraft,
   getSeatsForPod,
+  setDeckPhotoForUser,
 } from "../controller/draft.controller";
 import { generatePairings } from "../controller/pairings.controller";
 import { getStandings } from "../controller/score.controller";
@@ -121,6 +124,10 @@ userRouter.get("/draft/seats/:draftPodId", async (req, res) => {
   res.send(await getSeatsForPod(req));
 });
 
+userRouter.get("/draft/:draftId/user/:userId", async (req, res) => {
+  res.send(await getDraftInfoForUser(req));
+});
+
 userRouter.get("/tournaments", async (req, res) => {
   res.send(await getAllTournaments());
 });
@@ -160,6 +167,13 @@ userRouter.get("/tournament/:tournamentId/round/recent", async (req, res) => {
 userRouter.get("/tournament/:tournamentId/draft", async (req, res) => {
   res.send(await getCurrentDraft(req));
 });
+
+userRouter.get(
+  "/tournament/:tournamentId/round/:roundId/match/:userId",
+  async (req, res) => {
+    res.send(await getCurrentMatch(req));
+  }
+);
 
 userRouter.get("/tournament/:id/cubes", async (req, res) => {
   res.send(await getCubesForTournament(req));
@@ -257,4 +271,8 @@ userRouter.post(
 
 userRouter.post("/tournament/:tournamentId/drop/:userId", async (req, res) => {
   res.send(await dropFromTournament(req));
+});
+
+userRouter.post("/setDeckPhoto", async (req, res) => {
+  res.send(await setDeckPhotoForUser(req));
 });

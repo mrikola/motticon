@@ -203,6 +203,25 @@ export class TournamentService {
       .getOne();
   }
 
+  async getCurrentMatch(userId: number, roundId: number): Promise<Match> {
+    const match = await this.appDataSource
+      .getRepository(Match)
+      .createQueryBuilder("match")
+      .leftJoinAndSelect("match.round", "round")
+      .leftJoinAndSelect("match.resultSubmittedBy", "resultSubmittedUser")
+      .leftJoinAndSelect("match.player1", "player1")
+      .leftJoinAndSelect("match.player2", "player2")
+      .where("round.id = :roundId", { roundId })
+      .andWhere((qb) =>
+        qb
+          .where('match."player1Id" = :userId', { userId })
+          .orWhere('match."player2Id" = :userId', { userId })
+      )
+      .getOne();
+
+    return match;
+  }
+
   async getCurrentDraftAndMatch(
     userId: number,
     tournamentId: number
