@@ -64,7 +64,7 @@ const ManageDraft = ({
     if (totalPlayers === 0) {
       setTotalPlayers(seats.length);
     }
-  }, [currentDraft.id]);
+  }, [currentDraft]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,7 +130,6 @@ const ManageDraft = ({
   function markDone(seat: DraftPodSeat) {
     if (seat) {
       const seatId = seat.id;
-      console.log("selected seat id: " + seatId);
       post(`/setDeckPhoto`, {
         tournamentId,
         seatId,
