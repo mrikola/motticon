@@ -2,7 +2,7 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Loading from "../../components/general/Loading";
 import { useIsAdmin } from "../../utils/auth";
-import { TrophyFill } from "react-bootstrap-icons";
+import { Box, TrophyFill } from "react-bootstrap-icons";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import ResetResults from "../../components/admin/ResetResults";
 import { useEffect, useState } from "react";
@@ -38,6 +38,13 @@ const AdminPage = () => {
           <Link to="/admin/create-tournament">
             <Button variant="primary">
               <TrophyFill /> Create tournament
+            </Button>
+          </Link>
+        </Col>
+        <Col xs={12}>
+          <Link to="/admin/add-cube">
+            <Button variant="primary">
+              <Box /> Add cube
             </Button>
           </Link>
         </Col>

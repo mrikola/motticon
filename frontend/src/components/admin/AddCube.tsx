@@ -25,11 +25,11 @@ type AddCubeForm = {
 function AddCube() {
   const user = useIsAdmin();
   const [cardImageUrl, setCardImageUrl] = useState<string>("");
-  const [item, setItem] = useState<Item>(); // The selected item will be stored in this state.
+  const [item, _setItem] = useState<Item>(); // The selected item will be stored in this state.
   const [value, setValue] = useState<string>();
 
   // placeholder cards for testing
-  const [cards, setCards] = useState([
+  const [cards, _setCards] = useState([
     {
       id: 1,
       name: "Exploration",

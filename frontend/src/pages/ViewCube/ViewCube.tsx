@@ -15,8 +15,6 @@ import { Link } from "react-router-dom";
 
 const ViewCube = () => {
   const { cubeId, tournamentId } = useParams();
-  const ImageURL = `/img/masthead_${cubeId}.jpeg`;
-
   const [cube, setCube] = useState<Cube>();
 
   useEffect(() => {
