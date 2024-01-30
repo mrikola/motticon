@@ -62,7 +62,7 @@ const Login = () => {
             >
               <Form.Control
                 {...register("email")}
-                type="email"
+                type="text"
                 placeholder="Enter email"
               />
             </FloatingLabel>

@@ -40,9 +40,10 @@ FROM nginx
 COPY --from=build /app/dist /usr/share/nginx/html
 
 ENV VITE_API_URL="https://motticon-backend.fly.dev/"
-RUN mkdir /etc/nginx/templates
-COPY --from=build /app/default.conf.template /etc/nginx/templates/
+# RUN mkdir /etc/nginx/templates
+# COPY --from=build /app/default.conf.template /etc/nginx/templates/
+COPY --from=build /app/default.conf /etc/nginx/conf.d/default.conf
 
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
+EXPOSE 80
 CMD [ "/usr/sbin/nginx", "-g", "daemon off;" ]
