@@ -9,11 +9,10 @@ import {
 import { useEffect, useState } from "react";
 import { get, post, put } from "../../services/ApiService";
 import { useParams } from "react-router";
-import CardCountdownTimer from "../general/CardCountdownTimer";
 import DraftTable from "./DraftTable";
-
 import DeckBuildingModal, { DeckBuildingModalProps } from "./DeckBuildingModal";
 import DecksSubmittedProgressBar from "./DecksSubmittedProgressBar";
+import CardCountupTimer from "../general/CardCountupTimer";
 
 type Props = {
   currentDraft: Draft;
@@ -225,7 +224,7 @@ const ManageDraft = ({
                       Generate pairings
                     </Button>
                     <p className="small text-center">
-                      you can only generate pairings once deckbuilding is
+                      You can only generate pairings once deckbuilding is
                       complete for all players
                     </p>
                   </>
@@ -238,7 +237,7 @@ const ManageDraft = ({
                 <>
                   <Row className="mt-3">
                     <Container>
-                      <CardCountdownTimer initialSeconds={42} started={true} />
+                      <CardCountupTimer started={true} />
                       <Col xs={12}>
                         <DecksSubmittedProgressBar
                           remainingSubmissions={buildingRemaining}

@@ -11,6 +11,8 @@ import { get } from "../../services/ApiService";
 import { UserInfoContext } from "../provider/UserInfoProvider";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import DeckBuildingSubmission from "./DeckBuildingSubmission";
+import DecksSubmittedProgressBar from "../staff/DecksSubmittedProgressBar";
+import HorizontalCard from "../general/HorizontalCard";
 
 type Props = {
   tournament: Tournament;
@@ -22,13 +24,15 @@ function DraftOngoing({ tournament, draft }: Props) {
   const [playerPod, setPlayerPod] = useState<DraftPod>();
   const [playerSeat, setPlayerSeat] = useState<DraftPodSeat>();
   const [deckBuildingDone, setDeckBuildingDone] = useState<boolean>(false);
+  const [buildingRemaining, setBuildingRemaining] = useState<number>(0);
+  const [allSeats, setAllSeats] = useState<DraftPodSeat[]>([]);
+  const [totalPlayers, setTotalPlayers] = useState<number>(0);
 
   // get relevant draft info
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(`/draft/${draft.id}/user/${user?.id}`);
       const draftPod = (await response.json()) as DraftPod;
-
       setPlayerPod(draftPod);
       setPlayerSeat(draftPod.seats[0]);
       draftPod.seats[0].deckPhotoUrl ? setDeckBuildingDone(true) : false;
@@ -38,6 +42,32 @@ function DraftOngoing({ tournament, draft }: Props) {
     }
   }, [user, draft]);
 
+  // get other seats for progress bar
+  useEffect(() => {
+    const seats: DraftPodSeat[] = [];
+    for (let i = 0; i < draft.pods.length; i++) {
+      const pod = draft.pods[i];
+      for (let j = 0; j < pod.seats.length; j++) {
+        const seat = pod.seats[j];
+        seats.push({ ...seat, pod });
+      }
+    }
+    setAllSeats(seats);
+    if (totalPlayers === 0) {
+      setTotalPlayers(seats.length);
+    }
+  }, [draft]);
+
+  // update progress bar based on number of players done building
+  useEffect(() => {
+    if (allSeats) {
+      setBuildingRemaining(
+        allSeats.filter((seat) => seat.deckPhotoUrl == null).length
+      );
+    }
+  }, [allSeats]);
+
+  // callback function for modal once player confirms submit
   function doneSetter(value: boolean) {
     setDeckBuildingDone(value);
   }
@@ -75,47 +105,20 @@ function DraftOngoing({ tournament, draft }: Props) {
                 </Col>
               </Row>
             </Card>
-            <Card className="horizontal-card mb-3">
-              <Row>
-                <Col xs={3}>
-                  <span className="icon-stack">
-                    <SquareFill className="icon-stack-3x" />
-                    <p className="icon-stack-2x text-light">
-                      {playerPod.podNumber}
-                    </p>
-                  </span>
-                </Col>
-                <Col xs={9}>
-                  <Card.Body className="horizontal-card-body">
-                    <Card.Title className="horizontal-card-title">
-                      Pod
-                    </Card.Title>
-                  </Card.Body>
-                </Col>
-              </Row>
-            </Card>
-            <Card className="horizontal-card mb-3">
-              <Row>
-                <Col xs={3}>
-                  <span className="icon-stack">
-                    <SquareFill className="icon-stack-3x" />
-                    <p className="icon-stack-2x text-light">
-                      {playerSeat?.seat}
-                    </p>
-                  </span>
-                </Col>
-                <Col xs={9}>
-                  <Card.Body className="horizontal-card-body">
-                    <Card.Title className="horizontal-card-title">
-                      Seat
-                    </Card.Title>
-                  </Card.Body>
-                </Col>
-              </Row>
-            </Card>
+            <HorizontalCard
+              squareFillContent={playerPod.podNumber.toString()}
+              cardTitle="Pod"
+            />
+            <HorizontalCard
+              squareFillContent={playerSeat?.seat.toString()}
+              cardTitle="Seat"
+            />
           </Container>
         </Row>
-
+        <DecksSubmittedProgressBar
+          remainingSubmissions={buildingRemaining}
+          totalPlayers={totalPlayers}
+        />
         <DeckBuildingSubmission
           seat={playerSeat}
           tournamentId={tournament.id}

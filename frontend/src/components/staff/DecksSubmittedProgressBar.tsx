@@ -15,14 +15,9 @@ function DecksSubmittedProgressBar({
 
   return (
     <>
-      <ProgressBar
-        striped
-        variant="primary"
-        now={now}
-        label={`Submissions ${now}% done`}
-      />
+      <ProgressBar striped variant="primary" now={now} label={`${now}% done`} />
       <p className="lead">
-        {remainingSubmissions}/{totalPlayers} submissions left
+        {remainingSubmissions}/{totalPlayers} deck submissions left
       </p>
     </>
   );

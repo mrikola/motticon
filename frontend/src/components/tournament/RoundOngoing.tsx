@@ -116,6 +116,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   useEffect(() => {
     if (dayjs(round.startTime).isSame(dayjs(dayjs().unix()), "year")) {
       // temporary fix, as startTime is Unix epoch if not set
+      // set empty 50:00 clock
       setTimeRemaining(3000);
     } else {
       _setRoundStartTime(dayjs(round.startTime));
