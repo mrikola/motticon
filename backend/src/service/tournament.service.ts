@@ -363,12 +363,26 @@ export class TournamentService {
     return await this.getTournamentAndDrafts(tournamentId);
   }
 
+  // is called after pairings have been generated, before round timer starts
+  async initiateRound(tournamentId: number, roundId: number): Promise<Round> {
+    await this.appDataSource
+      .getRepository(Round)
+      .createQueryBuilder("round")
+      .update()
+      .set({ status: "started" })
+      .where({ id: roundId })
+      .execute();
+
+    return await this.getCurrentRound(tournamentId);
+  }
+
+  // starts the round timer
   async startRound(tournamentId: number, roundId: number): Promise<Round> {
     await this.appDataSource
       .getRepository(Round)
       .createQueryBuilder("round")
       .update()
-      .set({ startTime: new Date(), status: "started" })
+      .set({ startTime: new Date() })
       .where({ id: roundId })
       .execute();
 

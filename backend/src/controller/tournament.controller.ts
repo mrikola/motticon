@@ -131,6 +131,14 @@ export const endDraft = async (req) => {
   );
 };
 
+export const initiateRound = async (req) => {
+  const { tournamentId, roundId } = req.params;
+  return await tournamentService.initiateRound(
+    tournamentId as number,
+    roundId as number
+  );
+};
+
 export const startRound = async (req) => {
   const { tournamentId, roundId } = req.params;
   return await tournamentService.startRound(

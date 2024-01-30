@@ -44,7 +44,7 @@ function DraftOngoing({ tournament, draft }: Props) {
 
   if (user && draft && playerPod && playerSeat) {
     return (
-      <Container className="mt-3 my-md-4">
+      <>
         <HelmetProvider>
           <Helmet>
             <title>
@@ -122,7 +122,7 @@ function DraftOngoing({ tournament, draft }: Props) {
           done={deckBuildingDone}
           setDone={doneSetter}
         />
-      </Container>
+      </>
     );
   }
 }

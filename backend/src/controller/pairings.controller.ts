@@ -39,6 +39,7 @@ export const generatePairings = async (
       roundNumber: currentRound.roundNumber - 1,
     },
   });
+  tournamentService.initiateRound(tournamentId, roundId);
   const { pods } = draft;
 
   const roundInDraft = currentRound.roundNumber - draft.firstRound + 1;

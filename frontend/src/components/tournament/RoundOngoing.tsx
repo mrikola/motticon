@@ -7,7 +7,6 @@ import { SquareFill } from "react-bootstrap-icons";
 import dayjs, { Dayjs } from "dayjs";
 import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
-import CountdownTimer from "../general/CountdownTimer";
 import MatchesRemainingProgressBar from "../general/MatchesRemainingProgressBar";
 import MatchResultRadioButtons from "../general/MatchResultRadioButtons";
 import { Match, Round, Tournament } from "../../types/Tournament";
@@ -16,6 +15,7 @@ import VerticallyCenteredModal, {
 } from "../general/VerticallyCenteredModal";
 import { Player } from "../../types/User";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import CardCountdownTimer from "../general/CardCountdownTimer";
 
 type Props = {
   tournament: Tournament;
@@ -27,7 +27,7 @@ type Props = {
 function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
-  const [roundStart, _setRoundStart] = useState<Dayjs>(dayjs(round.startTime));
+  const [roundStartTime, _setRoundStartTime] = useState<Dayjs>();
   const [totalMatches, setTotalMatches] = useState<number>(0);
   const [matches, setMatches] = useState<Match[]>();
   const [playerRadioValue, setPlayerRadioValue] = useState<string>();
@@ -42,23 +42,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   });
   const [player, setPlayer] = useState<Player>();
   const [opponent, setOpponent] = useState<Player>();
-  //const [currentMatch, setCurrentMatch] = useState<Match>();
-  // console.log(match);
-
-  // useEffect(() => {
-  //   if (!currentMatch) {
-  //     const fetchData = async () => {
-  //       const response = await get(
-  //         `/tournament/${tournament?.id}/round/${round?.id}/match/${user?.id}`
-  //       );
-  //       const match = (await response.json()) as Match;
-  //       setCurrentMatch(match);
-  //     };
-  //     if (user && round) {
-  //       fetchData();
-  //     }
-  //   }
-  // }, [round]);
+  const [roundTimerStarted, setRoundTimerStarted] = useState<boolean>(false);
 
   useEffect(() => {
     // check player id's from match and set correct player & opponent objects
@@ -129,13 +113,25 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
     });
   }
 
+  useEffect(() => {
+    if (dayjs(round.startTime).isSame(dayjs(dayjs().unix()), "year")) {
+      // temporary fix, as startTime is Unix epoch if not set
+      setTimeRemaining(3000);
+    } else {
+      _setRoundStartTime(dayjs(round.startTime));
+      setRoundTimerStarted(true);
+    }
+  }, [user, round]);
+
   // timer
   useEffect(() => {
-    const now = dayjs();
-    const endTime = roundStart.add(50, "m");
-    const diff = endTime.diff(now, "second");
-    setTimeRemaining(diff);
-  }, [user, roundStart, timeRemaining]);
+    if (roundTimerStarted && roundStartTime) {
+      const now = dayjs();
+      const endTime = roundStartTime.add(50, "m");
+      const diff = endTime.diff(now, "second");
+      setTimeRemaining(diff);
+    }
+  }, [user, roundStartTime, timeRemaining, roundTimerStarted, round]);
 
   // get all matches for round (for progress bar)
   useEffect(() => {
@@ -169,7 +165,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
 
   if (user && timeRemaining && player && opponent) {
     return (
-      <Container className="mt-3 my-md-4">
+      <>
         <HelmetProvider>
           <Helmet>
             <title>
@@ -179,23 +175,16 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
           </Helmet>
         </HelmetProvider>
         <Row>
-          <h2 className="">Round: {round.roundNumber}</h2>
-          <h2>Started: {dayjs(roundStart).format("HH:mm")}</h2>
-          <Col xs={12}>
-            <CountdownTimer initialSeconds={timeRemaining} />
-          </Col>
-          <Col xs={12}>
-            <MatchesRemainingProgressBar
-              remainingMatches={resultsMissing}
-              totalMatches={totalMatches}
-            />
-          </Col>
-        </Row>
-        <Row>
           <Container>
+            <h2 className="">Round: {round.roundNumber}</h2>
+            {roundTimerStarted ? (
+              <h2>Round started: {dayjs(roundStartTime).format("HH:mm")}</h2>
+            ) : (
+              <h2>Round not started yet</h2>
+            )}
             <Card className="horizontal-card mb-3">
-              <Row>
-                <Col xs={3}>
+              <Row className="align-items-center">
+                <Col xs={4} sm={3}>
                   <span className="icon-stack">
                     <SquareFill className="icon-stack-3x" />
                     <p className="icon-stack-2x text-light">
@@ -203,16 +192,29 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
                     </p>
                   </span>
                 </Col>
-                <Col xs={9}>
+                <Col xs={8} sm={9}>
                   <Card.Body className="horizontal-card-body">
-                    <Card.Title className="horizontal-card-title">
+                    <Card.Title className="horizontal-card-title-small align-middle">
                       Table
                     </Card.Title>
                   </Card.Body>
                 </Col>
               </Row>
             </Card>
+            <CardCountdownTimer
+              initialSeconds={timeRemaining}
+              started={roundTimerStarted}
+            />
+            <Col xs={12}>
+              <MatchesRemainingProgressBar
+                remainingMatches={resultsMissing}
+                totalMatches={totalMatches}
+              />
+            </Col>
           </Container>
+        </Row>
+        <Row>
+          <Container></Container>
         </Row>
         <Row>
           <MatchResultRadioButtons
@@ -268,7 +270,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
             actionFunction={modal.actionFunction}
           />
         </Row>
-      </Container>
+      </>
     );
   }
 }

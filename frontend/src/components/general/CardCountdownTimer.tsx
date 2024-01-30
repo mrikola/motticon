@@ -4,31 +4,34 @@ import { SquareFill } from "react-bootstrap-icons";
 
 type Props = {
   initialSeconds: number;
+  started: boolean;
 };
 
-function CardCountdownTimer({ initialSeconds }: Props) {
+function CardCountdownTimer({ initialSeconds, started }: Props) {
   const [seconds, setSeconds] = useState<number>(initialSeconds);
   const [timerStyle, setTimerStyle] = useState("icon-stack-1x text-light");
   const [cardText, setCardText] = useState<string>("Time remaining");
 
   useEffect(() => {
-    if (seconds <= 0) {
-      timeRunOut();
-      // Stop timer if one hour over time
-      if (seconds <= -3599) {
-        setSeconds(-3599);
-        return;
+    if (started) {
+      if (seconds <= 0) {
+        timeRunOut();
+        // Stop timer if one hour over time
+        if (seconds <= -3599) {
+          setSeconds(-3599);
+          return;
+        }
       }
+
+      // Set up the timer
+      const timer = setInterval(() => {
+        setSeconds((prevSeconds) => prevSeconds - 1);
+      }, 1000);
+
+      // Clean up the timer
+      return () => clearInterval(timer);
     }
-
-    // Set up the timer
-    const timer = setInterval(() => {
-      setSeconds((prevSeconds) => prevSeconds - 1);
-    }, 1000);
-
-    // Clean up the timer
-    return () => clearInterval(timer);
-  }, [seconds]);
+  }, [seconds, started]);
 
   // Handle time running out
   function timeRunOut() {

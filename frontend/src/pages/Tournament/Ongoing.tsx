@@ -33,7 +33,7 @@ const Ongoing = () => {
           startTime: new Date(round.startTime),
         };
         setCurrentRound(roundParsed);
-        // console.log(roundParsed);
+        console.log(roundParsed);
       }
 
       if (Number(draftResponse.headers.get("content-length")) > 0) {
@@ -54,7 +54,7 @@ const Ongoing = () => {
         const response = await get(`/tournament/${tournamentId}`);
         const tourny = (await response.json()) as Tournament;
         setTournament(tourny);
-        // console.log(tourny);
+        console.log(tourny);
       };
       if (user) {
         fetchData();
@@ -129,12 +129,9 @@ const Ongoing = () => {
                 )}
               </>
             )}
-            {!currentRound && !currentDraft && latestRound && (
+            {!currentRound && !currentDraft && (
               <>
-                <PendingView
-                  tournamentId={Number(tournamentId)}
-                  latestRound={latestRound}
-                />
+                <PendingView tournamentId={Number(tournamentId)} />
               </>
             )}
           </>

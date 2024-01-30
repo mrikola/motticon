@@ -238,7 +238,7 @@ const ManageDraft = ({
                 <>
                   <Row className="mt-3">
                     <Container>
-                      <CardCountdownTimer initialSeconds={42} />
+                      <CardCountdownTimer initialSeconds={42} started={true} />
                       <Col xs={12}>
                         <DecksSubmittedProgressBar
                           remainingSubmissions={buildingRemaining}

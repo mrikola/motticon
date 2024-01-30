@@ -23,10 +23,11 @@ type Props = {
 const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
   const user = useContext(UserInfoContext);
   const { tournamentId } = useParams();
-  const [timeRemaining, setTimeRemaining] = useState<number>();
+  const [timeRemaining, setTimeRemaining] = useState<number>(3000);
   const [matches, setMatches] = useState<Match[]>();
   const [totalMatches, setTotalMatches] = useState<number>(0);
   const [roundStart, setRoundStart] = useState<Dayjs>();
+  const [roundTimerStarted, setRoundTimerStarted] = useState<boolean>(false);
   const [modal, setModal] = useState<ModalProps>({
     show: false,
     onHide: () => null,
@@ -53,17 +54,33 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
     });
 
   useEffect(() => {
-    if (currentRound) {
-      setRoundStart(dayjs(currentRound?.startTime));
+    if (dayjs(currentRound.startTime).isSame(dayjs(dayjs().unix()), "year")) {
+      // temporary fix, as startTime is Unix epoch if not set
+    } else {
+      setRoundStart(dayjs(currentRound.startTime));
+      setRoundTimerStarted(true);
     }
   }, [currentRound]);
 
+  const startRound = async () => {
+    if (currentRound) {
+      const response = await put(
+        `/tournament/${tournamentId}/round/${currentRound.id}/start`,
+        {}
+      );
+      const round = (await response.json()) as Round;
+      setCurrentRound(round);
+    }
+  };
+
   useEffect(() => {
-    const now = dayjs();
-    const endTime = roundStart?.add(50, "m");
-    const diff = endTime?.diff(now, "second");
-    setTimeRemaining(diff);
-  }, [roundStart, timeRemaining]);
+    if (roundTimerStarted && roundStart) {
+      const now = dayjs();
+      const endTime = roundStart.add(50, "m");
+      const diff = endTime.diff(now, "second");
+      setTimeRemaining(diff);
+    }
+  }, [roundStart, timeRemaining, roundTimerStarted]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -179,7 +196,10 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
                 </Col>
               </Row>
             </Card>
-            <CardCountdownTimer initialSeconds={timeRemaining} />
+            <CardCountdownTimer
+              initialSeconds={timeRemaining}
+              started={roundTimerStarted}
+            />
             <Col xs={12}>
               <MatchesRemainingProgressBar
                 remainingMatches={resultsMissing}
@@ -190,15 +210,25 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
         </Row>
         <Row>
           <Col xs={10} sm={8} className="d-grid gap-2 mx-auto my-3">
-            <Button
-              variant="primary"
-              className="btn-lg"
-              disabled={resultsMissing > 0}
-              aria-disabled={resultsMissing > 0}
-              onClick={() => handleEndRoundClick()}
-            >
-              End round
-            </Button>
+            {!roundTimerStarted ? (
+              <Button
+                variant="primary"
+                className="btn-lg"
+                onClick={() => startRound()}
+              >
+                Start next round
+              </Button>
+            ) : (
+              <Button
+                variant="primary"
+                className="btn-lg"
+                disabled={resultsMissing > 0}
+                aria-disabled={resultsMissing > 0}
+                onClick={() => handleEndRoundClick()}
+              >
+                End round
+              </Button>
+            )}
           </Col>
         </Row>
         <MatchTable

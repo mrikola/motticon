@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { Draft, Round, Tournament } from "../../types/Tournament";
+import { Draft, Tournament } from "../../types/Tournament";
 import { get } from "../../services/ApiService";
 import { Col, Row } from "react-bootstrap";
 
 type Props = {
   tournamentId: number;
-  latestRound: Round;
 };
 
 const PendingView = ({ tournamentId }: Props) => {
@@ -54,7 +53,7 @@ const PendingView = ({ tournamentId }: Props) => {
         </Row>
       ) : firstPendingDraft ? (
         <Row>
-          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+          <Col xs={12}>
             <h3>
               Waiting for draft {firstPendingDraft?.draftNumber} to begin.
             </h3>
@@ -62,7 +61,7 @@ const PendingView = ({ tournamentId }: Props) => {
         </Row>
       ) : (
         <Row>
-          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+          <Col xs={12}>
             <p>test 2</p>
           </Col>
         </Row>
