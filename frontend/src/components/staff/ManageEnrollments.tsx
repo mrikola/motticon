@@ -13,6 +13,7 @@ type Props = {
 const ManageEnrollments = ({ tournamentId }: Props) => {
   const [enrollments, setEnrollments] = useState<Enrollment[]>();
   const [playersEnrolled, setPlayersEnrolled] = useState<number>();
+  const [totalSeats, setTotalSeats] = useState<number>(0);
 
   function dropPlayer(player: Player) {
     const playerId = player.id;
@@ -33,6 +34,7 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
       const tournament = (await response.json()) as Tournament;
       const enrollments = tournament.enrollments;
       setEnrollments(enrollments);
+      setTotalSeats(tournament.totalSeats);
     };
     fetchData();
   }, []);
@@ -55,6 +57,7 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
               enrollments={enrollments}
               setEnrollments={setEnrollments}
               tournamentId={tournamentId}
+              totalSeats={totalSeats}
             />
           </Col>
         </Row>

@@ -9,6 +9,7 @@ import DraftOngoing from "../../components/tournament/DraftOngoing";
 import { BoxArrowInLeft } from "react-bootstrap-icons";
 import { Draft, Match, Round, Tournament } from "../../types/Tournament";
 import PendingView from "../../components/tournament/PendingView";
+import StandingsTable from "../../components/tournament/StandingsTable";
 
 const Ongoing = () => {
   const { tournamentId } = useParams();
@@ -53,7 +54,7 @@ const Ongoing = () => {
         const response = await get(`/tournament/${tournamentId}`);
         const tourny = (await response.json()) as Tournament;
         setTournament(tourny);
-        //console.log(tourny);
+        // console.log(tourny);
       };
       if (user) {
         fetchData();
@@ -86,7 +87,7 @@ const Ongoing = () => {
         const response = await get(`/tournament/${tournamentId}/round/recent`);
         const round = (await response.json()) as Round;
         setLatestRound(round);
-        // console.log(round);
+        console.log(round);
       };
 
       fetchData();
@@ -98,11 +99,17 @@ const Ongoing = () => {
       <Container className="mt-3 my-md-4">
         <Col xs={12}>
           <Link to={`/tournament/${tournamentId}`}>
-            <Button variant="primary">
-              <BoxArrowInLeft /> Back to tournament
+            <Button variant="primary" className="icon-link">
+              <BoxArrowInLeft />
+              Back to tournament
             </Button>
           </Link>
         </Col>
+        <Row>
+          <Col xs={12}>
+            <h1 className="display-1">{tournament.name}</h1>
+          </Col>
+        </Row>
         {tournament.status === "started" && (
           <>
             {currentRound && currentMatch && (
@@ -122,9 +129,12 @@ const Ongoing = () => {
                 )}
               </>
             )}
-            {!currentRound && !currentDraft && !latestRound && (
+            {!currentRound && !currentDraft && latestRound && (
               <>
-                <PendingView tournamentId={Number(tournamentId)} />
+                <PendingView
+                  tournamentId={Number(tournamentId)}
+                  latestRound={latestRound}
+                />
               </>
             )}
           </>
@@ -132,16 +142,29 @@ const Ongoing = () => {
         {tournament.status === "pending" && (
           <Row>
             <Col xs={12}>
-              <h1 className="display-1">Tournament waiting to start.</h1>
+              <h2 className="">Tournament waiting to start.</h2>
             </Col>
           </Row>
         )}
         {tournament.status === "completed" && (
-          <Row>
-            <Col xs={12}>
-              <h1 className="display-1">Tournament completed.</h1>
-            </Col>
-          </Row>
+          <>
+            <Row>
+              <Col xs={12}>
+                <h2 className="">Tournament completed.</h2>
+              </Col>
+            </Row>
+            {latestRound && (
+              <Row>
+                <Col xs={12}>
+                  <h3>Final standings.</h3>
+                  <StandingsTable
+                    roundNumber={latestRound?.roundNumber}
+                    tournamentId={Number(tournamentId)}
+                  />
+                </Col>
+              </Row>
+            )}
+          </>
         )}
       </Container>
     );

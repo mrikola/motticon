@@ -179,7 +179,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
           </Helmet>
         </HelmetProvider>
         <Row>
-          <h1 className="display-1">Round: {round.roundNumber}</h1>
+          <h2 className="">Round: {round.roundNumber}</h2>
           <h2>Started: {dayjs(roundStart).format("HH:mm")}</h2>
           <Col xs={12}>
             <CountdownTimer initialSeconds={timeRemaining} />

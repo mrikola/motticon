@@ -16,6 +16,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useEffect, useState } from "react";
 import { Cube } from "../../types/Cube";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { Tournament } from "../../types/Tournament";
 
 type TournamentForm = {
   name: string;
@@ -60,9 +61,8 @@ const CreateTournament = () => {
 
   function doCreateTournament(form: TournamentForm) {
     post("/tournament/create", form).then(async (resp) => {
-      const foo = await resp.json();
-      console.log(foo.id);
-      navigate("/admin");
+      const tournament = (await resp.json()) as Tournament;
+      navigate("/tournament/" + tournament.id);
     });
   }
 

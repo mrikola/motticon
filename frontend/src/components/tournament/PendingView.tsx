@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Draft, Tournament } from "../../types/Tournament";
+import { Draft, Round, Tournament } from "../../types/Tournament";
 import { get } from "../../services/ApiService";
-import { Button, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 type Props = {
   tournamentId: number;
+  latestRound: Round;
 };
 
 const PendingView = ({ tournamentId }: Props) => {
@@ -42,40 +43,28 @@ const PendingView = ({ tournamentId }: Props) => {
 
   return (
     <>
-      <Row>
-        <Col xs={12}>
-          <h2>Tournament started, waiting.</h2>
-        </Col>
-      </Row>
-      {!lastCompletedDraft?.draftNumber ? (
-        <Row>
-          <Col xs={12}>
-            <h3>
-              Waiting for draft {firstPendingDraft?.draftNumber} to begin.
-            </h3>
-          </Col>
-        </Row>
-      ) : (
-        <Row>
-          <Col xs={12}>
-            <h3>
-              Waiting for draft {firstPendingDraft?.draftNumber} to begin.
-            </h3>
-          </Col>
-        </Row>
-      )}
       {lastCompletedDraft?.draftNumber === tournament?.drafts.length ? (
         <Row>
-          <h3>The tournament is over.</h3>
-          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto"></Col>
+          <Col xs={12}>
+            <h3>All drafts done.</h3>
+            <p className="lead">
+              Waiting for tournament organizer to complete tournament.
+            </p>
+          </Col>
         </Row>
       ) : firstPendingDraft ? (
         <Row>
-          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto"></Col>
+          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+            <h3>
+              Waiting for draft {firstPendingDraft?.draftNumber} to begin.
+            </h3>
+          </Col>
         </Row>
       ) : (
         <Row>
-          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto"></Col>
+          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+            <p>test 2</p>
+          </Col>
         </Row>
       )}
     </>

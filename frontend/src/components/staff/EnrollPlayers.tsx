@@ -11,12 +11,14 @@ type Props = {
   enrollments: Enrollment[];
   setEnrollments: (enrollments: Enrollment[]) => void;
   tournamentId: number;
+  totalSeats: number;
 };
 
 const EnrollPlayers = ({
   enrollments,
   setEnrollments,
   tournamentId,
+  totalSeats,
 }: Props) => {
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
   const [availablePlayers, setAvailablePlayers] = useState<Player[]>([]);
@@ -62,6 +64,16 @@ const EnrollPlayers = ({
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (enrollments.length >= totalSeats) {
+      setSelectedPlayer("Tournament full");
+    } else if (enrollments.length < totalSeats) {
+      setSelectedPlayer("No player selected");
+    } else {
+      // nothing
+    }
+  }, [enrollments]);
+
   function enroll() {
     if (item) {
       const userId = item.id;
@@ -106,7 +118,11 @@ const EnrollPlayers = ({
           />
         </Col>
         <Col xs={12} className="my-3 d-grid">
-          <Button variant="primary" onClick={enroll}>
+          <Button
+            variant="primary"
+            onClick={enroll}
+            disabled={enrollments.length >= totalSeats}
+          >
             <PersonPlusFill className="fs-4" /> {selectedPlayer}
           </Button>
         </Col>

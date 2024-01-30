@@ -182,7 +182,8 @@ const ManageDraft = ({
 
         {lastCompletedRound?.roundNumber === currentDraft.lastRound ? (
           <Row>
-            <h3>The draft is over.</h3>
+            <h3>Round {lastCompletedRound.roundNumber} complete.</h3>
+            <h3>Draft {currentDraft.draftNumber} over.</h3>
             <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
               <Button
                 variant="primary"

@@ -54,7 +54,6 @@ function DraftOngoing({ tournament, draft }: Props) {
           </Helmet>
         </HelmetProvider>
         <Row>
-          <h1 className="display-1">{tournament.name}</h1>
           <h2 className="display-2">Draft: {draft.draftNumber}</h2>
         </Row>
         <Row>
