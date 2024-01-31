@@ -1,14 +1,23 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
 import { get } from "../../services/ApiService";
-import { TournamentsByType } from "../../types/Tournament";
-import { Col, Container, Row, Card } from "react-bootstrap";
+import {
+  Tournament,
+  TournamentsByType,
+  UsersTournaments,
+} from "../../types/Tournament";
+import { Col, Container, Row } from "react-bootstrap";
 import dayjs from "dayjs";
 import HelmetTitle from "../../components/general/HelmetTitle";
+import { UserInfoContext } from "../../components/provider/UserInfoProvider";
+import TournamentCard from "../../components/general/TournamentCard";
 
 function Tournaments() {
-  const [tournaments, setTournaments] = useState<TournamentsByType>();
-  const tournamentTypes: (keyof TournamentsByType)[] = [
+  const [tournaments, setTournaments] = useState<UsersTournaments>();
+  const [tournamentsStaffed, setTournamentsStaffed] = useState<Tournament[]>();
+  const user = useContext(UserInfoContext);
+  const [tournamentsStaffedIds, setTournamentsStaffedIds] =
+    useState<number[]>();
+  const tournamentTypes: (keyof UsersTournaments)[] = [
     "ongoing",
     "future",
     "past",
@@ -23,70 +32,79 @@ function Tournaments() {
     fetchData();
   }, []);
 
-  return (
-    <>
-      <Container className="mt-3 my-md-4">
-        <HelmetTitle titleText="Tournaments" />
-        <Row>
-          <h1 className="display-1">Tournaments</h1>
-        </Row>
-        {tournaments &&
-          tournamentTypes.map((type, index) => {
-            const tourneys = tournaments[type];
-            tourneys.sort((a, b) => (a.startDate < b.startDate ? -1 : 1));
-            return tourneys.length > 0 ? (
-              <div key={index}>
-                <h2 className="text-capitalize mt-2">{type} tournaments</h2>
-                <Row key={index} className="row-cols-1 row-cols-md-2 g-2">
-                  {tourneys.map((tournament) => {
-                    let date;
-                    if (
-                      dayjs(tournament.startDate).isSame(
-                        dayjs(tournament.endDate),
-                        "day"
-                      )
-                    ) {
-                      date = dayjs(tournament.startDate).format("DD/MM/YYYY");
-                    } else {
-                      date =
-                        dayjs(tournament.startDate).format("DD/MM/YYYY") +
-                        " - " +
-                        dayjs(tournament.endDate).format("DD/MM/YYYY");
-                    }
-                    return (
-                      <Col xs={12} md={6} lg={4} key={tournament.id}>
-                        <Card>
-                          <Card.Body>
-                            <Card.Title>{tournament.name}</Card.Title>
-                            <Card.Subtitle className="card-subtitle mb-2 text-body-secondary">
-                              {date}
-                            </Card.Subtitle>
-                            <Card.Text>{tournament.description}</Card.Text>
-                            <Link
-                              to={`/tournament/${tournament.id}`}
-                              className="btn btn-primary"
-                            >
-                              Go to tournament
-                            </Link>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    );
-                  })}
-                </Row>
-              </div>
-            ) : (
-              <Row key={index}>
-                <Col xs={12}>
-                  <h2 className="text-capitalize mt-2">
-                    No {type} tournaments
-                  </h2>
-                </Col>
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user && !tournamentsStaffed) {
+        const response = await get(`/user/${user?.id}/staff`);
+        setTournamentsStaffed(await response.json());
+      }
+    };
+
+    fetchData();
+  }, [user, tournamentsStaffed]);
+
+  useEffect(() => {
+    if (!tournamentsStaffedIds && tournamentsStaffed) {
+      const ids = [];
+      for (const tournament in tournamentsStaffed) {
+        ids.push(tournamentsStaffed[tournament].id);
+      }
+      setTournamentsStaffedIds(ids);
+      console.log(ids);
+    }
+  }, [tournamentsStaffed]);
+
+  return user && tournaments && tournamentsStaffedIds ? (
+    <Container className="mt-3 my-md-4">
+      <HelmetTitle titleText="Tournaments" />
+      <Row>
+        <h1 className="display-1">Tournaments</h1>
+      </Row>
+      {tournaments &&
+        tournamentTypes.map((type, index) => {
+          const tourneys = tournaments[type];
+          tourneys.sort((a, b) => (a.startDate < b.startDate ? -1 : 1));
+          return tourneys.length > 0 ? (
+            <div key={index}>
+              <h2 className="text-capitalize mt-2">{type} tournaments</h2>
+              <Row key={index} className="row-cols-1 row-cols-md-2 g-2">
+                {tourneys.map((tournament) => {
+                  let date;
+                  if (
+                    dayjs(tournament.startDate).isSame(
+                      dayjs(tournament.endDate),
+                      "day"
+                    )
+                  ) {
+                    date = dayjs(tournament.startDate).format("DD/MM/YYYY");
+                  } else {
+                    date =
+                      dayjs(tournament.startDate).format("DD/MM/YYYY") +
+                      " - " +
+                      dayjs(tournament.endDate).format("DD/MM/YYYY");
+                  }
+                  return (
+                    <TournamentCard
+                      tournament={tournament}
+                      staffedIds={tournamentsStaffedIds}
+                      date={date}
+                      key={tournament.id}
+                    />
+                  );
+                })}
               </Row>
-            );
-          })}
-      </Container>
-    </>
+            </div>
+          ) : (
+            <Row key={index}>
+              <Col xs={12}>
+                <h2 className="text-capitalize mt-2">No {type} tournaments</h2>
+              </Col>
+            </Row>
+          );
+        })}
+    </Container>
+  ) : (
+    <Container>Loading...</Container>
   );
 }
 

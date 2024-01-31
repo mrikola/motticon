@@ -1,19 +1,16 @@
 import { useContext, useEffect, useState } from "react";
-import { Badge, Card, Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { get } from "../../services/ApiService";
 import { Tournament, UsersTournaments } from "../../types/Tournament";
-import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import HelmetTitle from "../../components/general/HelmetTitle";
+import TournamentCard from "../../components/general/TournamentCard";
 
 const Landing = () => {
   const [tournaments, setTournaments] = useState<UsersTournaments>();
   const [tournamentsStaffed, setTournamentsStaffed] = useState<Tournament[]>();
   const user = useContext(UserInfoContext);
-  // const [tournamentsStaffedIds, setTournamentsStaffedIds] = useState<number[]>([
-  //   1, 2,
-  // ]);
   const [tournamentsStaffedIds, setTournamentsStaffedIds] =
     useState<number[]>();
 
@@ -33,9 +30,6 @@ const Landing = () => {
       if (user && !tournamentsStaffed) {
         const response = await get(`/user/${user?.id}/staff`);
         setTournamentsStaffed(await response.json());
-        // for tournamentsStaffed?.length > 0 ? {
-
-        // }
       }
     };
 
@@ -91,34 +85,20 @@ const Landing = () => {
                         dayjs(tournament.endDate).format("DD/MM/YYYY");
                     }
                     return (
-                      <Col xs={12} md={6} lg={4} key={tournament.id}>
-                        <Card>
-                          <Card.Body>
-                            <Card.Title>
-                              {tournament.name}{" "}
-                              {tournamentsStaffedIds.includes(
-                                tournament.id
-                              ) && <Badge bg="primary">Staff</Badge>}
-                            </Card.Title>
-                            <Card.Subtitle className="card-subtitle mb-2 text-body-secondary">
-                              {date}
-                            </Card.Subtitle>
-                            <Card.Text>{tournament.description}</Card.Text>
-                            <Link
-                              to={`/tournament/${tournament.id}`}
-                              className="btn btn-primary"
-                            >
-                              Go to tournament
-                            </Link>
-                          </Card.Body>
-                        </Card>
-                      </Col>
+                      <TournamentCard
+                        tournament={tournament}
+                        staffedIds={tournamentsStaffedIds}
+                        date={date}
+                        key={tournament.id}
+                      />
                     );
                   })}
                 </Row>
               </div>
             ) : (
-              <h2 key={index}>No {type} tournaments</h2>
+              <h2 key={index} className="text-capitalize my-2">
+                You have no {type} tournaments
+              </h2>
             );
           })}
       </Col>
