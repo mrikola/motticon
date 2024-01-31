@@ -6,6 +6,7 @@ import { Tournament, UsersTournaments } from "../../types/Tournament";
 import dayjs from "dayjs";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import TournamentCard from "../../components/general/TournamentCard";
+import Loading from "../../components/general/Loading";
 
 const Landing = () => {
   const [tournaments, setTournaments] = useState<UsersTournaments>();
@@ -104,7 +105,7 @@ const Landing = () => {
       </Col>
     </Container>
   ) : (
-    <Container>Loading...</Container>
+    <Loading />
   );
 };
 

@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import TournamentCard from "../../components/general/TournamentCard";
+import Loading from "../../components/general/Loading";
 
 function Tournaments() {
   const [tournaments, setTournaments] = useState<UsersTournaments>();
@@ -104,7 +105,7 @@ function Tournaments() {
         })}
     </Container>
   ) : (
-    <Container>Loading...</Container>
+    <Loading />
   );
 }
 
