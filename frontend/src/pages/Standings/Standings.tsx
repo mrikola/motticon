@@ -2,11 +2,11 @@ import { Table, Container, Row, Button, Col } from "react-bootstrap";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { BoxArrowInLeft } from "react-bootstrap-icons";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useContext, useEffect, useState } from "react";
 import { get } from "../../services/ApiService";
 import { ScoreHistory } from "../../types/Tournament";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
+import HelmetTitle from "../../components/general/HelmetTitle";
 
 function Standings() {
   const { roundNumber, tournamentId } = useParams();
@@ -28,11 +28,7 @@ function Standings() {
   if (standings && user) {
     return (
       <Container className="mt-3 my-md-4">
-        <HelmetProvider>
-          <Helmet>
-            <title>MottiCon &#9632; Standings Round {roundNumber}</title>
-          </Helmet>
-        </HelmetProvider>
+        <HelmetTitle titleText={"Standings Round " + { roundNumber }} />
         <Row>
           <Link to={`/tournament/${tournamentId}`}>
             <Button variant="primary">

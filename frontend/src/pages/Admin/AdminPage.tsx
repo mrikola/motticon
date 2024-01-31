@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import Loading from "../../components/general/Loading";
 import { useIsAdmin } from "../../utils/auth";
 import { Box, TrophyFill } from "react-bootstrap-icons";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import ResetResults from "../../components/admin/ResetResults";
 import { useEffect, useState } from "react";
 import { get } from "../../services/ApiService";
 import { Tournament } from "../../types/Tournament";
+import HelmetTitle from "../../components/general/HelmetTitle";
 
 const AdminPage = () => {
   const user = useIsAdmin();
@@ -25,11 +25,7 @@ const AdminPage = () => {
 
   return user ? (
     <Container className="mt-3 my-md-4">
-      <HelmetProvider>
-        <Helmet>
-          <title>MottiCon &#9632; Admin</title>
-        </Helmet>
-      </HelmetProvider>
+      <HelmetTitle titleText="Admin" />
       <Row className="my-3">
         <Col xs={12}>
           <h1 className="display-1">Admin page</h1>

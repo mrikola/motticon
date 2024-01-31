@@ -2,8 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { UserInfoContext } from "../provider/UserInfoProvider";
 import { post } from "../../services/ApiService";
 import { get } from "../../services/ApiService";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
-import { SquareFill } from "react-bootstrap-icons";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import dayjs, { Dayjs } from "dayjs";
 import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
@@ -14,8 +13,9 @@ import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
 } from "../general/VerticallyCenteredModal";
 import { Player } from "../../types/User";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import CardCountdownTimer from "../general/CardCountdownTimer";
+import HorizontalCard from "../general/HorizontalCard";
+import HelmetTitle from "../general/HelmetTitle";
 
 type Props = {
   tournament: Tournament;
@@ -167,14 +167,9 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   if (user && timeRemaining && player && opponent) {
     return (
       <>
-        <HelmetProvider>
-          <Helmet>
-            <title>
-              MottiCon &#9632; {tournament.name} Round{" "}
-              {round.roundNumber.toString()}
-            </title>
-          </Helmet>
-        </HelmetProvider>
+        <HelmetTitle
+          titleText={tournament.name + " Round " + round.roundNumber.toString()}
+        />
         <Row>
           <Container>
             <h2 className="">Round: {round.roundNumber}</h2>
@@ -183,25 +178,11 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
             ) : (
               <h2>Round not started yet</h2>
             )}
-            <Card className="horizontal-card mb-3">
-              <Row className="align-items-center">
-                <Col xs={4} sm={3}>
-                  <span className="icon-stack">
-                    <SquareFill className="icon-stack-3x" />
-                    <p className="icon-stack-2x text-light">
-                      {match.tableNumber}
-                    </p>
-                  </span>
-                </Col>
-                <Col xs={8} sm={9}>
-                  <Card.Body className="horizontal-card-body">
-                    <Card.Title className="horizontal-card-title-small align-middle">
-                      Table
-                    </Card.Title>
-                  </Card.Body>
-                </Col>
-              </Row>
-            </Card>
+            <HorizontalCard
+              squareFillContent={match.tableNumber.toString()}
+              cardTitle="Table"
+              textSize="small"
+            />
             <CardCountdownTimer
               initialSeconds={timeRemaining}
               started={roundTimerStarted}

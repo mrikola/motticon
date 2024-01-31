@@ -14,6 +14,7 @@ import { useParams } from "react-router";
 import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
 } from "../general/VerticallyCenteredModal";
+import HorizontalCard from "../general/HorizontalCard";
 
 type Props = {
   currentRound: Round;
@@ -177,25 +178,11 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
       <>
         <Row>
           <Container>
-            <Card className="horizontal-card mb-3">
-              <Row className="align-items-center">
-                <Col xs={4} sm={3}>
-                  <span className="icon-stack">
-                    <SquareFill className="icon-stack-3x" />
-                    <p className="icon-stack-2x text-light">
-                      {currentRound?.roundNumber}
-                    </p>
-                  </span>
-                </Col>
-                <Col xs={8} sm={9}>
-                  <Card.Body className="horizontal-card-body">
-                    <Card.Title className="horizontal-card-title-small align-middle">
-                      Round number
-                    </Card.Title>
-                  </Card.Body>
-                </Col>
-              </Row>
-            </Card>
+            <HorizontalCard
+              squareFillContent={currentRound.roundNumber.toString()}
+              cardTitle="Round number"
+              textSize="small"
+            />
             <CardCountdownTimer
               initialSeconds={timeRemaining}
               started={roundTimerStarted}

@@ -7,7 +7,7 @@ import { Cube } from "../../types/Cube";
 import { Tournament } from "../../types/Tournament";
 import { Badge, Button, Card, Col, Container, Row } from "react-bootstrap";
 import Loading from "../../components/general/Loading";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import HelmetTitle from "../../components/general/HelmetTitle";
 
 const ListCubesForTournament = () => {
   const { tournamentId } = useParams();
@@ -34,11 +34,7 @@ const ListCubesForTournament = () => {
 
   return tournament ? (
     <Container className="mt-3 my-md-4">
-      <HelmetProvider>
-        <Helmet>
-          <title>MottiCon &#9632; {tournament.name} Cubes</title>
-        </Helmet>
-      </HelmetProvider>
+      <HelmetTitle titleText={tournament.name + " Cubes"} />
       <Row>
         <Link to={`/tournament/${tournamentId}`}>
           <Button variant="primary" className="icon-link">

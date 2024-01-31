@@ -10,8 +10,8 @@ import {
   BoxArrowInLeft,
   BoxArrowUpRight,
 } from "react-bootstrap-icons";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Link } from "react-router-dom";
+import HelmetTitle from "../../components/general/HelmetTitle";
 
 const ViewCube = () => {
   const { cubeId, tournamentId } = useParams();
@@ -58,11 +58,8 @@ const ViewCube = () => {
   if (cube) {
     return (
       <>
-        <HelmetProvider>
-          <Helmet>
-            <title>MottiCon &#9632; {cube.title}</title>
-          </Helmet>
-        </HelmetProvider>
+        <HelmetTitle titleText={cube.title} />
+
         <div
           className="cube-masthead text-light mb-3"
           style={{ backgroundImage: `url(${cube.imageUrl})` }}

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Card, Col, Container, Row } from "react-bootstrap";
-import { Box, SquareFill } from "react-bootstrap-icons";
+import { Container, Row } from "react-bootstrap";
 import {
   Draft,
   DraftPod,
@@ -9,10 +8,11 @@ import {
 } from "../../types/Tournament";
 import { get } from "../../services/ApiService";
 import { UserInfoContext } from "../provider/UserInfoProvider";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import DeckBuildingSubmission from "./DeckBuildingSubmission";
 import DecksSubmittedProgressBar from "../staff/DecksSubmittedProgressBar";
 import HorizontalCard from "../general/HorizontalCard";
+import HorizontalIconCard from "../general/HorizontalIconCard";
+import HelmetTitle from "../general/HelmetTitle";
 
 type Props = {
   tournament: Tournament;
@@ -75,43 +75,28 @@ function DraftOngoing({ tournament, draft }: Props) {
   if (user && draft && playerPod && playerSeat) {
     return (
       <>
-        <HelmetProvider>
-          <Helmet>
-            <title>
-              MottiCon &#9632; {tournament.name} Draft{" "}
-              {draft.draftNumber.toString()}
-            </title>
-          </Helmet>
-        </HelmetProvider>
+        <HelmetTitle
+          titleText={tournament.name + " Draft " + draft.draftNumber.toString()}
+        />
         <Row>
           <h2 className="display-2">Draft: {draft.draftNumber}</h2>
         </Row>
         <Row>
           <Container>
-            <Card className="horizontal-card mb-3">
-              <Row className="align-items-center">
-                <Col xs={3}>
-                  <span className="icon-stack">
-                    <SquareFill className="icon-stack-3x" />
-                    <Box className="icon-stack-2x text-light" />
-                  </span>
-                </Col>
-                <Col xs={9}>
-                  <Card.Body className="horizontal-card-body">
-                    <Card.Title className="horizontal-card-title-small align-middle">
-                      {playerPod.cube.title}
-                    </Card.Title>
-                  </Card.Body>
-                </Col>
-              </Row>
-            </Card>
+            <HorizontalIconCard
+              iconName="Box"
+              cardTitle={playerPod.cube.title}
+              textSize="small"
+            />
             <HorizontalCard
               squareFillContent={playerPod.podNumber.toString()}
               cardTitle="Pod"
+              textSize="large"
             />
             <HorizontalCard
               squareFillContent={playerSeat?.seat.toString()}
               cardTitle="Seat"
+              textSize="large"
             />
           </Container>
         </Row>

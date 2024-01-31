@@ -1,20 +1,21 @@
 import { Card, Col, Row } from "react-bootstrap";
 import { SquareFill } from "react-bootstrap-icons";
+import { Icon } from "./Icon";
 
 type Props = {
-  squareFillContent: string;
+  iconName: keyof typeof Icon;
   cardTitle: string;
   textSize: string;
 };
 
-function HorizontalCard({ squareFillContent, cardTitle, textSize }: Props) {
+function HorizontalIconCard({ iconName, cardTitle, textSize }: Props) {
   return (
     <Card className="horizontal-card mb-3">
       <Row className="align-items-center">
         <Col xs={4} sm={3}>
           <span className="icon-stack">
             <SquareFill className="icon-stack-3x" />
-            <p className="icon-stack-2x text-light">{squareFillContent}</p>
+            <Icon iconName={iconName} className="icon-stack-2x text-light" />
           </span>
         </Col>
         <Col xs={8} sm={9}>
@@ -35,4 +36,4 @@ function HorizontalCard({ squareFillContent, cardTitle, textSize }: Props) {
   );
 }
 
-export default HorizontalCard;
+export default HorizontalIconCard;

@@ -14,7 +14,7 @@ import Standings from "./TournamentView/GoToStandings";
 import Enroll from "./TournamentView/Enroll";
 import GoToOngoing from "./TournamentView/GoToOngoing";
 import Staff from "./TournamentView/GoToStaff";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import HelmetTitle from "../../components/general/HelmetTitle";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
@@ -108,11 +108,7 @@ const TournamentView = () => {
 
   return activeTournament && user ? (
     <Container className="mt-3 my-md-4">
-      <HelmetProvider>
-        <Helmet>
-          <title>MottiCon &#9632; {activeTournament.name}</title>
-        </Helmet>
-      </HelmetProvider>
+      <HelmetTitle titleText={activeTournament.name} />
       <Row>
         <Col xs={12}>
           <Link to={`/tournaments`}>

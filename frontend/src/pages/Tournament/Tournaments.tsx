@@ -4,7 +4,7 @@ import { get } from "../../services/ApiService";
 import { TournamentsByType } from "../../types/Tournament";
 import { Col, Container, Row, Card } from "react-bootstrap";
 import dayjs from "dayjs";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import HelmetTitle from "../../components/general/HelmetTitle";
 
 function Tournaments() {
   const [tournaments, setTournaments] = useState<TournamentsByType>();
@@ -26,11 +26,7 @@ function Tournaments() {
   return (
     <>
       <Container className="mt-3 my-md-4">
-        <HelmetProvider>
-          <Helmet>
-            <title>MottiCon &#9632; Tournaments</title>
-          </Helmet>
-        </HelmetProvider>
+        <HelmetTitle titleText="Tournaments" />
         <Row>
           <h1 className="display-1">Tournaments</h1>
         </Row>

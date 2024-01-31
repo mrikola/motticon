@@ -12,7 +12,7 @@ import {
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { BoxArrowInRight, PersonPlusFill } from "react-bootstrap-icons";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import HelmetTitle from "../../components/general/HelmetTitle";
 
 type LoginForm = {
   email: string;
@@ -43,11 +43,7 @@ const Login = () => {
 
   return (
     <Container className="mt-3 my-md-4">
-      <HelmetProvider>
-        <Helmet>
-          <title>MottiCon &#9632; Login</title>
-        </Helmet>
-      </HelmetProvider>
+      <HelmetTitle titleText="Login" />
       <Row>
         <h1 className="display-1">MottiCon</h1>
       </Row>
