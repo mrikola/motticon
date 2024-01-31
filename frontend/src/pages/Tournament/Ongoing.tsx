@@ -26,7 +26,7 @@ const Ongoing = () => {
         get(`/tournament/${tournamentId}/round`),
         get(`/tournament/${tournamentId}/draft`),
       ]);
-      if (Number(roundResponse.headers.get("content-length")) > 0) {
+      try {
         const round = (await roundResponse.json()) as Round;
         const roundParsed: Round = {
           ...round,
@@ -34,12 +34,16 @@ const Ongoing = () => {
         };
         setCurrentRound(roundParsed);
         console.log(roundParsed);
+      } catch {
+        // TODO handle invalid response
       }
 
-      if (Number(draftResponse.headers.get("content-length")) > 0) {
+      try {
         const draft = (await draftResponse.json()) as Draft;
         setCurrentDraft(draft);
         // console.log(draft);
+      } catch {
+        // TODO handle invalid response
       }
     };
 

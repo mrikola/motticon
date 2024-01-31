@@ -1,9 +1,10 @@
 import { Card, Col, Row } from "react-bootstrap";
 import { SquareFill } from "react-bootstrap-icons";
+import * as icons from "react-bootstrap-icons";
 import { Icon } from "./Icon";
 
 type Props = {
-  iconName: keyof typeof Icon;
+  iconName: keyof typeof icons;
   cardTitle: string;
   textSize: string;
 };
