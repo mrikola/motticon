@@ -1,0 +1,10 @@
+table {
+  .td-no-wrap {
+    white-space: nowrap;
+  }
+  .table-primary {
+    td {
+      --bs-table-bg-type: $primary !important;
+    }
+  }
+}

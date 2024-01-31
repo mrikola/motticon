@@ -15,8 +15,8 @@ import { useNavigate } from "react-router";
 import "react-datepicker/dist/react-datepicker.css";
 import { useEffect, useState } from "react";
 import { Cube } from "../../types/Cube";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Tournament } from "../../types/Tournament";
+import HelmetTitle from "../general/HelmetTitle";
 
 type TournamentForm = {
   name: string;
@@ -68,11 +68,7 @@ const CreateTournament = () => {
 
   return user ? (
     <Container className="mt-3 my-md-4">
-      <HelmetProvider>
-        <Helmet>
-          <title>MottiCon &#9632; Create Tournament</title>
-        </Helmet>
-      </HelmetProvider>
+      <HelmetTitle titleText="Create Tournament" />
       <Row>
         <Col xs={12}>
           <h1 className="display-1">Create tournament</h1>

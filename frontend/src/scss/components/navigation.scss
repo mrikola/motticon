@@ -1,0 +1,10 @@
+nav {
+  svg {
+    margin-right: 5px;
+  }
+  .nav-link {
+    &.active {
+      text-decoration: underline;
+    }
+  }
+}

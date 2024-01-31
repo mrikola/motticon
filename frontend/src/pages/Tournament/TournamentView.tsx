@@ -63,7 +63,7 @@ const TournamentView = () => {
     }
   }, [user, tournamentId]);
 
-  // if tournament if over, get the last round
+  // if tournament is over, get the last round
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(`/tournament/${tournamentId}/round/recent`);

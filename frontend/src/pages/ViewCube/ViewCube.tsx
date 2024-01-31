@@ -14,6 +14,9 @@ import { Link } from "react-router-dom";
 import HelmetTitle from "../../components/general/HelmetTitle";
 
 const ViewCube = () => {
+  // Remake this view to something like "staff cube view"
+  // This should give the staff the possiblity to see the people who have
+  // drafted one cube, and inspect the photos of their pools
   const { cubeId, tournamentId } = useParams();
   const [cube, setCube] = useState<Cube>();
 
@@ -59,7 +62,6 @@ const ViewCube = () => {
     return (
       <>
         <HelmetTitle titleText={cube.title} />
-
         <div
           className="cube-masthead text-light mb-3"
           style={{ backgroundImage: `url(${cube.imageUrl})` }}

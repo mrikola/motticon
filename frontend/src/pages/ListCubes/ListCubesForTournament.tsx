@@ -41,7 +41,7 @@ const ListCubesForTournament = () => {
             <BoxArrowInLeft /> Back to tournament
           </Button>
         </Link>
-        <h1 className="display-1">{tournament.name} cubes</h1>
+        <h1 className="display-1">{tournament.name} Cubes</h1>
       </Row>
       <Row xs={1} sm={1} md={2} lg={3} className="g-3">
         {cubes.map((cube) => {

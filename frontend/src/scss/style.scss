@@ -7,131 +7,15 @@ $table-striped-bg-factor: 0.03;
 // Import all of Bootstrap's CSS
 @import "bootstrap/scss/bootstrap";
 
-@import "./components/cube-cards.scss";
+// import components
+@import "./components/general.scss";
+@import "./components/navigation.scss";
+@import "./components/inputs.scss";
+@import "./components/forms.scss";
+@import "./components/cube.scss";
 @import "./components/bootstrap-calendar.scss";
 @import "./components/horizontal-card.scss";
-
-$card-spacer-y: 0.5rem;
-$card-spacer-x: 0.5rem;
-
-::selection {
-  color: $primary;
-  background: $dark;
-}
-
-// mask element used for cube cards and cube masthead
-.mask {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-attachment: fixed;
-}
-
-nav {
-  svg {
-    margin-right: 5px;
-  }
-  .nav-link {
-    &.active {
-      text-decoration: underline;
-    }
-  }
-}
-
-// used only in the old/placeholder cube view that shows three drafts / players / draft pool images
-.btn-player-pool-image {
-  margin-right: 5px;
-}
-
-.result-entry-radio-group {
-  .btn {
-    background-color: $gray-200;
-    border: none;
-    &:hover {
-      background-color: $gray-400;
-    }
-  }
-  .btn-check:checked + .btn,
-  .btn.active,
-  .btn.show,
-  .btn:first-child:active,
-  :not(.btn-check) + .btn:active {
-    background-color: $primary !important;
-  }
-}
-
-.icon-stack {
-  position: relative;
-  display: inline-block;
-  width: 5.2rem;
-  height: 5.2rem;
-  line-height: 5.2rem;
-  vertical-align: middle;
-  p {
-    text-align: center;
-    top: 0;
-    left: 0;
-  }
-}
-.icon-stack-1x,
-.icon-stack-2x,
-.icon-stack-3x {
-  position: absolute;
-  left: 0;
-  width: 100%;
-}
-.icon-stack-1x {
-  line-height: inherit;
-  position: absolute;
-  font-size: 1.5rem;
-  left: 8px;
-  top: -11px;
-}
-.icon-stack-2x {
-  font-size: 4rem;
-  top: 0.5rem;
-}
-.icon-stack-3x {
-  font-size: 5.2rem;
-}
-
-table {
-  .td-no-wrap {
-    white-space: nowrap;
-  }
-  .table-primary {
-    td {
-      --bs-table-bg-type: $primary !important;
-    }
-  }
-}
-
-// countdown timer element
-.countdown-timer {
-  font-family: "Roboto Mono", monospace;
-  .over-time {
-    color: $red-400;
-  }
-}
-
-// progress bar element
-.progress {
-  height: $font-size-base * 1.5;
-  .progress-bar {
-    color: $dark;
-  }
-}
-
-// copy bs form-control styling over to the autocomplete input element
-.react-datalist-input__textbox {
-  @extend .form-control;
-}
-
-// image that displays when user selects display image in AddCube
-.add-cube-image {
-  max-width: 100%;
-}
+@import "./components/icon-stack.scss";
+@import "./components/table.scss";
+@import "./components/progress-bar.scss";
+@import "./components/countdown-timer.scss";

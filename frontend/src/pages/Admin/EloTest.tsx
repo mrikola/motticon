@@ -2,8 +2,8 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import Loading from "../../components/general/Loading";
 import { useIsAdmin } from "../../utils/auth";
 import { GraphUp } from "react-bootstrap-icons";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import { get, post } from "../../services/ApiService";
+import HelmetTitle from "../../components/general/HelmetTitle";
 
 const EloTest = () => {
   const user = useIsAdmin();
@@ -64,11 +64,7 @@ const EloTest = () => {
 
   return user ? (
     <Container className="mt-3 my-md-4">
-      <HelmetProvider>
-        <Helmet>
-          <title>MottiCon &#9632; Admin</title>
-        </Helmet>
-      </HelmetProvider>
+      <HelmetTitle titleText="Elo Test" />
       <Row className="my-3">
         <Col xs={12}>
           <h1 className="display-1">Admin page</h1>

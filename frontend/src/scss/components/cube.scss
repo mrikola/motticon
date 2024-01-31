@@ -1,0 +1,55 @@
+// mask element used for cube cards and cube masthead
+.mask {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-attachment: fixed;
+}
+
+.cube-masthead {
+  height: 40vh;
+  min-height: 300px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card {
+  hr {
+    margin: 0.5rem 0;
+  }
+}
+
+.cube-card {
+  .cube-card-image {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .card-link {
+    text-decoration: none;
+  }
+
+  .card-body {
+    padding: 1rem 0;
+  }
+
+  .card-text {
+    min-height: 3rem;
+  }
+}
+
+// used only in the old/placeholder cube view that shows three drafts / players / draft pool images
+.btn-player-pool-image {
+  margin-right: 5px;
+}
+
+// image that displays when user selects display image in AddCube
+.add-cube-image {
+  max-width: 100%;
+}
