@@ -91,9 +91,20 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
       setMatches(mtchs);
       console.log(mtchs);
     };
-    if (currentRound) {
-      fetchData();
-    }
+
+    const doFetch = () => {
+      if (currentRound) {
+        fetchData();
+      }
+    };
+
+    doFetch();
+    const roundInterval = setInterval(doFetch, 10000);
+
+    // return destructor function from useEffect to clear the interval pinging
+    return () => {
+      clearInterval(roundInterval);
+    };
   }, [currentRound]);
 
   useEffect(() => {
@@ -180,7 +191,6 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
             <HorizontalCard
               squareFillContent={currentRound.roundNumber.toString()}
               cardTitle="Round number"
-              textSize="small"
             />
             <CardCountdownTimer
               initialSeconds={timeRemaining}
