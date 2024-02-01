@@ -1,15 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Link } from "react-router-dom";
 import { get } from "../../services/ApiService";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
-import { Col, Container, Button, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import RoundOngoing from "../../components/tournament/RoundOngoing";
 import DraftOngoing from "../../components/tournament/DraftOngoing";
-import { BoxArrowInLeft } from "react-bootstrap-icons";
 import { Draft, Match, Round, Tournament } from "../../types/Tournament";
 import PendingView from "../../components/tournament/PendingView";
 import StandingsTable from "../../components/tournament/StandingsTable";
+import BackButton from "../../components/general/BackButton";
 
 const Ongoing = () => {
   const { tournamentId } = useParams();
@@ -101,14 +100,10 @@ const Ongoing = () => {
   if (user && tournament) {
     return (
       <Container className="mt-3 my-md-4">
-        <Col xs={12}>
-          <Link to={`/tournament/${tournamentId}`}>
-            <Button variant="primary" className="icon-link">
-              <BoxArrowInLeft />
-              Back to tournament
-            </Button>
-          </Link>
-        </Col>
+        <BackButton
+          buttonText="Back to tournament"
+          path={`/tournament/${tournamentId}`}
+        />
         <Row>
           <Col xs={12}>
             <h1 className="display-1">{tournament.name}</h1>

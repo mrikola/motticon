@@ -19,6 +19,8 @@ import AdminPage from "./pages/Admin/AdminPage";
 import AddCube from "./components/admin/AddCube";
 import CreateTournament from "./components/admin/CreateTournament";
 import AutocompleteTest from "./pages/Test/AutocompleteTest";
+import PublicProfile from "./pages/User/PublicProfile";
+import AllUsers from "./pages/User/AllUsers";
 
 function App() {
   const routes: RouteObject[] = [
@@ -94,7 +96,14 @@ function App() {
               path: "tournament/:tournamentId/staff",
               Component: StaffView,
             },
-
+            {
+              path: "user/:userId",
+              Component: PublicProfile,
+            },
+            {
+              path: "user",
+              Component: AllUsers,
+            },
             {
               path: "admin",
               Component: AdminPage,

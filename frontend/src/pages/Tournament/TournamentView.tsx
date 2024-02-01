@@ -5,8 +5,8 @@ import { get } from "../../services/ApiService";
 import { Round, Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
-import { Col, Container, Row, Button } from "react-bootstrap";
-import { Box, BoxArrowInLeft, CalendarEvent } from "react-bootstrap-icons";
+import { Col, Container, Row } from "react-bootstrap";
+import { Box, CalendarEvent } from "react-bootstrap-icons";
 import dayjs from "dayjs";
 import { Enrollment } from "../../types/User";
 import Loading from "../../components/general/Loading";
@@ -15,6 +15,7 @@ import Enroll from "./TournamentView/Enroll";
 import GoToOngoing from "./TournamentView/GoToOngoing";
 import Staff from "./TournamentView/GoToStaff";
 import HelmetTitle from "../../components/general/HelmetTitle";
+import BackButton from "../../components/general/BackButton";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
@@ -110,13 +111,7 @@ const TournamentView = () => {
     <Container className="mt-3 my-md-4">
       <HelmetTitle titleText={activeTournament.name} />
       <Row>
-        <Col xs={12}>
-          <Link to={`/tournaments`}>
-            <Button variant="primary" className="icon-link">
-              <BoxArrowInLeft /> Back to tournaments
-            </Button>
-          </Link>
-        </Col>
+        <BackButton buttonText="Back to tournaments" path="/tournaments" />
         <Col xs={12}>
           <h1 className="display-1">{activeTournament.name}</h1>
         </Col>

@@ -3,6 +3,7 @@ export type User = {
   firstName: string;
   lastName: string;
   isAdmin: boolean;
+  rating: number;
 };
 
 export type Player = User;

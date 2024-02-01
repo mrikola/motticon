@@ -1,10 +1,10 @@
 import {
-  Button,
   Col,
   Container,
   Row,
   Form,
   FloatingLabel,
+  Button,
 } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { post } from "../../services/ApiService";
@@ -13,6 +13,7 @@ import Loading from "../general/Loading";
 import { useMemo, useState } from "react";
 import DatalistInput, { Item } from "react-datalist-input";
 import HelmetTitle from "../general/HelmetTitle";
+import BackButton from "../general/BackButton";
 
 type AddCubeForm = {
   title: string;
@@ -95,9 +96,13 @@ function AddCube() {
   return user ? (
     <Container className="mt-3 my-md-4">
       <HelmetTitle titleText="Add cube" />
-      <Col>
-        <h1 className="display-1">Add Cube</h1>
-      </Col>
+      <Row>
+        <BackButton buttonText="Back to admin" path="/admin" />
+        <Col xs={12}>
+          <h1 className="display-1">Add Cube</h1>
+        </Col>
+      </Row>
+
       <Row>
         <Form onSubmit={handleSubmit(addCube)}>
           <Row>

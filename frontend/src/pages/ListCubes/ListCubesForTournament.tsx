@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { BoxArrowInLeft, PenFill } from "react-bootstrap-icons";
+import { PenFill } from "react-bootstrap-icons";
 import { get } from "../../services/ApiService";
 import { Cube } from "../../types/Cube";
 import { Tournament } from "../../types/Tournament";
-import { Badge, Button, Card, Col, Container, Row } from "react-bootstrap";
+import { Badge, Card, Col, Container, Row } from "react-bootstrap";
 import Loading from "../../components/general/Loading";
 import HelmetTitle from "../../components/general/HelmetTitle";
+import BackButton from "../../components/general/BackButton";
 
 const ListCubesForTournament = () => {
   const { tournamentId } = useParams();
@@ -36,11 +37,10 @@ const ListCubesForTournament = () => {
     <Container className="mt-3 my-md-4">
       <HelmetTitle titleText={tournament.name + " Cubes"} />
       <Row>
-        <Link to={`/tournament/${tournamentId}`}>
-          <Button variant="primary" className="icon-link">
-            <BoxArrowInLeft /> Back to tournament
-          </Button>
-        </Link>
+        <BackButton
+          buttonText="Back to tournament"
+          path={`/tournament/${tournamentId}`}
+        />
         <h1 className="display-1">{tournament.name} Cubes</h1>
       </Row>
       <Row xs={1} sm={1} md={2} lg={3} className="g-3">

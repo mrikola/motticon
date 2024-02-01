@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { Cube } from "../../types/Cube";
 import { Tournament } from "../../types/Tournament";
 import HelmetTitle from "../general/HelmetTitle";
+import BackButton from "../general/BackButton";
 
 type TournamentForm = {
   name: string;
@@ -70,6 +71,7 @@ const CreateTournament = () => {
     <Container className="mt-3 my-md-4">
       <HelmetTitle titleText="Create Tournament" />
       <Row>
+        <BackButton buttonText="Back to admin" path="/admin" />
         <Col xs={12}>
           <h1 className="display-1">Create tournament</h1>
         </Col>

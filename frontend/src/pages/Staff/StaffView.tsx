@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { Link } from "react-router-dom";
 import { get, put } from "../../services/ApiService";
 import { Col, Container, Row, Button } from "react-bootstrap";
-import { BoxArrowInLeft } from "react-bootstrap-icons";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
@@ -15,6 +13,7 @@ import ManageDraft from "../../components/staff/ManageDraft";
 import ManageEnrollments from "../../components/staff/ManageEnrollments";
 import NextDraft from "../../components/staff/NextDraft";
 import StandingsTable from "../../components/staff/StandingsTable";
+import BackButton from "../../components/general/BackButton";
 
 function StaffView() {
   const { tournamentId } = useParams();
@@ -90,14 +89,11 @@ function StaffView() {
 
   return user && tournament ? (
     <Container className="mt-3 my-md-4">
-      <Col xs={12}>
-        <Link to={`/tournament/${tournamentId}`}>
-          <Button variant="primary" className="icon-link">
-            <BoxArrowInLeft /> Back to tournament
-          </Button>
-        </Link>
-      </Col>
       <Row>
+        <BackButton
+          buttonText="Back to tournament"
+          path={`/tournament/${tournamentId}`}
+        />
         <h1 className="display-1">
           Hey {user.firstName} {user.lastName}
         </h1>

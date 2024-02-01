@@ -1,12 +1,11 @@
-import { Table, Container, Row, Button, Col } from "react-bootstrap";
+import { Table, Container, Row, Col } from "react-bootstrap";
 import { useParams } from "react-router";
-import { Link } from "react-router-dom";
-import { BoxArrowInLeft } from "react-bootstrap-icons";
 import { useContext, useEffect, useState } from "react";
 import { get } from "../../services/ApiService";
 import { ScoreHistory } from "../../types/Tournament";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import HelmetTitle from "../../components/general/HelmetTitle";
+import BackButton from "../../components/general/BackButton";
 
 function Standings() {
   const { roundNumber, tournamentId } = useParams();
@@ -30,11 +29,11 @@ function Standings() {
       <Container className="mt-3 my-md-4">
         <HelmetTitle titleText={"Standings Round " + { roundNumber }} />
         <Row>
-          <Link to={`/tournament/${tournamentId}`}>
-            <Button variant="primary">
-              <BoxArrowInLeft /> Back to tournament
-            </Button>
-          </Link>
+          <BackButton
+            buttonText="Back to tournament"
+            path={`/tournament/${tournamentId}`}
+          />
+
           <h1 className="display-1">Standings after round {roundNumber}</h1>
         </Row>
         <Row>
@@ -83,11 +82,10 @@ function Standings() {
     return (
       <Container className="mt-3 my-md-4">
         <Row>
-          <Link to={`/tournament/${tournamentId}`}>
-            <Button variant="primary">
-              <BoxArrowInLeft /> Back to tournament
-            </Button>
-          </Link>
+          <BackButton
+            buttonText="Back to tournament"
+            path={`/tournament/${tournamentId}`}
+          />
           <h1 className="display-1">
             No standings found for round {roundNumber}
           </h1>

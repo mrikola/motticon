@@ -7,6 +7,8 @@ type Props = {
 };
 
 function CountdownTimer({ initialSeconds, started }: Props) {
+  // this is currently not used anywhere
+
   const [seconds, setSeconds] = useState<number>(initialSeconds);
   const [timerStyle, setTimerStyle] = useState("display-3");
 

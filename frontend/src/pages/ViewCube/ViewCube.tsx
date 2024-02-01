@@ -4,14 +4,10 @@ import { Button, Col, Container, Row, Modal } from "react-bootstrap";
 import DeckImage from "/img/draft_pool.png";
 import { Cube } from "../../types/Cube";
 import { get } from "../../services/ApiService";
-import {
-  Image,
-  PenFill,
-  BoxArrowInLeft,
-  BoxArrowUpRight,
-} from "react-bootstrap-icons";
+import { Image, PenFill, BoxArrowUpRight } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import HelmetTitle from "../../components/general/HelmetTitle";
+import BackButton from "../../components/general/BackButton";
 
 const ViewCube = () => {
   // Remake this view to something like "staff cube view"
@@ -72,14 +68,10 @@ const ViewCube = () => {
           >
             <Container className="h-100">
               <Row className="mt-3 my-md-4">
-                <Col>
-                  <Link
-                    to={`/tournament/${tournamentId}/cubes/`}
-                    className="btn btn-primary"
-                  >
-                    <BoxArrowInLeft /> Back to tournament cubes
-                  </Link>
-                </Col>
+                <BackButton
+                  buttonText="Back to tournament cubes"
+                  path={`/tournament/${tournamentId}/cubes/`}
+                />
               </Row>
               <Row className="h-100 align-items-center">
                 <Col className="text-center">
