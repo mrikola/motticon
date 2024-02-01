@@ -43,6 +43,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   const [player, setPlayer] = useState<Player>();
   const [opponent, setOpponent] = useState<Player>();
   const [roundTimerStarted, setRoundTimerStarted] = useState<boolean>(false);
+  const [submissionDisabled, setSubmissionDisabled] = useState<boolean>(true);
 
   useEffect(() => {
     // check player id's from match and set correct player & opponent objects
@@ -64,7 +65,6 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   // handle result submission
   const submitResult = () => {
     const matchId = match.id;
-    // const matchId = 3;
     const resultSubmittedBy = user?.id;
     const player1GamesWon =
       match.player1.id === user?.id ? playerRadioValue : opponentRadioValue;
@@ -84,6 +84,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
           show: false,
         });
         setCurrentMatch({ ...match, ...updatedMatch });
+        setSubmissionDisabled(true);
       }
     });
   };
@@ -164,6 +165,12 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
     }
   }, [matches]);
 
+  useEffect(() => {
+    if (match.resultSubmittedBy === null && roundTimerStarted) {
+      setSubmissionDisabled(false);
+    }
+  }, [roundTimerStarted, match]);
+
   if (user && timeRemaining && player && opponent) {
     return (
       <>
@@ -181,7 +188,6 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
             <HorizontalCard
               squareFillContent={match.tableNumber.toString()}
               cardTitle="Table"
-              textSize="small"
             />
             <CardCountdownTimer
               initialSeconds={timeRemaining}
@@ -224,18 +230,18 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
             updateFunction={setOpponentRadioValue}
             disabled={match.resultSubmittedBy ? true : false}
           />
-          <div className="d-grid gap-2 my-3">
+          <Col xs={12} className="d-grid gap-2 my-3">
             <Button
               variant="primary"
               className="btn-lg"
               type="submit"
-              disabled={match.resultSubmittedBy ? true : false}
+              disabled={submissionDisabled}
               aria-disabled={match.resultSubmittedBy ? true : false}
               onClick={() => handleSubmitClicked()}
             >
               {match.resultSubmittedBy ? "Result submitted" : "Submit result"}
             </Button>
-          </div>
+          </Col>
           <VerticallyCenteredModal
             show={modal.show}
             onHide={() =>

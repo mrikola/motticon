@@ -20,6 +20,7 @@ function Standings() {
       const roundStandings = (await response.json()) as ScoreHistory[];
       roundStandings.sort((a, b) => (a.points > b.points ? -1 : 1));
       setStandings(roundStandings);
+      // console.log(roundStandings);
     };
     fetchData();
   }, [roundNumber, tournamentId]);

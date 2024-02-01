@@ -51,7 +51,7 @@ import {
   setDeckPhotoForUser,
 } from "../controller/draft.controller";
 import { generatePairings } from "../controller/pairings.controller";
-import { getStandings } from "../controller/score.controller";
+import { getPreviousScore, getStandings } from "../controller/score.controller";
 
 export const userRouter = express.Router();
 
@@ -246,6 +246,10 @@ userRouter.get(
     res.send(await getStandings(req));
   }
 );
+
+userRouter.get("/tournament/:tournamentId/score/:userId", async (req, res) => {
+  res.send(await getPreviousScore(req));
+});
 
 // todo: move tournament stuff to own router
 userRouter.post(

@@ -87,17 +87,14 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
             <HorizontalIconCard
               iconName="Box"
               cardTitle={playerPod.cube.title}
-              textSize="small"
             />
             <HorizontalCard
               squareFillContent={playerPod.podNumber.toString()}
               cardTitle="Pod"
-              textSize="large"
             />
             <HorizontalCard
               squareFillContent={playerSeat?.seat.toString()}
               cardTitle="Seat"
-              textSize="large"
             />
           </Container>
         </Row>

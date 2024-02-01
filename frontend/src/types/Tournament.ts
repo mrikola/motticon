@@ -89,3 +89,13 @@ export type ScoreHistory = {
   opponentMatchWinPercentage: number;
   roundNumber: number;
 };
+
+export type PlayerTournamentScore = {
+  playerId: number;
+  tournamentId: number;
+  player: User;
+  tournament: Tournament;
+  points: number;
+  draftsWon: number;
+  opponentMatchWinPercentage: number;
+};

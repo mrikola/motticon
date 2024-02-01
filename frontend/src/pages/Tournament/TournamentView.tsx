@@ -56,7 +56,7 @@ const TournamentView = () => {
         setTournamentStatus("ongoing");
       }
       checkEnrolled(enrollment);
-      console.log(tournament);
+      // console.log(tournament);
     };
 
     if (user) {
