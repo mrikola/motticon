@@ -4,7 +4,7 @@ import * as cors from "cors";
 import { adminRouter } from "./router/adminRouter";
 import { userRouter } from "./router/userRouter";
 import { notLoggedInRouter } from "./router/notLoggedInRouter";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 import path = require("node:path/posix");
 
 const port = process.env.PORT || 3000;
@@ -16,7 +16,10 @@ AppDataSource.initialize()
       readFileSync(path.join(__dirname, "..", "db", "markku.sql"), "utf8")
     );
 
-    console.log("allowing origin", process.env.FRONTEND_URL);
+    if (existsSync("/photos")) {
+      console.log("writing to volume");
+      writeFileSync("/photos/foo.txt", "this is a test");
+    }
 
     app.use(express.json());
     app.use(
@@ -27,6 +30,22 @@ AppDataSource.initialize()
 
     app.get("/", (req, res) => {
       res.send("Hello world, how are you doing");
+    });
+
+    app.get("/photos/*", (req, res) => {
+      if (existsSync("/photos")) {
+        res.sendFile(path.join("/", req.path), {
+          headers: {
+            "Content-Disposition": "inline",
+          },
+        });
+      } else {
+        res.sendFile(path.join(__dirname, "..", "README.md"), {
+          headers: {
+            "Content-Disposition": "inline",
+          },
+        });
+      }
     });
 
     app.use(notLoggedInRouter);

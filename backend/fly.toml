@@ -11,6 +11,10 @@ primary_region = "arn"
 
 [build]
 
+[mounts]
+  source="motticon_photos"
+  destination="/photos"
+
 [http_service]
   internal_port = 3000
   force_https = true
