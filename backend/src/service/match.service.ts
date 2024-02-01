@@ -1,14 +1,20 @@
 import { Brackets, DataSource, Repository } from "typeorm";
 import { Match } from "../entity/Match";
 import { AppDataSource } from "../data-source";
+import { LRUCache } from "lru-cache";
 
 export class MatchService {
   private appDataSource: DataSource;
   private repository: Repository<Match>;
+  private roundMatchesCache: LRUCache<number, Match[]>;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(Match);
+    this.roundMatchesCache = new LRUCache({
+      ttl: 1000 * 10,
+      ttlAutopurge: true,
+    });
   }
 
   async getMatch(matchId: number): Promise<Match> {
@@ -22,6 +28,11 @@ export class MatchService {
   }
 
   async getMatchesForRound(roundId: number) {
+    const cachedMatches = this.roundMatchesCache.get(roundId);
+    if (cachedMatches) {
+      console.log("cache hit");
+      return cachedMatches;
+    }
     const matches = await this.repository
       .createQueryBuilder("match")
       .leftJoin("match.round", "round")
@@ -30,6 +41,7 @@ export class MatchService {
       .leftJoinAndSelect("match.resultSubmittedBy", "user")
       .where("round.id = :roundId", { roundId })
       .getMany();
+    this.roundMatchesCache.set(roundId, matches);
     return matches;
   }
 
