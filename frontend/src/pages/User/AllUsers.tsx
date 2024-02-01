@@ -26,7 +26,7 @@ const AllUsers = () => {
       <HelmetTitle titleText={"Players"} />
       <Row className="my-3">
         <Col xs={12}>
-          <h1 className="display-1">All Users</h1>
+          <h1 className="display-1">Rating Leaderboard</h1>
         </Col>
       </Row>
       <Row>

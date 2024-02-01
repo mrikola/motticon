@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Button, Col, Container, Row, Modal } from "react-bootstrap";
-import DeckImage from "/img/draft_pool.png";
+import { Col, Container, Row } from "react-bootstrap";
 import { Cube } from "../../types/Cube";
 import { get } from "../../services/ApiService";
-import { Image, PenFill, BoxArrowUpRight } from "react-bootstrap-icons";
+import { PenFill, BoxArrowUpRight } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
+import Loading from "../../components/general/Loading";
 
 const ViewCube = () => {
-  // Remake this view to something like "staff cube view"
-  // This should give the staff the possiblity to see the people who have
-  // drafted one cube, and inspect the photos of their pools
   const { cubeId, tournamentId } = useParams();
   const [cube, setCube] = useState<Cube>();
 
@@ -24,35 +21,7 @@ const ViewCube = () => {
     };
 
     fetchData();
-  }, []);
-
-  const [show, setShow] = useState(false);
-
-  const drafts = [];
-  for (let d = 1; d <= 3; d++) {
-    const playerList = [];
-    for (let p = 1; p <= 8; p++) {
-      playerList.push({
-        id: p,
-      });
-    }
-    drafts.push({
-      id: d,
-      players: playerList,
-    });
-  }
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  const [modalDraftNumber, setModalDraftNumber] = useState(0);
-  const [modalPlayerName, setModalPlayerName] = useState("filler name");
-
-  function setModalContent(draftNumber: number, playerName: string) {
-    setModalDraftNumber(draftNumber);
-    setModalPlayerName(playerName);
-    handleShow();
-  }
+  }, [cubeId]);
 
   if (cube) {
     return (
@@ -80,15 +49,15 @@ const ViewCube = () => {
                     <PenFill /> Cube Designer: {cube.owner}
                   </p>
                   <p className="lead">{cube.description}</p>
-                  <div className="d-grid gap-2">
+                  <Col xs={10} sm={8} md={6} className="d-grid gap-2 mx-auto">
                     <Link
                       to={cube.url}
                       target="_blank"
-                      className="btn btn-primary"
+                      className="btn btn-primary btn-lg"
                     >
                       <BoxArrowUpRight className="fs-4" /> View list
                     </Link>
-                  </div>
+                  </Col>
                 </Col>
               </Row>
             </Container>
@@ -96,50 +65,13 @@ const ViewCube = () => {
         </div>
         <Container>
           <Row>
-            {drafts.map((draft) => (
-              <Col xs={12} sm={6} md={4} key={draft.id}>
-                <h3>Draft {draft.id}</h3>
-                {draft.players.map((player) => (
-                  <p key={player.id}>
-                    <button
-                      type="button"
-                      className="btn btn-primary btn-player-pool-image"
-                      onClick={() =>
-                        setModalContent(draft.id, "Player " + player.id)
-                      }
-                    >
-                      <Image />
-                    </button>
-                    Player Name {player.id}
-                  </p>
-                ))}
-              </Col>
-            ))}
+            <h2>Some cube info can go here</h2>
           </Row>
         </Container>
-
-        <Modal show={show} onHide={handleClose} fullscreen={true}>
-          <Modal.Header closeButton>
-            <Modal.Title>
-              {cube.title} – Draft {modalDraftNumber} – {modalPlayerName}
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <img src={DeckImage} className="img-fluid" />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="primary" onClick={handleClose}>
-              Save Changes
-            </Button>
-          </Modal.Footer>
-        </Modal>
       </>
     );
   } else {
-    return <>Loading</>;
+    return <Loading />;
   }
 };
 

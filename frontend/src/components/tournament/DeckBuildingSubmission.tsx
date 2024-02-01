@@ -11,9 +11,16 @@ type Props = {
   tournamentId: number;
   done: boolean;
   setDone: (value: boolean) => void;
+  setDraft: (draft: Draft) => void;
 };
 
-function DeckBuildingSubmission({ seat, tournamentId, done, setDone }: Props) {
+function DeckBuildingSubmission({
+  seat,
+  tournamentId,
+  done,
+  setDone,
+  setDraft,
+}: Props) {
   const [modal, setModal] = useState<VerticallyCenteredModalProps>({
     show: false,
     onHide: () => null,
@@ -34,6 +41,7 @@ function DeckBuildingSubmission({ seat, tournamentId, done, setDone }: Props) {
         if (draft !== null) {
           console.log(draft);
           setDone(true);
+          setDraft(draft);
           setModal({
             ...modal,
             show: false,

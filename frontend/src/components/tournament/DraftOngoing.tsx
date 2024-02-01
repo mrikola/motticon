@@ -17,9 +17,10 @@ import HelmetTitle from "../general/HelmetTitle";
 type Props = {
   tournament: Tournament;
   draft: Draft;
+  setDraft: (draft: Draft) => void;
 };
 
-function DraftOngoing({ tournament, draft }: Props) {
+function DraftOngoing({ tournament, draft, setDraft }: Props) {
   const user = useContext(UserInfoContext);
   const [playerPod, setPlayerPod] = useState<DraftPod>();
   const [playerSeat, setPlayerSeat] = useState<DraftPodSeat>();
@@ -109,6 +110,7 @@ function DraftOngoing({ tournament, draft }: Props) {
           tournamentId={tournament.id}
           done={deckBuildingDone}
           setDone={doneSetter}
+          setDraft={setDraft}
         />
       </>
     );

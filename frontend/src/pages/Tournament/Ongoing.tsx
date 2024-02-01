@@ -124,7 +124,11 @@ const Ongoing = () => {
                 {latestRound ? (
                   <h3>Round {latestRound.roundNumber} done.</h3>
                 ) : (
-                  <DraftOngoing draft={currentDraft} tournament={tournament} />
+                  <DraftOngoing
+                    draft={currentDraft}
+                    tournament={tournament}
+                    setDraft={setCurrentDraft}
+                  />
                 )}
               </>
             )}

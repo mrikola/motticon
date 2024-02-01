@@ -56,7 +56,7 @@ const TournamentView = () => {
         setTournamentStatus("ongoing");
       }
       checkEnrolled(enrollment);
-      //console.log(tournament);
+      console.log(tournament);
     };
 
     if (user) {
@@ -142,13 +142,14 @@ const TournamentView = () => {
           </Col>
         </Row>
       )}
+      {isStaff && <Staff tournamentId={activeTournament.id} />}
       {isEnrolled &&
         tournamentStatus === "ongoing" &&
         (activeTournament.status === "started" ||
           activeTournament.status === "pending") && (
           <GoToOngoing tournamentId={activeTournament.id} />
         )}
-      {tournamentStatus === "future" && (
+      {activeTournament.status === "pending" && (
         <Enroll
           isEnrolled={isEnrolled}
           userId={user?.id}
@@ -158,7 +159,7 @@ const TournamentView = () => {
           tournament={activeTournament}
         />
       )}
-      {isStaff && <Staff tournamentId={activeTournament.id} />}
+
       {tournamentStatus != "future" && newestRoundNumber > 0 && (
         <Standings
           roundNumber={newestRoundNumber}

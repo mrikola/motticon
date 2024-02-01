@@ -4,6 +4,7 @@ import {
   HouseFill,
   TrophyFill,
   PersonFillCheck,
+  ListOl,
 } from "react-bootstrap-icons";
 import { Outlet, useLocation } from "react-router";
 import { Link, NavLink } from "react-router-dom";
@@ -54,16 +55,21 @@ const Layout = () => {
                     </NavLink>
                   </Nav.Item>
                 )}
-
                 <Nav.Item>
                   <NavLink className="nav-link icon-link" to="/tournaments">
                     <TrophyFill />
                     Tournaments
                   </NavLink>
                 </Nav.Item>
+                <Nav.Item>
+                  <NavLink className="nav-link icon-link" to="/user">
+                    <ListOl />
+                    Leaderboard
+                  </NavLink>
+                </Nav.Item>
               </Nav>
               <Nav className="flex-row flex-wrap ms-md-auto">
-                <div className="vr d-none d-lg-block"></div>
+                <div className="vr d-none d-lg-block mx-2"></div>
                 <hr className="d-xs d-lg-none w-100" />
                 <Nav.Item>
                   <NavLink className="nav-link icon-link" to={"/logout"}>

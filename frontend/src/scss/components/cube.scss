@@ -12,10 +12,16 @@
 
 .cube-masthead {
   height: 40vh;
-  min-height: 300px;
+  min-height: 45vh;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+@media screen and (min-width: 768px) {
+  .cube-masthead {
+    min-height: 55vh;
+  }
 }
 
 .card {
