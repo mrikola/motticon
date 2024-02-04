@@ -45,6 +45,10 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   const [roundTimerStarted, setRoundTimerStarted] = useState<boolean>(false);
   const [submissionDisabled, setSubmissionDisabled] = useState<boolean>(true);
 
+  const {
+    playerGoingFirst: { id: onThePlay },
+  } = match;
+
   useEffect(() => {
     // check player id's from match and set correct player & opponent objects
     if (match && user) {
@@ -214,6 +218,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
           <Col xs={12} className="text-center">
             <h2>
               {player.firstName} {player.lastName}
+              {player.id === onThePlay && <> (plays first)</>}
             </h2>
           </Col>
           <Col xs={12} className="text-center">
@@ -222,6 +227,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
           <Col xs={12} className="text-center">
             <h2>
               {opponent.firstName} {opponent.lastName}
+              {opponent.id === onThePlay && <> (plays first)</>}
             </h2>
           </Col>
           <MatchResultRadioButtons

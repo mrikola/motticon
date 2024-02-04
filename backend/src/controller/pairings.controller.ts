@@ -60,38 +60,38 @@ export const generatePairings = async (
         switch (roundInDraft) {
           case 1:
             return await matchRepo.save([
-              {
+              matchRepo.create({
                 round: currentRound,
                 player1: seats.find((seat) => seat.seat === 1).player,
                 player2: seats.find((seat) => seat.seat === 5).player,
                 tableNumber: (pod.podNumber - 1) * 4 + 1,
                 matchType: "1v5",
-              },
-              {
+              }),
+              matchRepo.create({
                 round: currentRound,
                 player1: seats.find((seat) => seat.seat === 3).player,
                 player2: seats.find((seat) => seat.seat === 7).player,
                 tableNumber: (pod.podNumber - 1) * 4 + 2,
                 matchType: "3v7",
-              },
-              {
+              }),
+              matchRepo.create({
                 round: currentRound,
                 player1: seats.find((seat) => seat.seat === 2).player,
                 player2: seats.find((seat) => seat.seat === 6).player,
                 tableNumber: (pod.podNumber - 1) * 4 + 3,
                 matchType: "2v6",
-              },
-              {
+              }),
+              matchRepo.create({
                 round: currentRound,
                 player1: seats.find((seat) => seat.seat === 4).player,
                 player2: seats.find((seat) => seat.seat === 8).player,
                 tableNumber: (pod.podNumber - 1) * 4 + 4,
                 matchType: "4v8",
-              },
+              }),
             ]);
           case 2:
             return await matchRepo.save([
-              {
+              matchRepo.create({
                 round: currentRound,
                 player1: winnerFrom(
                   previousRoundMatches.find(
@@ -105,8 +105,8 @@ export const generatePairings = async (
                 ),
                 tableNumber: (pod.podNumber - 1) * 4 + 1,
                 matchType: "oddsWinners",
-              },
-              {
+              }),
+              matchRepo.create({
                 round: currentRound,
                 player1: winnerFrom(
                   previousRoundMatches.find(
@@ -120,8 +120,8 @@ export const generatePairings = async (
                 ),
                 tableNumber: (pod.podNumber - 1) * 4 + 2,
                 matchType: "evensWinners",
-              },
-              {
+              }),
+              matchRepo.create({
                 round: currentRound,
                 player1: loserFrom(
                   previousRoundMatches.find(
@@ -135,8 +135,8 @@ export const generatePairings = async (
                 ),
                 tableNumber: (pod.podNumber - 1) * 4 + 3,
                 matchType: "oddsLosers",
-              },
-              {
+              }),
+              matchRepo.create({
                 round: currentRound,
                 player1: loserFrom(
                   previousRoundMatches.find(
@@ -150,11 +150,11 @@ export const generatePairings = async (
                 ),
                 tableNumber: (pod.podNumber - 1) * 4 + 4,
                 matchType: "evensLosers",
-              },
+              }),
             ]);
           case 3:
             return await matchRepo.save([
-              {
+              matchRepo.create({
                 round: currentRound,
                 player1: winnerFrom(
                   previousRoundMatches.find(
@@ -168,8 +168,8 @@ export const generatePairings = async (
                 ),
                 tableNumber: (pod.podNumber - 1) * 4 + 1,
                 matchType: "final",
-              },
-              {
+              }),
+              matchRepo.create({
                 round: currentRound,
                 player1: loserFrom(
                   previousRoundMatches.find(
@@ -183,8 +183,8 @@ export const generatePairings = async (
                 ),
                 tableNumber: (pod.podNumber - 1) * 4 + 2,
                 matchType: "jumbofinal",
-              },
-              {
+              }),
+              matchRepo.create({
                 round: currentRound,
                 player1: winnerFrom(
                   previousRoundMatches.find(
@@ -198,8 +198,8 @@ export const generatePairings = async (
                 ),
                 tableNumber: (pod.podNumber - 1) * 4 + 3,
                 matchType: "mid1",
-              },
-              {
+              }),
+              matchRepo.create({
                 round: currentRound,
                 player1: winnerFrom(
                   previousRoundMatches.find(
@@ -213,7 +213,7 @@ export const generatePairings = async (
                 ),
                 tableNumber: (pod.podNumber - 1) * 4 + 4,
                 matchType: "mid2",
-              },
+              }),
             ]);
         }
       })

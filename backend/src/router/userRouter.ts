@@ -13,14 +13,6 @@ import {
   getOngoingTournaments,
   getTournamentAndDrafts,
   getTournamentEnrollments,
-  staffCancelEnrollment,
-  startTournament,
-  generateDrafts,
-  startDraft,
-  startRound,
-  endRound,
-  endDraft,
-  endTournament,
   getCurrentDraftAndMatch,
   getMostRecentRound,
   getCurrentMatch,
@@ -40,7 +32,6 @@ import {
 import {
   getPlayerMatchHistory,
   submitResult,
-  staffSubmitResult,
   getMatchesForRound,
 } from "../controller/match.controller";
 import {
@@ -50,7 +41,6 @@ import {
   getSeatsForPod,
   setDeckPhotoForUser,
 } from "../controller/draft.controller";
-import { generatePairings } from "../controller/pairings.controller";
 import { getPreviousScore, getStandings } from "../controller/score.controller";
 
 export const userRouter = express.Router();
@@ -90,10 +80,6 @@ userRouter.get(
 
 userRouter.post("/submitResult", async (req, res) => {
   res.send(await submitResult(req));
-});
-
-userRouter.post("/staff/submitResult", async (req, res) => {
-  res.send(await staffSubmitResult(req));
 });
 
 userRouter.get("/user/:userId/staff", async (req, res) => {
@@ -179,66 +165,9 @@ userRouter.get("/tournament/:id/cubes", async (req, res) => {
   res.send(await getCubesForTournament(req));
 });
 
-userRouter.put("/tournament/:tournamentId/start", async (req, res) => {
-  res.send(await startTournament(req));
-});
-
-userRouter.put("/tournament/:tournamentId/end", async (req, res) => {
-  res.send(await endTournament(req));
-});
-
-userRouter.post(
-  "/tournament/:tournamentId/draft/generate",
-  async (req, res) => {
-    res.send(await generateDrafts(req));
-  }
-);
-
-userRouter.put(
-  "/tournament/:tournamentId/draft/:draftId/start",
-  async (req, res) => {
-    res.send(await startDraft(req));
-  }
-);
-
-userRouter.put(
-  "/tournament/:tournamentId/draft/:draftId/end",
-  async (req, res) => {
-    res.send(await endDraft(req));
-  }
-);
-
 userRouter.get("/draft/:draftId/rounds", async (req, res) => {
   res.send(await getRoundsForDraft(req));
 });
-
-userRouter.put(
-  "/tournament/:tournamentId/round/:roundId/start",
-  async (req, res) => {
-    res.send(await startRound(req));
-  }
-);
-
-userRouter.put(
-  "/tournament/:tournamentId/round/:roundId/end",
-  async (req, res) => {
-    res.send(await endRound(req));
-  }
-);
-
-userRouter.put(
-  "/tournament/:tournamentId/draft/:draftId/round/:roundId/pairings",
-  async (req, res) => {
-    const { tournamentId, draftId, roundId } = req.params;
-    res.send(
-      await generatePairings(
-        Number(tournamentId),
-        Number(draftId),
-        Number(roundId)
-      )
-    );
-  }
-);
 
 userRouter.get(
   "/tournament/:tournamentId/standings/:roundNumber",
@@ -263,13 +192,6 @@ userRouter.post(
   "/tournament/:tournamentId/cancel/:userId",
   async (req, res) => {
     res.send(await cancelEnrollment(req));
-  }
-);
-
-userRouter.post(
-  "/staff/tournament/:tournamentId/cancel/:userId",
-  async (req, res) => {
-    res.send(await staffCancelEnrollment(req));
   }
 );
 

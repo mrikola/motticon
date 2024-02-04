@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
@@ -44,6 +45,17 @@ export class Match {
   @ManyToOne(() => User, { nullable: true })
   resultSubmittedBy: User;
 
+  @JoinColumn()
+  playerGoingFirstId: number;
+
+  @ManyToOne(() => User, { nullable: true })
+  playerGoingFirst: User;
+
   @Column("varchar")
   matchType: PodDraftMatch;
+
+  @BeforeInsert()
+  determineStartingPlayer() {
+    this.playerGoingFirst = Math.random() < 0.5 ? this.player1 : this.player2;
+  }
 }

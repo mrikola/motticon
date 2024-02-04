@@ -48,6 +48,7 @@ export type Match = {
   player1: Player;
   player2: Player;
   resultSubmittedBy: Player;
+  playerGoingFirst: Player;
 };
 
 export type Tournament = {

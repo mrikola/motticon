@@ -131,7 +131,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
     const matchId = match.id;
     const resultSubmittedBy = user?.id;
     const roundId = currentRound?.id;
-    post(`/staff/submitResult`, {
+    post(`/staff/tournament/${tournamentId}/submitResult`, {
       roundId,
       matchId,
       resultSubmittedBy,

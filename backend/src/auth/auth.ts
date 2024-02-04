@@ -23,6 +23,21 @@ export const isValidAdminToken = (token: string) => {
   }
 };
 
+export const isValidStaffMemberToken = (
+  token: string,
+  tournamentId: number
+) => {
+  try {
+    const decoded = verify(token, JWT_SECRET_KEY) as JwtPayload;
+    return (
+      decoded.isAdmin ||
+      (decoded.tournamentsStaffed ?? []).includes(tournamentId)
+    );
+  } catch (err: unknown) {
+    return false;
+  }
+};
+
 // TODO: use this for signup purposes
 export const encodePassword = (password: string) => hashSync(password, 10);
 
@@ -33,8 +48,6 @@ export const doLogin = async (email: string, password: string) => {
     // TODO log the login error
     return undefined;
   }
-
-  console.log("secret", JWT_SECRET_KEY);
 
   return sign(
     {

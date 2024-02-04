@@ -23,6 +23,7 @@ export class MatchService {
       .leftJoinAndSelect("match.resultSubmittedBy", "resultSubmittedUser")
       .leftJoinAndSelect("match.player1", "player1")
       .leftJoinAndSelect("match.player2", "player2")
+      .leftJoinAndSelect("match.playerGoingFirst", "playerGoingFirst")
       .where("match.id = :matchId", { matchId })
       .getOne();
   }
@@ -39,6 +40,7 @@ export class MatchService {
       .leftJoinAndSelect("match.player1", "player1")
       .leftJoinAndSelect("match.player2", "player2")
       .leftJoinAndSelect("match.resultSubmittedBy", "user")
+      .leftJoinAndSelect("match.playerGoingFirst", "playerGoingFirst")
       .where("round.id = :roundId", { roundId })
       .getMany();
     this.roundMatchesCache.set(roundId, matches);
@@ -99,6 +101,8 @@ export class MatchService {
       })
       .where("id = :matchId", { matchId })
       .execute();
+    // invalidate the round cache so that staff view looks correct
+    this.roundMatchesCache.delete(roundId);
     const matches = this.getMatchesForRound(roundId);
     return matches;
   }

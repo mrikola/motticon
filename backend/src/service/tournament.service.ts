@@ -210,6 +210,7 @@ export class TournamentService {
       .createQueryBuilder("match")
       .leftJoinAndSelect("match.round", "round")
       .leftJoinAndSelect("match.resultSubmittedBy", "resultSubmittedUser")
+      .leftJoinAndSelect("match.playerGoingFirst", "playerGoingFirst")
       .leftJoinAndSelect("match.player1", "player1")
       .leftJoinAndSelect("match.player2", "player2")
       .where("round.id = :roundId", { roundId })

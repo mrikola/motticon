@@ -6,6 +6,7 @@ import { userRouter } from "./router/userRouter";
 import { notLoggedInRouter } from "./router/notLoggedInRouter";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import path = require("node:path/posix");
+import { staffRouter } from "./router/staffRouter";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -50,6 +51,7 @@ AppDataSource.initialize()
 
     app.use(notLoggedInRouter);
     app.use(userRouter);
+    app.use(staffRouter);
     app.use(adminRouter);
 
     app.listen(port, () => {
