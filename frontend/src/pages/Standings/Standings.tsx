@@ -2,23 +2,22 @@ import { Table, Container, Row, Col } from "react-bootstrap";
 import { useParams } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { get } from "../../services/ApiService";
-import { ScoreHistory } from "../../types/Tournament";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
+import { StandingsRow } from "../../types/Tournament";
 
 function Standings() {
   const { roundNumber, tournamentId } = useParams();
   const user = useContext(UserInfoContext);
-  const [standings, setStandings] = useState<ScoreHistory[]>();
+  const [standings, setStandings] = useState<StandingsRow[]>();
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(
         `/tournament/${tournamentId}/standings/${roundNumber}`
       );
-      const roundStandings = (await response.json()) as ScoreHistory[];
-      roundStandings.sort((a, b) => (a.points > b.points ? -1 : 1));
+      const roundStandings = (await response.json()) as StandingsRow[];
       setStandings(roundStandings);
       // console.log(roundStandings);
     };
@@ -52,16 +51,16 @@ function Standings() {
               <tbody>
                 {standings.map((result, index) => (
                   <tr
-                    key={result.id}
+                    key={index}
                     className={
                       user.id === result.playerId ? "table-primary" : ""
                     }
                   >
                     <td>{index + 1}</td>
                     <td className="td-no-wrap">
-                      {result.player.firstName} {result.player.lastName}
+                      {result.firstName} {result.lastName}
                     </td>
-                    <td>{result.points}</td>
+                    <td>{result.matchPoints}</td>
                     <td>{result.draftsWon}</td>
                     <td>
                       {result.opponentMatchWinPercentage != 0

@@ -41,6 +41,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
       player1: {} as Player,
       player2: {} as Player,
       resultSubmittedBy: {} as Player,
+      playerGoingFirst: {} as Player,
     },
   });
   const [endRoundModal, setEndRoundModal] =

@@ -2,6 +2,8 @@ import { DataSource, Repository } from "typeorm";
 import { PlayerTournamentScore } from "../entity/PlayerTournamentScore";
 import { AppDataSource } from "../data-source";
 import { ScoreHistory } from "../entity/ScoreHistory";
+import { OMWView } from "../entity/OMWView";
+import { RecordByPlayer, StandingsRow } from "../dto/score.dto";
 
 export class ScoreService {
   private appDataSource: DataSource;
@@ -24,15 +26,76 @@ export class ScoreService {
   async getStandings(
     tournamentId: number,
     roundNumber: number
-  ): Promise<ScoreHistory[]> {
-    const standings = await this.appDataSource
-      .getRepository(ScoreHistory)
-      .createQueryBuilder("score")
-      .leftJoinAndSelect("score.player", "player")
-      .where("score.tournamentId = :tournamentId", { tournamentId })
-      .andWhere("score.roundNumber = :roundNumber", { roundNumber })
+  ): Promise<StandingsRow[]> {
+    const matches = await this.appDataSource
+      .getRepository(OMWView)
+      .createQueryBuilder("omw")
+      .where("omw.tournamentId = :tournamentId", { tournamentId })
+      .andWhere("omw.roundNumber <= :roundNumber", { roundNumber })
       .getMany();
-    return standings;
+
+    const tournamentScores = await this.appDataSource
+      .getRepository(ScoreHistory)
+      .createQueryBuilder("sh")
+      .leftJoinAndSelect("sh.player", "player")
+      .where("sh.tournamentId = :tournamentId", { tournamentId })
+      .andWhere("sh.roundNumber = :roundNumber", { roundNumber })
+      .getMany();
+
+    const records: RecordByPlayer = new Map();
+    matches.forEach((row) => {
+      const previousRecord = records.get(row.playerId);
+      records.set(row.playerId, {
+        ...previousRecord,
+        id: row.playerId,
+        gamesWon: (previousRecord?.gamesWon ?? 0) + row.playerGamesWon,
+        gamesPlayed: (previousRecord?.gamesPlayed ?? 0) + row.gamesPlayed,
+        matchPoints: (previousRecord?.matchPoints ?? 0) + row.playerPoints,
+        matchesPlayed: (previousRecord?.matchesPlayed ?? 0) + 1,
+        opponentIds: (previousRecord?.opponentIds ?? []).concat(row.opponentId),
+      });
+
+      const currentRecord = records.get(row.playerId);
+      records.set(row.playerId, {
+        ...currentRecord,
+        matchPointPercentage: Math.max(
+          1 / 3,
+          currentRecord.matchPoints / (currentRecord.matchesPlayed * 3)
+        ),
+      });
+    });
+
+    const standings: StandingsRow[] = [];
+
+    records.forEach((player) => {
+      const scoreRow = tournamentScores.find(
+        (score) => score.playerId === player.id
+      );
+
+      const omw =
+        player.opponentIds
+          .map((id) => records.get(id).matchPointPercentage)
+          .reduce((acc, curr) => acc + curr, 0) / player.opponentIds.length;
+
+      standings.push({
+        playerId: scoreRow.player.id,
+        firstName: scoreRow.player.firstName,
+        lastName: scoreRow.player.lastName,
+        matchPoints: player.matchPoints,
+        draftsWon: scoreRow.draftsWon,
+        opponentMatchWinPercentage: omw,
+      });
+    });
+
+    return standings.sort((a, b) => {
+      if (a.matchPoints === b.matchPoints) {
+        if (a.draftsWon === b.draftsWon) {
+          return b.opponentMatchWinPercentage - a.opponentMatchWinPercentage;
+        }
+        return b.draftsWon - a.draftsWon;
+      }
+      return b.matchPoints - a.matchPoints;
+    });
   }
 
   async awardMatchWin(tournamentId: number, playerId: number) {

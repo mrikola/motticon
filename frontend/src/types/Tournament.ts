@@ -79,8 +79,7 @@ export type UsersTournaments = {
   future: Tournament[];
 };
 
-export type ScoreHistory = {
-  id: number;
+export type PlayerTournamentScore = {
   playerId: number;
   tournamentId: number;
   player: User;
@@ -88,15 +87,13 @@ export type ScoreHistory = {
   points: number;
   draftsWon: number;
   opponentMatchWinPercentage: number;
-  roundNumber: number;
 };
 
-export type PlayerTournamentScore = {
+export type StandingsRow = {
   playerId: number;
-  tournamentId: number;
-  player: User;
-  tournament: Tournament;
-  points: number;
+  firstName: string;
+  lastName: string;
+  matchPoints: number;
   draftsWon: number;
   opponentMatchWinPercentage: number;
 };
