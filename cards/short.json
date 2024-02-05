@@ -1,0 +1,253 @@
+{
+  "meta": { "date": "2024-01-31", "version": "5.2.2+20240131" },
+  "data": {
+    "\"Ach! Hans, Run!\"": [
+      {
+        "colorIdentity": ["G", "R"],
+        "colors": ["G", "R"],
+        "convertedManaCost": 6.0,
+        "firstPrinting": "UNH",
+        "foreignData": [],
+        "identifiers": {
+          "scryfallOracleId": "a2c5ee76-6084-413c-bb70-45490d818374"
+        },
+        "isFunny": true,
+        "layout": "normal",
+        "legalities": {},
+        "manaCost": "{2}{R}{R}{G}{G}",
+        "manaValue": 6.0,
+        "name": "\"Ach! Hans, Run!\"",
+        "printings": ["UNH"],
+        "purchaseUrls": {
+          "cardKingdom": "https://mtgjson.com/links/84dfefe718a51cf8",
+          "cardKingdomFoil": "https://mtgjson.com/links/d8c9f3fc1e93c89c",
+          "cardmarket": "https://mtgjson.com/links/b9d69f0d1a9fb80c",
+          "tcgplayer": "https://mtgjson.com/links/c51d2b13ff76f1f0"
+        },
+        "subtypes": [],
+        "supertypes": [],
+        "text": "At the beginning of your upkeep, you may say \"Ach! Hans, run! It's the . . .\" and the name of a creature card. If you do, search your library for a card with that name, put it onto the battlefield, then shuffle. That creature gains haste. Exile it at the beginning of the next end step.",
+        "type": "Enchantment",
+        "types": ["Enchantment"]
+      }
+    ],
+    "\"Brims\" Barone, Midway Mobster": [
+      {
+        "colorIdentity": ["B", "W"],
+        "colors": ["B", "W"],
+        "convertedManaCost": 5.0,
+        "edhrecRank": 24161,
+        "firstPrinting": "UNF",
+        "foreignData": [],
+        "identifiers": {
+          "scryfallOracleId": "c64c31f2-c1be-414e-9dff-c3b77ba97545"
+        },
+        "isFunny": true,
+        "layout": "normal",
+        "leadershipSkills": {
+          "brawl": false,
+          "commander": true,
+          "oathbreaker": false
+        },
+        "legalities": {},
+        "manaCost": "{3}{W}{B}",
+        "manaValue": 5.0,
+        "name": "\"Brims\" Barone, Midway Mobster",
+        "power": "5",
+        "printings": ["UNF"],
+        "purchaseUrls": {
+          "cardKingdom": "https://mtgjson.com/links/d1e320bd9d6813c0",
+          "cardKingdomFoil": "https://mtgjson.com/links/18f86e8a04682c34",
+          "cardmarket": "https://mtgjson.com/links/d5a3d8cfb60767d4",
+          "tcgplayer": "https://mtgjson.com/links/980f45f2bc8c3733"
+        },
+        "rulings": [
+          {
+            "date": "2022-10-07",
+            "text": "Whether or not Brims has menace matters only as blockers are declared. After that point, a gust of wind removing your hat or blowing a new hat onto your head won’t change which blockers have already legally been declared."
+          }
+        ],
+        "subtypes": ["Human", "Rogue"],
+        "supertypes": ["Legendary"],
+        "text": "When \"Brims\" Barone, Midway Mobster enters the battlefield, put a +1/+1 counter on each other creature you control that has a hat.\n\"Brims\" Barone, Midway Mobster has menace as long as you're wearing a hat.",
+        "toughness": "4",
+        "type": "Legendary Creature — Human Rogue",
+        "types": ["Creature"]
+      }
+    ],
+    "\"Lifetime\" Pass Holder": [
+      {
+        "colorIdentity": ["B"],
+        "colors": ["B"],
+        "convertedManaCost": 1.0,
+        "edhrecRank": 10837,
+        "edhrecSaltiness": 0.69,
+        "firstPrinting": "UNF",
+        "foreignData": [],
+        "identifiers": {
+          "scryfallOracleId": "7bf6f13a-3c90-4bda-bc84-e026828bf4d1"
+        },
+        "keywords": ["Open an Attraction", "Roll to Visit Your Attractions"],
+        "layout": "normal",
+        "legalities": {
+          "commander": "Legal",
+          "duel": "Legal",
+          "legacy": "Legal",
+          "oathbreaker": "Legal",
+          "vintage": "Legal"
+        },
+        "manaCost": "{B}",
+        "manaValue": 1.0,
+        "name": "\"Lifetime\" Pass Holder",
+        "power": "2",
+        "printings": ["UNF"],
+        "purchaseUrls": {
+          "cardKingdom": "https://mtgjson.com/links/9e1631dd345f664d",
+          "cardKingdomFoil": "https://mtgjson.com/links/67667a01d3ca6254",
+          "cardmarket": "https://mtgjson.com/links/4814d0ee0bfce13a",
+          "tcgplayer": "https://mtgjson.com/links/e13efc749614f1a8"
+        },
+        "subtypes": ["Zombie", "Guest"],
+        "supertypes": [],
+        "text": "\"Lifetime\" Pass Holder enters the battlefield tapped.\nWhen \"Lifetime\" Pass Holder dies, open an Attraction.\nWhenever you roll to visit your Attractions, if you roll a 6, you may return \"Lifetime\" Pass Holder from your graveyard to the battlefield.",
+        "toughness": "1",
+        "type": "Creature — Zombie Guest",
+        "types": ["Creature"]
+      }
+    ],
+    "\"Name Sticker\" Goblin": [
+      {
+        "colorIdentity": ["R"],
+        "colors": ["R"],
+        "convertedManaCost": 3.0,
+        "firstPrinting": "UNF",
+        "foreignData": [],
+        "identifiers": {
+          "scryfallOracleId": "acee1d16-1651-4e2c-8138-cc6456c4ee71"
+        },
+        "layout": "normal",
+        "legalities": {
+          "commander": "Legal",
+          "legacy": "Legal",
+          "vintage": "Legal"
+        },
+        "manaCost": "{2}{R}",
+        "manaValue": 3.0,
+        "name": "\"Name Sticker\" Goblin",
+        "power": "2",
+        "printings": ["UNF"],
+        "purchaseUrls": {},
+        "subtypes": ["Goblin", "Guest"],
+        "supertypes": [],
+        "text": "When this creature enters the battlefield from anywhere other than a graveyard or exile, if it's on the battlefield and you control 9 or fewer creatures named \"Name Sticker\" Goblin, roll a 20-sided die.\n1-6 | Add {R}{R}{R}{R}.\n7-14 | Add {R}{R}{R}{R}{R}.\n15-20 | Add {R}{R}{R}{R}{R}{R}.",
+        "toughness": "2",
+        "type": "Creature — Goblin Guest",
+        "types": ["Creature"]
+      }
+    ],
+    "\"Rumors of My Death . . .\"": [
+      {
+        "colorIdentity": ["B"],
+        "colors": ["B"],
+        "convertedManaCost": 3.0,
+        "firstPrinting": "UST",
+        "foreignData": [],
+        "identifiers": {
+          "scryfallOracleId": "38bcba8b-2838-4ac8-9976-f9ccaa94fdba"
+        },
+        "isFunny": true,
+        "layout": "normal",
+        "legalities": {},
+        "manaCost": "{2}{B}",
+        "manaValue": 3.0,
+        "name": "\"Rumors of My Death . . .\"",
+        "printings": ["UST"],
+        "purchaseUrls": {
+          "cardKingdom": "https://mtgjson.com/links/d54ab84e96912232",
+          "cardKingdomFoil": "https://mtgjson.com/links/e717b6883a6d73b8",
+          "cardmarket": "https://mtgjson.com/links/67cfeca3514f2306",
+          "tcgplayer": "https://mtgjson.com/links/85349ca713ca49a4"
+        },
+        "subtypes": [],
+        "supertypes": [],
+        "text": "{3}{B}, Exile a permanent you control with a League of Dastardly Doom watermark: Return a permanent card with a League of Dastardly Doom watermark from your graveyard to the battlefield.",
+        "type": "Enchantment",
+        "types": ["Enchantment"]
+      }
+    ],
+    "+2 Mace": [
+      {
+        "colorIdentity": ["W"],
+        "colors": ["W"],
+        "convertedManaCost": 2.0,
+        "edhrecRank": 14148,
+        "firstPrinting": "AFR",
+        "foreignData": [],
+        "identifiers": {
+          "scryfallOracleId": "629fe1be-272d-465f-b9b1-2ce177410f13"
+        },
+        "keywords": ["Equip"],
+        "layout": "normal",
+        "legalities": {
+          "brawl": "Legal",
+          "commander": "Legal",
+          "duel": "Legal",
+          "explorer": "Legal",
+          "gladiator": "Legal",
+          "historic": "Legal",
+          "legacy": "Legal",
+          "modern": "Legal",
+          "oathbreaker": "Legal",
+          "pauper": "Legal",
+          "paupercommander": "Legal",
+          "pioneer": "Legal",
+          "timeless": "Legal",
+          "vintage": "Legal"
+        },
+        "manaCost": "{1}{W}",
+        "manaValue": 2.0,
+        "name": "+2 Mace",
+        "printings": ["AFR"],
+        "purchaseUrls": {
+          "cardKingdom": "https://mtgjson.com/links/2466db20a07b5a89",
+          "cardKingdomFoil": "https://mtgjson.com/links/60eeaa7b611aa07c",
+          "cardmarket": "https://mtgjson.com/links/416d2f3c4583aac5",
+          "tcgplayer": "https://mtgjson.com/links/2254f000ff7f8516"
+        },
+        "subtypes": ["Equipment"],
+        "supertypes": [],
+        "text": "Equipped creature gets +2/+2.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)",
+        "type": "Artifact — Equipment",
+        "types": ["Artifact"]
+      }
+    ],
+    "1996 World Champion": [
+      {
+        "colorIdentity": ["B", "G", "R", "U", "W"],
+        "colors": ["B", "G", "R", "U", "W"],
+        "convertedManaCost": 5.0,
+        "firstPrinting": "PCEL",
+        "foreignData": [],
+        "identifiers": {
+          "scryfallOracleId": "39302443-4614-4e62-832a-b74eb2136bc7"
+        },
+        "layout": "normal",
+        "legalities": {},
+        "manaCost": "{W}{U}{B}{R}{G}",
+        "manaValue": 5.0,
+        "name": "1996 World Champion",
+        "power": "*",
+        "printings": ["PCEL"],
+        "purchaseUrls": {
+          "tcgplayer": "https://mtgjson.com/links/d8c090aa0b7765d6"
+        },
+        "subtypes": [],
+        "supertypes": [],
+        "text": "Cannot be the target of spells or effects. World Champion has power and toughness equal to the life total of target opponent.\n{0}: Discard your hand to search your library for 1996 World Champion and reveal it to all players. Shuffle your library and put 1996 World Champion on top of it. Use this ability only at the beginning of your upkeep, and only if 1996 World Champion is in your library.",
+        "toughness": "*",
+        "type": "Summon Legend",
+        "types": ["Summon", "Legend"]
+      }
+    ]
+  }
+}

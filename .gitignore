@@ -1,2 +1,5 @@
 .vscode
 node_modules
+mtg_json/AtomicCards.json
+cards/AllPrintings.json
+cards/AtomicCards.json

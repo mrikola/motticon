@@ -1,0 +1,10 @@
+{
+  "name": "cards",
+  "version": "1.0.0",
+  "description": "parsing of mtg cards",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ."
+  }
+}
