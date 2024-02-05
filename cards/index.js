@@ -1,22 +1,18 @@
 const fs = require("fs");
 
-// use "short.json" for testing
-const response = JSON.parse(fs.readFileSync("AtomicCards.json"));
+// current script works with AllIdentifiers.json (https://mtgjson.com/downloads/all-files/#allidentifiers)
+// use "short_identifiers.json" for testing
+const response = JSON.parse(fs.readFileSync("AllIdentifiers.json"));
 
 let cards = [];
-for (const [name, cardinfo] of Object.entries(response.data)) {
-  for (const [key, info_object] of Object.entries(cardinfo)) {
-    if (typeof cardinfo[key] === "object") {
-      let card_obj = {
-        name: info_object.name,
-        scryfall_id: info_object.identifiers.scryfallOracleId,
-      };
-      for (const [key, value] of Object.entries(info_object.printings)) {
-        var printing = { set: value };
-        card_obj = { ...card_obj, ...printing };
-      }
-      cards.push(card_obj);
-    }
+for (const [key, cardinfo] of Object.entries(response.data)) {
+  if (typeof response.data[key] === "object") {
+    let card_obj = {
+      name: cardinfo.name,
+      set: cardinfo.setCode,
+      scryfallId: cardinfo.identifiers.scryfallId,
+    };
+    cards.push(card_obj);
   }
 }
 
