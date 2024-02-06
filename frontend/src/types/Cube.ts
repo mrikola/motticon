@@ -13,3 +13,9 @@ export type CubeSelection = {
   displayText: string;
   disabled: boolean;
 };
+
+export type Card = {
+  name: string;
+  set: string;
+  scryfallId: string;
+};

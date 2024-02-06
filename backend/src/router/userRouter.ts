@@ -42,6 +42,7 @@ import {
   setDeckPhotoForUser,
 } from "../controller/draft.controller";
 import { getPreviousScore, getStandings } from "../controller/score.controller";
+import { searchForCard } from "../controller/card.controller";
 
 export const userRouter = express.Router();
 
@@ -201,4 +202,8 @@ userRouter.post("/tournament/:tournamentId/drop/:userId", async (req, res) => {
 
 userRouter.post("/setDeckPhoto", async (req, res) => {
   res.send(await setDeckPhotoForUser(req));
+});
+
+userRouter.get("/card/search/:query", async (req, res) => {
+  res.send(await searchForCard(req));
 });

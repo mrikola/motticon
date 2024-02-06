@@ -16,4 +16,7 @@ for (const [key, cardinfo] of Object.entries(response.data)) {
   }
 }
 
+cards.sort((a, b) => a.name.localeCompare(b.name));
 fs.writeFileSync("filtered.json", JSON.stringify(cards, null, 2));
+const uniqueCards = [...new Map(cards.map((v) => [v.scryfallId, v])).values()];
+fs.writeFileSync("no_duplicates.json", JSON.stringify(uniqueCards, null, 2));
