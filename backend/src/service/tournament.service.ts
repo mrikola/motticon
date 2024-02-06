@@ -434,17 +434,4 @@ export class TournamentService {
     this.scoreService.saveSnapshot(tournamentId, round.roundNumber);
     return null;
   }
-
-  async resetRecentMatchesForTournament(tournamentId: number) {
-    const round = await this.getCurrentRound(tournamentId);
-    if (round) {
-      const matches = await this.matchService.getMatchesForRound(round.id);
-      matches.forEach((match) => {
-        this.matchService.submitResult(match.id, null, 0, 0);
-      });
-      return true;
-    } else {
-      return;
-    }
-  }
 }

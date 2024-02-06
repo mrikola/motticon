@@ -93,13 +93,6 @@ export const getCurrentDraftAndMatch = async (req) => {
   );
 };
 
-export const resetRecentMatchesForTournament = async (req) => {
-  const { tournamentId } = req.params;
-  return await tournamentService.resetRecentMatchesForTournament(
-    tournamentId as number
-  );
-};
-
 export const startTournament = async (req) => {
   const { tournamentId } = req.params;
   return await tournamentService.startTournament(tournamentId as number);

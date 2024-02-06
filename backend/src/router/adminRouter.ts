@@ -1,9 +1,6 @@
 import * as express from "express";
 import { isValidAdminToken } from "../auth/auth";
-import {
-  createTournament,
-  resetRecentMatchesForTournament,
-} from "../controller/tournament.controller";
+import { createTournament } from "../controller/tournament.controller";
 import { resetEloForUser, updateElo } from "../controller/rating.controller";
 import { addCube } from "../controller/cube.controller";
 import { setDeckPhotoForUser } from "../controller/draft.controller";
@@ -19,10 +16,6 @@ adminRouter.use((req, res, next) => {
 
 adminRouter.get("/admin", (req, res) => {
   res.send("you got da powa");
-});
-
-adminRouter.post("/admin/reset/tournament/:tournamentId", async (req, res) => {
-  res.send(await resetRecentMatchesForTournament(req));
 });
 
 adminRouter.post("/tournament/create", async (req, res) => {
