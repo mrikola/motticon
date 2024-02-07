@@ -31,17 +31,48 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
 
   // get relevant draft info
   useEffect(() => {
+    let ignore = false;
     const fetchData = async () => {
-      const response = await get(`/draft/${draft.id}/user/${user?.id}`);
-      const draftPod = (await response.json()) as DraftPod;
-      setPlayerPod(draftPod);
-      setPlayerSeat(draftPod.seats[0]);
-      draftPod.seats[0].deckPhotoUrl ? setDeckBuildingDone(true) : false;
+      if (!ignore) {
+        const response = await get(`/draft/${draft.id}/user/${user?.id}`);
+        const draftPod = (await response.json()) as DraftPod;
+        console.log("B call in draftongoing: draft/id/user/userId");
+        // console.log(draftPod);
+        setPlayerPod(draftPod);
+        setPlayerSeat(draftPod.seats[0]);
+        draftPod.seats[0].deckPhotoUrl
+          ? setDeckBuildingDone(true)
+          : setDeckBuildingDone(false);
+      }
     };
     if (user && draft) {
       fetchData();
     }
+    return () => {
+      ignore = true;
+    };
   }, [user, draft]);
+
+  // useEffect(() => {
+  //   if (user) {
+  //     // console.log(draft);
+  //     Object.values(draft.pods).forEach((pod) => {
+  //       // console.log(pod);
+  //       Object.values(pod.seats).forEach((seat) => {
+  //         if (seat.player.id === user.id) {
+  //           // console.log("found user pod");
+  //           // console.log(pod);
+  //           // console.log(seat);
+  //           // setPlayerPod(pod);
+  //           // setPlayerSeat(seat);
+  //           // seat.deckPhotoUrl
+  //           //   ? setDeckBuildingDone(true)
+  //           //   : setDeckBuildingDone(false);
+  //         }
+  //       });
+  //     });
+  //   }
+  // }, [draft, draft.pods, user]);
 
   // get other seats for progress bar
   useEffect(() => {
@@ -57,7 +88,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
     if (totalPlayers === 0) {
       setTotalPlayers(seats.length);
     }
-  }, [draft]);
+  }, [draft, totalPlayers]);
 
   // update progress bar based on number of players done building
   useEffect(() => {

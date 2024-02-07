@@ -20,50 +20,68 @@ const Ongoing = () => {
   const [latestRound, setLatestRound] = useState<Round>();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const [roundResponse, draftResponse] = await Promise.all([
-        get(`/tournament/${tournamentId}/round`),
-        get(`/tournament/${tournamentId}/draft`),
-      ]);
-      try {
-        const round = (await roundResponse.json()) as Round;
-        const roundParsed: Round = {
-          ...round,
-          startTime: new Date(round.startTime),
-        };
-        setCurrentRound(roundParsed);
-        console.log(roundParsed);
-      } catch {
-        // TODO handle invalid response
-      }
+    let ignore = false;
+    if (!currentRound && !currentDraft) {
+      const fetchData = async () => {
+        if (!ignore) {
+          const [roundResponse, draftResponse] = await Promise.all([
+            get(`/tournament/${tournamentId}/round`),
+            get(`/tournament/${tournamentId}/draft`),
+          ]);
+          console.log("B call: tournament/id/round");
+          console.log("B call: tournament/id/draft");
+          try {
+            const round = (await roundResponse.json()) as Round;
+            const roundParsed: Round = {
+              ...round,
+              startTime: new Date(round.startTime),
+            };
+            setCurrentRound(roundParsed);
+            // console.log(roundParsed);
+          } catch {
+            // TODO handle invalid response
+          }
 
-      try {
-        const draft = (await draftResponse.json()) as Draft;
-        setCurrentDraft(draft);
-        // console.log(draft);
-      } catch {
-        // TODO handle invalid response
-      }
-    };
+          try {
+            const draft = (await draftResponse.json()) as Draft;
+            // console.log(draft);
+            setCurrentDraft(draft);
+            // console.log(draft);
+          } catch {
+            // TODO handle invalid response
+          }
+        }
+      };
 
-    if (user) {
-      fetchData();
+      if (user) {
+        fetchData();
+      }
     }
-  }, [tournamentId, user]);
+    return () => {
+      ignore = true;
+    };
+  }, [currentDraft, currentRound, tournamentId, user]);
 
   useEffect(() => {
+    let ignore = false;
     if (!tournament) {
       const fetchData = async () => {
-        const response = await get(`/tournament/${tournamentId}`);
-        const tourny = (await response.json()) as Tournament;
-        setTournament(tourny);
-        console.log(tourny);
+        if (!ignore) {
+          const response = await get(`/tournament/${tournamentId}`);
+          const tourny = (await response.json()) as Tournament;
+          console.log("B call: tournament/id");
+          setTournament(tourny);
+          // console.log(tourny);
+        }
       };
       if (user) {
         fetchData();
       }
     }
-  }, [tournamentId, user]);
+    return () => {
+      ignore = true;
+    };
+  }, [tournament, tournamentId, user]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,6 +90,7 @@ const Ongoing = () => {
           `/tournament/${tournamentId}/round/${currentRound?.id}/match/${user?.id}`
         );
         const match = (await response.json()) as Match;
+        console.log("B call: tournament/id/round/number/match/userID");
         setCurrentMatch(match);
       }
     };
@@ -79,23 +98,42 @@ const Ongoing = () => {
     if (user && currentRound) {
       fetchData();
     }
-  }, [currentRound]);
+  }, [currentMatch, currentRound, tournamentId, user]);
 
   // latestRoundNumber used for showing standings table
   useEffect(() => {
-    if (currentRound) {
-      setLatestRound(currentRound);
-    } else {
-      const fetchData = async () => {
-        const response = await get(`/tournament/${tournamentId}/round/recent`);
-        const round = (await response.json()) as Round;
-        setLatestRound(round);
-        console.log(round);
-      };
+    let ignore = true;
+    if (!latestRound) {
+      if (currentRound) {
+        setLatestRound(currentRound);
+      } else {
+        const fetchData = async () => {
+          const response = await get(
+            `/tournament/${tournamentId}/round/recent`
+          );
 
-      fetchData();
+          if (!ignore) {
+            console.log("B call: tournament/id/round/recent");
+            try {
+              const round = (await response.json()) as Round;
+              setLatestRound(round);
+            } catch {
+              // TODO handle invalid response
+            }
+          }
+          // const round = (await response.json()) as Round;
+          // console.log("B call: tournament/id/round/recent");
+          // setLatestRound(round);
+          // console.log(round);
+        };
+
+        fetchData();
+      }
     }
-  }, [currentRound, tournament]);
+    return () => {
+      ignore = true;
+    };
+  }, [currentRound, latestRound, tournament, tournamentId]);
 
   if (user && tournament) {
     return (
@@ -133,9 +171,7 @@ const Ongoing = () => {
               </>
             )}
             {!currentRound && !currentDraft && (
-              <>
-                <PendingView tournamentId={Number(tournamentId)} />
-              </>
+              <PendingView tournamentId={Number(tournamentId)} />
             )}
           </>
         )}

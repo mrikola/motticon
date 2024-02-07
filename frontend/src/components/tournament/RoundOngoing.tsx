@@ -146,9 +146,18 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
       const mtchs = await response.json();
       setMatches(mtchs);
     };
-    if (round) {
-      fetchData();
-    }
+    const doFetch = () => {
+      if (round) {
+        fetchData();
+      }
+    };
+    doFetch();
+    const roundInterval = setInterval(doFetch, 10000);
+
+    // return destructor function from useEffect to clear the interval pinging
+    return () => {
+      clearInterval(roundInterval);
+    };
   }, [round]);
 
   // set total matches for progress bar

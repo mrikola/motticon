@@ -13,27 +13,35 @@ const PendingView = ({ tournamentId }: Props) => {
   const [tournament, setTournament] = useState<Tournament>();
 
   useEffect(() => {
+    let ignore = false;
     const fetchData = async () => {
       const resp = await get(`/tournament/${tournamentId}/drafts`);
-      const tournament = (await resp.json()) as Tournament;
-      setTournament(tournament);
+      if (!ignore) {
+        const tourny = (await resp.json()) as Tournament;
+        console.log("B call pending: tournament/id/drafts");
+        setTournament(tourny);
 
-      const drafts = tournament.drafts ?? [];
-      setFirstPendingDraft(
-        drafts
-          .sort((a, b) => a.draftNumber - b.draftNumber)
-          .find((draft) => draft.status === "pending")
-      );
+        const drafts = tourny.drafts ?? [];
+        setFirstPendingDraft(
+          drafts
+            .sort((a, b) => a.draftNumber - b.draftNumber)
+            .find((draft) => draft.status === "pending")
+        );
 
-      setLastCompletedDraft(
-        drafts
-          .sort((a, b) => b.draftNumber - a.draftNumber)
-          .find((draft) => draft.status === "completed")
-      );
+        setLastCompletedDraft(
+          drafts
+            .sort((a, b) => b.draftNumber - a.draftNumber)
+            .find((draft) => draft.status === "completed")
+        );
+      }
     };
 
     fetchData();
-  }, [tournamentId, JSON.stringify(tournament)]);
+
+    return () => {
+      ignore = true;
+    };
+  }, [firstPendingDraft, lastCompletedDraft, tournament, tournamentId]);
 
   // if latest draft completed == tournament draft count, tournament is over (minus top 8)
   // else if next draft pending == null, we need to generate the draft and pods

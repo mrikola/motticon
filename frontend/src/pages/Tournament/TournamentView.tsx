@@ -81,8 +81,12 @@ const TournamentView = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(`/tournament/${tournamentId}/round`);
-      const round = (await response.json()) as Round;
-      setNewestRoundNumber(round.roundNumber);
+      try {
+        const round = (await response.json()) as Round;
+        setNewestRoundNumber(round.roundNumber);
+      } catch {
+        // TODO handle invalid response
+      }
     };
     if (
       user &&
