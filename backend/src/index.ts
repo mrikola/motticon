@@ -7,6 +7,9 @@ import { notLoggedInRouter } from "./router/notLoggedInRouter";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import path = require("node:path/posix");
 import { staffRouter } from "./router/staffRouter";
+import { uploadDeckPhoto } from "./controller/draft.controller";
+import multer = require("multer");
+const upload = multer();
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -22,12 +25,12 @@ AppDataSource.initialize()
       writeFileSync("/photos/foo.txt", "this is a test");
     }
 
-    app.use(express.json());
     app.use(
       cors({
         origin: process.env.FRONTEND_URL,
       })
     );
+    app.use(express.json());
 
     app.get("/", (req, res) => {
       res.send("Hello world, how are you doing");

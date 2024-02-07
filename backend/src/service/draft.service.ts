@@ -64,7 +64,8 @@ export class DraftService {
 
   async setDeckPhotoForUser(
     tournamentId: number,
-    seatId: number
+    seatId: number,
+    url?: string
   ): Promise<Draft> {
     // consider moving this to tournament.service
     await this.appDataSource
@@ -72,7 +73,7 @@ export class DraftService {
       .createQueryBuilder("seat")
       .update(DraftPodSeat)
       .set({
-        deckPhotoUrl: "blöö",
+        deckPhotoUrl: url ?? "blöö",
       })
       .where("id = :seatId", { seatId })
       .execute();

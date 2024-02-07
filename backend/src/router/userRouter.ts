@@ -1,4 +1,7 @@
 import * as express from "express";
+import * as multer from "multer";
+const upload = multer();
+
 import { isValidToken } from "../auth/auth";
 import {
   getAllTournaments,
@@ -40,6 +43,7 @@ import {
   getRoundsForDraft,
   getSeatsForPod,
   setDeckPhotoForUser,
+  uploadDeckPhoto,
 } from "../controller/draft.controller";
 import { getPreviousScore, getStandings } from "../controller/score.controller";
 import { searchForCard } from "../controller/card.controller";
@@ -203,6 +207,14 @@ userRouter.post("/tournament/:tournamentId/drop/:userId", async (req, res) => {
 userRouter.post("/setDeckPhoto", async (req, res) => {
   res.send(await setDeckPhotoForUser(req));
 });
+
+userRouter.post(
+  "/tournament/:tournamentId/submitDeck/:seatId",
+  upload.single("photo"),
+  async (req, res) => {
+    res.send(await uploadDeckPhoto(req));
+  }
+);
 
 userRouter.get("/card/search/:query", async (req, res) => {
   res.send(await searchForCard(req));

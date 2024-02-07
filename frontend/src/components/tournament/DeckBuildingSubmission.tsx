@@ -1,10 +1,7 @@
 import { Button, Col, Row } from "react-bootstrap";
-import VerticallyCenteredModal, {
-  VerticallyCenteredModalProps,
-} from "../general/VerticallyCenteredModal";
 import { useState } from "react";
 import { Draft, DraftPodSeat } from "../../types/Tournament";
-import { post } from "../../services/ApiService";
+import { postFormData } from "../../services/ApiService";
 
 type Props = {
   seat: DraftPodSeat;
@@ -21,95 +18,80 @@ function DeckBuildingSubmission({
   setDone,
   setDraft,
 }: Props) {
-  const [modal, setModal] = useState<VerticallyCenteredModalProps>({
-    show: false,
-    onHide: () => null,
-    heading: "",
-    text: "",
-    actionText: "",
-    actionFunction: () => {},
-  });
+  const [file, setFile] = useState<File | null>(null);
+  const [status, setStatus] = useState<
+    "initial" | "uploading" | "success" | "fail"
+  >("initial");
 
-  function markDone() {
-    if (seat) {
-      const seatId = seat.id;
-      post(`/setDeckPhoto`, {
-        tournamentId,
-        seatId,
-      }).then(async (resp) => {
-        const draft = (await resp.json()) as Draft;
-        if (draft !== null) {
-          console.log(draft);
-          setDone(true);
-          setDraft(draft);
-          setModal({
-            ...modal,
-            show: false,
-          });
-        }
-      });
-    } else {
-      console.log("error");
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setStatus("initial");
+      setFile(e.target.files[0]);
+      console.log("setting file", e.target.files[0]);
     }
-  }
+  };
 
-  function handleDoneClick() {
-    setModal({
-      show: true,
-      onHide: () => null,
-      heading: "Confirm deck building done",
-      text: "Are you sure you want to confirm your deck building is done?",
-      actionText: "Confirm done",
-      actionFunction: markDone,
-    });
-  }
+  const handleUpload = async () => {
+    if (file) {
+      setStatus("uploading");
+
+      const formData = new FormData();
+      formData.append("photo", file);
+      for (var key of formData.entries()) {
+        console.log("key", key);
+      }
+
+      try {
+        const result = await postFormData(
+          `/tournament/${tournamentId}/submitDeck/${seat.id}`,
+          formData
+        );
+
+        const data = await result.json();
+
+        console.log(data);
+        setStatus("success");
+      } catch (error) {
+        console.error(error);
+        setStatus("fail");
+      }
+    }
+  };
+
   return (
     <Row>
       {done ? (
-        <Row>
+        <>
           <h2>Your deck building done.</h2>
           <p>Waiting for other players to submit their decks.</p>
           <Col className="d-grid gap-2">
             <Button
               variant="primary"
               className="btn-lg"
-              onClick={handleDoneClick}
+              onClick={() => null}
               disabled={done}
             >
               Your deck building done
             </Button>
           </Col>
-        </Row>
+        </>
       ) : (
-        <Row>
+        <>
           <h2>Deck building</h2>
-          <p>Click the button to confirm you are done with deck building.</p>
           <Col className="d-grid gap-2">
+            <input type="file" name="poop" onChange={handleFileChange} />
             <Button
               variant="primary"
               className="btn-lg"
-              onClick={handleDoneClick}
+              onClick={() => handleUpload()}
               disabled={done}
             >
               Complete deck building
             </Button>
+            upload status: {status}
           </Col>
-        </Row>
+        </>
       )}
-
-      <VerticallyCenteredModal
-        show={modal.show}
-        onHide={() =>
-          setModal({
-            ...modal,
-            show: false,
-          })
-        }
-        heading={modal.heading}
-        text={modal.text}
-        actionText={modal.actionText}
-        actionFunction={modal.actionFunction}
-      />
     </Row>
   );
 }

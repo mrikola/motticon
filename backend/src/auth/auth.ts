@@ -1,6 +1,7 @@
 import { hashSync, compareSync } from "bcrypt";
 import { verify, sign, JwtPayload } from "jsonwebtoken";
 import { UserService } from "../service/user.service";
+import { User } from "../entity/User";
 
 const { JWT_SECRET_KEY } = process.env;
 const userService = new UserService();
@@ -60,4 +61,14 @@ export const doLogin = async (email: string, password: string) => {
     },
     JWT_SECRET_KEY
   );
+};
+
+export const getUserFromToken = (token: string) => {
+  try {
+    const decoded = verify(token, JWT_SECRET_KEY) as JwtPayload;
+    const { id, firstName, lastName } = decoded;
+    return { id, firstName, lastName };
+  } catch (err: unknown) {
+    return null;
+  }
 };
