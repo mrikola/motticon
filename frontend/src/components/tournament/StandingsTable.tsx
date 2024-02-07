@@ -45,7 +45,7 @@ const StandingsTable = ({ roundNumber, tournamentId }: Props) => {
               <td>{result.draftsWon}</td>
               <td>
                 {result.opponentMatchWinPercentage != 0
-                  ? result.opponentMatchWinPercentage
+                  ? (result.opponentMatchWinPercentage * 100).toPrecision(5)
                   : Math.random().toPrecision(3).toString().substring(1, 5)}
               </td>
             </tr>

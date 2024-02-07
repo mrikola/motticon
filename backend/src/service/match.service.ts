@@ -31,7 +31,7 @@ export class MatchService {
   async getMatchesForRound(roundId: number) {
     const cachedMatches = this.roundMatchesCache.get(roundId);
     if (cachedMatches) {
-      console.log("cache hit");
+      console.log("matches for round cache hit");
       return cachedMatches;
     }
     const matches = await this.repository

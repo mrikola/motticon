@@ -9,6 +9,7 @@ import { Draft, Match, Round, Tournament } from "../../types/Tournament";
 import PendingView from "../../components/tournament/PendingView";
 import StandingsTable from "../../components/tournament/StandingsTable";
 import BackButton from "../../components/general/BackButton";
+import BetweenRounds from "../../components/tournament/BetweenRounds";
 
 const Ongoing = () => {
   const { tournamentId } = useParams();
@@ -20,120 +21,143 @@ const Ongoing = () => {
   const [latestRound, setLatestRound] = useState<Round>();
 
   useEffect(() => {
-    let ignore = false;
-    if (!currentRound && !currentDraft) {
-      const fetchData = async () => {
-        if (!ignore) {
-          const [roundResponse, draftResponse] = await Promise.all([
-            get(`/tournament/${tournamentId}/round`),
-            get(`/tournament/${tournamentId}/draft`),
-          ]);
-          console.log("B call: tournament/id/round");
-          console.log("B call: tournament/id/draft");
-          try {
-            const round = (await roundResponse.json()) as Round;
-            const roundParsed: Round = {
-              ...round,
-              startTime: new Date(round.startTime),
-            };
-            setCurrentRound(roundParsed);
-            // console.log(roundParsed);
-          } catch {
-            // TODO handle invalid response
-          }
+    const fetchData = async () => {
+      const [roundResponse, draftResponse] = await Promise.all([
+        get(`/tournament/${tournamentId}/round`),
+        get(`/tournament/${tournamentId}/draft`),
+      ]);
+      console.log("B call: tournament/id/round");
+      console.log("B call: tournament/id/draft");
+      try {
+        const round = (await roundResponse.json()) as Round;
+        const roundParsed: Round = {
+          ...round,
+          startTime: new Date(round.startTime),
+        };
+        setCurrentRound(roundParsed);
+        // console.log(roundParsed);
+      } catch {
+        // TODO handle invalid response
+        // set current round as null when inbetween rounds
+        setCurrentRound(undefined);
+      }
 
-          try {
-            const draft = (await draftResponse.json()) as Draft;
-            // console.log(draft);
-            setCurrentDraft(draft);
-            // console.log(draft);
-          } catch {
-            // TODO handle invalid response
-          }
+      try {
+        const draft = (await draftResponse.json()) as Draft;
+        setCurrentDraft(draft);
+        console.log(draft);
+      } catch {
+        // TODO handle invalid response
+        if (
+          latestRound?.status === "completed" &&
+          latestRound.roundNumber === currentDraft?.lastRound
+        ) {
+          console.log("draft done");
+          setCurrentDraft(undefined);
         }
-      };
-
-      if (user) {
+      }
+    };
+    const doFetch = () => {
+      if (user && tournament?.status !== "completed") {
         fetchData();
       }
-    }
-    return () => {
-      ignore = true;
     };
-  }, [currentDraft, currentRound, tournamentId, user]);
 
-  useEffect(() => {
-    let ignore = false;
-    if (!tournament) {
-      const fetchData = async () => {
-        if (!ignore) {
-          const response = await get(`/tournament/${tournamentId}`);
-          const tourny = (await response.json()) as Tournament;
-          console.log("B call: tournament/id");
-          setTournament(tourny);
-          // console.log(tourny);
-        }
-      };
-      if (user) {
-        fetchData();
-      }
-    }
+    doFetch();
+    const roundInterval = setInterval(doFetch, 10000);
+
+    // return destructor function from useEffect to clear the interval pinging
     return () => {
-      ignore = true;
+      clearInterval(roundInterval);
     };
-  }, [tournament, tournamentId, user]);
+  }, [tournamentId, user, tournament]);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (currentRound && !currentMatch) {
+      const response = await get(`/tournament/${tournamentId}`);
+      const tourny = (await response.json()) as Tournament;
+      console.log("B call: tournament/id");
+      setTournament(tourny);
+      // console.log(tourny);
+    };
+
+    const doFetch = () => {
+      if (user) {
+        fetchData();
+      }
+    };
+
+    doFetch();
+    const roundInterval = setInterval(doFetch, 10000);
+
+    // return destructor function from useEffect to clear the interval pinging
+    return () => {
+      clearInterval(roundInterval);
+    };
+  }, [tournamentId, user]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (currentRound) {
         const response = await get(
           `/tournament/${tournamentId}/round/${currentRound?.id}/match/${user?.id}`
         );
         const match = (await response.json()) as Match;
         console.log("B call: tournament/id/round/number/match/userID");
         setCurrentMatch(match);
+        // console.log(match);
       }
     };
 
-    if (user && currentRound) {
-      fetchData();
-    }
-  }, [currentMatch, currentRound, tournamentId, user]);
+    const doFetch = () => {
+      if (user && currentRound) {
+        fetchData();
+      }
+    };
+
+    doFetch();
+    const roundInterval = setInterval(doFetch, 10000);
+
+    // return destructor function from useEffect to clear the interval pinging
+    return () => {
+      clearInterval(roundInterval);
+    };
+  }, [currentRound, tournamentId, user]);
 
   // latestRoundNumber used for showing standings table
   useEffect(() => {
-    let ignore = true;
-    if (!latestRound) {
-      if (currentRound) {
-        setLatestRound(currentRound);
-      } else {
-        const fetchData = async () => {
-          const response = await get(
-            `/tournament/${tournamentId}/round/recent`
-          );
+    // if (currentRound) {
+    //   setLatestRound(currentRound);
+    // } else {
+    const fetchData = async () => {
+      const response = await get(`/tournament/${tournamentId}/round/recent`);
 
-          if (!ignore) {
-            console.log("B call: tournament/id/round/recent");
-            try {
-              const round = (await response.json()) as Round;
-              setLatestRound(round);
-            } catch {
-              // TODO handle invalid response
-            }
-          }
-          // const round = (await response.json()) as Round;
-          // console.log("B call: tournament/id/round/recent");
-          // setLatestRound(round);
-          // console.log(round);
-        };
+      console.log("B call: tournament/id/round/recent");
+      try {
+        const round = (await response.json()) as Round;
+        setLatestRound(round);
+        // console.log(round);
+      } catch {
+        // TODO handle invalid response
+      }
 
+      // const round = (await response.json()) as Round;
+      // console.log("B call: tournament/id/round/recent");
+    };
+    const doFetch = () => {
+      if (user) {
         fetchData();
       }
-    }
-    return () => {
-      ignore = true;
     };
-  }, [currentRound, latestRound, tournament, tournamentId]);
+
+    doFetch();
+    const roundInterval = setInterval(doFetch, 10000);
+
+    // return destructor function from useEffect to clear the interval pinging
+    return () => {
+      clearInterval(roundInterval);
+    };
+  }, [currentRound, tournament, tournamentId]);
 
   if (user && tournament) {
     return (
@@ -160,7 +184,11 @@ const Ongoing = () => {
             {!currentRound && currentDraft && (
               <>
                 {latestRound ? (
-                  <h3>Round {latestRound.roundNumber} done.</h3>
+                  <BetweenRounds
+                    latestRoundNumber={latestRound.roundNumber}
+                    lastRoundNumber={currentDraft.lastRound}
+                    draft={currentDraft}
+                  />
                 ) : (
                   <DraftOngoing
                     draft={currentDraft}

@@ -13,35 +13,41 @@ const PendingView = ({ tournamentId }: Props) => {
   const [tournament, setTournament] = useState<Tournament>();
 
   useEffect(() => {
-    let ignore = false;
     const fetchData = async () => {
       const resp = await get(`/tournament/${tournamentId}/drafts`);
-      if (!ignore) {
-        const tourny = (await resp.json()) as Tournament;
-        console.log("B call pending: tournament/id/drafts");
-        setTournament(tourny);
 
-        const drafts = tourny.drafts ?? [];
-        setFirstPendingDraft(
-          drafts
-            .sort((a, b) => a.draftNumber - b.draftNumber)
-            .find((draft) => draft.status === "pending")
-        );
+      const tourny = (await resp.json()) as Tournament;
+      console.log("B call pending: tournament/id/drafts");
+      setTournament(tourny);
 
-        setLastCompletedDraft(
-          drafts
-            .sort((a, b) => b.draftNumber - a.draftNumber)
-            .find((draft) => draft.status === "completed")
-        );
+      const drafts = tourny.drafts ?? [];
+      setFirstPendingDraft(
+        drafts
+          .sort((a, b) => a.draftNumber - b.draftNumber)
+          .find((draft) => draft.status === "pending")
+      );
+
+      setLastCompletedDraft(
+        drafts
+          .sort((a, b) => b.draftNumber - a.draftNumber)
+          .find((draft) => draft.status === "completed")
+      );
+    };
+
+    const doFetch = () => {
+      if (tournamentId) {
+        fetchData();
       }
     };
 
-    fetchData();
+    doFetch();
+    const roundInterval = setInterval(doFetch, 10000);
 
+    // return destructor function from useEffect to clear the interval pinging
     return () => {
-      ignore = true;
+      clearInterval(roundInterval);
     };
-  }, [firstPendingDraft, lastCompletedDraft, tournament, tournamentId]);
+  }, [tournamentId]);
 
   // if latest draft completed == tournament draft count, tournament is over (minus top 8)
   // else if next draft pending == null, we need to generate the draft and pods
