@@ -2,8 +2,8 @@ import path = require("path");
 import { getUserFromToken } from "../auth/auth";
 import { DraftService } from "../service/draft.service";
 import { createDirIfNotExists } from "../util/fs";
-import { existsSync, writeFileSync } from "fs";
-import * as mime from "mime-types";
+import { writeFileSync } from "fs";
+import mime from "mime-types";
 
 const draftService = new DraftService();
 

@@ -1,4 +1,4 @@
-import * as express from "express";
+import express from "express";
 import { isValidAdminToken } from "../auth/auth";
 import { createTournament } from "../controller/tournament.controller";
 import { resetEloForUser, updateElo } from "../controller/rating.controller";

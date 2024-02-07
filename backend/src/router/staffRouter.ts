@@ -1,4 +1,4 @@
-import * as express from "express";
+import express from "express";
 import { isValidStaffMemberToken } from "../auth/auth";
 import {
   endDraft,

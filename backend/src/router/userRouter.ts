@@ -1,5 +1,5 @@
-import * as express from "express";
-import * as multer from "multer";
+import express from "express";
+import multer from "multer";
 const upload = multer();
 
 import { isValidToken } from "../auth/auth";

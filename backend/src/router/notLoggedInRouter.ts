@@ -1,4 +1,4 @@
-import * as express from "express";
+import express from "express";
 import { doLogin } from "../auth/auth";
 import { signup } from "../controller/user.controller";
 

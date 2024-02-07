@@ -1,6 +1,6 @@
 import { Card, Col, Row } from "react-bootstrap";
 import { SquareFill } from "react-bootstrap-icons";
-import * as icons from "react-bootstrap-icons";
+import icons from "react-bootstrap-icons";
 import { Icon } from "./Icon";
 import { useEffect, useState } from "react";
 

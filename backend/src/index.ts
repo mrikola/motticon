@@ -1,15 +1,12 @@
 import { AppDataSource } from "./data-source";
-import * as express from "express";
-import * as cors from "cors";
+import express from "express";
+import cors from "cors";
 import { adminRouter } from "./router/adminRouter";
 import { userRouter } from "./router/userRouter";
 import { notLoggedInRouter } from "./router/notLoggedInRouter";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import path = require("node:path/posix");
 import { staffRouter } from "./router/staffRouter";
-import { uploadDeckPhoto } from "./controller/draft.controller";
-import multer = require("multer");
-const upload = multer();
 
 const port = process.env.PORT || 3000;
 const app = express();
