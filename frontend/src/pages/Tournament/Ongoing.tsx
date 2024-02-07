@@ -35,7 +35,7 @@ const Ongoing = () => {
           startTime: new Date(round.startTime),
         };
         setCurrentRound(roundParsed);
-        console.log(roundParsed);
+        // console.log(roundParsed);
       } catch {
         // TODO handle invalid response
         // set current round as null when inbetween rounds
@@ -48,6 +48,13 @@ const Ongoing = () => {
         console.log(draft);
       } catch {
         // TODO handle invalid response
+        if (
+          latestRound?.status === "completed" &&
+          latestRound.roundNumber === currentDraft?.lastRound
+        ) {
+          console.log("draft done");
+          setCurrentDraft(undefined);
+        }
       }
     };
     const doFetch = () => {
@@ -129,7 +136,7 @@ const Ongoing = () => {
       try {
         const round = (await response.json()) as Round;
         setLatestRound(round);
-        console.log(round);
+        // console.log(round);
       } catch {
         // TODO handle invalid response
       }
@@ -180,6 +187,7 @@ const Ongoing = () => {
                   <BetweenRounds
                     latestRoundNumber={latestRound.roundNumber}
                     lastRoundNumber={currentDraft.lastRound}
+                    draft={currentDraft}
                   />
                 ) : (
                   <DraftOngoing
