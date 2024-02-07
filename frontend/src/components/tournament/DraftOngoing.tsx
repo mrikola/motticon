@@ -31,25 +31,29 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
 
   // get relevant draft info
   useEffect(() => {
-    let ignore = false;
     const fetchData = async () => {
-      if (!ignore) {
-        const response = await get(`/draft/${draft.id}/user/${user?.id}`);
-        const draftPod = (await response.json()) as DraftPod;
-        console.log("B call in draftongoing: draft/id/user/userId");
-        // console.log(draftPod);
-        setPlayerPod(draftPod);
-        setPlayerSeat(draftPod.seats[0]);
-        draftPod.seats[0].deckPhotoUrl
-          ? setDeckBuildingDone(true)
-          : setDeckBuildingDone(false);
+      const response = await get(`/draft/${draft.id}/user/${user?.id}`);
+      const draftPod = (await response.json()) as DraftPod;
+      console.log("B call in draftongoing: draft/id/user/userId");
+      // console.log(draftPod);
+      setPlayerPod(draftPod);
+      setPlayerSeat(draftPod.seats[0]);
+      draftPod.seats[0].deckPhotoUrl
+        ? setDeckBuildingDone(true)
+        : setDeckBuildingDone(false);
+    };
+    const doFetch = () => {
+      if (user && draft) {
+        fetchData();
       }
     };
-    if (user && draft) {
-      fetchData();
-    }
+
+    doFetch();
+    const roundInterval = setInterval(doFetch, 10000);
+
+    // return destructor function from useEffect to clear the interval pinging
     return () => {
-      ignore = true;
+      clearInterval(roundInterval);
     };
   }, [user, draft]);
 

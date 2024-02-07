@@ -5,14 +5,20 @@ import { DraftPodSeat } from "../entity/DraftPodSeat";
 import { Round } from "../entity/Round";
 import { TournamentService } from "./tournament.service";
 import { Draft } from "../entity/Draft";
+import { LRUCache } from "lru-cache";
 
 export class DraftService {
   private appDataSource: DataSource;
   private tournamentService: TournamentService;
+  private userDraftPodCache: LRUCache<string, DraftPod>;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.tournamentService = new TournamentService();
+    this.userDraftPodCache = new LRUCache({
+      ttl: 1000 * 10,
+      ttlAutopurge: true,
+    });
   }
 
   async getPodsForDraft(draftId: number): Promise<DraftPod[]> {
@@ -37,7 +43,13 @@ export class DraftService {
     draftId: number,
     userId: number
   ): Promise<DraftPod> {
-    return await this.appDataSource
+    const identifier = draftId.toString + "." + userId.toString;
+    const cachedPod = this.userDraftPodCache.get(identifier);
+    if (cachedPod) {
+      console.log("draft pod cache hit");
+      return cachedPod;
+    }
+    const pod = await this.appDataSource
       .getRepository(DraftPod)
       .createQueryBuilder("pod")
       .leftJoinAndSelect("pod.cube", "cube")
@@ -46,6 +58,8 @@ export class DraftService {
       .where('pod."draftId" = :draftId', { draftId })
       .andWhere("player.id = :userId", { userId })
       .getOne();
+    this.userDraftPodCache.set(identifier, pod);
+    return pod;
   }
 
   async getRoundsForDraft(draftId: number): Promise<Round[]> {

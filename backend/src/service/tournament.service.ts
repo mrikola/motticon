@@ -15,6 +15,7 @@ import { RatingService } from "./rating.service";
 import { Match } from "../entity/Match";
 import { ScoreService } from "./score.service";
 import { PlayerTournamentScore } from "../entity/PlayerTournamentScore";
+import { LRUCache } from "lru-cache";
 
 export class TournamentService {
   private appDataSource: DataSource;
@@ -23,6 +24,8 @@ export class TournamentService {
   private cubeService: CubeService;
   private ratingService: RatingService;
   private scoreService: ScoreService;
+  private tournamentCache: LRUCache<number, Tournament>;
+  private userMatchCache: LRUCache<string, Match>;
 
   constructor() {
     this.appDataSource = AppDataSource;
@@ -31,6 +34,14 @@ export class TournamentService {
     this.cubeService = new CubeService();
     this.ratingService = new RatingService();
     this.scoreService = new ScoreService();
+    this.tournamentCache = new LRUCache({
+      ttl: 1000 * 10,
+      ttlAutopurge: true,
+    });
+    this.userMatchCache = new LRUCache({
+      ttl: 1000 * 10,
+      ttlAutopurge: true,
+    });
   }
 
   async createTournament(
@@ -142,9 +153,16 @@ export class TournamentService {
   }
 
   async getTournament(id: number): Promise<Tournament> {
-    return await this.repository.findOne({
+    const cachedTournament = this.tournamentCache.get(id);
+    if (cachedTournament) {
+      console.log("get tournament cache hit");
+      return cachedTournament;
+    }
+    const tournament = await this.repository.findOne({
       where: { id },
     });
+    this.tournamentCache.set(id, tournament);
+    return tournament;
   }
 
   async getTournamentEnrollments(id: number): Promise<Tournament> {
@@ -205,6 +223,12 @@ export class TournamentService {
   }
 
   async getCurrentMatch(userId: number, roundId: number): Promise<Match> {
+    const identifier = roundId + "." + userId;
+    const cachedMatch = this.userMatchCache.get(identifier);
+    if (cachedMatch) {
+      console.log("user match cache hit");
+      return cachedMatch;
+    }
     const match = await this.appDataSource
       .getRepository(Match)
       .createQueryBuilder("match")
@@ -222,7 +246,7 @@ export class TournamentService {
         )
       )
       .getOne();
-
+    this.userMatchCache.set(identifier, match);
     return match;
   }
 
