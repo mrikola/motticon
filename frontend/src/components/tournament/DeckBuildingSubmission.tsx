@@ -27,7 +27,6 @@ function DeckBuildingSubmission({
     if (e.target.files) {
       setStatus("initial");
       setFile(e.target.files[0]);
-      console.log("setting file", e.target.files[0]);
     }
   };
 
@@ -37,20 +36,19 @@ function DeckBuildingSubmission({
 
       const formData = new FormData();
       formData.append("photo", file);
-      for (var key of formData.entries()) {
-        console.log("key", key);
-      }
 
       try {
         const result = await postFormData(
           `/tournament/${tournamentId}/submitDeck/${seat.id}`,
           formData
         );
-
-        const data = await result.json();
-
-        console.log(data);
+        const draft = (await result.json()) as Draft;
         setStatus("success");
+        if (draft !== null) {
+          console.log(draft);
+          setDone(true);
+          setDraft(draft);
+        }
       } catch (error) {
         console.error(error);
         setStatus("fail");
