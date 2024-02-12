@@ -56,6 +56,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
     };
   }, [user, draft]);
 
+  // get pod info from draft-object rather than having to do extra backend call
   // useEffect(() => {
   //   if (user) {
   //     // console.log(draft);

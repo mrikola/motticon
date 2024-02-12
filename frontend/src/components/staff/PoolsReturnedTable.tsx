@@ -1,4 +1,4 @@
-import { Accordion, Button, Col, Row, Table } from "react-bootstrap";
+import { Accordion, Col, Row, Table } from "react-bootstrap";
 import { Draft, DraftPod, DraftPodSeat } from "../../types/Tournament";
 import { useEffect, useState } from "react";
 import { CheckSquare, CheckSquareFill } from "react-bootstrap-icons";
@@ -15,8 +15,10 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
   const [incompleteSeats, setIncompleteSeats] = useState<DraftPodSeat[]>([]);
 
   useEffect(() => {
-    setIncompleteSeats(seats.filter((seat) => seat.deckPhotoUrl === null));
-    setCompleteSeats(seats.filter((seat) => seat.deckPhotoUrl !== null));
+    setIncompleteSeats(
+      seats.filter((seat) => seat.draftPoolReturned === false)
+    );
+    setCompleteSeats(seats.filter((seat) => seat.draftPoolReturned === true));
   }, [seats]);
 
   if (completeSeats && incompleteSeats) {
@@ -32,7 +34,7 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
           <Accordion.Body className="px-0">
             <Row>
               <Col xs={12}>
-                <h3>Pools missing</h3>
+                <h3>Pools missing: {incompleteSeats.length}</h3>
                 <Table striped bordered hover size="sm">
                   <thead>
                     <tr>
@@ -48,8 +50,8 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
                         <td>
                           {seat.player.firstName} {seat.player.lastName}
                         </td>
-                        <td>
-                          {seat.deckPhotoUrl ? (
+                        <td className="cursor-pointer text-center">
+                          {seat.draftPoolReturned ? (
                             <CheckSquareFill
                               className="text-success fs-2"
                               onClick={() => markDoneClicked(seat)}
@@ -69,7 +71,7 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
             </Row>
             <Row>
               <Col xs={12}>
-                <h3>Pools returned</h3>
+                <h3>Pools returned: {completeSeats.length}</h3>
                 <Table striped bordered hover size="sm">
                   <thead>
                     <tr>
@@ -86,7 +88,7 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
                           {seat.player.firstName} {seat.player.lastName}
                         </td>
                         <td className="text-center">
-                          {seat.deckPhotoUrl ? (
+                          {seat.draftPoolReturned ? (
                             <CheckSquareFill
                               className="text-success fs-2"
                               onClick={() => markDoneClicked(seat)}

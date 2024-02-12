@@ -178,6 +178,7 @@ const Ongoing = () => {
                     latestRoundNumber={latestRound.roundNumber}
                     lastRoundNumber={currentDraft.lastRound}
                     draft={currentDraft}
+                    user={user}
                   />
                 ) : (
                   <DraftOngoing

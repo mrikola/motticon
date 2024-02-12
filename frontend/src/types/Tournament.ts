@@ -38,6 +38,7 @@ export type DraftPodSeat = {
   player: User;
   seat: number;
   deckPhotoUrl: string;
+  draftPoolReturned: boolean;
 };
 
 export type Match = {

@@ -38,7 +38,7 @@ const ManageDraft = ({
   const [allSeats, setAllSeats] = useState<DraftPodSeat[]>([]);
   const [totalPlayers, setTotalPlayers] = useState<number>(0);
   const [buildingRemaining, setBuildingRemaining] = useState<number>(0);
-  const [allPoolsReturned, setAllPoolsReturned] = useState<boolean>(false);
+  const [poolsReturned, setPoolsReturned] = useState<number>(0);
   const [modal, setModal] = useState<DeckBuildingModalProps>({
     show: false,
     onHide: () => null,
@@ -167,9 +167,13 @@ const ManageDraft = ({
     });
   }
 
-  function toggleAllPoolsReturned() {
-    setAllPoolsReturned((prevAllPoolsReturned) => !prevAllPoolsReturned);
-  }
+  useEffect(() => {
+    if (allSeats) {
+      setPoolsReturned(
+        allSeats.filter((seat) => seat.draftPoolReturned === true).length
+      );
+    }
+  }, [allSeats]);
 
   if (currentDraft) {
     return (
@@ -196,27 +200,21 @@ const ManageDraft = ({
                 variant="primary"
                 className="btn-lg"
                 onClick={() => completeDraft()}
-                disabled={!allPoolsReturned}
+                disabled={poolsReturned < totalPlayers}
               >
                 Complete draft
               </Button>
-              {!allPoolsReturned && (
+              {poolsReturned < totalPlayers && (
                 <p className="small text-center">
                   All draft pools need to be returned before the draft can be
                   complete.
                 </p>
               )}
-
-              <Button
-                variant="primary"
-                className="btn-lg"
-                onClick={() => toggleAllPoolsReturned()}
-              >
-                TESTING: toggle pools returned
-              </Button>
             </Col>
-            <Col xs={12}>
-              <h3>Draft pools waiting to be returned: 6/8</h3>
+            <Col xs={12} className="mt-3">
+              <h3>
+                Draft pools returned: {poolsReturned}/{totalPlayers}
+              </h3>
             </Col>
             <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
               <Link

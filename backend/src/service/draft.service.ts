@@ -94,4 +94,21 @@ export class DraftService {
     const draft = await this.tournamentService.getCurrentDraft(tournamentId);
     return draft;
   }
+
+  async setDraftPoolReturned(
+    tournamentId: number,
+    seatId: number
+  ): Promise<Draft> {
+    await this.appDataSource
+      .getRepository(DraftPodSeat)
+      .createQueryBuilder("seat")
+      .update(DraftPodSeat)
+      .set({
+        draftPoolReturned: true,
+      })
+      .where("id = :seatId", { seatId })
+      .execute();
+    const draft = await this.tournamentService.getCurrentDraft(tournamentId);
+    return draft;
+  }
 }

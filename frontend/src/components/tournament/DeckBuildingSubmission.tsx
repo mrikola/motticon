@@ -1,7 +1,8 @@
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import { useState } from "react";
 import { Draft, DraftPodSeat } from "../../types/Tournament";
 import { postFormData } from "../../services/ApiService";
+import { CheckSquareFill } from "react-bootstrap-icons";
 
 type Props = {
   seat: DraftPodSeat;
@@ -60,24 +61,23 @@ function DeckBuildingSubmission({
     <Row>
       {done ? (
         <>
-          <h2>Your deck building done.</h2>
+          <h2 className="icon-link">
+            Your deck building done <CheckSquareFill className="text-success" />
+          </h2>
           <p>Waiting for other players to submit their decks.</p>
-          <Col className="d-grid gap-2">
-            <Button
-              variant="primary"
-              className="btn-lg"
-              onClick={() => null}
-              disabled={done}
-            >
-              Your deck building done
-            </Button>
-          </Col>
         </>
       ) : (
         <>
           <h2>Deck building</h2>
+          <p>
+            After the draft, please submit a photo showing all the cards you
+            have drafted.
+          </p>
           <Col className="d-grid gap-2">
-            <input type="file" name="poop" onChange={handleFileChange} />
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Label>Draft pool photo</Form.Label>
+              <Form.Control type="file" onChange={handleFileChange} />
+            </Form.Group>
             <Button
               variant="primary"
               className="btn-lg"

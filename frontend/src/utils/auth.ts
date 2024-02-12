@@ -9,6 +9,7 @@ export type LoggedInUser = {
   lastName: string;
   isAdmin: boolean;
   tournamentsStaffed: number[];
+  rating: number;
 };
 
 export const getUserInfoFromJwt = async (jwt: string) => {

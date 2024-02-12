@@ -12,6 +12,7 @@ import {
 } from "../controller/tournament.controller";
 import { generatePairings } from "../controller/pairings.controller";
 import { staffSubmitResult } from "../controller/match.controller";
+import { setDraftPoolReturned } from "../controller/draft.controller";
 
 export const staffRouter = express.Router();
 
@@ -97,3 +98,7 @@ staffRouter.post(
     res.send(await staffSubmitResult(req));
   }
 );
+
+staffRouter.post("/setDraftPoolReturned", async (req, res) => {
+  res.send(await setDraftPoolReturned(req));
+});

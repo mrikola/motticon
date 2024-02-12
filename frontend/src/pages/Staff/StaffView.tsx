@@ -134,7 +134,6 @@ function StaffView() {
       )}
       {tournament.status === "pending" && (
         <>
-          <ManageEnrollments tournamentId={Number(tournamentId)} />
           <Row>
             <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
               <Button
@@ -146,6 +145,7 @@ function StaffView() {
               </Button>
             </Col>
           </Row>
+          <ManageEnrollments tournamentId={Number(tournamentId)} />
         </>
       )}
       {tournament.status === "completed" && (

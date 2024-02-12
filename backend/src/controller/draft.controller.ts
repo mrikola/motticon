@@ -30,6 +30,14 @@ export const getDraftInfoForUser = async (req) => {
   );
 };
 
+export const setDraftPoolReturned = async (req) => {
+  const { tournamentId, seatId } = req.body;
+  return await draftService.setDraftPoolReturned(
+    tournamentId as number,
+    seatId as number
+  );
+};
+
 export const setDeckPhotoForUser = async (req) => {
   const { tournamentId, seatId } = req.body;
   return await draftService.setDeckPhotoForUser(
