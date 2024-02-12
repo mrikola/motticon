@@ -100,14 +100,14 @@ INSERT INTO draft("tournamentId", "draftNumber") values(draft_8_man_2_2024_id, 1
 INSERT INTO draft("tournamentId", "draftNumber") values(pikadrafti_id, 1) RETURNING id into pikadrafti_draft_id;
 INSERT INTO draft_pod("draftId", "cubeId", "podNumber") values(pikadrafti_draft_id, monoblue_id, 1) RETURNING id into pikadrafti_pod_id;
 
-INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, pekka_id, 1);
-INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, markku_id, 2);
-INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, timo_id, 3);
-INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, tiina_id, 4);
-INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, john_id, 5);
-INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, jane_id, 6);
-INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, spike_id, 7);
-INSERT INTO draft_pod_seat("podId", "playerId", seat) values(pikadrafti_pod_id, timmy_id, 8);
+INSERT INTO draft_pod_seat("podId", "playerId", seat, "draftPoolReturned") values(pikadrafti_pod_id, pekka_id, 1, false);
+INSERT INTO draft_pod_seat("podId", "playerId", seat, "draftPoolReturned") values(pikadrafti_pod_id, markku_id, 2, false);
+INSERT INTO draft_pod_seat("podId", "playerId", seat, "draftPoolReturned") values(pikadrafti_pod_id, timo_id, 3, false);
+INSERT INTO draft_pod_seat("podId", "playerId", seat, "draftPoolReturned") values(pikadrafti_pod_id, tiina_id, 4, false);
+INSERT INTO draft_pod_seat("podId", "playerId", seat, "draftPoolReturned") values(pikadrafti_pod_id, john_id, 5, false);
+INSERT INTO draft_pod_seat("podId", "playerId", seat, "draftPoolReturned") values(pikadrafti_pod_id, jane_id, 6, false);
+INSERT INTO draft_pod_seat("podId", "playerId", seat, "draftPoolReturned") values(pikadrafti_pod_id, spike_id, 7, false);
+INSERT INTO draft_pod_seat("podId", "playerId", seat, "draftPoolReturned") values(pikadrafti_pod_id, timmy_id, 8, false);
 
 INSERT INTO round("tournamentId", "roundNumber", "status", "startTime") values(pikadrafti_id, 1, 'started', now()) RETURNING id INTO pikadrafti_round1_id;
 INSERT INTO round("tournamentId", "roundNumber") values(pikadrafti_id, 2);

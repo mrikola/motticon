@@ -5,9 +5,14 @@ import { useEffect, useState } from "react";
 type Props = {
   matches: Match[];
   submitResultClicked: (match: Match) => void;
+  roundTimerStarted: boolean;
 };
 
-const MatchTable = ({ matches, submitResultClicked }: Props) => {
+const MatchTable = ({
+  matches,
+  submitResultClicked,
+  roundTimerStarted,
+}: Props) => {
   const [ongoingMatches, setOngoingMatches] = useState<Match[]>();
   const [doneMatches, setDoneMatches] = useState<Match[]>();
 
@@ -52,8 +57,16 @@ const MatchTable = ({ matches, submitResultClicked }: Props) => {
                         variant="primary"
                         type="submit"
                         onClick={() => submitResultClicked(match)}
-                        disabled={match.resultSubmittedBy ? true : false}
-                        aria-disabled={match.resultSubmittedBy ? true : false}
+                        disabled={
+                          match.resultSubmittedBy || !roundTimerStarted
+                            ? true
+                            : false
+                        }
+                        aria-disabled={
+                          match.resultSubmittedBy || !roundTimerStarted
+                            ? true
+                            : false
+                        }
                       >
                         Submit result
                       </Button>

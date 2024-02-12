@@ -13,6 +13,7 @@ import DraftTable from "./DraftTable";
 import DeckBuildingModal, { DeckBuildingModalProps } from "./DeckBuildingModal";
 import DecksSubmittedProgressBar from "./DecksSubmittedProgressBar";
 import CardCountupTimer from "../general/CardCountupTimer";
+import { Link } from "react-router-dom";
 
 type Props = {
   currentDraft: Draft;
@@ -37,6 +38,7 @@ const ManageDraft = ({
   const [allSeats, setAllSeats] = useState<DraftPodSeat[]>([]);
   const [totalPlayers, setTotalPlayers] = useState<number>(0);
   const [buildingRemaining, setBuildingRemaining] = useState<number>(0);
+  const [allPoolsReturned, setAllPoolsReturned] = useState<boolean>(false);
   const [modal, setModal] = useState<DeckBuildingModalProps>({
     show: false,
     onHide: () => null,
@@ -94,6 +96,7 @@ const ManageDraft = ({
     );
     const matches = (await resp.json()) as Match[];
     setFirstPendingRound({ ...firstPendingRound!, matches });
+    // todo: response should return a Round so we can setCurrentRound() and instantly update the view
   };
 
   const startRound = async () => {
@@ -164,11 +167,16 @@ const ManageDraft = ({
     });
   }
 
+  function toggleAllPoolsReturned() {
+    setAllPoolsReturned((prevAllPoolsReturned) => !prevAllPoolsReturned);
+  }
+
   if (currentDraft) {
     return (
       <>
         <Row>
           <Col xs={12}>
+            <p>managedraft view</p>
             <p>
               Last completed round: {lastCompletedRound?.roundNumber ?? "N/A"}
             </p>
@@ -188,9 +196,35 @@ const ManageDraft = ({
                 variant="primary"
                 className="btn-lg"
                 onClick={() => completeDraft()}
+                disabled={!allPoolsReturned}
               >
                 Complete draft
               </Button>
+              {!allPoolsReturned && (
+                <p className="small text-center">
+                  All draft pools need to be returned before the draft can be
+                  complete.
+                </p>
+              )}
+
+              <Button
+                variant="primary"
+                className="btn-lg"
+                onClick={() => toggleAllPoolsReturned()}
+              >
+                TESTING: toggle pools returned
+              </Button>
+            </Col>
+            <Col xs={12}>
+              <h3>Draft pools waiting to be returned: 6/8</h3>
+            </Col>
+            <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+              <Link
+                className="btn btn-primary btn-lg"
+                to={`/tournament/${tournamentId}/pools`}
+              >
+                Manage draft pools
+              </Link>
             </Col>
           </Row>
         ) : firstPendingRound ? (
@@ -223,10 +257,12 @@ const ManageDraft = ({
                     >
                       Generate pairings
                     </Button>
-                    <p className="small text-center">
-                      You can only generate pairings once deckbuilding is
-                      complete for all players
-                    </p>
+                    {!lastCompletedRound && (
+                      <p className="small text-center">
+                        You can only generate pairings once deckbuilding is
+                        complete for all players
+                      </p>
+                    )}
                   </>
                 )}
               </Col>

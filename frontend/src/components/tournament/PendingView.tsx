@@ -15,9 +15,7 @@ const PendingView = ({ tournamentId }: Props) => {
   useEffect(() => {
     const fetchData = async () => {
       const resp = await get(`/tournament/${tournamentId}/drafts`);
-
       const tourny = (await resp.json()) as Tournament;
-      console.log("B call pending: tournament/id/drafts");
       setTournament(tourny);
 
       const drafts = tourny.drafts ?? [];

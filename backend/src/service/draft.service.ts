@@ -87,7 +87,7 @@ export class DraftService {
       .createQueryBuilder("seat")
       .update(DraftPodSeat)
       .set({
-        deckPhotoUrl: url ?? "blöö",
+        deckPhotoUrl: url ?? "/public/img/draft_pool.png",
       })
       .where("id = :seatId", { seatId })
       .execute();

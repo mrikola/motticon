@@ -26,8 +26,6 @@ const Ongoing = () => {
         get(`/tournament/${tournamentId}/round`),
         get(`/tournament/${tournamentId}/draft`),
       ]);
-      console.log("B call: tournament/id/round");
-      console.log("B call: tournament/id/draft");
       try {
         const round = (await roundResponse.json()) as Round;
         const roundParsed: Round = {
@@ -45,14 +43,13 @@ const Ongoing = () => {
       try {
         const draft = (await draftResponse.json()) as Draft;
         setCurrentDraft(draft);
-        console.log(draft);
+        // console.log(draft);
       } catch {
         // TODO handle invalid response
         if (
           latestRound?.status === "completed" &&
           latestRound.roundNumber === currentDraft?.lastRound
         ) {
-          console.log("draft done");
           setCurrentDraft(undefined);
         }
       }
@@ -76,7 +73,6 @@ const Ongoing = () => {
     const fetchData = async () => {
       const response = await get(`/tournament/${tournamentId}`);
       const tourny = (await response.json()) as Tournament;
-      console.log("B call: tournament/id");
       setTournament(tourny);
       // console.log(tourny);
     };
@@ -103,7 +99,6 @@ const Ongoing = () => {
           `/tournament/${tournamentId}/round/${currentRound?.id}/match/${user?.id}`
         );
         const match = (await response.json()) as Match;
-        console.log("B call: tournament/id/round/number/match/userID");
         setCurrentMatch(match);
         // console.log(match);
       }
@@ -131,8 +126,6 @@ const Ongoing = () => {
     // } else {
     const fetchData = async () => {
       const response = await get(`/tournament/${tournamentId}/round/recent`);
-
-      console.log("B call: tournament/id/round/recent");
       try {
         const round = (await response.json()) as Round;
         setLatestRound(round);
@@ -140,9 +133,6 @@ const Ongoing = () => {
       } catch {
         // TODO handle invalid response
       }
-
-      // const round = (await response.json()) as Round;
-      // console.log("B call: tournament/id/round/recent");
     };
     const doFetch = () => {
       if (user) {

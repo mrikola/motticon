@@ -48,10 +48,20 @@ function StaffView() {
       }
     };
 
-    if (user) {
-      fetchData();
-    }
-  }, [user]);
+    const doFetch = () => {
+      if (user) {
+        fetchData();
+      }
+    };
+
+    doFetch();
+    const roundInterval = setInterval(doFetch, 10000);
+
+    // return destructor function from useEffect to clear the interval pinging
+    return () => {
+      clearInterval(roundInterval);
+    };
+  }, [tournamentId, user]);
 
   useEffect(() => {
     if (!tournament) {
@@ -94,10 +104,7 @@ function StaffView() {
           buttonText="Back to tournament"
           path={`/tournament/${tournamentId}`}
         />
-        <h1 className="display-1">
-          Hey {user.firstName} {user.lastName}
-        </h1>
-        <h1 className="display-1">{tournament.name}</h1>
+        <h1 className="display-1">{tournament.name} Staff View</h1>
       </Row>
       {tournament.status === "started" && (
         <>

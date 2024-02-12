@@ -21,6 +21,7 @@ import CreateTournament from "./components/admin/CreateTournament";
 import AutocompleteTest from "./pages/Test/AutocompleteTest";
 import PublicProfile from "./pages/User/PublicProfile";
 import AllUsers from "./pages/User/AllUsers";
+import PoolView from "./pages/Staff/PoolView";
 
 function App() {
   const routes: RouteObject[] = [
@@ -95,6 +96,10 @@ function App() {
             {
               path: "tournament/:tournamentId/staff",
               Component: StaffView,
+            },
+            {
+              path: "tournament/:tournamentId/pools",
+              Component: PoolView,
             },
             {
               path: "user/:userId",

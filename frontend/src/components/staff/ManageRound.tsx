@@ -231,6 +231,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
         <MatchTable
           matches={matches}
           submitResultClicked={submitResultClicked}
+          roundTimerStarted={roundTimerStarted}
         />
         <VerticallyCenteredModal
           show={endRoundModal.show}

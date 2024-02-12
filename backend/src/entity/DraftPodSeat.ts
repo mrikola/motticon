@@ -30,4 +30,7 @@ export class DraftPodSeat {
 
   @Column({ nullable: true })
   deckPhotoUrl: string;
+
+  @Column()
+  draftPoolReturned: boolean;
 }

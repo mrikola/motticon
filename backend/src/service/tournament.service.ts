@@ -319,6 +319,7 @@ export class TournamentService {
           pod,
           seat: playerIndex + 1,
           player,
+          draftPoolReturned: false,
         });
       });
     });

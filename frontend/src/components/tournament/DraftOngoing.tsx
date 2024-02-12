@@ -34,7 +34,6 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
     const fetchData = async () => {
       const response = await get(`/draft/${draft.id}/user/${user?.id}`);
       const draftPod = (await response.json()) as DraftPod;
-      console.log("B call in draftongoing: draft/id/user/userId");
       // console.log(draftPod);
       setPlayerPod(draftPod);
       setPlayerSeat(draftPod.seats[0]);
