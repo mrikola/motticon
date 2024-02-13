@@ -68,31 +68,15 @@ const TournamentView = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(`/tournament/${tournamentId}/round/recent`);
-      const round = (await response.json()) as Round;
-
-      setNewestRoundNumber(round.roundNumber);
-    };
-    if (user && activeTournament?.status === "completed") {
-      fetchData();
-    }
-  }, [activeTournament]);
-
-  // if tournament is ongoing, get ongoing round
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await get(`/tournament/${tournamentId}/round`);
       try {
         const round = (await response.json()) as Round;
         setNewestRoundNumber(round.roundNumber);
       } catch {
-        // TODO handle invalid response
+        // no recent round found
+        setNewestRoundNumber(0);
       }
     };
-    if (
-      user &&
-      tournamentStatus === "ongoing" &&
-      activeTournament?.status !== "completed"
-    ) {
+    if (user && activeTournament?.status !== "pending") {
       fetchData();
     }
   }, [activeTournament]);
