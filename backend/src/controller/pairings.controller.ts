@@ -33,12 +33,16 @@ export const generatePairings = async (
   const currentRound = await AppDataSource.getRepository(Round).findOne({
     where: { id: roundId },
   });
-  const previousRound = await AppDataSource.getRepository(Round).findOne({
-    where: {
+  const previousRound = await AppDataSource.getRepository(Round)
+    .createQueryBuilder("round")
+    .where('round."tournamentId" = :tournamentId', {
       tournamentId: tournament.id,
+    })
+    .andWhere('round."roundNumber" = :roundNumber', {
       roundNumber: currentRound.roundNumber - 1,
-    },
-  });
+    })
+    .getOne();
+
   tournamentService.initiateRound(tournamentId, roundId);
   const { pods } = draft;
 
