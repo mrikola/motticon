@@ -35,17 +35,17 @@ export class CubeService {
     url: string,
     owner: string,
     imageUrl: string
-  ) {
+  ): Promise<any> {
     // TODO improve return values
     try {
-      await this.repository.insert({
+      const cube: Cube = await this.repository.save({
         title,
         description,
         url,
         owner,
         imageUrl,
       });
-      return true;
+      return cube;
     } catch {
       return false;
     }

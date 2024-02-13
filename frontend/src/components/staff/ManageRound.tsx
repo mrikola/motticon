@@ -90,7 +90,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
       // sort by table number, descending
       mtchs.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1));
       setMatches(mtchs);
-      console.log(mtchs);
+      // console.log(mtchs);
     };
 
     const doFetch = () => {
@@ -141,7 +141,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
     }).then(async (resp) => {
       const jwt = await resp.json();
       if (jwt !== null) {
-        console.log(jwt);
+        // console.log(jwt);
         setMatches(jwt);
         setModal({
           ...modal,

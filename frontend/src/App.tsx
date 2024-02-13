@@ -22,6 +22,7 @@ import AutocompleteTest from "./pages/Test/AutocompleteTest";
 import PublicProfile from "./pages/User/PublicProfile";
 import AllUsers from "./pages/User/AllUsers";
 import PoolView from "./pages/Staff/PoolView";
+import ViewCubeGeneral from "./pages/ViewCube/ViewCubeGeneral";
 
 function App() {
   const routes: RouteObject[] = [
@@ -62,8 +63,8 @@ function App() {
               Component: ListCubes,
             },
             {
-              path: "cube/:cubeId",
-              Component: ViewCube,
+              path: "cubes/:cubeId",
+              Component: ViewCubeGeneral,
             },
             {
               path: "standings",

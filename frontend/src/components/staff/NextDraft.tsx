@@ -56,14 +56,8 @@ const NextDraft = ({
       `/tournament/${tournamentId}/draft/${firstPendingDraft?.id}/initiate`,
       {}
     );
-    // const updatedTournament = (await response.json()) as Tournament;
     const draft = (await response.json()) as Draft;
     setCurrentDraft(draft);
-    // setCurrentDraft(
-    //   updatedTournament.drafts.find(
-    //     (draft) => draft.id === firstPendingDraft?.id
-    //   )
-    // );
   };
 
   const completeTournament = async () => {

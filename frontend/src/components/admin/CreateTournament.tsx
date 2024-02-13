@@ -131,6 +131,7 @@ const CreateTournament = () => {
                     selected={field.value}
                     calendarClassName="bootstrap-calendar"
                     className="form-control mb-3"
+                    calendarStartDay={1}
                   />
                 )}
               />
@@ -146,6 +147,7 @@ const CreateTournament = () => {
                     selected={field.value}
                     calendarClassName="bootstrap-calendar"
                     className="form-control mb-3"
+                    calendarStartDay={1}
                   />
                 )}
               />

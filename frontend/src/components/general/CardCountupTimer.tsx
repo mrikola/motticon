@@ -15,6 +15,10 @@ function CardCountupTimer({ started, startTime }: Props) {
 
   useEffect(() => {
     if (started) {
+      if (seconds <= -3599) {
+        setSeconds(3599);
+        return;
+      }
       // Set up the timer
       const timer = setInterval(() => {
         // setSeconds((prevSeconds) => prevSeconds - 1);

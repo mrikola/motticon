@@ -74,7 +74,7 @@ const ListCubesForTournament = () => {
                         <>
                           <p className="mt-auto pt-4">
                             <Badge bg="primary" className="py-2">
-                              You are playing this cube
+                              Test badge for preference indication
                             </Badge>
                           </p>
                           <h3 className="mb-4 display-4 lh-1">

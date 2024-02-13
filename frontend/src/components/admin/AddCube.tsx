@@ -15,6 +15,8 @@ import { Item } from "react-datalist-input";
 import HelmetTitle from "../general/HelmetTitle";
 import BackButton from "../general/BackButton";
 import MTGAutocompleteInput from "../general/MTGAutocompleteInput";
+import { Cube } from "../../types/Cube";
+import { useNavigate } from "react-router";
 
 type AddCubeForm = {
   title: string;
@@ -26,6 +28,7 @@ type AddCubeForm = {
 
 function AddCube() {
   const user = useIsAdmin();
+  const navigate = useNavigate();
   const [cardImageUrl, setCardImageUrl] = useState<string>("");
   const [selectedCard, setSelectedCard] = useState<Item>();
 
@@ -34,7 +37,8 @@ function AddCube() {
     post("/cube/add", { title, description, url, owner, imageUrl }).then(
       async (_resp) => {
         // TODO show some kind of success thing
-        console.log(_resp);
+        const cube = (await _resp.json()) as Cube;
+        navigate("/cubes/" + cube.id);
       }
     );
   }

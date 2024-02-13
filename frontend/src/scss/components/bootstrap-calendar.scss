@@ -34,3 +34,7 @@
     border-color: $primary;
   }
 }
+
+.react-datepicker-popper {
+  z-index: 9000 !important;
+}

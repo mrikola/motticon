@@ -94,20 +94,14 @@ const ManageDraft = ({
   }, [currentDraft.id]);
 
   const generatePairings = async () => {
-    console.log(
-      "tid: " +
-        tournamentId +
-        ", currentdraft: " +
-        currentDraft.id +
-        ", round: " +
-        firstPendingRound?.id
-    );
     const resp = await put(
       `/tournament/${tournamentId}/draft/${currentDraft.id}/round/${firstPendingRound?.id}/pairings`
     );
     const matches = (await resp.json()) as Match[];
     setFirstPendingRound({ ...firstPendingRound!, matches });
     // todo: response should return a Round so we can setCurrentRound() and instantly update the view
+    // const round = (await resp.json()) as Round;
+    // setCurrentRound(round);
   };
 
   const startRound = async () => {
@@ -138,7 +132,7 @@ const ManageDraft = ({
       {}
     );
     const updatedTournament = (await response.json()) as Tournament;
-    console.log(updatedTournament);
+    // console.log(updatedTournament);
     setCurrentDraft(undefined);
     // do some stuff here
   };
@@ -160,7 +154,7 @@ const ManageDraft = ({
       }).then(async (resp) => {
         const draft = (await resp.json()) as Draft;
         if (draft !== null) {
-          console.log(draft);
+          // console.log(draft);
           setCurrentDraft(draft);
           setModal({
             ...modal,
