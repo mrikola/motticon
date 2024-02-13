@@ -6,6 +6,7 @@ import {
   OneToMany,
   JoinColumn,
   ManyToOne,
+  Timestamp,
 } from "typeorm";
 import { DraftPod } from "./DraftPod";
 import { Tournament } from "./Tournament";
@@ -35,4 +36,7 @@ export class Draft {
 
   @OneToMany(() => DraftPod, (pod) => pod.draft)
   pods: DraftPod[];
+
+  @Column("timestamp", { nullable: true })
+  startTime: Timestamp;
 }

@@ -1,19 +1,26 @@
+import dayjs, { Dayjs } from "dayjs";
 import { useState, useEffect } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import { SquareFill } from "react-bootstrap-icons";
 
 type Props = {
   started: boolean;
+  startTime: Dayjs;
 };
 
-function CardCountupTimer({ started }: Props) {
-  const [seconds, setSeconds] = useState<number>(0);
+function CardCountupTimer({ started, startTime }: Props) {
+  const [seconds, setSeconds] = useState<number>(
+    startTime ? startTime.diff(dayjs(), "second") : 0
+  );
 
   useEffect(() => {
     if (started) {
       // Set up the timer
       const timer = setInterval(() => {
-        setSeconds((prevSeconds) => prevSeconds - 1);
+        // setSeconds((prevSeconds) => prevSeconds - 1);
+        const now = dayjs();
+        const diff = startTime.diff(now, "second");
+        setSeconds(diff);
       }, 1000);
 
       // Clean up the timer
@@ -43,7 +50,7 @@ function CardCountupTimer({ started }: Props) {
         <Col xs={8} sm={9}>
           <Card.Body className="horizontal-card-body">
             <Card.Title className="horizontal-card-title-small">
-              Time elapsed
+              {started ? "Time elapsed" : "Timer not started"}
             </Card.Title>
           </Card.Body>
         </Col>

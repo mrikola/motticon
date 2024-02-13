@@ -18,6 +18,7 @@ export type Draft = {
   pods: DraftPod[];
   firstRound: number;
   lastRound: number;
+  startTime: Date;
 };
 
 export type DraftPod = {

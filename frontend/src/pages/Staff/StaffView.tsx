@@ -104,7 +104,8 @@ function StaffView() {
           buttonText="Back to tournament"
           path={`/tournament/${tournamentId}`}
         />
-        <h1 className="display-1">{tournament.name} Staff View</h1>
+        <h1 className="display-1">{tournament.name}</h1>
+        <h2 className="display-3">Staff View</h2>
       </Row>
       {tournament.status === "started" && (
         <>

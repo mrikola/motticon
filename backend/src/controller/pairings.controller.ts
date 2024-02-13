@@ -35,7 +35,7 @@ export const generatePairings = async (
   });
   const previousRound = await AppDataSource.getRepository(Round).findOne({
     where: {
-      tournament,
+      tournamentId: tournament.id,
       roundNumber: currentRound.roundNumber - 1,
     },
   });

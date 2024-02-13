@@ -20,7 +20,7 @@ const EnrolledPlayersTable = ({ enrollments, buttonFunction }: Props) => {
       <thead>
         <tr>
           <th>Player name</th>
-          <th>Drop player</th>
+          <th>Cancel enrollment</th>
         </tr>
       </thead>
       <tbody>

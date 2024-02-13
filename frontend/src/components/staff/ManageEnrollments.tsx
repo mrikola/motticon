@@ -62,7 +62,9 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
           </Col>
         </Row>
         <Row>
-          <h2>{playersEnrolled} enrolled players:</h2>
+          <h2>
+            {playersEnrolled}/{totalSeats} players enrolled:
+          </h2>
           <Col xs={12}>
             <EnrolledPlayersTable
               enrollments={enrollments}

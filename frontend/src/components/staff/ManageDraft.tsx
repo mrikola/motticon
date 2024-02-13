@@ -14,6 +14,7 @@ import DeckBuildingModal, { DeckBuildingModalProps } from "./DeckBuildingModal";
 import DecksSubmittedProgressBar from "./DecksSubmittedProgressBar";
 import CardCountupTimer from "../general/CardCountupTimer";
 import { Link } from "react-router-dom";
+import dayjs, { Dayjs } from "dayjs";
 
 type Props = {
   currentDraft: Draft;
@@ -39,6 +40,8 @@ const ManageDraft = ({
   const [totalPlayers, setTotalPlayers] = useState<number>(0);
   const [buildingRemaining, setBuildingRemaining] = useState<number>(0);
   const [poolsReturned, setPoolsReturned] = useState<number>(0);
+  const [draftStart, setDraftStart] = useState<Dayjs>();
+  const [draftTimerStarted, setDraftTimerStarted] = useState<boolean>(false);
   const [modal, setModal] = useState<DeckBuildingModalProps>({
     show: false,
     onHide: () => null,
@@ -91,6 +94,14 @@ const ManageDraft = ({
   }, [currentDraft.id]);
 
   const generatePairings = async () => {
+    console.log(
+      "tid: " +
+        tournamentId +
+        ", currentdraft: " +
+        currentDraft.id +
+        ", round: " +
+        firstPendingRound?.id
+    );
     const resp = await put(
       `/tournament/${tournamentId}/draft/${currentDraft.id}/round/${firstPendingRound?.id}/pairings`
     );
@@ -107,6 +118,17 @@ const ManageDraft = ({
       );
       const round = (await response.json()) as Round;
       setCurrentRound(round);
+    }
+  };
+
+  const startDraft = async () => {
+    if (currentDraft) {
+      const response = await put(
+        `/tournament/${tournamentId}/draft/${currentDraft.id}/start`,
+        {}
+      );
+      const draft = (await response.json()) as Draft;
+      setCurrentDraft(draft);
     }
   };
 
@@ -175,12 +197,20 @@ const ManageDraft = ({
     }
   }, [allSeats]);
 
+  useEffect(() => {
+    if (!currentDraft.startTime) {
+      // not started yet
+    } else {
+      setDraftStart(dayjs(currentDraft.startTime));
+      setDraftTimerStarted(true);
+    }
+  }, [currentDraft]);
+
   if (currentDraft) {
     return (
       <>
         <Row>
           <Col xs={12}>
-            <p>managedraft view</p>
             <p>
               Last completed round: {lastCompletedRound?.roundNumber ?? "N/A"}
             </p>
@@ -255,13 +285,24 @@ const ManageDraft = ({
                     >
                       Generate pairings
                     </Button>
-                    {!lastCompletedRound && (
+                    {!lastCompletedRound && buildingRemaining !== 0 && (
                       <p className="small text-center">
                         You can only generate pairings once deckbuilding is
                         complete for all players
                       </p>
                     )}
                   </>
+                )}
+              </Col>
+              <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+                {!draftTimerStarted && (
+                  <Button
+                    variant="primary"
+                    className="btn-lg"
+                    onClick={() => startDraft()}
+                  >
+                    Start draft timer
+                  </Button>
                 )}
               </Col>
             </Row>
@@ -271,7 +312,10 @@ const ManageDraft = ({
                 <>
                   <Row className="mt-3">
                     <Container>
-                      <CardCountupTimer started={true} />
+                      <CardCountupTimer
+                        started={draftTimerStarted}
+                        startTime={draftStart ? draftStart : dayjs()}
+                      />
                       <Col xs={12}>
                         <DecksSubmittedProgressBar
                           remainingSubmissions={buildingRemaining}
@@ -283,6 +327,7 @@ const ManageDraft = ({
                   <DraftTable
                     seats={allSeats}
                     markDoneClicked={markDoneClicked}
+                    draftTimerStarted={draftTimerStarted}
                   />
                   <DeckBuildingModal
                     show={modal.show}

@@ -37,6 +37,7 @@ const EnrollPlayers = ({
       const notEnrolled = allPlayers.filter(
         (item) => !playersIdOnly.includes(item.id)
       );
+      notEnrolled.sort((a, b) => a.lastName.localeCompare(b.lastName));
       setAvailablePlayers(notEnrolled);
     }
   }, [allPlayers, enrollments]);

@@ -51,18 +51,19 @@ const NextDraft = ({
     setTournament({ ...tournament, ...updatedTournament });
   };
 
-  const startDraft = async () => {
+  const initiateDraft = async () => {
     const response = await put(
-      `/tournament/${tournamentId}/draft/${firstPendingDraft?.id}/start`,
+      `/tournament/${tournamentId}/draft/${firstPendingDraft?.id}/initiate`,
       {}
     );
-    const updatedTournament = (await response.json()) as Tournament;
-
-    setCurrentDraft(
-      updatedTournament.drafts.find(
-        (draft) => draft.id === firstPendingDraft?.id
-      )
-    );
+    // const updatedTournament = (await response.json()) as Tournament;
+    const draft = (await response.json()) as Draft;
+    setCurrentDraft(draft);
+    // setCurrentDraft(
+    //   updatedTournament.drafts.find(
+    //     (draft) => draft.id === firstPendingDraft?.id
+    //   )
+    // );
   };
 
   const completeTournament = async () => {
@@ -108,9 +109,9 @@ const NextDraft = ({
               <Button
                 variant="primary"
                 className="btn-lg"
-                onClick={() => startDraft()}
+                onClick={() => initiateDraft()}
               >
-                Start next draft
+                Initiate next draft
               </Button>
             ) : (
               <Button

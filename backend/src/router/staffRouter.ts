@@ -5,6 +5,7 @@ import {
   endRound,
   endTournament,
   generateDrafts,
+  initiateDraft,
   staffCancelEnrollment,
   startDraft,
   startRound,
@@ -40,6 +41,13 @@ staffRouter.post(
   "/tournament/:tournamentId/draft/generate",
   async (req, res) => {
     res.send(await generateDrafts(req));
+  }
+);
+
+staffRouter.put(
+  "/tournament/:tournamentId/draft/:draftId/initiate",
+  async (req, res) => {
+    res.send(await initiateDraft(req));
   }
 );
 

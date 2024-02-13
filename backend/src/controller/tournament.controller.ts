@@ -108,6 +108,14 @@ export const generateDrafts = async (req) => {
   return await tournamentService.generateDrafts(tournamentId as number);
 };
 
+export const initiateDraft = async (req) => {
+  const { tournamentId, draftId } = req.params;
+  return await tournamentService.initiateDraft(
+    tournamentId as number,
+    draftId as number
+  );
+};
+
 export const startDraft = async (req) => {
   const { tournamentId, draftId } = req.params;
   return await tournamentService.startDraft(

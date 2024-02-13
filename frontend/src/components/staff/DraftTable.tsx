@@ -6,9 +6,10 @@ import { CheckSquare, CheckSquareFill } from "react-bootstrap-icons";
 type Props = {
   seats: DraftPodSeat[];
   markDoneClicked: (seat: DraftPodSeat) => void;
+  draftTimerStarted: boolean;
 };
 
-const DraftTable = ({ seats, markDoneClicked }: Props) => {
+const DraftTable = ({ seats, markDoneClicked, draftTimerStarted }: Props) => {
   const [completeSeats, setCompleteSeats] = useState<DraftPodSeat[]>([]);
   const [incompleteSeats, setIncompleteSeats] = useState<DraftPodSeat[]>([]);
 
@@ -55,8 +56,12 @@ const DraftTable = ({ seats, markDoneClicked }: Props) => {
                         variant="primary"
                         type="submit"
                         onClick={() => markDoneClicked(seat)}
-                        disabled={seat.deckPhotoUrl ? true : false}
-                        aria-disabled={seat.deckPhotoUrl ? true : false}
+                        disabled={
+                          seat.deckPhotoUrl || !draftTimerStarted ? true : false
+                        }
+                        aria-disabled={
+                          seat.deckPhotoUrl || !draftTimerStarted ? true : false
+                        }
                       >
                         Mark done
                       </Button>
@@ -102,8 +107,12 @@ const DraftTable = ({ seats, markDoneClicked }: Props) => {
                         variant="primary"
                         type="submit"
                         onClick={() => markDoneClicked(seat)}
-                        disabled={seat.deckPhotoUrl ? true : false}
-                        aria-disabled={seat.deckPhotoUrl ? true : false}
+                        disabled={
+                          seat.deckPhotoUrl || !draftTimerStarted ? true : false
+                        }
+                        aria-disabled={
+                          seat.deckPhotoUrl || !draftTimerStarted ? true : false
+                        }
                       >
                         Mark done
                       </Button>

@@ -362,10 +362,12 @@ export class TournamentService {
         await this.generateDraftSeatings(draftPods, players);
       })
     );
+
     return await this.getTournamentAndDrafts(tournamentId);
   }
 
-  async startDraft(tournamentId: number, draftId: number) {
+  // is called after pairings have been generated, before round timer starts
+  async initiateDraft(tournamentId: number, draftId: number): Promise<Draft> {
     await this.appDataSource
       .getRepository(Draft)
       .createQueryBuilder("draft")
@@ -374,7 +376,19 @@ export class TournamentService {
       .where({ id: draftId })
       .execute();
 
-    return await this.getTournamentAndDrafts(tournamentId);
+    return await this.getCurrentDraft(tournamentId);
+  }
+
+  async startDraft(tournamentId: number, draftId: number): Promise<Draft> {
+    await this.appDataSource
+      .getRepository(Draft)
+      .createQueryBuilder("draft")
+      .update()
+      .set({ startTime: new Date() })
+      .where({ id: draftId })
+      .execute();
+
+    return await this.getCurrentDraft(tournamentId);
   }
 
   async endDraft(tournamentId: number, draftId: number) {
