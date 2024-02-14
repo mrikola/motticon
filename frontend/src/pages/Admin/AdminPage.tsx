@@ -20,12 +20,16 @@ const AdminPage = () => {
             to="/admin/create-tournament"
             className="btn btn-primary btn-lg"
           >
-            <TrophyFill /> Create tournament
+            <div className="icon-link">
+              <TrophyFill className="fs-3" /> Create tournament
+            </div>
           </Link>
         </Col>
         <Col xs={10} sm={8} className="d-grid gap-2 mx-auto mt-3">
           <Link to="/admin/add-cube" className="btn btn-primary btn-lg">
-            <Box /> Add cube
+            <div className="icon-link">
+              <Box className="fs-3" /> Add cube
+            </div>
           </Link>
         </Col>
       </Row>

@@ -3,6 +3,7 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import { PersonPlusFill } from "react-bootstrap-icons";
 import MTGAutocompleteInput from "../../components/general/MTGAutocompleteInput";
 import { Item } from "react-datalist-input";
+import { toast } from "react-toastify";
 
 const AutocompleteTest = () => {
   const [selectedCard, setSelectedCard] = useState<Item>({
@@ -11,6 +12,30 @@ const AutocompleteTest = () => {
   });
   const [buttonText, setButtonText] = useState<string>("No card selected");
   const [cardImageUrl, setCardImageUrl] = useState<string>("");
+
+  const success = () =>
+    toast.success("Wow success!", {
+      position: "bottom-center",
+      autoClose: 2000,
+      theme: "colored",
+      pauseOnHover: false,
+    });
+
+  const warning = () =>
+    toast.warning("warning warning!", {
+      position: "bottom-center",
+      autoClose: 2000,
+      theme: "colored",
+      pauseOnHover: false,
+    });
+
+  const error = () =>
+    toast.error("oh no error!", {
+      position: "bottom-center",
+      autoClose: 2000,
+      theme: "colored",
+      pauseOnHover: false,
+    });
 
   function handleClick() {
     setCardImageUrl(getScryfallUrl(selectedCard.id));
@@ -32,6 +57,17 @@ const AutocompleteTest = () => {
     <Container>
       <h1>Card search test</h1>
       <Row>
+        <Col xs={12}>
+          <Button variant="primary" onClick={success}>
+            Success !
+          </Button>
+          <Button variant="primary" onClick={warning}>
+            warning !
+          </Button>
+          <Button variant="primary" onClick={error}>
+            error !
+          </Button>
+        </Col>
         <Col xs={12}>
           <MTGAutocompleteInput
             labelText={"Choose card"}

@@ -2,6 +2,8 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
 
 // Import our custom CSS
 import "./scss/style.scss";
@@ -19,5 +21,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       />
     </Helmet>
     <App />
+    <ToastContainer newestOnTop />
   </HelmetProvider>
 );
