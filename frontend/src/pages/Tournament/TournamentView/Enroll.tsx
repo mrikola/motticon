@@ -44,15 +44,15 @@ function Enroll({
   useEffect(() => {
     if (isEnrolled) {
       setEnrollButtonText("Enrolled");
-      setEnrollButtonIcon(<CheckSquareFill />);
+      setEnrollButtonIcon(<CheckSquareFill className="fs-3" />);
     } else if (!isEnrolled && freeSeats > 0) {
       setEnrollButtonText("Enroll");
-      setEnrollButtonIcon(<CheckSquare />);
+      setEnrollButtonIcon(<CheckSquare className="fs-3" />);
     } else if (freeSeats === 0) {
       setEnrollButtonText("Tournament full");
-      setEnrollButtonIcon(<ExclamationTriangleFill />);
+      setEnrollButtonIcon(<ExclamationTriangleFill className="fs-3" />);
     }
-  }, []);
+  }, [isEnrolled]);
 
   const doEnroll = () => {
     post(`/tournament/${tournament.id}/enroll/${userId}`, {}).then(
@@ -128,7 +128,9 @@ function Enroll({
             onClick={() => handleEnrollClick()}
             disabled={isEnrolled || freeSeats === 0 ? true : false}
           >
-            {enrollButtonIcon} {enrollButtonText}
+            <div className="icon-link">
+              {enrollButtonIcon} {enrollButtonText}
+            </div>
           </Button>
           {isEnrolled && (
             <Button
@@ -137,7 +139,9 @@ function Enroll({
               type="submit"
               onClick={handleCancelClick}
             >
-              <XLg /> Cancel enrollment
+              <div className="icon-link">
+                <XLg className="fs-3" /> Cancel enrollment
+              </div>
             </Button>
           )}
         </Col>

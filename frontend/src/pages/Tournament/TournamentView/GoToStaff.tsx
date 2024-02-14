@@ -14,7 +14,9 @@ function Staff({ tournamentId }: Props) {
           to={`/tournament/${tournamentId}/staff`}
           className="btn-primary btn btn-lg"
         >
-          <ListOl /> Go to staff view
+          <div className="icon-link">
+            <ListOl className="fs-3" /> Go to staff view
+          </div>
         </Link>
       </Col>
     </Row>

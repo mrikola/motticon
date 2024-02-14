@@ -125,7 +125,9 @@ const TournamentView = () => {
               to={`/tournament/${activeTournament.id}/cubes/`}
               className="btn btn-primary btn-lg"
             >
-              <Box /> View cubes
+              <div className="icon-link">
+                <Box className="fs-3" /> View cubes
+              </div>
             </Link>
           </Col>
         </Row>

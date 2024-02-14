@@ -14,7 +14,9 @@ function GoToOngoing({ tournamentId }: Props) {
           to={`/tournament/${tournamentId}/ongoing/`}
           className="btn btn-primary btn-lg"
         >
-          <TrophyFill /> View ongoing
+          <div className="icon-link">
+            <TrophyFill className="fs-3" /> View ongoing
+          </div>
         </Link>
       </Col>
     </Row>

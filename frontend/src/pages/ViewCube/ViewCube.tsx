@@ -55,7 +55,9 @@ const ViewCube = () => {
                       target="_blank"
                       className="btn btn-primary btn-lg"
                     >
-                      <BoxArrowUpRight className="fs-4" /> View list
+                      <div className="icon-link">
+                        <BoxArrowUpRight className="fs-3" /> View list
+                      </div>
                     </Link>
                   </Col>
                 </Col>

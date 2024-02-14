@@ -41,7 +41,8 @@ const ListCubesForTournament = () => {
           buttonText="Back to tournament"
           path={`/tournament/${tournamentId}`}
         />
-        <h1 className="display-1">{tournament.name} Cubes</h1>
+        <h1 className="display-1">{tournament.name}</h1>
+        <h2 className="display-3">Cubes</h2>
       </Row>
       <Row xs={1} sm={1} md={2} lg={3} className="g-3">
         {cubes.map((cube) => {
