@@ -99,24 +99,8 @@ export class TournamentService {
     return tournament;
   }
 
-  async getAllTournaments(): Promise<TournamentsByType> {
-    const allTournaments = await this.repository.find();
-
-    const today = new Date();
-    const [past, notPast] = partition(
-      allTournaments,
-      (tournament) => tournament.endDate < today
-    );
-    const [future, ongoing] = partition(
-      notPast,
-      (tournament) => tournament.startDate > today
-    );
-
-    return {
-      past,
-      ongoing,
-      future,
-    };
+  async getAllTournaments(): Promise<Tournament[]> {
+    return await this.repository.find();
   }
 
   async getOngoingTournaments(): Promise<any> {

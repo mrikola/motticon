@@ -13,7 +13,7 @@ import TournamentCard from "../../components/general/TournamentCard";
 import Loading from "../../components/general/Loading";
 
 function Tournaments() {
-  const [tournaments, setTournaments] = useState<UsersTournaments>();
+  const [tournaments, setTournaments] = useState<TournamentsByType>();
   const [tournamentsStaffed, setTournamentsStaffed] = useState<Tournament[]>();
   const user = useContext(UserInfoContext);
   const [tournamentsStaffedIds, setTournamentsStaffedIds] =
@@ -27,8 +27,15 @@ function Tournaments() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await get("/tournaments");
-      setTournaments((await response.json()) as TournamentsByType);
-      tournaments?.future.sort((a, b) => (a.startDate > b.startDate ? -1 : 1));
+      const tournys = (await response.json()) as Tournament[];
+      tournys.sort((a, b) => (a.startDate > b.startDate ? -1 : 1));
+      setTournaments({
+        ongoing: tournys.filter(
+          (tournament) => tournament.status === "started"
+        ),
+        future: tournys.filter((tournament) => tournament.status === "pending"),
+        past: tournys.filter((tournament) => tournament.status === "completed"),
+      });
     };
     fetchData();
   }, []);
@@ -51,7 +58,7 @@ function Tournaments() {
         ids.push(tournamentsStaffed[tournament].id);
       }
       setTournamentsStaffedIds(ids);
-      console.log(ids);
+      // console.log(ids);
     }
   }, [tournamentsStaffed]);
 

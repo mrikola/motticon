@@ -77,7 +77,7 @@ export class UserService {
     return memberships;
   }
 
-  async getUsersTournaments(userId: number): Promise<TournamentsByType> {
+  async getUsersTournaments(userId: number): Promise<Tournament[]> {
     const enrolled = await this.getTournamentsEnrolled(userId);
     const staffed = await this.getTournamentsStaffed(userId);
 
@@ -85,7 +85,7 @@ export class UserService {
       [...enrolled, ...staffed],
       (tournament) => tournament.id
     );
-
+    return allTournaments;
     const today = new Date();
     const [past, notPast] = partition(
       allTournaments,
@@ -96,10 +96,10 @@ export class UserService {
       (tournament) => tournament.startDate > today
     );
 
-    return {
-      past,
-      ongoing,
-      future,
-    };
+    // return {
+    //   past,
+    //   ongoing,
+    //   future,
+    // };
   }
 }
