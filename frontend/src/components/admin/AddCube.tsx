@@ -17,6 +17,7 @@ import BackButton from "../general/BackButton";
 import MTGAutocompleteInput from "../general/MTGAutocompleteInput";
 import { Cube } from "../../types/Cube";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 type AddCubeForm = {
   title: string;
@@ -38,6 +39,7 @@ function AddCube() {
       async (_resp) => {
         // TODO show some kind of success thing
         const cube = (await _resp.json()) as Cube;
+        toast.success("Cube added");
         navigate("/cubes/" + cube.id);
       }
     );

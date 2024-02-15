@@ -1,4 +1,4 @@
-import { Alert, Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import {
   Draft,
   DraftPodSeat,
@@ -15,6 +15,7 @@ import DecksSubmittedProgressBar from "./DecksSubmittedProgressBar";
 import CardCountupTimer from "../general/CardCountupTimer";
 import { Link } from "react-router-dom";
 import dayjs, { Dayjs } from "dayjs";
+import { toast } from "react-toastify";
 
 type Props = {
   currentDraft: Draft;
@@ -98,7 +99,13 @@ const ManageDraft = ({
       `/tournament/${tournamentId}/draft/${currentDraft.id}/round/${firstPendingRound?.id}/pairings`
     );
     const matches = (await resp.json()) as Match[];
-    setFirstPendingRound({ ...firstPendingRound!, matches });
+    if (matches !== null) {
+      toast.success(
+        "Pairings for round " + firstPendingRound?.roundNumber + " generated"
+      );
+      setFirstPendingRound({ ...firstPendingRound!, matches });
+    }
+
     // todo: response should return a Round so we can setCurrentRound() and instantly update the view
     // const round = (await resp.json()) as Round;
     // setCurrentRound(round);
@@ -122,7 +129,10 @@ const ManageDraft = ({
         {}
       );
       const draft = (await response.json()) as Draft;
-      setCurrentDraft(draft);
+      if (draft !== null) {
+        toast.success("Draft timer started");
+        setCurrentDraft(draft);
+      }
     }
   };
 
@@ -133,6 +143,7 @@ const ManageDraft = ({
     );
     const updatedTournament = (await response.json()) as Tournament;
     // console.log(updatedTournament);
+    toast.success("Draft completed");
     setCurrentDraft(undefined);
     // do some stuff here
   };
@@ -155,6 +166,12 @@ const ManageDraft = ({
         const draft = (await resp.json()) as Draft;
         if (draft !== null) {
           // console.log(draft);
+          toast.success(
+            "Marked done for " +
+              seat.player.firstName +
+              " " +
+              seat.player.lastName
+          );
           setCurrentDraft(draft);
           setModal({
             ...modal,
@@ -203,18 +220,6 @@ const ManageDraft = ({
   if (currentDraft) {
     return (
       <>
-        <Row>
-          <Col xs={12}>
-            <p>
-              Last completed round: {lastCompletedRound?.roundNumber ?? "N/A"}
-            </p>
-            <p>Next pending round: {firstPendingRound?.roundNumber ?? "N/A"}</p>
-            <p>
-              Which rounds: {currentDraft.firstRound} - {currentDraft.lastRound}
-            </p>
-          </Col>
-        </Row>
-
         {lastCompletedRound?.roundNumber === currentDraft.lastRound ? (
           <Row>
             <h3>Round {lastCompletedRound.roundNumber} complete.</h3>
@@ -255,12 +260,6 @@ const ManageDraft = ({
               <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
                 {firstPendingRound.matches.length ? (
                   <>
-                    {firstPendingRound.roundNumber ===
-                      currentDraft.firstRound && (
-                      <Alert variant="success" className="fs-5 text-center">
-                        Deck building complete
-                      </Alert>
-                    )}
                     <Button
                       variant="primary"
                       className="btn-lg"

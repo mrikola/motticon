@@ -5,6 +5,7 @@ import EnrolledPlayersTable from "./EnrolledPlayersTable";
 import { Enrollment, Player } from "../../types/User";
 import { useEffect, useState } from "react";
 import { get, post } from "../../services/ApiService";
+import { toast } from "react-toastify";
 
 type Props = {
   tournamentId: number;
@@ -21,7 +22,13 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
       async (resp) => {
         const tournament = await resp.json();
         if (tournament !== null) {
-          console.log(tournament);
+          // console.log(tournament);
+          toast.success(
+            "Cancelled enrollment for " +
+              player.firstName +
+              " " +
+              player.lastName
+          );
           setEnrollments(tournament.enrollments);
         }
       }

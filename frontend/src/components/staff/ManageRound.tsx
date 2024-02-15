@@ -14,6 +14,7 @@ import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
 } from "../general/VerticallyCenteredModal";
 import HorizontalCard from "../general/HorizontalCard";
+import { toast } from "react-toastify";
 
 type Props = {
   currentRound: Round;
@@ -70,7 +71,10 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
         {}
       );
       const round = (await response.json()) as Round;
-      setCurrentRound(round);
+      if (round !== null) {
+        toast.success("Round timer started");
+        setCurrentRound(round);
+      }
     }
   };
 
@@ -141,6 +145,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
     }).then(async (resp) => {
       const jwt = await resp.json();
       if (jwt !== null) {
+        toast.success("Result for table " + match.tableNumber + " submitted");
         // console.log(jwt);
         setMatches(jwt);
         setModal({
@@ -169,6 +174,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
 
     if (response.status === 200 || response.status === 204) {
       // round ended successfully, tell the tournament there is no round
+      toast.success("Round ended");
       setCurrentRound(undefined);
     }
   };

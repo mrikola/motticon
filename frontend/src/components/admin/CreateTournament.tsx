@@ -18,6 +18,7 @@ import { Cube } from "../../types/Cube";
 import { Tournament } from "../../types/Tournament";
 import HelmetTitle from "../general/HelmetTitle";
 import BackButton from "../general/BackButton";
+import { toast } from "react-toastify";
 
 type TournamentForm = {
   name: string;
@@ -63,6 +64,7 @@ const CreateTournament = () => {
   function doCreateTournament(form: TournamentForm) {
     post("/tournament/create", form).then(async (resp) => {
       const tournament = (await resp.json()) as Tournament;
+      toast.success("Tournament created");
       navigate("/tournament/" + tournament.id);
     });
   }

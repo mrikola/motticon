@@ -13,29 +13,11 @@ const AutocompleteTest = () => {
   const [buttonText, setButtonText] = useState<string>("No card selected");
   const [cardImageUrl, setCardImageUrl] = useState<string>("");
 
-  const success = () =>
-    toast.success("Wow success!", {
-      position: "bottom-center",
-      autoClose: 2000,
-      theme: "colored",
-      pauseOnHover: false,
-    });
+  const success = () => toast.success("Wow success!");
 
-  const warning = () =>
-    toast.warning("warning warning!", {
-      position: "bottom-center",
-      autoClose: 2000,
-      theme: "colored",
-      pauseOnHover: false,
-    });
+  const warning = () => toast.warning("warning warning!");
 
-  const error = () =>
-    toast.error("oh no error!", {
-      position: "bottom-center",
-      autoClose: 2000,
-      theme: "colored",
-      pauseOnHover: false,
-    });
+  const error = () => toast.error("oh no error!");
 
   function handleClick() {
     setCardImageUrl(getScryfallUrl(selectedCard.id));

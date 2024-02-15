@@ -18,6 +18,7 @@ import PoolsReturnedTable from "../../components/staff/PoolsReturnedTable";
 import PoolReturnedModal, {
   PoolReturnedModalProps,
 } from "../../components/staff/PoolReturnedModal";
+import { toast } from "react-toastify";
 
 function PoolView() {
   const { tournamentId } = useParams();
@@ -75,7 +76,13 @@ function PoolView() {
       }).then(async (resp) => {
         const draft = (await resp.json()) as Draft;
         if (draft !== null) {
-          console.log(draft);
+          // console.log(draft);
+          toast.success(
+            seat.player.firstName +
+              " " +
+              seat.player.lastName +
+              " draft pool returned"
+          );
           setCurrentDraft(draft);
           setModal({
             ...modal,

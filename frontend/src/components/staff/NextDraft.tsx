@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Draft, Tournament } from "../../types/Tournament";
 import { get, post, put } from "../../services/ApiService";
 import { Button, Col, Row } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 type Props = {
   tournamentId: number;
@@ -47,8 +48,11 @@ const NextDraft = ({
       {}
     );
     const updatedTournament = (await response.json()) as Tournament;
-
-    setTournament({ ...tournament, ...updatedTournament });
+    if (updateTournament !== null) {
+      // todo: create better alert when multiple drafts are created
+      toast.success("Draft pods generated");
+      setTournament({ ...tournament, ...updatedTournament });
+    }
   };
 
   const initiateDraft = async () => {
@@ -57,14 +61,20 @@ const NextDraft = ({
       {}
     );
     const draft = (await response.json()) as Draft;
-    setCurrentDraft(draft);
+    if (draft !== null) {
+      toast.success("Draft " + draft.draftNumber + " initiated");
+      setCurrentDraft(draft);
+    }
   };
 
   const completeTournament = async () => {
     const resp = await put(`/tournament/${tournamentId}/end`);
     const updatedTournament = (await resp.json()) as Tournament;
-    setTournament({ ...updatedTournament });
-    updateTournament(updatedTournament);
+    if (updateTournament !== null) {
+      setTournament({ ...updatedTournament });
+      updateTournament(updatedTournament);
+      toast.success("Tournament completed");
+    }
   };
 
   // if latest draft completed == tournament draft count, tournament is over (minus top 8)
@@ -74,15 +84,6 @@ const NextDraft = ({
 
   return (
     <>
-      <Row>
-        <Col xs={12}>
-          <p>
-            Last completed draft: {lastCompletedDraft?.draftNumber ?? "N/A"}
-          </p>
-          <p>Next pending draft: {firstPendingDraft?.draftNumber ?? "N/A"}</p>
-          <p>How many drafts: {tournament?.drafts.length ?? "N/A"}</p>
-        </Col>
-      </Row>
       {lastCompletedDraft?.draftNumber === tournament?.drafts.length ? (
         <Row>
           <h3>The tournament is over.</h3>

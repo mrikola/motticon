@@ -11,6 +11,7 @@ import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
 } from "../../../components/general/VerticallyCenteredModal";
 import { Tournament } from "../../../types/Tournament";
+import { toast } from "react-toastify";
 
 type Props = {
   isEnrolled: boolean;
@@ -40,6 +41,21 @@ function Enroll({
   const [enrollButtonText, setEnrollButtonText] = useState<string>();
   // consider creating an Icon component and passing it the icon name as a prop
   const [enrollButtonIcon, setEnrollButtonIcon] = useState<ReactNode>();
+  const enrollSuccess = () =>
+    toast.success("Enrolled successfully", {
+      position: "bottom-center",
+      autoClose: 2000,
+      theme: "colored",
+      pauseOnHover: false,
+    });
+
+  const cancelSuccess = () =>
+    toast.success("Cancelled enrollment succesfully", {
+      position: "bottom-center",
+      autoClose: 2000,
+      theme: "colored",
+      pauseOnHover: false,
+    });
 
   useEffect(() => {
     if (isEnrolled) {
@@ -66,6 +82,7 @@ function Enroll({
           });
           enrolledChanger(true);
           freeSeatsUpdater(-1);
+          toast.success("Enrolled succesfully");
         }
       }
     );
@@ -83,6 +100,7 @@ function Enroll({
           });
           enrolledChanger(false);
           freeSeatsUpdater(1);
+          toast.success("Cancelled enrollment succesfully");
         }
       }
     );

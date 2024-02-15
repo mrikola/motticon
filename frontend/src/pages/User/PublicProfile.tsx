@@ -16,7 +16,7 @@ const PublicProfile = () => {
     const fetchData = async () => {
       const response = await get(`/user/${userId}`);
       const playerObject = (await response.json()) as User;
-      console.log(playerObject);
+      // console.log(playerObject);
       setPlayer(playerObject);
     };
     fetchData();

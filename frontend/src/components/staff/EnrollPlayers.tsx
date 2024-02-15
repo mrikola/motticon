@@ -6,6 +6,7 @@ import DatalistInput, { Item } from "react-datalist-input";
 import "react-datalist-input/dist/styles.css";
 import { PersonPlusFill } from "react-bootstrap-icons";
 import { Tournament } from "../../types/Tournament";
+import { toast } from "react-toastify";
 
 type Props = {
   enrollments: Enrollment[];
@@ -83,7 +84,8 @@ const EnrollPlayers = ({
           // temporary solution that just checks boolean return (should be object with tournament info)
           const tournament = (await resp.json()) as Tournament;
           if (tournament) {
-            console.log(tournament.enrollments);
+            // console.log(tournament.enrollments);
+            toast.success("Enrolled " + item.value);
             setItem(undefined);
             setSelectedPlayer("No player selected");
             setEnrollments(tournament.enrollments);
@@ -97,7 +99,7 @@ const EnrollPlayers = ({
 
   function handleSelection(item: Item) {
     setItem(item);
-    console.log(item);
+    // console.log(item);
     setSelectedPlayer("Enroll: " + item.value);
     setValue(undefined); // Custom behavior: Clear input field once a value has been selected
   }
@@ -124,7 +126,9 @@ const EnrollPlayers = ({
             onClick={enroll}
             disabled={enrollments.length >= totalSeats}
           >
-            <PersonPlusFill className="fs-4" /> {selectedPlayer}
+            <div className="icon-link">
+              <PersonPlusFill className="fs-4" /> {selectedPlayer}
+            </div>
           </Button>
         </Col>
       </Row>

@@ -21,6 +21,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       />
     </Helmet>
     <App />
-    <ToastContainer newestOnTop />
+    <ToastContainer
+      newestOnTop
+      position="bottom-center"
+      autoClose={2000}
+      theme="colored"
+      pauseOnHover={false}
+    />
   </HelmetProvider>
 );
