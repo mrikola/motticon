@@ -14,6 +14,7 @@ import ManageEnrollments from "../../components/staff/ManageEnrollments";
 import NextDraft from "../../components/staff/NextDraft";
 import StandingsTable from "../../components/staff/StandingsTable";
 import BackButton from "../../components/general/BackButton";
+import { toast } from "react-toastify";
 
 function StaffView() {
   const { tournamentId } = useParams();
@@ -79,7 +80,10 @@ function StaffView() {
   const startTournament = async () => {
     const resp = await put(`/tournament/${tournamentId}/start`);
     const updatedTournament = (await resp.json()) as Tournament;
-    setTournament({ ...tournament, ...updatedTournament });
+    if (updatedTournament !== null) {
+      toast.success("Tournament started");
+      setTournament({ ...tournament, ...updatedTournament });
+    }
   };
 
   // latestRoundNumber used for showing standings table

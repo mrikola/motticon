@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Draft, DraftPodSeat } from "../../types/Tournament";
 import { postFormData } from "../../services/ApiService";
 import { CheckSquareFill } from "react-bootstrap-icons";
+import { toast } from "react-toastify";
 
 type Props = {
   seat: DraftPodSeat;
@@ -20,20 +21,37 @@ function DeckBuildingSubmission({
   setDraft,
 }: Props) {
   const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState<
-    "initial" | "uploading" | "success" | "fail"
-  >("initial");
+
+  const uploadStarted = () =>
+    toast("Uploading, please wait...", {
+      type: "warning",
+      autoClose: false,
+      toastId: "uploadToast",
+    });
+
+  const uploadSuccess = () =>
+    toast.update("uploadToast", {
+      render: "Uploaded successfully",
+      type: "success",
+      autoClose: 2000,
+    });
+
+  const uploadFailed = () =>
+    toast.update("uploadToast", {
+      render: "Upload failed",
+      type: "error",
+      autoClose: 2000,
+    });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setStatus("initial");
       setFile(e.target.files[0]);
     }
   };
 
   const handleUpload = async () => {
     if (file) {
-      setStatus("uploading");
+      uploadStarted();
 
       const formData = new FormData();
       formData.append("photo", file);
@@ -44,15 +62,15 @@ function DeckBuildingSubmission({
           formData
         );
         const draft = (await result.json()) as Draft;
-        setStatus("success");
         if (draft !== null) {
           console.log(draft);
+          uploadSuccess();
           setDone(true);
           setDraft(draft);
         }
       } catch (error) {
         console.error(error);
-        setStatus("fail");
+        uploadFailed();
       }
     }
   };
@@ -86,7 +104,6 @@ function DeckBuildingSubmission({
             >
               Complete deck building
             </Button>
-            upload status: {status}
           </Col>
         </>
       )}

@@ -45,13 +45,6 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   const [opponent, setOpponent] = useState<Player>();
   const [roundTimerStarted, setRoundTimerStarted] = useState<boolean>(false);
   const [submissionDisabled, setSubmissionDisabled] = useState<boolean>(true);
-  const resultSubmissionSuccess = () =>
-    toast.success("Result submitted successfully", {
-      position: "bottom-center",
-      autoClose: 2000,
-      theme: "colored",
-      pauseOnHover: false,
-    });
 
   const {
     playerGoingFirst: { id: onThePlay },
@@ -97,7 +90,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
         });
         setCurrentMatch({ ...match, ...updatedMatch });
         setSubmissionDisabled(true);
-        resultSubmissionSuccess();
+        toast.success("Result submitted successfully");
       }
     });
   };
