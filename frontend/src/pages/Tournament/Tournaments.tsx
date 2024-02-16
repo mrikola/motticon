@@ -15,8 +15,12 @@ import Loading from "../../components/general/Loading";
 function Tournaments() {
   const [tournaments, setTournaments] = useState<TournamentsByType>();
   const [tournamentsStaffed, setTournamentsStaffed] = useState<Tournament[]>();
+  const [tournamentsEnrolled, setTournamentsEnrolled] =
+    useState<Tournament[]>();
   const user = useContext(UserInfoContext);
   const [tournamentsStaffedIds, setTournamentsStaffedIds] =
+    useState<number[]>();
+  const [tournamentsEnrolledIds, setTournamentsEnrolledIds] =
     useState<number[]>();
   const tournamentTypes: (keyof UsersTournaments)[] = [
     "ongoing",
@@ -42,8 +46,20 @@ function Tournaments() {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (user && !tournamentsEnrolled) {
+        const userTournys = await get(`/user/${user.id}/tournaments`);
+        const enrollments = (await userTournys.json()) as Tournament[];
+        setTournamentsEnrolled(enrollments);
+      }
+    };
+
+    fetchData();
+  }, [user, tournamentsStaffed]);
+
+  useEffect(() => {
+    const fetchData = async () => {
       if (user && !tournamentsStaffed) {
-        const response = await get(`/user/${user?.id}/staff`);
+        const response = await get(`/user/${user.id}/staff`);
         setTournamentsStaffed(await response.json());
       }
     };
@@ -62,7 +78,21 @@ function Tournaments() {
     }
   }, [tournamentsStaffed]);
 
-  return user && tournaments && tournamentsStaffedIds ? (
+  useEffect(() => {
+    if (!tournamentsEnrolledIds && tournamentsEnrolled) {
+      const ids = [];
+      for (const tournament in tournamentsEnrolled) {
+        ids.push(tournamentsEnrolled[tournament].id);
+      }
+      setTournamentsEnrolledIds(ids);
+      // console.log(ids);
+    }
+  }, [tournamentsEnrolled]);
+
+  return user &&
+    tournaments &&
+    tournamentsStaffedIds &&
+    tournamentsEnrolledIds ? (
     <Container className="mt-3 my-md-4">
       <HelmetTitle titleText="Tournaments" />
       <Row>
@@ -95,8 +125,10 @@ function Tournaments() {
                     <TournamentCard
                       tournament={tournament}
                       staffedIds={tournamentsStaffedIds}
+                      enrolledIds={tournamentsEnrolledIds}
                       date={date}
                       key={tournament.id}
+                      type={type}
                     />
                   );
                 })}

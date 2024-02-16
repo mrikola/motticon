@@ -14,6 +14,8 @@ const Landing = () => {
   const user = useContext(UserInfoContext);
   const [tournamentsStaffedIds, setTournamentsStaffedIds] =
     useState<number[]>();
+  const [tournamentsEnrolledIds, setTournamentsEnrolledIds] =
+    useState<number[]>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,6 +34,11 @@ const Landing = () => {
             (tournament) => tournament.status === "completed"
           ),
         });
+        const ids = [];
+        for (const tournament in tournys) {
+          ids.push(tournys[tournament].id);
+        }
+        setTournamentsEnrolledIds(ids);
         // setTournaments((await response.json()) as UsersTournaments);
       }
     };
@@ -67,7 +74,10 @@ const Landing = () => {
     "past",
   ];
 
-  return user && tournaments && tournamentsStaffedIds ? (
+  return user &&
+    tournaments &&
+    tournamentsStaffedIds &&
+    tournamentsEnrolledIds ? (
     <Container className="mt-3 my-md-4">
       <HelmetTitle titleText="Home" />
       <Col>
@@ -104,6 +114,8 @@ const Landing = () => {
                         staffedIds={tournamentsStaffedIds}
                         date={date}
                         key={tournament.id}
+                        enrolledIds={tournamentsEnrolledIds}
+                        type={type}
                       />
                     );
                   })}
