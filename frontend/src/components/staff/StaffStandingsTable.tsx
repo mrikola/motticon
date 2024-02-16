@@ -8,7 +8,7 @@ type Props = {
   roundNumber: number;
 };
 
-const StandingsTable = ({ roundNumber }: Props) => {
+const StaffStandingsTable = ({ roundNumber }: Props) => {
   const { tournamentId } = useParams();
   const [standings, setStandings] = useState<StandingsRow[]>();
 
@@ -57,4 +57,4 @@ const StandingsTable = ({ roundNumber }: Props) => {
   }
 };
 
-export default StandingsTable;
+export default StaffStandingsTable;

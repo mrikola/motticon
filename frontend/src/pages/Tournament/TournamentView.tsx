@@ -1,13 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useParams } from "react-router";
 import { get } from "../../services/ApiService";
 import { Round, Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row } from "react-bootstrap";
-import { Box, CalendarEvent } from "react-bootstrap-icons";
-import dayjs from "dayjs";
+import { CalendarEvent } from "react-bootstrap-icons";
+import dayjs, { Dayjs } from "dayjs";
 import { Enrollment } from "../../types/User";
 import Loading from "../../components/general/Loading";
 import Standings from "./TournamentView/GoToStandings";
@@ -16,16 +15,18 @@ import GoToOngoing from "./TournamentView/GoToOngoing";
 import Staff from "./TournamentView/GoToStaff";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
+import GoToCubes from "./TournamentView/GoToCubes";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
   const user = useContext(UserInfoContext);
   const [activeTournament, setActiveTournament] = useState<Tournament>();
   const [cubes, setCubes] = useState<Cube[]>([]);
-  const [tournamentStatus, setTournamentStatus] = useState<string>();
+  // const [tournamentStatus, setTournamentStatus] = useState<string>();
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const [newestRoundNumber, setNewestRoundNumber] = useState<number>(0);
   const [freeSeats, setFreeSeats] = useState<number>(0);
+  const [date, setDate] = useState<string>();
 
   const isStaff =
     user?.isAdmin || user?.tournamentsStaffed.includes(Number(tournamentId));
@@ -45,16 +46,16 @@ const TournamentView = () => {
       sessionStorage.setItem("currentTournament", tournament.id);
       setActiveTournament(tournament);
       setFreeSeats(tournament.totalSeats - tournament.enrollments.length);
-      const now = dayjs();
-      const tournyStartDate = dayjs(tournament.startDate);
-      const tournyEndDate = dayjs(tournament.endDate);
-      if (tournyEndDate.isBefore(now, "day")) {
-        setTournamentStatus("past");
-      } else if (tournyStartDate.isAfter(now, "day")) {
-        setTournamentStatus("future");
-      } else {
-        setTournamentStatus("ongoing");
-      }
+      // const now = dayjs();
+      // const tournyStartDate = dayjs(tournament.startDate);
+      // const tournyEndDate = dayjs(tournament.endDate);
+      // if (tournyEndDate.isBefore(now, "day")) {
+      //   setTournamentStatus("past");
+      // } else if (tournyStartDate.isAfter(now, "day")) {
+      //   setTournamentStatus("future");
+      // } else {
+      //   setTournamentStatus("ongoing");
+      // }
       checkEnrolled(enrollment);
       // console.log(tournament);
     };
@@ -95,6 +96,25 @@ const TournamentView = () => {
     setFreeSeats(freeSeats + increase);
   }
 
+  useEffect(() => {
+    if (activeTournament) {
+      if (
+        dayjs(activeTournament.startDate).isSame(
+          dayjs(activeTournament.endDate),
+          "day"
+        )
+      ) {
+        setDate(dayjs(activeTournament.startDate).format("DD/MM/YYYY"));
+      } else {
+        setDate(
+          dayjs(activeTournament.startDate).format("DD/MM/YYYY") +
+            " - " +
+            dayjs(activeTournament.endDate).format("DD/MM/YYYY")
+        );
+      }
+    }
+  }, [activeTournament]);
+
   return activeTournament && user ? (
     <Container className="mt-3 my-md-4">
       <HelmetTitle titleText={activeTournament.name} />
@@ -110,35 +130,17 @@ const TournamentView = () => {
         </Col>
         <Col xs={12}>
           <p className="icon-link">
-            <CalendarEvent className="display-6" />{" "}
-            {dayjs(activeTournament.startDate).format("DD/MM/YYYY")} –{" "}
-            {dayjs(activeTournament.endDate).format("DD/MM/YYYY")}
+            <CalendarEvent className="display-6" /> {date}
           </p>
           <p>{activeTournament.description}</p>
           <p>Type: Draft</p>
         </Col>
       </Row>
-      {cubes.length > 0 && (
-        <Row>
-          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
-            <Link
-              to={`/tournament/${activeTournament.id}/cubes/`}
-              className="btn btn-primary btn-lg"
-            >
-              <div className="icon-link">
-                <Box className="fs-3" /> View cubes
-              </div>
-            </Link>
-          </Col>
-        </Row>
-      )}
+      {cubes.length > 0 && <GoToCubes tournamentId={activeTournament.id} />}
       {isStaff && <Staff tournamentId={activeTournament.id} />}
-      {isEnrolled &&
-        tournamentStatus === "ongoing" &&
-        (activeTournament.status === "started" ||
-          activeTournament.status === "pending") && (
-          <GoToOngoing tournamentId={activeTournament.id} />
-        )}
+      {isEnrolled && activeTournament.status === "started" && (
+        <GoToOngoing tournamentId={activeTournament.id} />
+      )}
       {activeTournament.status === "pending" && (
         <Enroll
           isEnrolled={isEnrolled}
@@ -149,8 +151,7 @@ const TournamentView = () => {
           tournament={activeTournament}
         />
       )}
-
-      {tournamentStatus != "future" && newestRoundNumber > 0 && (
+      {activeTournament.status !== "pending" && newestRoundNumber > 0 && (
         <Standings
           roundNumber={newestRoundNumber}
           tournamentId={activeTournament.id}

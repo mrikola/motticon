@@ -12,7 +12,7 @@ import ManageRound from "../../components/staff/ManageRound";
 import ManageDraft from "../../components/staff/ManageDraft";
 import ManageEnrollments from "../../components/staff/ManageEnrollments";
 import NextDraft from "../../components/staff/NextDraft";
-import StandingsTable from "../../components/staff/StandingsTable";
+import StaffStandingsTable from "../../components/staff/StaffStandingsTable";
 import BackButton from "../../components/general/BackButton";
 import { toast } from "react-toastify";
 
@@ -160,7 +160,7 @@ function StaffView() {
           </Col>
           <Col>
             <h3>Final standings.</h3>
-            <StandingsTable roundNumber={latestRoundNumber} />
+            <StaffStandingsTable roundNumber={latestRoundNumber} />
           </Col>
         </Row>
       )}

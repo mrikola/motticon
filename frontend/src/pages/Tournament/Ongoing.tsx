@@ -10,6 +10,7 @@ import PendingView from "../../components/tournament/PendingView";
 import StandingsTable from "../../components/tournament/StandingsTable";
 import BackButton from "../../components/general/BackButton";
 import BetweenRounds from "../../components/tournament/BetweenRounds";
+import LoadingOngoing from "../../components/general/LoadingOngoing";
 
 const Ongoing = () => {
   const { tournamentId } = useParams();
@@ -215,6 +216,7 @@ const Ongoing = () => {
                   <StandingsTable
                     roundNumber={latestRound?.roundNumber}
                     tournamentId={Number(tournamentId)}
+                    user={user}
                   />
                 </Col>
               </Row>
@@ -223,6 +225,8 @@ const Ongoing = () => {
         )}
       </Container>
     );
+  } else {
+    <LoadingOngoing />;
   }
 };
 

@@ -23,6 +23,7 @@ import PublicProfile from "./pages/User/PublicProfile";
 import AllUsers from "./pages/User/AllUsers";
 import PoolView from "./pages/Staff/PoolView";
 import ViewCubeGeneral from "./pages/ViewCube/ViewCubeGeneral";
+import LoadingOngoing from "./components/general/LoadingOngoing";
 
 function App() {
   const routes: RouteObject[] = [
@@ -38,9 +39,14 @@ function App() {
               Component: Landing,
             },
             {
-              path: "/test",
+              path: "/test", // todo: remove
               index: true,
               Component: AutocompleteTest,
+            },
+            {
+              path: "/placeholder", // todo: remove
+              index: true,
+              Component: LoadingOngoing,
             },
             {
               path: "login",

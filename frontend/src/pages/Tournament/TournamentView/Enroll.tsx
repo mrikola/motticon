@@ -6,6 +6,7 @@ import {
   CheckSquareFill,
   XLg,
   ExclamationTriangleFill,
+  PersonPlusFill,
 } from "react-bootstrap-icons";
 import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
@@ -132,7 +133,9 @@ function Enroll({
     return (
       <Row className="my-3">
         <Col xs={12}>
-          <h2>Enroll</h2>
+          <h2>
+            <PersonPlusFill /> Enroll
+          </h2>
           <p>Price: {tournament.entryFee}</p>
           <p>
             Seats left: {freeSeats}/{tournament.totalSeats}

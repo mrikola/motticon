@@ -2,13 +2,15 @@ import { Table } from "react-bootstrap";
 import { StandingsRow } from "../../types/Tournament";
 import { useEffect, useState } from "react";
 import { get } from "../../services/ApiService";
+import { User } from "../../types/User";
 
 type Props = {
   roundNumber: number;
   tournamentId: number;
+  user: User;
 };
 
-const StandingsTable = ({ roundNumber, tournamentId }: Props) => {
+const StandingsTable = ({ roundNumber, tournamentId, user }: Props) => {
   const [standings, setStandings] = useState<StandingsRow[]>();
 
   useEffect(() => {
@@ -36,7 +38,10 @@ const StandingsTable = ({ roundNumber, tournamentId }: Props) => {
         </thead>
         <tbody>
           {standings.map((result, index) => (
-            <tr key={index}>
+            <tr
+              key={index}
+              className={user.id === result.playerId ? "table-primary" : ""}
+            >
               <td>{index + 1}</td>
               <td className="td-no-wrap">
                 {result.firstName} {result.lastName}
