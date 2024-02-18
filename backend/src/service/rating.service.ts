@@ -13,7 +13,8 @@ export class RatingService {
     this.userService = new UserService();
   }
 
-  async setUserRating(rating: number, userId: number) {
+  // TODO return the user?
+  async setUserRating(rating: number, userId: number): Promise<void> {
     const user = await this.appDataSource
       .getRepository(User)
       .createQueryBuilder()
@@ -25,7 +26,8 @@ export class RatingService {
       .execute();
   }
 
-  async resetEloForUser(userId: number) {
+  // TODO return the user?
+  async resetEloForUser(userId: number): Promise<void> {
     const user = await this.appDataSource
       .getRepository(User)
       .createQueryBuilder()
@@ -35,7 +37,6 @@ export class RatingService {
       })
       .where("id = :userId", { userId })
       .execute();
-    return user;
   }
 
   async updateElo(
@@ -43,7 +44,7 @@ export class RatingService {
     player1Id: number,
     player2Id: number,
     winnerId: number
-  ) {
+  ): Promise<void> {
     // todo: change this to get a whole array of players to change ratings for
 
     // create object with K-Factor (without it defaults to 32)

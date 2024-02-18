@@ -4,7 +4,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from "typeorm";
 import { User } from "./User";
 import { Tournament } from "./Tournament";
@@ -15,13 +14,13 @@ export class Enrollment {
   id: number;
 
   @JoinColumn()
-  tournamentId: Tournament;
+  tournamentId: number;
 
   @ManyToOne(() => Tournament, (tournament) => tournament.enrollments)
   tournament: Tournament;
 
   @JoinColumn()
-  playerId: User;
+  playerId: number;
 
   @ManyToOne(() => User, (user) => user.enrollments)
   player: User;

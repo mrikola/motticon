@@ -3,8 +3,9 @@ import { AppDataSource } from "../data-source";
 import { Enrollment } from "../entity/Enrollment";
 import { Preference } from "../entity/Preference";
 import { Tournament } from "../entity/Tournament";
-import { PlayerTournamentInfo } from "../dto/tournaments.dto";
+import { PlayerTournamentInfo, tournamentToDto } from "../dto/tournaments.dto";
 import { TournamentService } from "./tournament.service";
+import { enrollmentToDto, preferenceToDto } from "../dto/user.dto";
 
 export class EnrollmentService {
   private appDataSource: DataSource;
@@ -20,7 +21,7 @@ export class EnrollmentService {
   async enrollIntoTournament(
     tournamentId: number,
     userId: number
-  ): Promise<any> {
+  ): Promise<Tournament> {
     try {
       await this.appDataSource
         .createQueryBuilder()
@@ -33,16 +34,18 @@ export class EnrollmentService {
           dropped: false,
         })
         .execute();
-      const enrollments = await this.tournamentService.getTournamentEnrollments(
-        tournamentId
-      );
-      return enrollments;
+      const tournamentWithEnrollments =
+        await this.tournamentService.getTournamentEnrollments(tournamentId);
+      return tournamentWithEnrollments;
     } catch (err: unknown) {
-      return false;
+      return null;
     }
   }
 
-  async cancelEnrollment(tournamentId: number, userId: number): Promise<any> {
+  async cancelEnrollment(
+    tournamentId: number,
+    userId: number
+  ): Promise<boolean> {
     // placeholder returning just boolean instead of object from getUserTournamentInfo()
     try {
       // todo: make sure this actually works and doesn't break stuff horribly
@@ -62,7 +65,7 @@ export class EnrollmentService {
   async staffCancelEnrollment(
     tournamentId: number,
     userId: number
-  ): Promise<any> {
+  ): Promise<Tournament> {
     try {
       await this.appDataSource
         .createQueryBuilder()
@@ -72,7 +75,7 @@ export class EnrollmentService {
         .andWhere("playerId = :userId", { userId })
         .execute();
     } catch (err: unknown) {
-      return false;
+      return null;
     }
     const tournament = await this.tournamentService.getTournamentEnrollments(
       tournamentId
@@ -80,7 +83,10 @@ export class EnrollmentService {
     return tournament;
   }
 
-  async dropFromTournament(tournamentId: number, userId: number): Promise<any> {
+  async dropFromTournament(
+    tournamentId: number,
+    userId: number
+  ): Promise<boolean> {
     // placeholder returning just boolean
     try {
       this.appDataSource
@@ -129,6 +135,10 @@ export class EnrollmentService {
         { userId, tournamentId }
       )
       .getMany();
-    return { tournament, enrollment, preferences };
+    return {
+      tournament: tournamentToDto(tournament),
+      enrollment: enrollmentToDto(enrollment),
+      preferences: preferences.map(preferenceToDto),
+    };
   }
 }

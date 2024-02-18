@@ -14,7 +14,10 @@ export class ScoreService {
     this.repository = this.appDataSource.getRepository(PlayerTournamentScore);
   }
 
-  async getPreviousScore(tournamentId: number, playerId: number) {
+  async getPreviousScore(
+    tournamentId: number,
+    playerId: number
+  ): Promise<PlayerTournamentScore> {
     return await this.repository.findOne({
       where: {
         tournamentId,
@@ -98,7 +101,7 @@ export class ScoreService {
     });
   }
 
-  async awardMatchWin(tournamentId: number, playerId: number) {
+  async awardMatchWin(tournamentId: number, playerId: number): Promise<void> {
     const previousScore = await this.getPreviousScore(tournamentId, playerId);
 
     await this.repository.upsert(
@@ -111,7 +114,11 @@ export class ScoreService {
     );
   }
 
-  async awardDraw(tournamentId: number, player1Id: number, player2Id: number) {
+  async awardDraw(
+    tournamentId: number,
+    player1Id: number,
+    player2Id: number
+  ): Promise<void> {
     const previousScore1 = await this.getPreviousScore(tournamentId, player1Id);
     const previousScore2 = await this.getPreviousScore(tournamentId, player2Id);
 
@@ -134,7 +141,7 @@ export class ScoreService {
     );
   }
 
-  async awardDraftWin(tournamentId: number, playerId: number) {
+  async awardDraftWin(tournamentId: number, playerId: number): Promise<void> {
     const previousScore = await this.getPreviousScore(tournamentId, playerId);
 
     await this.repository.upsert(
@@ -147,7 +154,7 @@ export class ScoreService {
     );
   }
 
-  async saveSnapshot(tournamentId: number, roundNumber: number) {
+  async saveSnapshot(tournamentId: number, roundNumber: number): Promise<void> {
     const scores = await this.repository.find({ where: { tournamentId } });
     this.appDataSource
       .getRepository(ScoreHistory)

@@ -103,7 +103,7 @@ export class TournamentService {
     return await this.repository.find();
   }
 
-  async getOngoingTournaments(): Promise<any> {
+  async getOngoingTournaments(): Promise<Tournament[]> {
     // temporary hackjob
     const allTournaments = await this.repository.find();
 
@@ -120,7 +120,7 @@ export class TournamentService {
     return ongoing;
   }
 
-  async getFutureTournaments(): Promise<any> {
+  async getFutureTournaments(): Promise<Tournament[]> {
     const today = new Date();
     return await this.repository
       .createQueryBuilder("tournament")
@@ -128,7 +128,7 @@ export class TournamentService {
       .getMany();
   }
 
-  async getPastTournaments(): Promise<any> {
+  async getPastTournaments(): Promise<Tournament[]> {
     const today = new Date();
     return await this.repository
       .createQueryBuilder("tournament")
@@ -234,36 +234,7 @@ export class TournamentService {
     return match;
   }
 
-  async getCurrentDraftAndMatch(
-    userId: number,
-    tournamentId: number
-  ): Promise<any> {
-    const round = await this.getCurrentRound(tournamentId);
-    const draft = await this.getCurrentDraft(tournamentId);
-
-    // TODO get seat info
-
-    const match = await this.appDataSource
-      .getRepository(Match)
-      .createQueryBuilder("match")
-      .leftJoinAndSelect("match.round", "round")
-      .leftJoinAndSelect("match.resultSubmittedBy", "resultSubmittedUser")
-      .leftJoinAndSelect("match.player1", "player1")
-      .leftJoinAndSelect("match.player2", "player2")
-      .where("round.id = :roundId", { roundId: round.id })
-      .andWhere(
-        new Brackets((qb) =>
-          qb
-            .where('match."player1Id" = :userId', { userId })
-            .orWhere('match."player2Id" = :userId', { userId })
-        )
-      )
-      .getOne();
-
-    return { round, draft, match };
-  }
-
-  async startTournament(tournamentId: number) {
+  async startTournament(tournamentId: number): Promise<Tournament> {
     await this.repository
       .createQueryBuilder("tournament")
       .update()
@@ -284,7 +255,7 @@ export class TournamentService {
     return await this.getTournamentAndDrafts(tournamentId);
   }
 
-  async endTournament(tournamentId: number) {
+  async endTournament(tournamentId: number): Promise<Tournament> {
     await this.repository
       .createQueryBuilder("tournament")
       .update()
@@ -295,7 +266,10 @@ export class TournamentService {
     return await this.getTournamentAndDrafts(tournamentId);
   }
 
-  async generateDraftSeatings(pods: DraftPod[], players: User[]) {
+  async generateDraftSeatings(
+    pods: DraftPod[],
+    players: User[]
+  ): Promise<void> {
     pods.forEach((pod, podIndex) => {
       const podPlayers = players.slice(podIndex * 8, (podIndex + 1) * 8);
       podPlayers.forEach(async (player, playerIndex) => {
@@ -309,7 +283,7 @@ export class TournamentService {
     });
   }
 
-  async generateDrafts(tournamentId: number) {
+  async generateDrafts(tournamentId: number): Promise<Tournament> {
     // TODO this just randomizes players and cubes + assigns them afterwards
     // better algorithms suggested and required for production use
 
@@ -375,7 +349,7 @@ export class TournamentService {
     return await this.getCurrentDraft(tournamentId);
   }
 
-  async endDraft(tournamentId: number, draftId: number) {
+  async endDraft(tournamentId: number, draftId: number): Promise<Tournament> {
     await this.appDataSource
       .getRepository(Draft)
       .createQueryBuilder("draft")

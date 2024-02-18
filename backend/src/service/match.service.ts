@@ -28,7 +28,7 @@ export class MatchService {
       .getOne();
   }
 
-  async getMatchesForRound(roundId: number) {
+  async getMatchesForRound(roundId: number): Promise<Match[]> {
     const cachedMatches = this.roundMatchesCache.get(roundId);
     if (cachedMatches) {
       console.log("matches for round cache hit");
@@ -47,7 +47,10 @@ export class MatchService {
     return matches;
   }
 
-  async getMatchesForRoundByPlayers(roundId: number, playerIds: number[]) {
+  async getMatchesForRoundByPlayers(
+    roundId: number,
+    playerIds: number[]
+  ): Promise<Match[]> {
     const matches = await this.repository
       .createQueryBuilder("match")
       .leftJoinAndSelect("match.round", "round")
@@ -90,7 +93,7 @@ export class MatchService {
     resultSubmittedBy: number,
     player1GamesWon: number,
     player2GamesWon: number
-  ) {
+  ): Promise<Match[]> {
     await this.repository
       .createQueryBuilder("match")
       .update(Match)
@@ -107,7 +110,7 @@ export class MatchService {
     return matches;
   }
 
-  async getPlayerMatchHistory(userId, tournamentId) {
+  async getPlayerMatchHistory(userId, tournamentId): Promise<Match[]> {
     return await this.repository
       .createQueryBuilder("match")
       .leftJoinAndSelect("match.round", "round")

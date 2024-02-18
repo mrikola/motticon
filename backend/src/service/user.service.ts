@@ -3,7 +3,6 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 import { Tournament } from "../entity/Tournament";
 import { partition, uniqBy } from "lodash";
-import { TournamentsByType } from "../dto/tournaments.dto";
 import { encodePassword } from "../auth/auth";
 
 export class UserService {
@@ -20,7 +19,7 @@ export class UserService {
     lastName: string,
     email: string,
     password: string
-  ) {
+  ): Promise<boolean> {
     // TODO improve return values
     try {
       await this.repository.insert({
@@ -55,7 +54,7 @@ export class UserService {
     });
   }
 
-  async getTournamentsEnrolled(userId: number) {
+  async getTournamentsEnrolled(userId: number): Promise<Tournament[]> {
     const enrollments = await this.appDataSource
       .getRepository(Tournament)
       .createQueryBuilder("tournament")
@@ -66,7 +65,7 @@ export class UserService {
     return enrollments;
   }
 
-  async getTournamentsStaffed(userId: number) {
+  async getTournamentsStaffed(userId: number): Promise<Tournament[]> {
     const memberships = await this.appDataSource
       .getRepository(Tournament)
       .createQueryBuilder("tournament")
@@ -86,20 +85,5 @@ export class UserService {
       (tournament) => tournament.id
     );
     return allTournaments;
-    const today = new Date();
-    const [past, notPast] = partition(
-      allTournaments,
-      (tournament) => tournament.endDate < today
-    );
-    const [future, ongoing] = partition(
-      notPast,
-      (tournament) => tournament.startDate > today
-    );
-
-    // return {
-    //   past,
-    //   ongoing,
-    //   future,
-    // };
   }
 }

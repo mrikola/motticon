@@ -85,14 +85,6 @@ export const getMostRecentRound = async (req) => {
   return await tournamentService.getMostRecentRound(tournamentId as number);
 };
 
-export const getCurrentDraftAndMatch = async (req) => {
-  const { userId, tournamentId } = req.params;
-  return await tournamentService.getCurrentDraftAndMatch(
-    userId,
-    tournamentId as number
-  );
-};
-
 export const startTournament = async (req) => {
   const { tournamentId } = req.params;
   return await tournamentService.startTournament(tournamentId as number);

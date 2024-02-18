@@ -5,7 +5,7 @@ const cardsArray = cards as Card[];
 export class CardService {
   constructor() {}
 
-  async searchForCard(query: string): Promise<any> {
+  async searchForCard(query: string): Promise<Card[]> {
     if (cardsArray) {
       // console.log(cardsArray.length);
       return cardsArray

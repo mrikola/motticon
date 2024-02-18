@@ -16,7 +16,6 @@ import {
   getOngoingTournaments,
   getTournamentAndDrafts,
   getTournamentEnrollments,
-  getCurrentDraftAndMatch,
   getMostRecentRound,
   getCurrentMatch,
 } from "../controller/tournament.controller";
@@ -68,13 +67,6 @@ userRouter.get("/user/:userId/tournament/:tournamentId", async (req, res) => {
 userRouter.get("/match/round/:roundId", async (req, res) => {
   res.send(await getMatchesForRound(req));
 });
-
-userRouter.get(
-  "/user/:userId/tournament/:tournamentId/current",
-  async (req, res) => {
-    res.send(await getCurrentDraftAndMatch(req));
-  }
-);
 
 userRouter.get(
   "/user/:userId/tournament/:tournamentId/matches",
