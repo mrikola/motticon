@@ -142,7 +142,7 @@ const ManageDraft = ({
       {}
     );
     const updatedTournament = (await response.json()) as Tournament;
-    // console.log(updatedTournament);
+    console.log(updatedTournament);
     toast.success("Draft completed");
     setCurrentDraft(undefined);
     // do some stuff here

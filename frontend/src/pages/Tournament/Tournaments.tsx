@@ -128,7 +128,6 @@ function Tournaments() {
                       enrolledIds={tournamentsEnrolledIds}
                       date={date}
                       key={tournament.id}
-                      type={type}
                     />
                   );
                 })}

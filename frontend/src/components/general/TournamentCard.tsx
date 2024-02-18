@@ -1,5 +1,5 @@
 import { Badge, Card, Col } from "react-bootstrap";
-import { Tournament, UsersTournaments } from "../../types/Tournament";
+import { Tournament } from "../../types/Tournament";
 import { Link } from "react-router-dom";
 import { CheckCircleFill } from "react-bootstrap-icons";
 

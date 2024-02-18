@@ -42,6 +42,7 @@ function Enroll({
   const [enrollButtonText, setEnrollButtonText] = useState<string>();
   // consider creating an Icon component and passing it the icon name as a prop
   const [enrollButtonIcon, setEnrollButtonIcon] = useState<ReactNode>();
+  /*
   const enrollSuccess = () =>
     toast.success("Enrolled successfully", {
       position: "bottom-center",
@@ -57,7 +58,7 @@ function Enroll({
       theme: "colored",
       pauseOnHover: false,
     });
-
+  */
   useEffect(() => {
     if (isEnrolled) {
       setEnrollButtonText("Enrolled");

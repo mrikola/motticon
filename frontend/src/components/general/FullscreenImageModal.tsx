@@ -1,4 +1,4 @@
-import { Button, Col, Container, Modal, Row } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 
 export type FullscreenImageModalProps = {
   show: boolean;

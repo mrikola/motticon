@@ -115,7 +115,6 @@ const Landing = () => {
                         date={date}
                         key={tournament.id}
                         enrolledIds={tournamentsEnrolledIds}
-                        type={type}
                       />
                     );
                   })}

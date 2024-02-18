@@ -6,7 +6,7 @@ import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row } from "react-bootstrap";
 import { CalendarEvent } from "react-bootstrap-icons";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { Enrollment } from "../../types/User";
 import Loading from "../../components/general/Loading";
 import Standings from "./TournamentView/GoToStandings";
