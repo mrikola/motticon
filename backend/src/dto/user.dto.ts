@@ -10,6 +10,10 @@ export type PlayerDto = {
   lastName: string;
 };
 
+export type PlayerWithRatingDto = PlayerDto & {
+  rating: number;
+};
+
 export type EnrollmentDto = {
   id: number;
   tournament: TournamentDto;
@@ -34,24 +38,43 @@ export type PlayerTournamentScoreDto = {
   opponentMatchWinPercentage: number;
 };
 
-export const playerToDto = (player: User): PlayerDto => ({
-  id: player.id,
-  firstName: player.firstName,
-  lastName: player.lastName,
-});
+export const playerToDto = (player: User): PlayerDto =>
+  player
+    ? {
+        id: player.id,
+        firstName: player.firstName,
+        lastName: player.lastName,
+      }
+    : undefined;
 
-export const enrollmentToDto = (enrollment: Enrollment): EnrollmentDto => ({
-  id: enrollment.id,
-  tournament: tournamentToDto(enrollment.tournament),
-  player: playerToDto(enrollment.player),
-  paid: enrollment.paid,
-  dropped: enrollment.dropped,
-});
+export const playerToRatedDto = (player: User): PlayerWithRatingDto =>
+  player
+    ? {
+        id: player.id,
+        firstName: player.firstName,
+        lastName: player.lastName,
+        rating: player.rating,
+      }
+    : undefined;
 
-export const preferenceToDto = (preference: Preference): PreferenceDto => ({
-  id: preference.id,
-  tournament: tournamentToDto(preference.tournament),
-  player: playerToDto(preference.player),
-  cube: cubeToDto(preference.cube),
-  points: preference.points,
-});
+export const enrollmentToDto = (enrollment: Enrollment): EnrollmentDto =>
+  enrollment
+    ? {
+        id: enrollment.id,
+        tournament: tournamentToDto(enrollment.tournament),
+        player: playerToDto(enrollment.player),
+        paid: enrollment.paid,
+        dropped: enrollment.dropped,
+      }
+    : undefined;
+
+export const preferenceToDto = (preference: Preference): PreferenceDto =>
+  preference
+    ? {
+        id: preference.id,
+        tournament: tournamentToDto(preference.tournament),
+        player: playerToDto(preference.player),
+        cube: cubeToDto(preference.cube),
+        points: preference.points,
+      }
+    : undefined;

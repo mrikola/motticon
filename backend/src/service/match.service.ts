@@ -2,6 +2,7 @@ import { Brackets, DataSource, Repository } from "typeorm";
 import { Match } from "../entity/Match";
 import { AppDataSource } from "../data-source";
 import { LRUCache } from "lru-cache";
+import { round } from "lodash";
 
 export class MatchService {
   private appDataSource: DataSource;
@@ -13,7 +14,7 @@ export class MatchService {
     this.repository = this.appDataSource.getRepository(Match);
     this.roundMatchesCache = new LRUCache({
       ttl: 1000 * 10,
-      ttlAutopurge: true,
+      ttlAutopurge: false,
     });
   }
 
@@ -31,7 +32,7 @@ export class MatchService {
   async getMatchesForRound(roundId: number): Promise<Match[]> {
     const cachedMatches = this.roundMatchesCache.get(roundId);
     if (cachedMatches) {
-      console.log("matches for round cache hit");
+      console.log("matches for round cache hit", roundId);
       return cachedMatches;
     }
     const matches = await this.repository
@@ -104,8 +105,7 @@ export class MatchService {
       })
       .where("id = :matchId", { matchId })
       .execute();
-    // invalidate the round cache so that staff view looks correct
-    this.roundMatchesCache.delete(roundId);
+    this.roundMatchesCache.set(roundId, undefined);
     const matches = this.getMatchesForRound(roundId);
     return matches;
   }

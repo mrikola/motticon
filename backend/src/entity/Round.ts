@@ -29,7 +29,7 @@ export class Round {
   status: RoundStatus;
 
   @Column("timestamp", { nullable: true })
-  startTime: Timestamp;
+  startTime: Date;
 
   @OneToMany(() => Match, (match) => match.round)
   matches: Match[];

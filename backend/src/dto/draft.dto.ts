@@ -44,27 +44,36 @@ export type DraftDto = {
   pods?: DraftPodDto[];
 };
 
-export const seatToDto = (seat: DraftPodSeat): DraftPodSeatDto => ({
-  id: seat.id,
-  seat: seat.seat,
-  player: playerToDto(seat.player),
-  deckPhotoUrl: seat.deckPhotoUrl,
-  draftPoolReturned: seat.draftPoolReturned,
-});
+export const seatToDto = (seat: DraftPodSeat): DraftPodSeatDto =>
+  seat
+    ? {
+        id: seat.id,
+        seat: seat.seat,
+        player: playerToDto(seat.player),
+        deckPhotoUrl: seat.deckPhotoUrl,
+        draftPoolReturned: seat.draftPoolReturned,
+      }
+    : undefined;
 
-export const podToDto = (pod: DraftPod): DraftPodDto => ({
-  id: pod.id,
-  podNumber: pod.podNumber,
-  cube: pod.cube ? cubeToDto(pod.cube) : undefined,
-  seats: pod.seats?.map(seatToDto),
-});
+export const podToDto = (pod: DraftPod): DraftPodDto =>
+  pod
+    ? {
+        id: pod.id,
+        podNumber: pod.podNumber,
+        cube: pod.cube ? cubeToDto(pod.cube) : undefined,
+        seats: pod.seats?.map(seatToDto),
+      }
+    : undefined;
 
-export const draftToDto = (draft: Draft): DraftDto => ({
-  id: draft.id,
-  draftNumber: draft.draftNumber,
-  firstRound: draft.firstRound,
-  lastRound: draft.lastRound,
-  status: draft.status,
-  startTime: new Date(draft.startTime.toNumber()),
-  pods: draft.pods?.map(podToDto),
-});
+export const draftToDto = (draft: Draft): DraftDto =>
+  draft
+    ? {
+        id: draft.id,
+        draftNumber: draft.draftNumber,
+        firstRound: draft.firstRound,
+        lastRound: draft.lastRound,
+        status: draft.status,
+        startTime: draft.startTime,
+        pods: draft.pods?.map(podToDto),
+      }
+    : undefined;

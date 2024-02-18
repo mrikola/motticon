@@ -35,7 +35,7 @@ export class CubeService {
     url: string,
     owner: string,
     imageUrl: string
-  ): Promise<any> {
+  ): Promise<Cube> {
     // TODO improve return values
     try {
       const cube: Cube = await this.repository.save({
@@ -47,7 +47,7 @@ export class CubeService {
       });
       return cube;
     } catch {
-      return false;
+      return null;
     }
   }
 }

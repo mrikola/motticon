@@ -181,7 +181,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   }, [matches]);
 
   useEffect(() => {
-    if (match.resultSubmittedBy === null && roundTimerStarted) {
+    if (!match.resultSubmittedBy && roundTimerStarted) {
       setSubmissionDisabled(false);
     }
   }, [roundTimerStarted, match]);

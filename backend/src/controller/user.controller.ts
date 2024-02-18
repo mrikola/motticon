@@ -1,35 +1,51 @@
-import { encodePassword } from "../auth/auth";
+import {
+  PlayerTournamentInfo,
+  TournamentDto,
+  tournamentToDto,
+} from "../dto/tournaments.dto";
+import {
+  PlayerDto,
+  PlayerWithRatingDto,
+  playerToDto,
+  playerToRatedDto,
+} from "../dto/user.dto";
 import { EnrollmentService } from "../service/enrollment.service";
 import { UserService } from "../service/user.service";
 
 const userService = new UserService();
 const enrollmentService = new EnrollmentService();
 
-export const signup = async (req) => {
+export const signup = async (req): Promise<boolean> => {
   const { firstName, lastName, email, password } = req.body;
   return await userService.createUser(firstName, lastName, email, password);
 };
 
-export const getUser = async (req) => {
+export const getUser = async (req): Promise<PlayerWithRatingDto> => {
   const { id } = req.params;
-  return await userService.getUser(id as number);
+  return playerToRatedDto(await userService.getUser(id as number));
 };
 
-export const getAllUsers = async () => {
-  return await userService.getAllUsers();
+export const getAllUsers = async (): Promise<PlayerWithRatingDto[]> => {
+  return (await userService.getAllUsers()).map(playerToRatedDto);
 };
 
-export const getUsersTournaments = async (req) => {
+export const getUsersTournaments = async (req): Promise<TournamentDto[]> => {
   const { id } = req.params;
-  return await userService.getUsersTournaments(id as number);
+  return (await userService.getUsersTournaments(id as number)).map(
+    tournamentToDto
+  );
 };
 
-export const getTournamentsStaffed = async (req) => {
+export const getTournamentsStaffed = async (req): Promise<TournamentDto[]> => {
   const { userId } = req.params;
-  return await userService.getTournamentsStaffed(userId as number);
+  return (await userService.getTournamentsStaffed(userId as number)).map(
+    tournamentToDto
+  );
 };
 
-export const getUserTournamentInfo = async (req) => {
+export const getUserTournamentInfo = async (
+  req
+): Promise<PlayerTournamentInfo> => {
   const { userId, tournamentId } = req.params;
   return await enrollmentService.getUserTournamentInfo(
     userId,

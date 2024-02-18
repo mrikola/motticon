@@ -38,5 +38,5 @@ export class Draft {
   pods: DraftPod[];
 
   @Column("timestamp", { nullable: true })
-  startTime: Timestamp;
+  startTime: Date;
 }

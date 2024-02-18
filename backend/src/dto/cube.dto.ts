@@ -9,11 +9,14 @@ export type CubeDto = {
   imageUrl: string;
 };
 
-export const cubeToDto = (cube: Cube): CubeDto => ({
-  id: cube.id,
-  title: cube.title,
-  description: cube.description,
-  owner: cube.owner,
-  url: cube.url,
-  imageUrl: cube.imageUrl,
-});
+export const cubeToDto = (cube: Cube): CubeDto =>
+  cube
+    ? {
+        id: cube.id,
+        title: cube.title,
+        description: cube.description,
+        owner: cube.owner,
+        url: cube.url,
+        imageUrl: cube.imageUrl,
+      }
+    : undefined;

@@ -1,10 +1,13 @@
+import { DraftDto, draftToDto } from "../dto/draft.dto";
+import { MatchDto, RoundDto, matchToDto, roundToDto } from "../dto/round.dto";
+import { TournamentDto, tournamentToDto } from "../dto/tournaments.dto";
 import { EnrollmentService } from "../service/enrollment.service";
 import { TournamentService } from "../service/tournament.service";
 
 const tournamentService = new TournamentService();
 const enrollmentService = new EnrollmentService();
 
-export const createTournament = async (req) => {
+export const createTournament = async (req): Promise<TournamentDto> => {
   const {
     name,
     description,
@@ -16,147 +19,172 @@ export const createTournament = async (req) => {
     endDate,
     cubeIds,
   } = req.body;
-  return await tournamentService.createTournament(
-    name,
-    description,
-    price,
-    players,
-    drafts,
-    preferencesRequired,
-    startDate,
-    endDate,
-    cubeIds
+  return tournamentToDto(
+    await tournamentService.createTournament(
+      name,
+      description,
+      price,
+      players,
+      drafts,
+      preferencesRequired,
+      startDate,
+      endDate,
+      cubeIds
+    )
   );
 };
 
-export const getAllTournaments = async () => {
-  return await tournamentService.getAllTournaments();
+export const getAllTournaments = async (): Promise<TournamentDto[]> => {
+  return (await tournamentService.getAllTournaments()).map(tournamentToDto);
 };
 
-export const getOngoingTournaments = async () => {
-  return await tournamentService.getOngoingTournaments();
+export const getOngoingTournaments = async (): Promise<TournamentDto[]> => {
+  return (await tournamentService.getOngoingTournaments()).map(tournamentToDto);
 };
 
-export const getFutureTournaments = async () => {
-  return await tournamentService.getFutureTournaments();
+export const getFutureTournaments = async (): Promise<TournamentDto[]> => {
+  return (await tournamentService.getFutureTournaments()).map(tournamentToDto);
 };
 
-export const getPastTournaments = async () => {
-  return await tournamentService.getPastTournaments();
+export const getPastTournaments = async (): Promise<TournamentDto[]> => {
+  return (await tournamentService.getPastTournaments()).map(tournamentToDto);
 };
 
-export const getTournament = async (req) => {
+export const getTournament = async (req): Promise<TournamentDto> => {
   const { tournamentId } = req.params;
-  return await tournamentService.getTournament(tournamentId as number);
-};
-
-export const getTournamentEnrollments = async (req) => {
-  const { tournamentId } = req.params;
-  return await tournamentService.getTournamentEnrollments(
-    tournamentId as number
+  return tournamentToDto(
+    await tournamentService.getTournament(tournamentId as number)
   );
 };
 
-export const getTournamentAndDrafts = async (req) => {
+export const getTournamentEnrollments = async (req): Promise<TournamentDto> => {
   const { tournamentId } = req.params;
-  return await tournamentService.getTournamentAndDrafts(tournamentId as number);
+  return tournamentToDto(
+    await tournamentService.getTournamentEnrollments(tournamentId as number)
+  );
 };
 
-export const getCurrentDraft = async (req) => {
+export const getTournamentAndDrafts = async (req): Promise<TournamentDto> => {
   const { tournamentId } = req.params;
-  return await tournamentService.getCurrentDraft(tournamentId as number);
+  return tournamentToDto(
+    await tournamentService.getTournamentAndDrafts(tournamentId as number)
+  );
 };
 
-export const getCurrentRound = async (req) => {
+export const getCurrentDraft = async (req): Promise<DraftDto> => {
   const { tournamentId } = req.params;
-  return await tournamentService.getCurrentRound(tournamentId as number);
+  return draftToDto(
+    await tournamentService.getCurrentDraft(tournamentId as number)
+  );
 };
 
-export const getCurrentMatch = async (req) => {
+export const getCurrentRound = async (req): Promise<RoundDto> => {
+  const { tournamentId } = req.params;
+  return roundToDto(
+    await tournamentService.getCurrentRound(tournamentId as number)
+  );
+};
+
+export const getCurrentMatch = async (req): Promise<MatchDto> => {
   const { roundId, userId } = req.params;
-  return await tournamentService.getCurrentMatch(
-    userId as number,
-    roundId as number
+  return matchToDto(
+    await tournamentService.getCurrentMatch(userId as number, roundId as number)
   );
 };
 
-export const getMostRecentRound = async (req) => {
+export const getMostRecentRound = async (req): Promise<RoundDto> => {
   const { tournamentId } = req.params;
-  return await tournamentService.getMostRecentRound(tournamentId as number);
+  return roundToDto(
+    await tournamentService.getMostRecentRound(tournamentId as number)
+  );
 };
 
-export const startTournament = async (req) => {
+export const startTournament = async (req): Promise<TournamentDto> => {
   const { tournamentId } = req.params;
-  return await tournamentService.startTournament(tournamentId as number);
+  return tournamentToDto(
+    await tournamentService.startTournament(tournamentId as number)
+  );
 };
 
-export const endTournament = async (req) => {
+export const endTournament = async (req): Promise<TournamentDto> => {
   const { tournamentId } = req.params;
-  return await tournamentService.endTournament(tournamentId as number);
+  return tournamentToDto(
+    await tournamentService.endTournament(tournamentId as number)
+  );
 };
 
-export const generateDrafts = async (req) => {
+export const generateDrafts = async (req): Promise<TournamentDto> => {
   const { tournamentId } = req.params;
-  return await tournamentService.generateDrafts(tournamentId as number);
+  return tournamentToDto(
+    await tournamentService.generateDrafts(tournamentId as number)
+  );
 };
 
-export const initiateDraft = async (req) => {
+export const initiateDraft = async (req): Promise<DraftDto> => {
   const { tournamentId, draftId } = req.params;
-  return await tournamentService.initiateDraft(
-    tournamentId as number,
-    draftId as number
+  return draftToDto(
+    await tournamentService.initiateDraft(
+      tournamentId as number,
+      draftId as number
+    )
   );
 };
 
-export const startDraft = async (req) => {
+export const startDraft = async (req): Promise<DraftDto> => {
   const { tournamentId, draftId } = req.params;
-  return await tournamentService.startDraft(
-    tournamentId as number,
-    draftId as number
+  return draftToDto(
+    await tournamentService.startDraft(
+      tournamentId as number,
+      draftId as number
+    )
   );
 };
 
-export const endDraft = async (req) => {
+export const endDraft = async (req): Promise<TournamentDto> => {
   const { tournamentId, draftId } = req.params;
-  return await tournamentService.endDraft(
-    tournamentId as number,
-    draftId as number
+  return tournamentToDto(
+    await tournamentService.endDraft(tournamentId as number, draftId as number)
   );
 };
 
-export const initiateRound = async (req) => {
+export const initiateRound = async (req): Promise<RoundDto> => {
   const { tournamentId, roundId } = req.params;
-  return await tournamentService.initiateRound(
-    tournamentId as number,
-    roundId as number
+  return roundToDto(
+    await tournamentService.initiateRound(
+      tournamentId as number,
+      roundId as number
+    )
   );
 };
 
-export const startRound = async (req) => {
+export const startRound = async (req): Promise<RoundDto> => {
   const { tournamentId, roundId } = req.params;
-  return await tournamentService.startRound(
-    tournamentId as number,
-    roundId as number
+  return roundToDto(
+    await tournamentService.startRound(
+      tournamentId as number,
+      roundId as number
+    )
   );
 };
 
-export const endRound = async (req) => {
+export const endRound = async (req): Promise<RoundDto> => {
   const { tournamentId, roundId } = req.params;
-  return await tournamentService.endRound(
-    tournamentId as number,
-    roundId as number
+  return roundToDto(
+    await tournamentService.endRound(tournamentId as number, roundId as number)
   );
 };
 
-export const enrollIntoTournament = async (req) => {
+export const enrollIntoTournament = async (req): Promise<TournamentDto> => {
   const { tournamentId, userId } = req.params;
-  return await enrollmentService.enrollIntoTournament(
-    tournamentId as number,
-    userId as number
+  return tournamentToDto(
+    await enrollmentService.enrollIntoTournament(
+      tournamentId as number,
+      userId as number
+    )
   );
 };
 
-export const cancelEnrollment = async (req) => {
+export const cancelEnrollment = async (req): Promise<boolean> => {
   const { tournamentId, userId } = req.params;
   return await enrollmentService.cancelEnrollment(
     tournamentId as number,
@@ -164,15 +192,17 @@ export const cancelEnrollment = async (req) => {
   );
 };
 
-export const staffCancelEnrollment = async (req) => {
+export const staffCancelEnrollment = async (req): Promise<TournamentDto> => {
   const { tournamentId, userId } = req.params;
-  return await enrollmentService.staffCancelEnrollment(
-    tournamentId as number,
-    userId as number
+  return tournamentToDto(
+    await enrollmentService.staffCancelEnrollment(
+      tournamentId as number,
+      userId as number
+    )
   );
 };
 
-export const dropFromTournament = async (req) => {
+export const dropFromTournament = async (req): Promise<boolean> => {
   const { tournamentId, userId } = req.params;
   return await enrollmentService.dropFromTournament(
     tournamentId as number,

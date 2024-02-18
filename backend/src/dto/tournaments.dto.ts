@@ -39,18 +39,21 @@ export type TournamentsByType = {
   future: TournamentDto[];
 };
 
-export const tournamentToDto = (tournament: Tournament): TournamentDto => ({
-  id: tournament.id,
-  name: tournament.name,
-  description: tournament.description,
-  startDate: tournament.startDate,
-  endDate: tournament.endDate,
-  entryFee: tournament.entryFee,
-  totalSeats: tournament.totalSeats,
-  preferencesRequired: tournament.preferencesRequired,
-  status: tournament.status,
-  drafts: tournament.drafts.map(draftToDto),
-  enrollments: tournament.enrollments.map(enrollmentToDto),
-  cubes: tournament.cubes.map(cubeToDto),
-  staffMembers: tournament.staffMembers.map(playerToDto),
-});
+export const tournamentToDto = (tournament: Tournament): TournamentDto =>
+  tournament
+    ? {
+        id: tournament.id,
+        name: tournament.name,
+        description: tournament.description,
+        startDate: tournament.startDate,
+        endDate: tournament.endDate,
+        entryFee: tournament.entryFee,
+        totalSeats: tournament.totalSeats,
+        preferencesRequired: tournament.preferencesRequired,
+        status: tournament.status,
+        drafts: tournament.drafts?.map(draftToDto),
+        enrollments: tournament.enrollments?.map(enrollmentToDto),
+        cubes: tournament.cubes?.map(cubeToDto),
+        staffMembers: tournament.staffMembers?.map(playerToDto),
+      }
+    : undefined;

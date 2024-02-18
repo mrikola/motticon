@@ -1,11 +1,9 @@
-import { DraftPod } from "../entity/DraftPod";
-import { DraftPodSeat } from "../entity/DraftPodSeat";
 import { Match } from "../entity/Match";
 import { TournamentService } from "../service/tournament.service";
-import { DraftService } from "../service/draft.service";
 import { MatchService } from "../service/match.service";
 import { AppDataSource } from "../data-source";
 import { Round } from "../entity/Round";
+import { MatchDto, matchToDto } from "../dto/round.dto";
 
 const tournamentService = new TournamentService();
 const matchService = new MatchService();
@@ -19,7 +17,7 @@ export const generatePairings = async (
   tournamentId: number,
   draftId: number,
   roundId: number
-): Promise<Partial<Match>[]> => {
+): Promise<MatchDto[]> => {
   // TODO this only applies to 8man pod draft pairings, parametrize somehow
   // TODO test this to hell and back :D
   // FIXME also clean this up a LOT
@@ -51,7 +49,7 @@ export const generatePairings = async (
 
   return (
     await Promise.all(
-      pods.flatMap(async (pod): Promise<Partial<Match>[]> => {
+      pods.flatMap(async (pod): Promise<Match[]> => {
         const { seats } = pod;
         const players: number[] = seats.map((seat) => seat.player.id);
         const previousRoundMatches: Match[] =
@@ -222,5 +220,7 @@ export const generatePairings = async (
         }
       })
     )
-  ).flat();
+  )
+    .flat()
+    .map(matchToDto);
 };
