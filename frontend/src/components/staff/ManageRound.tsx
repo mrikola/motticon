@@ -123,7 +123,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
   useEffect(() => {
     if (matches) {
       setResultsMissing(
-        matches.filter((match) => match.resultSubmittedBy == null).length
+        matches.filter((match) => !match.resultSubmittedBy).length
       );
     }
   }, [matches]);

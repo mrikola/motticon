@@ -71,6 +71,7 @@ export class MatchService {
 
   async submitResult(
     matchId: number,
+    roundId: number,
     resultSubmittedBy: number,
     player1GamesWon: number,
     player2GamesWon: number
@@ -85,6 +86,7 @@ export class MatchService {
       })
       .where("id = :matchId", { matchId })
       .execute();
+    this.roundMatchesCache.set(roundId, undefined);
     return await this.getMatch(matchId);
   }
 

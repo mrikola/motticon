@@ -98,7 +98,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
   useEffect(() => {
     if (allSeats) {
       setBuildingRemaining(
-        allSeats.filter((seat) => seat.deckPhotoUrl == null).length
+        allSeats.filter((seat) => !seat.deckPhotoUrl).length
       );
     }
   }, [allSeats]);

@@ -17,10 +17,8 @@ const MatchTable = ({
   const [doneMatches, setDoneMatches] = useState<Match[]>();
 
   useEffect(() => {
-    setOngoingMatches(
-      matches.filter((match) => match.resultSubmittedBy == null)
-    );
-    setDoneMatches(matches.filter((match) => match.resultSubmittedBy != null));
+    setOngoingMatches(matches.filter((match) => !match.resultSubmittedBy));
+    setDoneMatches(matches.filter((match) => match.resultSubmittedBy));
   }, [matches]);
 
   if (ongoingMatches && doneMatches) {
@@ -58,14 +56,10 @@ const MatchTable = ({
                         type="submit"
                         onClick={() => submitResultClicked(match)}
                         disabled={
-                          match.resultSubmittedBy || !roundTimerStarted
-                            ? true
-                            : false
+                          !!match.resultSubmittedBy || !roundTimerStarted
                         }
                         aria-disabled={
-                          match.resultSubmittedBy || !roundTimerStarted
-                            ? true
-                            : false
+                          !!match.resultSubmittedBy || !roundTimerStarted
                         }
                       >
                         Submit result

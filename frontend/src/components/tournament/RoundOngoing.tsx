@@ -44,7 +44,6 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   const [player, setPlayer] = useState<Player>();
   const [opponent, setOpponent] = useState<Player>();
   const [roundTimerStarted, setRoundTimerStarted] = useState<boolean>(false);
-  const [submissionDisabled, setSubmissionDisabled] = useState<boolean>(true);
 
   const {
     playerGoingFirst: { id: onThePlay },
@@ -54,15 +53,27 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
     // check player id's from match and set correct player & opponent objects
     if (match && user) {
       if (match.player1.id === user?.id) {
+        if (opponent?.id !== match.player2.id) {
+          setPlayerRadioValue("0");
+          setOpponentRadioValue("0");
+        }
         setPlayer(match.player1);
-        setPlayerRadioValue(match.player1GamesWon.toString());
         setOpponent(match.player2);
-        setOpponentRadioValue(match.player2GamesWon.toString());
+        if (match.resultSubmittedBy) {
+          setPlayerRadioValue(match.player1GamesWon.toString());
+          setOpponentRadioValue(match.player2GamesWon.toString());
+        }
       } else {
+        if (opponent?.id !== match.player1.id) {
+          setPlayerRadioValue("0");
+          setOpponentRadioValue("0");
+        }
         setPlayer(match.player2);
-        setPlayerRadioValue(match.player2GamesWon.toString());
         setOpponent(match.player1);
-        setOpponentRadioValue(match.player1GamesWon.toString());
+        if (match.resultSubmittedBy) {
+          setPlayerRadioValue(match.player2GamesWon.toString());
+          setOpponentRadioValue(match.player1GamesWon.toString());
+        }
       }
     }
   }, [match, user]);
@@ -70,6 +81,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   // handle result submission
   const submitResult = () => {
     const matchId = match.id;
+    const roundId = round.id;
     const resultSubmittedBy = user?.id;
     const player1GamesWon =
       match.player1.id === user?.id ? playerRadioValue : opponentRadioValue;
@@ -77,6 +89,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
       match.player1.id === user?.id ? opponentRadioValue : playerRadioValue;
     post(`/submitResult`, {
       matchId,
+      roundId,
       resultSubmittedBy,
       player1GamesWon,
       player2GamesWon,
@@ -89,7 +102,6 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
           show: false,
         });
         setCurrentMatch({ ...match, ...updatedMatch });
-        setSubmissionDisabled(true);
         toast.success("Result submitted successfully");
       }
     });
@@ -175,16 +187,12 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   useEffect(() => {
     if (matches) {
       setResultsMissing(
-        matches.filter((match) => match.resultSubmittedBy == null).length
+        matches.filter((match) => !match.resultSubmittedBy).length
       );
     }
   }, [matches]);
 
-  useEffect(() => {
-    if (!match.resultSubmittedBy && roundTimerStarted) {
-      setSubmissionDisabled(false);
-    }
-  }, [roundTimerStarted, match]);
+  const submissionDisabled = !roundTimerStarted || !!match.resultSubmittedBy;
 
   if (user && timeRemaining && player && opponent) {
     return (

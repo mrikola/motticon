@@ -16,11 +16,17 @@ export const getMatchesForRound = async (req): Promise<MatchDto[]> => {
 };
 
 export const submitResult = async (req): Promise<MatchDto> => {
-  const { matchId, resultSubmittedBy, player1GamesWon, player2GamesWon } =
-    req.body;
+  const {
+    matchId,
+    roundId,
+    resultSubmittedBy,
+    player1GamesWon,
+    player2GamesWon,
+  } = req.body;
   return matchToDto(
     await matchService.submitResult(
       matchId,
+      roundId,
       resultSubmittedBy,
       player1GamesWon,
       player2GamesWon
