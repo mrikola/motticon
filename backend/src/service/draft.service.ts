@@ -43,10 +43,11 @@ export class DraftService {
     draftId: number,
     userId: number
   ): Promise<DraftPod> {
-    const identifier = draftId.toString + "." + userId.toString;
+    const identifier = `${draftId}.${userId}`;
     const cachedPod = this.userDraftPodCache.get(identifier);
+
     if (cachedPod) {
-      console.log("draft pod cache hit");
+      console.log("draft pod cache hit", identifier);
       return cachedPod;
     }
     const pod = await this.appDataSource
