@@ -62,7 +62,7 @@ const UserCubePreferences = () => {
         <p>
           Please select the cubes that you would most like to draft during the
           tournament. #1 is your most favorite, #2 the second most favorite and
-          so on. If you don’t care too much about what you draft, select “No
+          so on. If you don't care too much about what you draft, select “No
           preference”.
         </p>
         <p>

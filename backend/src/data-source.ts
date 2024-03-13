@@ -6,7 +6,7 @@ export const AppDataSource = new DataSource({
   url:
     process.env.DATABASE_URL ||
     "postgres://postgres:postgres@localhost:5432/motticon",
-  logging: true,
+  logging: false,
   entities: ["src/entity/*.ts"],
   migrations: ["src/migration/*.ts"],
   migrationsRun: true,

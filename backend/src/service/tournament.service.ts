@@ -16,10 +16,25 @@ import { Match } from "../entity/Match";
 import { ScoreService } from "./score.service";
 import { PlayerTournamentScore } from "../entity/PlayerTournamentScore";
 import { LRUCache } from "lru-cache";
+import { PreferenceService } from "./preference.service";
+import { randomize } from "../util/random";
+import { makeArray } from "../util/array";
+
+type PreferencesByPlayer = {
+  [key: string]: [
+    {
+      player: number;
+      cube: number;
+      points: number;
+      used: boolean;
+    }
+  ];
+};
 
 export class TournamentService {
   private appDataSource: DataSource;
   private repository: Repository<Tournament>;
+  private preferenceService: PreferenceService;
   private matchService: MatchService;
   private cubeService: CubeService;
   private ratingService: RatingService;
@@ -30,6 +45,7 @@ export class TournamentService {
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(Tournament);
+    this.preferenceService = new PreferenceService();
     this.matchService = new MatchService();
     this.cubeService = new CubeService();
     this.ratingService = new RatingService();
@@ -284,42 +300,174 @@ export class TournamentService {
   }
 
   async generateDrafts(tournamentId: number): Promise<Tournament> {
-    // TODO this just randomizes players and cubes + assigns them afterwards
-    // better algorithms suggested and required for production use
-
     const tournament = await this.getTournamentAndDrafts(tournamentId);
-    const players = (
-      await this.getTournamentEnrollments(tournamentId)
-    ).enrollments
-      .map((enr) => enr.player)
-      .sort((_a, __b) => 0.5 - Math.random());
-    const cubes = (
-      await this.cubeService.getCubesForTournament(tournamentId)
-    ).sort((_a, __b) => 0.5 - Math.random());
+    const enrollments = (await this.getTournamentEnrollments(tournamentId))
+      .enrollments;
+    const cubes = await this.cubeService.getCubesForTournament(tournamentId);
     const podsPerDraft = tournament.totalSeats / 8;
 
-    if (players.length !== tournament.totalSeats) {
-      console.log("not all seats will be filled");
-    }
-    if (cubes.length < podsPerDraft) {
-      console.log("not enough cubes for all draft pods");
-    }
+    if (tournament.preferencesRequired === 0) {
+      // TODO for non-preference cases, this just randomizes players and cubes + assigns them afterwards
+      // better algorithms suggested and required for production use
 
-    await Promise.all(
-      tournament.drafts.map(async (draft) => {
-        const draftPods: DraftPod[] = [];
-        for (let index = 0; index < podsPerDraft; ++index) {
-          draftPods.push(
-            await this.appDataSource.getRepository(DraftPod).save({
-              podNumber: index + 1,
-              draft,
-              cube: cubes[index],
-            })
-          );
+      const players = enrollments.map((enr) => enr.player).sort(randomize);
+      const sortedCubes = cubes.sort(randomize);
+
+      if (players.length !== tournament.totalSeats) {
+        console.log("not all seats will be filled");
+      }
+      if (sortedCubes.length < podsPerDraft) {
+        console.log("not enough cubes for all draft pods");
+      }
+
+      await Promise.all(
+        tournament.drafts.map(async (draft) => {
+          const draftPods: DraftPod[] = [];
+          for (let index = 0; index < podsPerDraft; ++index) {
+            draftPods.push(
+              await this.appDataSource.getRepository(DraftPod).save({
+                podNumber: index + 1,
+                draft,
+                cube: sortedCubes[index],
+              })
+            );
+          }
+          await this.generateDraftSeatings(draftPods, players);
+        })
+      );
+    } else {
+      console.log("generating pods based on preferences, watch out");
+      const assignments: User[][][] = makeArray(
+        tournament.drafts.length,
+        podsPerDraft,
+        8
+      );
+
+      const preferences =
+        await this.preferenceService.getPreferencesForTournament(tournamentId);
+
+      const preferencesByPlayer: PreferencesByPlayer = {};
+      preferences.forEach((preference) => {
+        let currentPlayerPreference = preferencesByPlayer[preference.player.id];
+        const pref = {
+          player: preference.playerId,
+          cube: preference.cube.id,
+          points: preference.points,
+          used: false,
+        };
+
+        if (!currentPlayerPreference) {
+          preferencesByPlayer[preference.player.id] = [pref];
+        } else {
+          currentPlayerPreference.push(pref);
         }
-        await this.generateDraftSeatings(draftPods, players);
-      })
-    );
+      });
+
+      for (let draft = 0; draft < tournament.drafts.length; ++draft) {
+        let preferencePointsUsed = 0;
+        let unassignedPlayers = enrollments.map((enroll) => enroll.player);
+
+        const wildCards = unassignedPlayers
+          .filter(
+            (player) =>
+              !preferencesByPlayer[player.id] ||
+              preferencesByPlayer[player.id].filter((pref) => !pref.used)
+                .length === 0
+          )
+          .sort(randomize);
+
+        for (let cubeIndex = podsPerDraft - 1; cubeIndex >= 0; --cubeIndex) {
+          const cubesByPreference = cubes
+            .map((cube) => ({
+              id: cube.id,
+              points: preferences
+                .filter(
+                  (pref) =>
+                    pref.cube.id === cube.id &&
+                    !preferencesByPlayer[pref.player.id].find(
+                      (x) => x.cube === cube.id
+                    )?.used
+                )
+                .reduce((acc, cur) => acc + cur.points, 0),
+            }))
+            .sort((a, b) => b.points - a.points);
+
+          const currentCubeId = cubesByPreference[cubeIndex].id;
+          const preferredPlayers = preferences // find players who..
+            .filter((pref) => pref.cube.id === currentCubeId) // want to play this cube
+            .sort((a, b) => b.points - a.points) // have rated it highly
+            .filter(
+              // have not already been assigned to play it in an earlier draft
+              (pref) =>
+                !preferencesByPlayer[pref.player.id].find(
+                  (x) => x.cube === currentCubeId
+                )?.used
+            )
+            .filter(
+              (
+                pref // and have not been assigned to a different cube in this draft
+              ) =>
+                unassignedPlayers.find((player) => player.id === pref.player.id)
+            )
+            .slice(0, 8)
+            .map((pref) => {
+              preferencePointsUsed += pref.points;
+              return pref;
+            })
+            .map((pref) => pref.player);
+          // if pod is not full, fill it with wildcards
+          while (preferredPlayers.length < 8 && wildCards.length > 0) {
+            preferredPlayers.push(wildCards.pop());
+          }
+
+          // if pod is STILL not full, fill it with randoms
+          while (preferredPlayers.length < 8) {
+            console.log("have to resort to randoms, uh oh");
+            preferredPlayers.push(
+              ...unassignedPlayers
+                .filter(
+                  (player) =>
+                    !preferredPlayers.find((pp) => pp.id === player.id)
+                )
+                .slice(0, 8 - preferredPlayers.length)
+            );
+          }
+
+          // TODO insert draft pod into database
+          assignments[draft][cubeIndex] = preferredPlayers;
+
+          console.log(
+            `Draft ${draft + 1}, pod ${cubeIndex + 1} (cube ${currentCubeId})`,
+            JSON.stringify(
+              preferredPlayers.map(
+                (pp) =>
+                  `${pp.firstName} ${pp.lastName} (${
+                    preferencesByPlayer[pp.id]?.find(
+                      (p) => p.cube === currentCubeId
+                    )?.points ?? "W"
+                  })`
+              )
+            )
+          );
+
+          // clear assigned players from the unassigned list for this draft
+          unassignedPlayers = unassignedPlayers.filter(
+            (player) => !preferredPlayers.find((pp) => pp.id === player.id)
+          );
+
+          // and take this cube away from their preferences
+          preferredPlayers.forEach((pp) => {
+            if (preferencesByPlayer[pp.id]) {
+              const pref = preferencesByPlayer[pp.id].find(
+                (pref) => pref.cube === currentCubeId
+              );
+              if (pref) pref.used = true;
+            }
+          });
+        }
+        console.log("Preference points used", preferencePointsUsed);
+      }
+    }
 
     return await this.getTournamentAndDrafts(tournamentId);
   }
