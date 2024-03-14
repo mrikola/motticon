@@ -52,3 +52,8 @@ export const getUserTournamentInfo = async (
     tournamentId as number
   );
 };
+
+export const userExists = async (req) => {
+  const { email } = req.params;
+  return await userService.userExists(email);
+};

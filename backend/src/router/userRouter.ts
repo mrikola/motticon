@@ -30,6 +30,7 @@ import {
   getTournamentsStaffed,
   getUser,
   getAllUsers,
+  userExists,
 } from "../controller/user.controller";
 import {
   getPlayerMatchHistory,
@@ -54,6 +55,10 @@ userRouter.use((req, res, next) => {
     return res.sendStatus(401);
   }
   next();
+});
+
+userRouter.get("/user/:email", async (req, res) => {
+  res.send(await userExists(req));
 });
 
 userRouter.get("/user/:id/tournaments", async (req, res) => {

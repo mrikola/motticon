@@ -86,4 +86,13 @@ export class UserService {
     );
     return allTournaments;
   }
+
+  async userExists(email: string): Promise<boolean> {
+    const user = await this.getUserByEmail(email);
+    if (user) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

@@ -9,6 +9,7 @@ import { Badge, Card, Col, Container, Row } from "react-bootstrap";
 import Loading from "../../components/general/Loading";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
+import LoadingCubes from "../../components/general/LoadingCubes";
 
 const ListCubesForTournament = () => {
   const { tournamentId } = useParams();
@@ -103,7 +104,7 @@ const ListCubesForTournament = () => {
       </Row>
     </Container>
   ) : (
-    <Loading />
+    <LoadingCubes />
   );
 };
 

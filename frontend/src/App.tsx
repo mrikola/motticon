@@ -23,7 +23,7 @@ import PublicProfile from "./pages/User/PublicProfile";
 import AllUsers from "./pages/User/AllUsers";
 import PoolView from "./pages/Staff/PoolView";
 import ViewCubeGeneral from "./pages/ViewCube/ViewCubeGeneral";
-import LoadingOngoing from "./components/general/LoadingOngoing";
+import LoadingCubes from "./components/general/LoadingCubes";
 
 function App() {
   const routes: RouteObject[] = [
@@ -46,7 +46,7 @@ function App() {
             {
               path: "/placeholder", // todo: remove
               index: true,
-              Component: LoadingOngoing,
+              Component: LoadingCubes,
             },
             {
               path: "login",

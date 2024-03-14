@@ -1,14 +1,15 @@
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
+import { get, post } from "../../services/ApiService";
 import {
   Button,
   Col,
   Container,
-  Row,
-  Form,
   FloatingLabel,
+  Form,
+  Row,
 } from "react-bootstrap";
-import { useForm } from "react-hook-form";
-import { post } from "../../services/ApiService";
-import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 import HelmetTitle from "../../components/general/HelmetTitle";
 
 type SignupForm = {
@@ -16,6 +17,7 @@ type SignupForm = {
   lastName: string;
   email: string;
   password: string;
+  confirmPassword: string;
 };
 
 function SignUp() {
@@ -28,15 +30,18 @@ function SignUp() {
         navigate("/login");
       }
     );
+    toast.success("Account succesfully created");
   }
 
-  const { register, handleSubmit } = useForm<SignupForm>({
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-    },
+  const {
+    register,
+    handleSubmit,
+    getFieldState,
+    watch,
+    formState: { errors },
+  } = useForm<SignupForm>({
+    mode: "onChange",
+    reValidateMode: "onChange",
   });
 
   return (
@@ -46,7 +51,7 @@ function SignUp() {
         <h1 className="display-1">Create account</h1>
       </Col>
       <Row>
-        <Form onSubmit={handleSubmit(createAccount)}>
+        <Form noValidate onSubmit={handleSubmit(createAccount)}>
           <Row>
             <Col xs={6}>
               <FloatingLabel
@@ -55,10 +60,22 @@ function SignUp() {
                 className="mb-3"
               >
                 <Form.Control
-                  {...register("firstName")}
+                  {...register("firstName", {
+                    required: "Please enter your first name",
+                  })}
                   type="text"
-                  placeholder="Jedit"
+                  placeholder=""
+                  className={
+                    getFieldState("firstName").isDirty
+                      ? getFieldState("firstName").invalid
+                        ? "is-invalid"
+                        : "is-valid"
+                      : ""
+                  }
                 />
+                <p className="text-danger">
+                  {errors.firstName && errors.firstName.message}
+                </p>
               </FloatingLabel>
             </Col>
             <Col xs={6}>
@@ -68,24 +85,55 @@ function SignUp() {
                 className="mb-3"
               >
                 <Form.Control
-                  {...register("lastName")}
+                  {...register("lastName", {
+                    required: "Please enter your last name",
+                  })}
                   type="text"
                   placeholder="Ojanen"
+                  className={
+                    getFieldState("lastName").isDirty
+                      ? getFieldState("lastName").invalid
+                        ? "is-invalid"
+                        : "is-valid"
+                      : ""
+                  }
                 />
+                <p className="text-danger">
+                  {errors.lastName && errors.lastName.message}
+                </p>
               </FloatingLabel>
             </Col>
           </Row>
           <Col xs={12}>
-            <FloatingLabel
-              controlId="email"
-              label="Email address"
-              className="mb-3"
-            >
+            <FloatingLabel controlId="email" label="Email address">
               <Form.Control
-                {...register("email")}
+                {...register("email", {
+                  required: "Please enter an email address",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                    message: "Invalid email address format",
+                  },
+                  validate: {
+                    check: async (fieldValue) => {
+                      const resp = await get(`/user/${fieldValue}`);
+                      const exists = (await resp.json()) as boolean;
+                      return exists == false || "Email already registered";
+                    },
+                  },
+                })}
                 type="email"
                 placeholder="Enter email"
+                className={
+                  getFieldState("email").isDirty
+                    ? getFieldState("email").invalid
+                      ? "is-invalid"
+                      : "is-valid"
+                    : ""
+                }
               />
+              <p className="text-danger">
+                {errors.email && errors.email.message}
+              </p>
             </FloatingLabel>
           </Col>
           <Col xs={12}>
@@ -95,10 +143,54 @@ function SignUp() {
               className="mb-3"
             >
               <Form.Control
-                {...register("password")}
+                {...register("password", {
+                  required: "Please enter a password",
+                })}
                 type="password"
                 placeholder="Password"
+                className={
+                  getFieldState("password").isDirty
+                    ? getFieldState("password").invalid
+                      ? "is-invalid"
+                      : "is-valid"
+                    : ""
+                }
               />
+              <p className="text-danger">
+                {errors.password && errors.password.message}
+              </p>
+            </FloatingLabel>
+          </Col>
+          <Col xs={12}>
+            <FloatingLabel
+              controlId="confirmPassword"
+              label="Confirm Password"
+              className="mb-3"
+            >
+              <Form.Control
+                {...register("confirmPassword", {
+                  required: "Please confirm your password",
+                  validate: {
+                    match: (val: string) => {
+                      if (watch("password") != val) {
+                        return "Your passwords do not match";
+                      }
+                    },
+                  },
+                })}
+                type="password"
+                placeholder="Password"
+                className={
+                  getFieldState("confirmPassword").isDirty
+                    ? getFieldState("confirmPassword").invalid
+                      ? "is-invalid"
+                      : "is-valid"
+                    : ""
+                }
+              />
+              <p className="text-danger">
+                {errors.confirmPassword && errors.confirmPassword.message}
+              </p>
             </FloatingLabel>
           </Col>
           <Col xs={12} className="d-grid">

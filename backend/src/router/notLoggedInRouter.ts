@@ -1,6 +1,6 @@
 import express from "express";
 import { doLogin } from "../auth/auth";
-import { signup } from "../controller/user.controller";
+import { signup, userExists } from "../controller/user.controller";
 import {
   generateDryRunPods,
   generateDryRunUsers,
@@ -16,6 +16,10 @@ notLoggedInRouter.post("/signup", async (req, res) => {
   } else {
     res.sendStatus(401); // UNAUTHORIZED
   }
+});
+
+notLoggedInRouter.get("/user/:email", async (req, res) => {
+  res.send(await userExists(req));
 });
 
 notLoggedInRouter.post("/login", async (req, res) => {
