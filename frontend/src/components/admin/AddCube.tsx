@@ -49,6 +49,8 @@ function AddCube() {
     register,
     handleSubmit,
     getFieldState,
+    setValue,
+    trigger,
     formState: { errors },
   } = useForm<AddCubeForm>({
     mode: "onChange",
@@ -68,8 +70,11 @@ function AddCube() {
     return baseUrl + uniqueUrl;
   }
 
-  function setImage() {
-    setCardImageUrl(getScryfallUrl(selectedCard.id));
+  async function setImage() {
+    const url = getScryfallUrl(selectedCard.id);
+    setValue("imageUrl", url);
+    await trigger("imageUrl");
+    setCardImageUrl(url);
   }
 
   useEffect(() => {
@@ -176,6 +181,12 @@ function AddCube() {
                 <Form.Control
                   {...register("url", {
                     required: "Please enter the URL to the cube list",
+                    pattern: {
+                      value: new RegExp(
+                        "/(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?/"
+                      ),
+                      message: "Please enter a valid URL",
+                    },
                   })}
                   type="url"
                   placeholder="http://example.com/"
@@ -202,7 +213,7 @@ function AddCube() {
                   required: "Choose a display image",
                 }}
                 // selected card currently not getting passed back properly
-                render={({ field, value }) => (
+                render={() => (
                   <MTGAutocompleteInput
                     labelText={"Choose display image"}
                     setSelectedCard={setSelectedCard}
