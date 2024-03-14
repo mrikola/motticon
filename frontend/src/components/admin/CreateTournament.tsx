@@ -48,7 +48,15 @@ const CreateTournament = () => {
     fetchData();
   }, []);
 
-  const { control, register, handleSubmit } = useForm<TournamentForm>({
+  const {
+    control,
+    register,
+    handleSubmit,
+    getFieldState,
+    formState: { errors },
+  } = useForm<TournamentForm>({
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       name: "",
       description: "",
@@ -79,7 +87,7 @@ const CreateTournament = () => {
         </Col>
       </Row>
       <Row>
-        <Form onSubmit={handleSubmit(doCreateTournament)}>
+        <Form noValidate onSubmit={handleSubmit(doCreateTournament)}>
           <h2>General info</h2>
           <Col xs={12}>
             <FloatingLabel
@@ -88,10 +96,22 @@ const CreateTournament = () => {
               className="mb-3"
             >
               <Form.Control
-                {...register("name")}
+                {...register("name", {
+                  required: "Please enter a tournament name",
+                })}
                 type="text"
                 placeholder="Tournament name"
+                className={
+                  getFieldState("name").isDirty
+                    ? getFieldState("name").invalid
+                      ? "is-invalid"
+                      : "is-valid"
+                    : ""
+                }
               />
+              <p className="text-danger">
+                {errors.name && errors.name.message}
+              </p>
             </FloatingLabel>
           </Col>
           <Col xs={12}>
@@ -101,10 +121,22 @@ const CreateTournament = () => {
               className="mb-3"
             >
               <Form.Control
-                {...register("description")}
+                {...register("description", {
+                  required: "Please enter a tournament description",
+                })}
                 type="text"
                 placeholder="Description"
+                className={
+                  getFieldState("description").isDirty
+                    ? getFieldState("description").invalid
+                      ? "is-invalid"
+                      : "is-valid"
+                    : ""
+                }
               />
+              <p className="text-danger">
+                {errors.description && errors.description.message}
+              </p>
             </FloatingLabel>
           </Col>
           <Col xs={12}>
@@ -114,10 +146,22 @@ const CreateTournament = () => {
               className="mb-3"
             >
               <Form.Control
-                {...register("price")}
-                type="text"
+                {...register("price", {
+                  required: "Please enter the price as a number",
+                })}
+                type="number"
                 placeholder="0"
+                className={
+                  getFieldState("price").isDirty
+                    ? getFieldState("price").invalid
+                      ? "is-invalid"
+                      : "is-valid"
+                    : ""
+                }
               />
+              <p className="text-danger">
+                {errors.price && errors.price.message}
+              </p>
             </FloatingLabel>
           </Col>
           <Row>
@@ -126,33 +170,59 @@ const CreateTournament = () => {
               <Controller
                 control={control}
                 name="startDate"
+                rules={{
+                  required: "Enter a start date",
+                }}
                 render={({ field }) => (
                   <DatePicker
                     placeholderText="Start date"
                     onChange={(date) => field.onChange(date)}
                     selected={field.value}
                     calendarClassName="bootstrap-calendar"
-                    className="form-control mb-3"
+                    className={`form-control mb-3
+                      ${
+                        getFieldState("startDate").isDirty
+                          ? getFieldState("startDate").invalid
+                            ? "is-invalid"
+                            : "is-valid"
+                          : ""
+                      }`}
                     calendarStartDay={1}
                   />
                 )}
               />
+              <p className="text-danger">
+                {errors.startDate && errors.startDate.message}
+              </p>
             </Col>
             <Col xs={6}>
               <Controller
                 control={control}
                 name="endDate"
+                rules={{
+                  required: "Enter an end date",
+                }}
                 render={({ field }) => (
                   <DatePicker
                     placeholderText="End date"
                     onChange={(date) => field.onChange(date)}
                     selected={field.value}
                     calendarClassName="bootstrap-calendar"
-                    className="form-control mb-3"
+                    className={`form-control mb-3
+                      ${
+                        getFieldState("endDate").isDirty
+                          ? getFieldState("endDate").invalid
+                            ? "is-invalid"
+                            : "is-valid"
+                          : ""
+                      }`}
                     calendarStartDay={1}
                   />
                 )}
               />
+              <p className="text-danger">
+                {errors.endDate && errors.endDate.message}
+              </p>
             </Col>
           </Row>
           <Row>

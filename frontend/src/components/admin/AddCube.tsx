@@ -6,7 +6,7 @@ import {
   FloatingLabel,
   Button,
 } from "react-bootstrap";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { post } from "../../services/ApiService";
 import { useIsAdmin } from "../../utils/auth";
 import Loading from "../general/Loading";
@@ -33,19 +33,26 @@ function AddCube() {
   const [cardImageUrl, setCardImageUrl] = useState<string>("");
   const [selectedCard, setSelectedCard] = useState<Item>();
 
-  function addCube({ title, description, url, owner }: AddCubeForm) {
-    const imageUrl = cardImageUrl;
-    post("/cube/add", { title, description, url, owner, imageUrl }).then(
-      async (_resp) => {
-        // TODO show some kind of success thing
-        const cube = (await _resp.json()) as Cube;
-        toast.success("Cube added");
-        navigate("/cubes/" + cube.id);
-      }
-    );
+  function addCube(form: AddCubeForm) {
+    console.log("addcube called");
+    // const imageUrl = cardImageUrl;
+    post("/cube/add", form).then(async (_resp) => {
+      // TODO show some kind of success thing
+      const cube = (await _resp.json()) as Cube;
+      toast.success("Cube added");
+      navigate("/cubes/" + cube.id);
+    });
   }
 
-  const { register, handleSubmit } = useForm<AddCubeForm>({
+  const {
+    control,
+    register,
+    handleSubmit,
+    getFieldState,
+    formState: { errors },
+  } = useForm<AddCubeForm>({
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       title: "",
       description: "",
@@ -80,9 +87,8 @@ function AddCube() {
           <h1 className="display-1">Add Cube</h1>
         </Col>
       </Row>
-
       <Row>
-        <Form onSubmit={handleSubmit(addCube)}>
+        <Form noValidate onSubmit={handleSubmit(addCube)}>
           <Row>
             <Col xs={6}>
               <FloatingLabel
@@ -91,11 +97,22 @@ function AddCube() {
                 className="mb-3"
               >
                 <Form.Control
-                  {...register("title")}
-                  required
+                  {...register("title", {
+                    required: "Please enter a title",
+                  })}
                   type="text"
                   placeholder="Number One Cube"
+                  className={
+                    getFieldState("title").isDirty
+                      ? getFieldState("title").invalid
+                        ? "is-invalid"
+                        : "is-valid"
+                      : ""
+                  }
                 />
+                <p className="text-danger">
+                  {errors.title && errors.title.message}
+                </p>
               </FloatingLabel>
             </Col>
             <Col xs={6}>
@@ -105,11 +122,23 @@ function AddCube() {
                 className="mb-3"
               >
                 <Form.Control
-                  {...register("owner")}
-                  required
+                  {...register("owner", {
+                    required:
+                      "Please enter the name of the cube owner/designer",
+                  })}
                   type="text"
                   placeholder="Jedit Ojanen"
+                  className={
+                    getFieldState("owner").isDirty
+                      ? getFieldState("owner").invalid
+                        ? "is-invalid"
+                        : "is-valid"
+                      : ""
+                  }
                 />
+                <p className="text-danger">
+                  {errors.owner && errors.owner.message}
+                </p>
               </FloatingLabel>
             </Col>
             <Col xs={12}>
@@ -119,11 +148,22 @@ function AddCube() {
                 className="mb-3"
               >
                 <Form.Control
-                  {...register("description")}
-                  required
+                  {...register("description", {
+                    required: "Please enter a description",
+                  })}
                   type="text"
                   placeholder="This cube is all about..."
+                  className={
+                    getFieldState("description").isDirty
+                      ? getFieldState("description").invalid
+                        ? "is-invalid"
+                        : "is-valid"
+                      : ""
+                  }
                 />
+                <p className="text-danger">
+                  {errors.description && errors.description.message}
+                </p>
               </FloatingLabel>
             </Col>
 
@@ -134,20 +174,44 @@ function AddCube() {
                 className="mb-3"
               >
                 <Form.Control
-                  {...register("url")}
-                  required
+                  {...register("url", {
+                    required: "Please enter the URL to the cube list",
+                  })}
                   type="url"
                   placeholder="http://example.com/"
+                  className={
+                    getFieldState("url").isDirty
+                      ? getFieldState("url").invalid
+                        ? "is-invalid"
+                        : "is-valid"
+                      : ""
+                  }
                 />
+                <p className="text-danger">
+                  {errors.url && errors.url.message}
+                </p>
               </FloatingLabel>
             </Col>
           </Row>
           <Row>
             <Col xs={6}>
-              <MTGAutocompleteInput
-                labelText={"Choose display image"}
-                setSelectedCard={setSelectedCard}
+              <Controller
+                control={control}
+                name="imageUrl"
+                rules={{
+                  required: "Choose a display image",
+                }}
+                // selected card currently not getting passed back properly
+                render={({ field, value }) => (
+                  <MTGAutocompleteInput
+                    labelText={"Choose display image"}
+                    setSelectedCard={setSelectedCard}
+                  />
+                )}
               />
+              <p className="text-danger">
+                {errors.imageUrl && errors.imageUrl.message}
+              </p>
             </Col>
             <Col xs={6}>
               <img src={cardImageUrl} className="add-cube-image" />
