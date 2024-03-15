@@ -44,6 +44,9 @@ export class Tournament {
   @OneToMany(() => Draft, (draft) => draft.tournament)
   drafts: Draft[];
 
+  @Column({ default: true })
+  userEnrollmentEnabled: boolean;
+
   @OneToMany(() => Enrollment, (enrollment) => enrollment.tournament)
   enrollments: Enrollment[];
 

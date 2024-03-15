@@ -69,7 +69,8 @@ export class TournamentService {
     preferencesRequired: number,
     startDate: Date,
     endDate: Date,
-    cubeIds: number[]
+    cubeIds: number[],
+    userEnrollmentEnabled: boolean
   ): Promise<Tournament> {
     const cubes: Cube[] = await this.appDataSource
       .getRepository(Cube)
@@ -86,6 +87,7 @@ export class TournamentService {
       startDate,
       endDate,
       cubes,
+      userEnrollmentEnabled: userEnrollmentEnabled,
     });
 
     for (let draftIndex = 0; draftIndex < drafts; ++draftIndex) {

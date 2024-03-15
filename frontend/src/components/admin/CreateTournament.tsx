@@ -30,6 +30,7 @@ type TournamentForm = {
   startDate: Date;
   endDate: Date;
   cubeIds: number[];
+  userEnrollmentEnabled: boolean;
 };
 
 const CreateTournament = () => {
@@ -66,6 +67,7 @@ const CreateTournament = () => {
       startDate: undefined,
       endDate: undefined,
       cubeIds: [],
+      userEnrollmentEnabled: true,
     },
   });
 
@@ -273,6 +275,22 @@ const CreateTournament = () => {
               ))}
             </Form.Select>
           </Col>
+          <Row>
+            <Form.Group className="mb-3" controlId="userEnrollmentEnabled">
+              <Form.Check
+                {...register("userEnrollmentEnabled")}
+                defaultChecked={true}
+                type="checkbox"
+                label="Enable user enrollment"
+                className="fs-5"
+              />
+              <p className="small">
+                Choose whether you want to allow users to enroll to the
+                tournament by themselves (box checked), or if enrollment by
+                staff is the only option (box unchecked).
+              </p>
+            </Form.Group>
+          </Row>
           <Col xs={12} className="d-grid">
             <Button variant="primary" type="submit" className="btn-lg">
               Create tournament

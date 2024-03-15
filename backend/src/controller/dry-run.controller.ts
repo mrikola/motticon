@@ -104,7 +104,8 @@ export const generateDryRunPods = async () => {
     PREFERENCES_REQUIRED,
     new Date(),
     new Date(),
-    cubes.map((cube) => cube.id)
+    cubes.map((cube) => cube.id),
+    true
   );
 
   // 2. enroll test users into the tournament
