@@ -6,7 +6,6 @@ import { get } from "../../services/ApiService";
 import { Cube } from "../../types/Cube";
 import { Tournament } from "../../types/Tournament";
 import { Badge, Card, Col, Container, Row } from "react-bootstrap";
-import Loading from "../../components/general/Loading";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import LoadingCubes from "../../components/general/LoadingCubes";
