@@ -149,6 +149,7 @@ const TournamentView = () => {
           freeSeats={freeSeats}
           freeSeatsUpdater={freeSeatsUpdater}
           tournament={activeTournament}
+          userEnrollmentEnabled={activeTournament.userEnrollmentEnabled}
         />
       )}
       {activeTournament.status !== "pending" && newestRoundNumber > 0 && (

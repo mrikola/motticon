@@ -18,6 +18,7 @@ export const createTournament = async (req): Promise<TournamentDto> => {
     startDate,
     endDate,
     cubeIds,
+    userEnrollmentEnabled,
   } = req.body;
   return tournamentToDto(
     await tournamentService.createTournament(
@@ -29,7 +30,8 @@ export const createTournament = async (req): Promise<TournamentDto> => {
       preferencesRequired,
       startDate,
       endDate,
-      cubeIds
+      cubeIds,
+      userEnrollmentEnabled
     )
   );
 };

@@ -67,6 +67,7 @@ export type Tournament = {
   cubes: Cube[];
   staffMembers: User[];
   enrollments: Enrollment[];
+  userEnrollmentEnabled: boolean;
 };
 
 export type TournamentsByType = {

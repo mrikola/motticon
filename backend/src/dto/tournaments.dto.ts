@@ -22,6 +22,7 @@ export type TournamentDto = {
   preferencesRequired: number;
   status: TournamentStatus;
   drafts: DraftDto[];
+  userEnrollmentEnabled: boolean;
   enrollments: EnrollmentDto[];
   cubes: CubeDto[];
   staffMembers: PlayerDto[];
@@ -52,6 +53,7 @@ export const tournamentToDto = (tournament: Tournament): TournamentDto =>
         preferencesRequired: tournament.preferencesRequired,
         status: tournament.status,
         drafts: tournament.drafts?.map(draftToDto),
+        userEnrollmentEnabled: tournament.userEnrollmentEnabled,
         enrollments: tournament.enrollments?.map(enrollmentToDto),
         cubes: tournament.cubes?.map(cubeToDto),
         staffMembers: tournament.staffMembers?.map(playerToDto),

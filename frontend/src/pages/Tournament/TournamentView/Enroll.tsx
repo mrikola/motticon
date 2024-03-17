@@ -21,6 +21,7 @@ type Props = {
   freeSeats: number;
   freeSeatsUpdater: (val: number) => void;
   tournament: Tournament;
+  userEnrollmentEnabled: boolean;
 };
 
 function Enroll({
@@ -30,6 +31,7 @@ function Enroll({
   freeSeats,
   freeSeatsUpdater,
   tournament,
+  userEnrollmentEnabled,
 }: Props) {
   const [modal, setModal] = useState<VerticallyCenteredModalProps>({
     show: false,
@@ -134,8 +136,8 @@ function Enroll({
     return (
       <Row className="my-3">
         <Col xs={12}>
-          <h2>
-            <PersonPlusFill /> Enroll
+          <h2 className="icon-link">
+            <PersonPlusFill /> Enrollment
           </h2>
           <p>Price: {tournament.entryFee}</p>
           <p>
@@ -143,28 +145,37 @@ function Enroll({
           </p>
         </Col>
         <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
-          <Button
-            variant="primary"
-            className="btn-lg"
-            type="submit"
-            onClick={() => handleEnrollClick()}
-            disabled={isEnrolled || freeSeats === 0 ? true : false}
-          >
-            <div className="icon-link">
-              {enrollButtonIcon} {enrollButtonText}
-            </div>
-          </Button>
-          {isEnrolled && (
-            <Button
-              variant="danger"
-              className="btn-lg"
-              type="submit"
-              onClick={handleCancelClick}
-            >
-              <div className="icon-link">
-                <XLg className="fs-3" /> Cancel enrollment
-              </div>
-            </Button>
+          {userEnrollmentEnabled ? (
+            <>
+              <Button
+                variant="primary"
+                className="btn-lg"
+                type="submit"
+                onClick={() => handleEnrollClick()}
+                disabled={isEnrolled || freeSeats === 0 ? true : false}
+              >
+                <div className="icon-link">
+                  {enrollButtonIcon} {enrollButtonText}
+                </div>
+              </Button>
+
+              {isEnrolled && (
+                <Button
+                  variant="danger"
+                  className="btn-lg"
+                  type="submit"
+                  onClick={handleCancelClick}
+                >
+                  <div className="icon-link">
+                    <XLg className="fs-3" /> Cancel enrollment
+                  </div>
+                </Button>
+              )}
+            </>
+          ) : (
+            <p className="lead">
+              Only tournament staff may enroll players to this tournament.
+            </p>
           )}
         </Col>
         <VerticallyCenteredModal
