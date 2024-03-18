@@ -16,7 +16,7 @@ export class PreferenceService {
     userId: number,
     cubeId: number,
     points: number
-  ): Promise<void> {
+  ): Promise<boolean> {
     try {
       await this.appDataSource
         .createQueryBuilder()
@@ -29,8 +29,9 @@ export class PreferenceService {
           points,
         })
         .execute();
+      return true;
     } catch (err: unknown) {
-      return null;
+      return false;
     }
   }
 

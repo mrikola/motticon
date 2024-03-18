@@ -4,14 +4,18 @@ import { User } from "../entity/User";
 import { Tournament } from "../entity/Tournament";
 import { partition, uniqBy } from "lodash";
 import { encodePassword } from "../auth/auth";
+import { PreferenceService } from "./preference.service";
+import { UserCubePreferenceDto } from "../dto/user.dto";
 
 export class UserService {
   private appDataSource: DataSource;
   private repository: Repository<User>;
+  private preferenceService = new PreferenceService();
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(User);
+    this.preferenceService = new PreferenceService();
   }
 
   async createUser(
@@ -94,5 +98,20 @@ export class UserService {
     } else {
       return false;
     }
+  }
+
+  async setCubePreferences(
+    preferences: UserCubePreferenceDto[]
+  ): Promise<boolean> {
+    let success = false;
+    preferences.forEach(async (preference) => {
+      success = await this.preferenceService.setPreference(
+        preference.tournamentId,
+        preference.playerId,
+        preference.cubeId,
+        preference.points
+      );
+    });
+    return success;
   }
 }

@@ -34,8 +34,6 @@ function AddCube() {
   const [selectedCard, setSelectedCard] = useState<Item>();
 
   function addCube(form: AddCubeForm) {
-    console.log("addcube called");
-    // const imageUrl = cardImageUrl;
     post("/cube/add", form).then(async (_resp) => {
       // TODO show some kind of success thing
       const cube = (await _resp.json()) as Cube;

@@ -14,3 +14,10 @@ export type Enrollment = {
   dropped: boolean;
   paid: boolean;
 };
+
+export type UserCubePreference = {
+  playerId: number;
+  tournamentId: number;
+  cubeId: number;
+  points: number;
+};

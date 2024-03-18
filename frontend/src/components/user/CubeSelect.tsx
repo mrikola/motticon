@@ -14,7 +14,17 @@ const CubeSelect = ({ priority, options, switchOption }: Props) => {
   const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const foo = e.target.value;
     const newOption = options.find((opt) => opt.key === foo);
-    switchOption(priority, newOption);
+    if (newOption) {
+      switchOption(priority, newOption);
+    } else {
+      const noPref = {
+        key: "0",
+        value: "0",
+        displayText: "No preference",
+        disabled: false,
+      };
+      switchOption(priority, noPref);
+    }
   };
 
   return (
@@ -28,6 +38,9 @@ const CubeSelect = ({ priority, options, switchOption }: Props) => {
             {opt.displayText}{" "}
           </option>
         ))}
+        <option disabled={false} value={0}>
+          No preference
+        </option>
       </Form.Select>
     </Form.Group>
   );

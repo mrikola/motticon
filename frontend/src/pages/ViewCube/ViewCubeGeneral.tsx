@@ -45,7 +45,6 @@ const ViewCubeGeneral = () => {
                   <p className="small icon-link">
                     <PenFill /> Cube Designer: {cube.owner}
                   </p>
-                  <p className="lead">{cube.description}</p>
                   <Col xs={10} sm={8} md={6} className="d-grid gap-2 mx-auto">
                     <Link
                       to={cube.url}
@@ -60,9 +59,11 @@ const ViewCubeGeneral = () => {
             </Container>
           </div>
         </div>
-        <Container>
+        <Container className="mt-3 my-md-4">
           <Row>
-            <h2>Some cube info can go here</h2>
+            <Col xs="10" md="8" className="d-grid gap-2 mx-auto">
+              <p className="lead">{cube.description}</p>
+            </Col>
           </Row>
         </Container>
       </>

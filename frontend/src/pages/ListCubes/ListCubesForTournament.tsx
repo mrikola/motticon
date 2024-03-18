@@ -44,7 +44,7 @@ const ListCubesForTournament = () => {
         <h1 className="display-1">{tournament.name}</h1>
         <h2 className="display-3">Cubes</h2>
       </Row>
-      <Row xs={1} sm={1} md={2} lg={3} className="g-3">
+      <Row xs={1} sm={1} md={2} xl={3} className="g-3">
         {cubes.map((cube) => {
           let imageUrl;
           if (cube.imageUrl) {

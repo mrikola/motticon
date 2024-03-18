@@ -57,3 +57,8 @@ export const userExists = async (req) => {
   const { email } = req.params;
   return await userService.userExists(email);
 };
+
+export const setCubePreferences = async (req): Promise<boolean> => {
+  const preferences = req.body;
+  return await userService.setCubePreferences(preferences);
+};

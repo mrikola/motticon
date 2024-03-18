@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { PenFill } from "react-bootstrap-icons";
 import { get } from "../../services/ApiService";
 import { Cube } from "../../types/Cube";
-import { Badge, Card, Col, Container, Row } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import Loading from "../../components/general/Loading";
 
 const ListCubes = () => {
@@ -24,7 +24,7 @@ const ListCubes = () => {
       <Row>
         <h1 className="display-1">All Cubes</h1>
       </Row>
-      <Row xs={1} sm={1} md={2} lg={3} className="g-3">
+      <Row xs={1} sm={1} md={2} xl={3} className="g-3">
         {cubes.map((cube) => {
           let imageUrl;
           if (cube.imageUrl) {
@@ -48,23 +48,9 @@ const ListCubes = () => {
                     style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
                   >
                     <div className="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                      {cube.id === 1 ? (
-                        <>
-                          <p className="mt-auto pt-4">
-                            <Badge bg="primary" className="py-2">
-                              Test badge for preference indication
-                            </Badge>
-                          </p>
-                          <h3 className="mb-4 display-4 lh-1">
-                            {cube.title + " "}
-                          </h3>
-                        </>
-                      ) : (
-                        <h3 className="pt-4 mt-5 mb-4 display-4 lh-1">
-                          {cube.title + " "}
-                        </h3>
-                      )}
-
+                      <h3 className="pt-4 mt-5 mb-4 display-4 lh-1">
+                        {cube.title + " "}
+                      </h3>
                       <Card.Subtitle className="icon-link mt-auto">
                         <PenFill />{" "}
                         {cube.owner ? cube.owner : "Placeholder Name"}

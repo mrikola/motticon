@@ -30,6 +30,13 @@ export type PreferenceDto = {
   points: number;
 };
 
+export type UserCubePreferenceDto = {
+  playerId: number;
+  tournamentId: number;
+  cubeId: number;
+  points: number;
+};
+
 export type PlayerTournamentScoreDto = {
   player: PlayerDto;
   tournament: TournamentDto;
