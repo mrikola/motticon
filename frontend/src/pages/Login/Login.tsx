@@ -42,15 +42,17 @@ const Login = () => {
   };
 
   return (
-    <Container className="mt-3 my-md-4">
+    <Container className="mt-3 my-md-4 text-center">
       <HelmetTitle titleText="Login" />
       <Row>
         <h1 className="display-1">MottiCon</h1>
       </Row>
       <Row>
         <Form onSubmit={handleSubmit(doLogin)}>
-          <h2>Already have an account? Log in.</h2>
-          <Col xs={12}>
+          <Col xs={12} lg={6} xxl={4} className="d-grid gap-2 mx-auto">
+            <h2>Already have an account? Log in.</h2>
+          </Col>
+          <Col xs={12} lg={6} xxl={4} className="d-grid gap-2 mx-auto">
             <FloatingLabel
               controlId="email"
               label="Email address"
@@ -63,7 +65,7 @@ const Login = () => {
               />
             </FloatingLabel>
           </Col>
-          <Col xs={12}>
+          <Col xs={12} lg={6} xxl={4} className="d-grid gap-2 mx-auto">
             <FloatingLabel
               controlId="password"
               label="Password"
@@ -76,7 +78,7 @@ const Login = () => {
               />
             </FloatingLabel>
           </Col>
-          <Col xs={12} className="d-grid">
+          <Col xs={12} lg={6} xxl={4} className="d-grid gap-2 mx-auto">
             <Button variant="primary" type="submit">
               <BoxArrowInRight className="fs-4" /> Login
             </Button>
@@ -84,7 +86,7 @@ const Login = () => {
         </Form>
       </Row>
       <Row className="my-3">
-        <Col xs={12} className="d-grid">
+        <Col xs={12} lg={6} xxl={4} className="d-grid gap-2 mx-auto">
           <h2>No account yet? Sign up.</h2>
           <Link to="/signup" className="btn btn-primary">
             <PersonPlusFill className="fs-4" /> Sign up
