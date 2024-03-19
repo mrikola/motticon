@@ -2,7 +2,7 @@ import express from "express";
 import { isValidAdminToken } from "../auth/auth";
 import { createTournament } from "../controller/tournament.controller";
 import { resetEloForUser, updateElo } from "../controller/rating.controller";
-import { addCube } from "../controller/cube.controller";
+import { addCube, editCube } from "../controller/cube.controller";
 import { setDeckPhotoForUser } from "../controller/draft.controller";
 
 export const adminRouter = express.Router();
@@ -24,6 +24,10 @@ adminRouter.post("/tournament/create", async (req, res) => {
 
 adminRouter.post("/cube/add", async (req, res) => {
   res.send(await addCube(req));
+});
+
+adminRouter.post("/cube/edit", async (req, res) => {
+  res.send(await editCube(req));
 });
 
 // just here for testing purposes

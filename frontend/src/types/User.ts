@@ -1,3 +1,6 @@
+import { Cube } from "./Cube";
+import { Tournament } from "./Tournament";
+
 export type User = {
   id: number;
   firstName: string;
@@ -19,5 +22,15 @@ export type UserCubePreference = {
   playerId: number;
   tournamentId: number;
   cubeId: number;
+  points: number;
+};
+
+export type Preference = {
+  id: number;
+  tournamentId: number;
+  tournament: Tournament;
+  playerId: number;
+  player: User;
+  cube: Cube;
   points: number;
 };

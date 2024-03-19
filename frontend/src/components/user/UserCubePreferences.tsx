@@ -10,7 +10,7 @@ import Loading from "../general/Loading";
 import { Tournament } from "../../types/Tournament";
 import HelmetTitle from "../general/HelmetTitle";
 import { toast } from "react-toastify";
-import { UserCubePreference } from "../../types/User";
+import { Preference, UserCubePreference } from "../../types/User";
 
 const UserCubePreferences = () => {
   const user = useContext(UserInfoContext);
@@ -63,6 +63,16 @@ const UserCubePreferences = () => {
       setSelectedOptions(Array(tourny.preferencesRequired));
       setPriorityArray(generatePriorityArray(tourny.preferencesRequired));
       setTournament(tourny);
+    };
+    fetchData();
+  }, []);
+
+  // for testing
+  useEffect(() => {
+    const fetchData = async () => {
+      const resp = await get(`/tournament/${tournamentId}/preferences`);
+      const prefs = (await resp.json()) as Preference[];
+      console.log(prefs);
     };
     fetchData();
   }, []);

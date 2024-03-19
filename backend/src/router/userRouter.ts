@@ -18,6 +18,7 @@ import {
   getTournamentEnrollments,
   getMostRecentRound,
   getCurrentMatch,
+  getPreferences,
 } from "../controller/tournament.controller";
 import {
   getAllCubes,
@@ -158,6 +159,10 @@ userRouter.get(
     res.send(await getCurrentMatch(req));
   }
 );
+
+userRouter.get("/tournament/:tournamentId/preferences", async (req, res) => {
+  res.send(await getPreferences(req));
+});
 
 userRouter.post("/cubePreferences", async (req, res) => {
   res.send(await setCubePreferences(req));

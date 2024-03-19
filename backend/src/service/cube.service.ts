@@ -50,4 +50,32 @@ export class CubeService {
       return null;
     }
   }
+
+  async editCube(
+    cubeId: number,
+    title: string,
+    description: string,
+    url: string,
+    owner: string,
+    imageUrl: string
+  ): Promise<Cube> {
+    console.log("received:");
+    console.log("title: " + title);
+    console.log("description: " + description);
+    console.log("url: " + url);
+    console.log("owner: " + owner);
+    await this.repository
+      .createQueryBuilder("cube")
+      .update(Cube)
+      .set({
+        title,
+        description,
+        url,
+        owner,
+        imageUrl,
+      })
+      .where("id = :cubeId", { cubeId })
+      .execute();
+    return await this.getCube(cubeId);
+  }
 }

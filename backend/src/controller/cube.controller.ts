@@ -23,3 +23,10 @@ export const addCube = async (req) => {
     await cubeService.addCube(title, description, url, owner, imageUrl)
   );
 };
+
+export const editCube = async (req) => {
+  const { cubeId, title, description, url, owner, imageUrl } = req.body;
+  return cubeToDto(
+    await cubeService.editCube(cubeId, title, description, url, owner, imageUrl)
+  );
+};

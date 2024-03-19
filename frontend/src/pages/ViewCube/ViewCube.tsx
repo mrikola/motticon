@@ -8,8 +8,10 @@ import { Link } from "react-router-dom";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import Loading from "../../components/general/Loading";
+import { useIsAdmin } from "../../utils/auth";
 
 const ViewCube = () => {
+  const isAdmin = useIsAdmin();
   const { cubeId, tournamentId } = useParams();
   const [cube, setCube] = useState<Cube>();
 
@@ -44,6 +46,14 @@ const ViewCube = () => {
               </Row>
               <Row className="h-100 align-items-center">
                 <Col className="text-center">
+                  {isAdmin && (
+                    <Link
+                      to={`/cubes/${cube.id}/edit`}
+                      className="btn btn-primary btn-lg"
+                    >
+                      Admin: Edit cube
+                    </Link>
+                  )}
                   <h1 className="display-1">{cube.title}</h1>
                   <p className="small icon-link">
                     <PenFill /> Cube Designer: {cube.owner}

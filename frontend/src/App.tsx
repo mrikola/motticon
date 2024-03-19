@@ -24,6 +24,7 @@ import AllUsers from "./pages/User/AllUsers";
 import PoolView from "./pages/Staff/PoolView";
 import ViewCubeGeneral from "./pages/ViewCube/ViewCubeGeneral";
 import LoadingCubes from "./components/general/LoadingCubes";
+import EditCube from "./components/admin/EditCube";
 
 function App() {
   const routes: RouteObject[] = [
@@ -71,6 +72,10 @@ function App() {
             {
               path: "cubes/:cubeId",
               Component: ViewCubeGeneral,
+            },
+            {
+              path: "cubes/:cubeId/edit",
+              Component: EditCube,
             },
             {
               path: "standings",

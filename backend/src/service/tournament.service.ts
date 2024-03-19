@@ -19,6 +19,7 @@ import { LRUCache } from "lru-cache";
 import { PreferenceService } from "./preference.service";
 import { randomize } from "../util/random";
 import { makeArray } from "../util/array";
+import { Preference } from "../entity/Preference";
 
 type PreferencesByPlayer = {
   [key: string]: [
@@ -580,5 +581,12 @@ export class TournamentService {
 
     this.scoreService.saveSnapshot(tournamentId, round.roundNumber);
     return null;
+  }
+
+  // todo: for testing use only
+  async getPreferences(tournamentId: number): Promise<Preference[]> {
+    return await this.preferenceService.getPreferencesForTournament(
+      tournamentId
+    );
   }
 }

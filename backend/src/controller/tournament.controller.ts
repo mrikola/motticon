@@ -1,6 +1,7 @@
 import { DraftDto, draftToDto } from "../dto/draft.dto";
 import { MatchDto, RoundDto, matchToDto, roundToDto } from "../dto/round.dto";
 import { TournamentDto, tournamentToDto } from "../dto/tournaments.dto";
+import { Preference } from "../entity/Preference";
 import { EnrollmentService } from "../service/enrollment.service";
 import { TournamentService } from "../service/tournament.service";
 
@@ -210,4 +211,11 @@ export const dropFromTournament = async (req): Promise<boolean> => {
     tournamentId as number,
     userId as number
   );
+};
+
+// todo: for testing use only
+export const getPreferences = async (req): Promise<Preference[]> => {
+  const { tournamentId } = req.params;
+  return;
+  await tournamentService.getPreferences(tournamentId as number);
 };
