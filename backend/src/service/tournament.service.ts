@@ -366,9 +366,10 @@ export class TournamentService {
         }
       });
 
-      for (let draft = 0; draft < tournament.drafts.length; ++draft) {
+      tournament.drafts.forEach(async (draft, draftIndex) => {
         let preferencePointsUsed = 0;
         let unassignedPlayers = enrollments.map((enroll) => enroll.player);
+        const draftPods: DraftPod[] = [];
 
         const wildCards = unassignedPlayers
           .filter(
@@ -437,10 +438,12 @@ export class TournamentService {
           }
 
           // TODO insert draft pod into database
-          assignments[draft][cubeIndex] = preferredPlayers;
+          assignments[draftIndex][cubeIndex] = preferredPlayers;
 
           console.log(
-            `Draft ${draft + 1}, pod ${cubeIndex + 1} (cube ${currentCubeId})`,
+            `Draft ${draftIndex + 1}, pod ${
+              cubeIndex + 1
+            } (cube ${currentCubeId})`,
             JSON.stringify(
               preferredPlayers.map(
                 (pp) =>
@@ -467,9 +470,22 @@ export class TournamentService {
               if (pref) pref.used = true;
             }
           });
+
+          draftPods.push(
+            await this.appDataSource.getRepository(DraftPod).save({
+              podNumber: cubeIndex + 1,
+              draft,
+              cube: cubesByPreference[cubeIndex],
+            })
+          );
         }
+        await this.generateDraftSeatings(
+          draftPods,
+          assignments[draftIndex].flat()
+        );
+
         console.log("Preference points used", preferencePointsUsed);
-      }
+      });
     }
 
     return await this.getTournamentAndDrafts(tournamentId);
