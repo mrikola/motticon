@@ -216,6 +216,13 @@ export const dropFromTournament = async (req): Promise<boolean> => {
 // todo: for testing use only
 export const getPreferences = async (req): Promise<Preference[]> => {
   const { tournamentId } = req.params;
-  return;
-  await tournamentService.getPreferences(tournamentId as number);
+  return await tournamentService.getPreferences(tournamentId as number);
+};
+
+export const getPreferencesForUser = async (req): Promise<Preference[]> => {
+  const { tournamentId, userId } = req.params;
+  return await tournamentService.getPreferencesForUser(
+    tournamentId as number,
+    userId as number
+  );
 };

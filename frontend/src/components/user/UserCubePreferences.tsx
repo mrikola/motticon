@@ -23,6 +23,10 @@ const UserCubePreferences = () => {
   >([]);
   const [priorityArray, setPriorityArray] = useState<number[]>([]);
 
+  const [previousSelections, setPreviousSelections] = useState<CubeSelection[]>(
+    []
+  );
+
   function addPreferences() {
     const preferences: UserCubePreference[] = [];
     if (user) {
@@ -31,14 +35,12 @@ const UserCubePreferences = () => {
           playerId: user.id,
           tournamentId: Number(tournamentId),
           cubeId: Number(selectedOptions[i]?.value),
-          points: i,
+          points: priorityArray[i],
         });
       }
     }
     post(`/cubePreferences`, preferences).then(async (_resp) => {
-      // TODO show some kind of success thing
       const success = (await _resp.json()) as boolean;
-      console.log(success);
       if (success) {
         toast.success("Preferences saved");
       } else {
@@ -69,13 +71,36 @@ const UserCubePreferences = () => {
 
   // for testing
   useEffect(() => {
-    const fetchData = async () => {
-      const resp = await get(`/tournament/${tournamentId}/preferences`);
-      const prefs = (await resp.json()) as Preference[];
-      console.log(prefs);
-    };
-    fetchData();
-  }, []);
+    if (user) {
+      const fetchData = async () => {
+        const resp = await get(
+          `/tournament/${tournamentId}/preferences/${user?.id}`
+        );
+        const prefs = (await resp.json()) as Preference[];
+        if (prefs.length > 0) {
+          setSelectedOptions([]);
+          for (let i = 0; i < prefs.length; ++i) {
+            selectedOptions.push({
+              key: prefs[i].cube.id.toString(),
+              value: prefs[i].cube.id.toString(),
+              displayText: prefs[i].cube.title,
+              disabled: false,
+            });
+            setPreviousSelections((testObjects) => [
+              ...testObjects,
+              {
+                key: prefs[i].cube.id.toString(),
+                value: prefs[i].cube.id.toString(),
+                displayText: prefs[i].cube.title,
+                disabled: false,
+              },
+            ]);
+          }
+        }
+      };
+      fetchData();
+    }
+  }, [user]);
 
   useEffect(() => {
     setOptions(
@@ -101,12 +126,12 @@ const UserCubePreferences = () => {
     disabled: Boolean(selectedOptions.find((so) => so?.key === opt.key)),
   }));
 
-  return user && cubes && tournament && priorityArray ? (
+  return user && cubes && tournament && priorityArray && selectedOptions ? (
     <Container className="mt-3 my-md-4">
       <HelmetTitle titleText={tournament.name + " – Cube Preferences"} />
       <Row>
-        <h1 className="display-1">Your cube preferences</h1>
-        <h2>{tournament.name}</h2>
+        <h1 className="display-1">{tournament.name}</h1>
+        <h2>Your cube preferences</h2>
         <p>
           Please select the cubes that you would like to draft. If you don't
           care too much about what you draft, select “No preference”.
@@ -130,6 +155,7 @@ const UserCubePreferences = () => {
               pointValue={e}
               options={availableOptions}
               switchOption={switchOption}
+              selectedOption={previousSelections[i]}
             />
           ))}
           <Button variant="primary" className="btn-lg" onClick={addPreferences}>
