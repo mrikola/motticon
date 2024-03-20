@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { BoxArrowInRight, PersonPlusFill } from "react-bootstrap-icons";
 import HelmetTitle from "../../components/general/HelmetTitle";
+import { toast } from "react-toastify";
 
 type LoginForm = {
   email: string;
@@ -33,6 +34,10 @@ const Login = () => {
   const doLogin = ({ email, password }: LoginForm) => {
     post("/login", { email, password }).then(async (resp) => {
       const jwt = await resp.text();
+      console.log(jwt);
+      if (jwt === "Unauthorized") {
+        toast.error("Incorrect email address or password");
+      }
       if (jwt !== null) {
         localStorage.setItem("user", jwt);
         localStorage.setItem("userInfo", await getUserInfoFromJwt(jwt));
