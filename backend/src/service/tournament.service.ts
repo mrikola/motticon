@@ -589,4 +589,14 @@ export class TournamentService {
       tournamentId
     );
   }
+
+  async getPreferencesForUser(
+    tournamentId: number,
+    userId: number
+  ): Promise<Preference[]> {
+    return await this.preferenceService.getPreferencesForTournamentAndUser(
+      tournamentId,
+      userId
+    );
+  }
 }

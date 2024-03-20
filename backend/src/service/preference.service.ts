@@ -18,6 +18,14 @@ export class PreferenceService {
     points: number
   ): Promise<boolean> {
     try {
+      // todo: delete not working properly
+      // await this.repository
+      //   .createQueryBuilder("preference")
+      //   .delete()
+      //   .from(Preference)
+      //   .where('preference."tournamentId" = :tournamentId', { tournamentId })
+      //   .andWhere('preference."playerId" = :userId', { userId })
+      //   .execute();
       await this.appDataSource
         .createQueryBuilder()
         .insert()
@@ -43,6 +51,19 @@ export class PreferenceService {
       .leftJoinAndSelect("preference.player", "player")
       .leftJoinAndSelect("preference.cube", "cube")
       .where('preference."tournamentId" = :tournamentId', { tournamentId })
+      .getMany();
+  }
+
+  async getPreferencesForTournamentAndUser(
+    tournamentId: number,
+    userId: number
+  ): Promise<Preference[]> {
+    return await this.repository
+      .createQueryBuilder("preference")
+      .leftJoinAndSelect("preference.player", "player")
+      .leftJoinAndSelect("preference.cube", "cube")
+      .where('preference."tournamentId" = :tournamentId', { tournamentId })
+      .andWhere('preference."playerId" = :userId', { userId })
       .getMany();
   }
 }

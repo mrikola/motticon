@@ -5,6 +5,7 @@ import {
   TrophyFill,
   PersonFillCheck,
   ListOl,
+  BoxFill,
 } from "react-bootstrap-icons";
 import { Outlet, useLocation } from "react-router";
 import { Link, NavLink } from "react-router-dom";
@@ -59,6 +60,12 @@ const Layout = () => {
                   <NavLink className="nav-link icon-link" to="/tournaments">
                     <TrophyFill />
                     Tournaments
+                  </NavLink>
+                </Nav.Item>
+                <Nav.Item>
+                  <NavLink className="nav-link icon-link" to="/cubes">
+                    <BoxFill />
+                    Cubes
                   </NavLink>
                 </Nav.Item>
                 <Nav.Item>
