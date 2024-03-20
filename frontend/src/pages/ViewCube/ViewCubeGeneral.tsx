@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Col, Container, Row } from "react-bootstrap";
 import { Cube } from "../../types/Cube";
@@ -8,10 +8,11 @@ import { Link } from "react-router-dom";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import Loading from "../../components/general/Loading";
-import { useIsAdmin } from "../../utils/auth";
+import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 
 const ViewCubeGeneral = () => {
-  const isAdmin = useIsAdmin();
+  const user = useContext(UserInfoContext);
+  const isAdmin = user?.isAdmin;
   const { cubeId } = useParams();
   const [cube, setCube] = useState<Cube>();
 
