@@ -143,11 +143,13 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
       player1GamesWon,
       player2GamesWon,
     }).then(async (resp) => {
-      const jwt = await resp.json();
+      const jwt = (await resp.json()) as Match[];
       if (jwt !== null) {
         toast.success("Result for table " + match.tableNumber + " submitted");
         // console.log(jwt);
-        setMatches(jwt);
+        setMatches(
+          jwt.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1))
+        );
         setModal({
           ...modal,
           show: false,
