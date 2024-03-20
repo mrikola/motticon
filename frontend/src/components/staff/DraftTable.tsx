@@ -14,8 +14,9 @@ const DraftTable = ({ seats, markDoneClicked, draftTimerStarted }: Props) => {
   const [incompleteSeats, setIncompleteSeats] = useState<DraftPodSeat[]>([]);
 
   useEffect(() => {
-    setIncompleteSeats(seats.filter((seat) => !seat.deckPhotoUrl));
-    setCompleteSeats(seats.filter((seat) => !!seat.deckPhotoUrl));
+    const sortedSeats = seats.sort((a, b) => a.pod.podNumber - b.pod.podNumber);
+    setIncompleteSeats(sortedSeats.filter((seat) => !seat.deckPhotoUrl));
+    setCompleteSeats(sortedSeats.filter((seat) => !!seat.deckPhotoUrl));
   }, [seats]);
 
   if (completeSeats && incompleteSeats) {
