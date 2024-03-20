@@ -9,7 +9,7 @@
     "deploy:test-frontend": "yarn workspace motticon-frontend deploy",
     "deploy:test": "yarn deploy:test-backend && yarn deploy:test-frontend",
     "deploy:prod-backend": "yarn workspace motticon-backend deploy -c fly.prod.toml",
-    "deploy:prod-frontend": "yarn workspace motticon-frontend deploy -c fly.prod.toml",
+    "deploy:prod-frontend": "yarn workspace motticon-frontend deploy -c fly.prod.toml --dockerfile Dockerfile.prod",
     "deploy:prod": "yarn deploy:prod-backend && yarn deploy:prod-frontend"
   }
 }
