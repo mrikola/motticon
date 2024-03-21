@@ -94,6 +94,11 @@ export const generateDryRunPods = async () => {
     return;
   }
 
+  if (cubes.length < 8) {
+    console.log("must have at least 8 cubes for 64 player dry run");
+    return;
+  }
+
   // 1. generate dry run tournament
   const tournament = await tournamentService.createTournament(
     "Motticon sim",
