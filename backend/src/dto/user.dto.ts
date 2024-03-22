@@ -8,6 +8,7 @@ export type PlayerDto = {
   id: number;
   firstName: string;
   lastName: string;
+  email: string;
 };
 
 export type PlayerWithRatingDto = PlayerDto & {
@@ -51,6 +52,7 @@ export const playerToDto = (player: User): PlayerDto =>
         id: player.id,
         firstName: player.firstName,
         lastName: player.lastName,
+        email: player.email,
       }
     : undefined;
 
@@ -60,6 +62,7 @@ export const playerToRatedDto = (player: User): PlayerWithRatingDto =>
         id: player.id,
         firstName: player.firstName,
         lastName: player.lastName,
+        email: player.email,
         rating: player.rating,
       }
     : undefined;
