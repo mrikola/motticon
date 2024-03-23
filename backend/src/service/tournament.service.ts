@@ -371,7 +371,8 @@ export class TournamentService {
         [key: number]: number[];
       } = {};
 
-      tournament.drafts.forEach(async (draft, draftIndex) => {
+      let draftIndex = 0;
+      for (let draft of tournament.drafts) {
         let preferencePointsUsed = 0;
         let unassignedPlayers = enrollments.map((enroll) => enroll.player);
         const draftPods: DraftPod[] = [];
@@ -430,14 +431,25 @@ export class TournamentService {
           // if pod is not full, fill it with wildcards
           while (preferredPlayers.length < 8 && wildCards.length > 0) {
             // TODO check that the wildcard hasn't played this cube earlier
-            preferredPlayers.push(
-              wildCards
-                .filter(
-                  (wc) =>
-                    !(wildCardAssignments[wc.id] ?? []).includes(currentCubeId)
-                )
-                .pop()
-            );
+            const assigned = wildCards
+              .filter(
+                (wc) =>
+                  !(wildCardAssignments[wc.id] ?? []).includes(currentCubeId)
+              )
+              .pop();
+
+            if (!assigned && wildCards.length > 0) {
+              console.log("can't assign wildcard");
+              break;
+            }
+
+            if (assigned) {
+              wildCardAssignments[assigned.id] = wildCardAssignments[
+                assigned.id
+              ]
+                ? wildCardAssignments[assigned.id].concat(currentCubeId)
+                : [currentCubeId];
+            }
           }
 
           // if pod is STILL not full, fill it with randoms
@@ -504,7 +516,8 @@ export class TournamentService {
         );
 
         console.log("Preference points used", preferencePointsUsed);
-      });
+        draftIndex++;
+      }
     }
 
     return await this.getTournamentAndDrafts(tournamentId);
