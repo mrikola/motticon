@@ -182,6 +182,7 @@ export class TournamentService {
       .createQueryBuilder("tournament")
       .leftJoinAndSelect("tournament.drafts", "draft")
       .leftJoinAndSelect("draft.pods", "pod")
+      .leftJoinAndSelect("pod.cube", "cube")
       .leftJoinAndSelect("pod.seats", "seat")
       .leftJoinAndSelect("seat.player", "player")
       .where("tournament.id = :id", { id })

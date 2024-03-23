@@ -48,7 +48,8 @@ const EnrollPlayers = ({
     () =>
       availablePlayers.map((player) => ({
         // required: id and value
-        value: player.firstName + " " + player.lastName,
+        value:
+          player.firstName + " " + player.lastName + " (" + player.email + ")",
         // optional: label, node
         // label: option.name, // use a custom label instead of the value
         // node: option.name, // use a custom ReactNode to display the option
@@ -62,6 +63,7 @@ const EnrollPlayers = ({
       const response = await get(`/user`);
       const players = (await response.json()) as Player[];
       setAllPlayers(players);
+      console.log(players);
     };
     fetchData();
   }, []);

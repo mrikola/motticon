@@ -35,12 +35,12 @@ notLoggedInRouter.post("/login", async (req, res) => {
 // TODO nice to have: password reset
 notLoggedInRouter.post("/forgot-password", (req, res) => {});
 
-notLoggedInRouter.post("/dry-run/users", async (req, res) => {
+notLoggedInRouter.get("/dry-run/users", async (req, res) => {
   await generateDryRunUsers();
   res.sendStatus(201);
 });
 
-notLoggedInRouter.post("/dry-run", async (req, res) => {
+notLoggedInRouter.get("/dry-run", async (req, res) => {
   await generateDryRunPods();
   res.sendStatus(201);
 });

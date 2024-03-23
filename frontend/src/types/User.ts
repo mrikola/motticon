@@ -7,6 +7,7 @@ export type User = {
   lastName: string;
   isAdmin: boolean;
   rating: number;
+  email: string;
 };
 
 export type Player = User;

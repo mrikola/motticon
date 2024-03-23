@@ -25,6 +25,7 @@ import PoolView from "./pages/Staff/PoolView";
 import ViewCubeGeneral from "./pages/ViewCube/ViewCubeGeneral";
 import LoadingCubes from "./components/general/LoadingCubes";
 import EditCube from "./components/admin/EditCube";
+import TestPreferencesTable from "./pages/Staff/TestPreferencesTable";
 
 function App() {
   const routes: RouteObject[] = [
@@ -88,6 +89,10 @@ function App() {
             {
               path: "tournament/:tournamentId",
               Component: TournamentView,
+            },
+            {
+              path: "tournament/:tournamentId/testPreferencesTable",
+              Component: TestPreferencesTable,
             },
             {
               path: "tournament/:tournamentId/cubes",
