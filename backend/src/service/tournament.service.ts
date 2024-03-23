@@ -485,8 +485,8 @@ export class TournamentService {
               if (pref) pref.used = true;
             } else {
               wildCardAssignments[pp.id] = wildCardAssignments[pp.id]
-                ? [currentCubeId]
-                : wildCardAssignments[pp.id].concat(currentCubeId);
+                ? wildCardAssignments[pp.id].concat(currentCubeId)
+                : [currentCubeId];
             }
           });
 
