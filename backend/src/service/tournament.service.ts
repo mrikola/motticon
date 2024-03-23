@@ -366,6 +366,10 @@ export class TournamentService {
         }
       });
 
+      const wildCardAssignments: {
+        [key: number]: number[];
+      } = {};
+
       tournament.drafts.forEach(async (draft, draftIndex) => {
         let preferencePointsUsed = 0;
         let unassignedPlayers = enrollments.map((enroll) => enroll.player);
@@ -382,6 +386,8 @@ export class TournamentService {
 
         for (let cubeIndex = podsPerDraft - 1; cubeIndex >= 0; --cubeIndex) {
           const cubesByPreference = cubes
+            // filter out cubes already used in this draft
+            .filter((cube) => !draftPods.find((pod) => pod.cube.id === cube.id))
             .map((cube) => ({
               id: cube.id,
               points: preferences
@@ -419,9 +425,18 @@ export class TournamentService {
               return pref;
             })
             .map((pref) => pref.player);
+
           // if pod is not full, fill it with wildcards
           while (preferredPlayers.length < 8 && wildCards.length > 0) {
-            preferredPlayers.push(wildCards.pop());
+            // TODO check that the wildcard hasn't played this cube earlier
+            preferredPlayers.push(
+              wildCards
+                .filter(
+                  (wc) =>
+                    !(wildCardAssignments[wc.id] ?? []).includes(currentCubeId)
+                )
+                .pop()
+            );
           }
 
           // if pod is STILL not full, fill it with randoms
@@ -437,7 +452,6 @@ export class TournamentService {
             );
           }
 
-          // TODO insert draft pod into database
           assignments[draftIndex][cubeIndex] = preferredPlayers;
 
           console.log(
@@ -468,6 +482,10 @@ export class TournamentService {
                 (pref) => pref.cube === currentCubeId
               );
               if (pref) pref.used = true;
+            } else {
+              wildCardAssignments[pp.id] = wildCardAssignments[pp.id]
+                ? [currentCubeId]
+                : wildCardAssignments[pp.id].concat(currentCubeId);
             }
           });
 
