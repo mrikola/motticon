@@ -32,6 +32,8 @@ type PreferencesByPlayer = {
   ];
 };
 
+type DraftPodGenerationStrategy = "greedy" | "sparing";
+
 export class TournamentService {
   private appDataSource: DataSource;
   private repository: Repository<Tournament>;
@@ -310,6 +312,8 @@ export class TournamentService {
     const cubes = await this.cubeService.getCubesForTournament(tournamentId);
     const podsPerDraft = tournament.totalSeats / 8;
 
+    let totalPreferencePointsUsed = 0;
+
     if (tournament.preferencesRequired === 0) {
       // TODO for non-preference cases, this just randomizes players and cubes + assigns them afterwards
       // better algorithms suggested and required for production use
@@ -350,6 +354,12 @@ export class TournamentService {
       const preferences =
         await this.preferenceService.getPreferencesForTournament(tournamentId);
 
+      const podGenerationStrategies: DraftPodGenerationStrategy[] = [
+        "greedy",
+        "sparing",
+        "sparing",
+      ];
+
       const preferencesByPlayer: PreferencesByPlayer = {};
       preferences.forEach((preference) => {
         let currentPlayerPreference = preferencesByPlayer[preference.player.id];
@@ -389,7 +399,10 @@ export class TournamentService {
           .sort(randomize);
 
         for (let podNumber = 1; podNumber <= podsPerDraft; ++podNumber) {
-          const cubeIndex = podsPerDraft - podNumber;
+          const cubeIndex =
+            podGenerationStrategies[draftIndex] === "greedy"
+              ? 0 // for greedy strategy, take the most popular cube available
+              : podsPerDraft - podNumber; // for sparing strategy, take the Nth most popular where N is pods to be generated
 
           const cubesByPreference = cubes
             // filter out cubes already used in this draft
@@ -518,8 +531,11 @@ export class TournamentService {
         );
 
         console.log("Preference points used", preferencePointsUsed);
+
+        totalPreferencePointsUsed += preferencePointsUsed;
         draftIndex++;
       }
+      console.log("Total preference points used", totalPreferencePointsUsed);
     }
 
     return await this.getTournamentAndDrafts(tournamentId);
