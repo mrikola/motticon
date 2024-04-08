@@ -372,7 +372,9 @@ export class TournamentService {
       } = {};
 
       let draftIndex = 0;
-      for (let draft of tournament.drafts) {
+      for (let draft of tournament.drafts.sort(
+        (a, b) => a.draftNumber - b.draftNumber
+      )) {
         let preferencePointsUsed = 0;
         let unassignedPlayers = enrollments.map((enroll) => enroll.player);
         const draftPods: DraftPod[] = [];
