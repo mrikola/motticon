@@ -16,6 +16,7 @@ import Staff from "./TournamentView/GoToStaff";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import GoToCubes from "./TournamentView/GoToCubes";
+import ManagePreferences from "./TournamentView/ManagePreferences";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
@@ -46,18 +47,8 @@ const TournamentView = () => {
       sessionStorage.setItem("currentTournament", tournament.id);
       setActiveTournament(tournament);
       setFreeSeats(tournament.totalSeats - tournament.enrollments.length);
-      // const now = dayjs();
-      // const tournyStartDate = dayjs(tournament.startDate);
-      // const tournyEndDate = dayjs(tournament.endDate);
-      // if (tournyEndDate.isBefore(now, "day")) {
-      //   setTournamentStatus("past");
-      // } else if (tournyStartDate.isAfter(now, "day")) {
-      //   setTournamentStatus("future");
-      // } else {
-      //   setTournamentStatus("ongoing");
-      // }
       checkEnrolled(enrollment);
-      // console.log(tournament);
+      console.log(tournament);
     };
 
     if (user) {
@@ -138,6 +129,11 @@ const TournamentView = () => {
       </Row>
       {cubes.length > 0 && <GoToCubes tournamentId={activeTournament.id} />}
       {isStaff && <Staff tournamentId={activeTournament.id} />}
+      {isEnrolled &&
+        activeTournament.status === "pending" &&
+        activeTournament.preferencesRequired > 0 && (
+          <ManagePreferences tournamentId={activeTournament.id} />
+        )}
       {isEnrolled && activeTournament.status === "started" && (
         <GoToOngoing tournamentId={activeTournament.id} />
       )}

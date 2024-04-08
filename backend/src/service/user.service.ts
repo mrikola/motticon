@@ -104,14 +104,36 @@ export class UserService {
     preferences: UserCubePreferenceDto[]
   ): Promise<boolean> {
     let success = false;
-    preferences.forEach(async (preference) => {
-      success = await this.preferenceService.setPreference(
-        preference.tournamentId,
-        preference.playerId,
-        preference.cubeId,
-        preference.points
-      );
-    });
+    // delete all old preferences
+    // todo: this shouldn't be needed to run more than 1x (but delete is now being run for each preference)
+    await Promise.all(
+      preferences.map(async (preference) => {
+        success = await this.deleteCubePreferences(preference);
+      })
+    );
+    // add new preferences
+    await Promise.all(
+      preferences.map(async (preference) => {
+        success = await this.preferenceService.setPreference(
+          preference.tournamentId,
+          preference.playerId,
+          preference.cubeId,
+          preference.points
+        );
+      })
+    );
+    return success;
+  }
+
+  async deleteCubePreferences(
+    preferences: UserCubePreferenceDto
+  ): Promise<boolean> {
+    let success = false;
+    // deletes all preferences assigned to tournamentId & playerId
+    success = await this.preferenceService.deletePreference(
+      preferences.tournamentId,
+      preferences.playerId
+    );
     return success;
   }
 }

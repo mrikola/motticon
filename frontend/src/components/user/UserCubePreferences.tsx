@@ -1,19 +1,21 @@
 import { useContext, useState, useEffect } from "react";
 import { get, post } from "../../services/ApiService";
 import { Cube, CubeSelection } from "../../types/Cube";
-import { Container, Row, Form, Button } from "react-bootstrap";
+import { Container, Row, Form, Button, Col } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import CubeSelect from "./CubeSelect";
 import { generatePriorityArray } from "../../utils/preferences";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Loading from "../general/Loading";
 import { Tournament } from "../../types/Tournament";
 import HelmetTitle from "../general/HelmetTitle";
 import { toast } from "react-toastify";
 import { Preference, UserCubePreference } from "../../types/User";
+import BackButton from "../general/BackButton";
 
 const UserCubePreferences = () => {
   const user = useContext(UserInfoContext);
+  const navigate = useNavigate();
   const { tournamentId } = useParams();
   const [tournament, setTournament] = useState<Tournament>();
   const [cubes, setCubes] = useState<Cube[]>([]);
@@ -31,20 +33,46 @@ const UserCubePreferences = () => {
     const preferences: UserCubePreference[] = [];
     if (user) {
       for (let i = 0; i < selectedOptions.length; ++i) {
-        preferences.push({
-          playerId: user.id,
-          tournamentId: Number(tournamentId),
-          cubeId: Number(selectedOptions[i]?.value),
-          points: priorityArray[i],
-        });
+        if (selectedOptions[i]?.value) {
+          preferences.push({
+            playerId: user.id,
+            tournamentId: Number(tournamentId),
+            cubeId: Number(selectedOptions[i]?.value),
+            points: priorityArray[i],
+          });
+        }
       }
     }
-    post(`/cubePreferences`, preferences).then(async (_resp) => {
+    console.log(preferences);
+    if (preferences.length === 0) {
+      resetPreferences();
+    } else {
+      post(`/cubePreferences`, preferences).then(async (_resp) => {
+        const success = (await _resp.json()) as boolean;
+        if (success) {
+          toast.success("Preferences saved");
+        } else {
+          toast.error("Unable to save preferences");
+        }
+      });
+    }
+  }
+
+  function resetPreferences() {
+    const send = {
+      playerId: user?.id,
+      tournamentId: Number(tournamentId),
+      cubeId: "",
+      points: "",
+    };
+    post(`/cubePreferences/delete`, send).then(async (_resp) => {
       const success = (await _resp.json()) as boolean;
       if (success) {
-        toast.success("Preferences saved");
+        navigate(0);
+        // navigate(0) refreshes immediately, no time for toast to render
+        // toast.success("Preferences reset");
       } else {
-        toast.error("Unable to save preferences");
+        toast.error("Unable to reset preferences");
       }
     });
   }
@@ -62,14 +90,13 @@ const UserCubePreferences = () => {
     const fetchData = async () => {
       const resp = await get(`/tournament/${tournamentId}`);
       const tourny = (await resp.json()) as Tournament;
-      setSelectedOptions(Array(tourny.preferencesRequired));
+      // setSelectedOptions(Array(tourny.preferencesRequired));
       setPriorityArray(generatePriorityArray(tourny.preferencesRequired));
       setTournament(tourny);
     };
     fetchData();
   }, []);
 
-  // for testing
   useEffect(() => {
     if (user) {
       const fetchData = async () => {
@@ -77,17 +104,20 @@ const UserCubePreferences = () => {
           `/tournament/${tournamentId}/preferences/${user?.id}`
         );
         const prefs = (await resp.json()) as Preference[];
+        // sort existing preferences by point value for correct rendering of CubeSelects
+        prefs.sort((a, b) => b.points - a.points);
         if (prefs.length > 0) {
           setSelectedOptions([]);
+          const opts = [];
           for (let i = 0; i < prefs.length; ++i) {
-            selectedOptions.push({
+            opts.push({
               key: prefs[i].cube.id.toString(),
               value: prefs[i].cube.id.toString(),
               displayText: prefs[i].cube.title,
               disabled: false,
             });
-            setPreviousSelections((testObjects) => [
-              ...testObjects,
+            setPreviousSelections((obj) => [
+              ...obj,
               {
                 key: prefs[i].cube.id.toString(),
                 value: prefs[i].cube.id.toString(),
@@ -96,8 +126,10 @@ const UserCubePreferences = () => {
               },
             ]);
           }
+          setSelectedOptions(opts);
         }
       };
+
       fetchData();
     }
   }, [user]);
@@ -126,15 +158,29 @@ const UserCubePreferences = () => {
     disabled: Boolean(selectedOptions.find((so) => so?.key === opt.key)),
   }));
 
-  return user && cubes && tournament && priorityArray && selectedOptions ? (
+  return user &&
+    cubes &&
+    tournament &&
+    priorityArray &&
+    selectedOptions &&
+    previousSelections ? (
     <Container className="mt-3 my-md-4">
       <HelmetTitle titleText={tournament.name + " – Cube Preferences"} />
       <Row>
+        <BackButton
+          buttonText="Back to tournament"
+          path={`/tournament/${tournamentId}`}
+        />
         <h1 className="display-1">{tournament.name}</h1>
         <h2>Your cube preferences</h2>
         <p>
           Please select the cubes that you would like to draft. If you don't
-          care too much about what you draft, select “No preference”.
+          care too much about what you draft, you can leave a preference
+          unselected (i.e. so that it shows "No preference").
+        </p>
+        <p>
+          Preference #1 will have a higher impact than #2 and so on, so if there
+          is one cube you really want to draft, set it as preference #1.
         </p>
         <p>
           Preferences will be taken into account when making the draft pods, but
@@ -145,9 +191,15 @@ const UserCubePreferences = () => {
           You can find information about the available cubes in the tournament's
           Cube section.
         </p>
+        <p>
+          You can change your preferences by selecting new cubes and
+          resubmitting.
+        </p>
       </Row>
       <Row xs={1} md={2}>
         <Form>
+          <hr></hr>
+          <h2>Select your preferences</h2>
           {priorityArray.map((e, i) => (
             <CubeSelect
               key={i}
@@ -158,11 +210,18 @@ const UserCubePreferences = () => {
               selectedOption={previousSelections[i]}
             />
           ))}
-          <Button variant="primary" className="btn-lg" onClick={addPreferences}>
-            Submit preferences
-          </Button>
+          <Col xs={12} className="my-3 d-grid">
+            <Button
+              variant="primary"
+              className="btn-lg"
+              onClick={addPreferences}
+            >
+              Submit preferences
+            </Button>
+          </Col>
         </Form>
       </Row>
+      <Row></Row>
     </Container>
   ) : (
     <Loading />

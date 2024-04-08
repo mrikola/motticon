@@ -33,6 +33,7 @@ import {
   getUser,
   getAllUsers,
   setCubePreferences,
+  deleteCubePreferences,
 } from "../controller/user.controller";
 import {
   getPlayerMatchHistory,
@@ -174,6 +175,10 @@ userRouter.get(
 
 userRouter.post("/cubePreferences", async (req, res) => {
   res.send(await setCubePreferences(req));
+});
+
+userRouter.post("/cubePreferences/delete", async (req, res) => {
+  res.send(await deleteCubePreferences(req));
 });
 
 userRouter.get("/tournament/:id/cubes", async (req, res) => {

@@ -182,12 +182,12 @@ const TestPreferencesTable = () => {
           <h1 className="display-1">Player cube preferences</h1>
         </Col>
         <Col xs={12}>
-          {/* <Button variant="primary" className="btn-lg" onClick={dryRun}>
+          <Button variant="primary" className="btn-lg" onClick={dryRun}>
             Do dry run
           </Button>
           <Button variant="primary" className="btn-lg" onClick={dryRunUsers}>
             Generate dry run users
-          </Button> */}
+          </Button>
         </Col>
         <Col xs={12} className="d-grid gap-2 mx-auto">
           <Table striped responsive>

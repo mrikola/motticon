@@ -18,14 +18,6 @@ export class PreferenceService {
     points: number
   ): Promise<boolean> {
     try {
-      // todo: delete not working properly
-      // await this.repository
-      //   .createQueryBuilder("preference")
-      //   .delete()
-      //   .from(Preference)
-      //   .where('preference."tournamentId" = :tournamentId', { tournamentId })
-      //   .andWhere('preference."playerId" = :userId', { userId })
-      //   .execute();
       await this.appDataSource
         .createQueryBuilder()
         .insert()
@@ -36,6 +28,25 @@ export class PreferenceService {
           cube: { id: cubeId },
           points,
         })
+        .execute();
+      return true;
+    } catch (err: unknown) {
+      return false;
+    }
+  }
+
+  async deletePreference(
+    tournamentId: number,
+    userId: number
+  ): Promise<boolean> {
+    // deletes all preferences for a tournament & user, not just one
+    try {
+      await this.repository
+        .createQueryBuilder("preference")
+        .delete()
+        .from(Preference)
+        .where('preference."tournamentId" = :tournamentId', { tournamentId })
+        .andWhere('preference."playerId" = :userId', { userId })
         .execute();
       return true;
     } catch (err: unknown) {

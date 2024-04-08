@@ -21,17 +21,18 @@ const CubeSelect = ({
     setCurrentSelection(e.target.value);
     const foo = e.target.value;
     const newOption = options.find((opt) => opt.key === foo);
-    if (newOption) {
-      switchOption(priority, newOption);
-    } else {
-      const noPref = {
-        key: "0",
-        value: "0",
-        displayText: "No preference",
-        disabled: false,
-      };
-      switchOption(priority, noPref);
-    }
+    switchOption(priority, newOption);
+    // if (newOption) {
+    //   switchOption(priority, newOption);
+    // } else {
+    //   const noPref = {
+    //     key: undefined,
+    //     value: undefined,
+    //     displayText: "No preference",
+    //     disabled: false,
+    //   };
+    //   switchOption(priority, noPref);
+    // }
   };
 
   useEffect(() => {
@@ -44,16 +45,13 @@ const CubeSelect = ({
     <Form.Group className="mb-3" controlId={`CubePreference${priority}`}>
       <Form.Label>Cube preference #{priority + 1}</Form.Label>
       <Form.Select onChange={handleSelectChange} value={currentSelection}>
-        <option>Select your preferred cube</option>
+        <option>No preference</option>
         {options.map((opt) => (
           <option key={opt.key} disabled={opt.disabled} value={opt.value}>
             {" "}
             {opt.displayText}{" "}
           </option>
         ))}
-        <option disabled={false} value={0}>
-          No preference
-        </option>
       </Form.Select>
     </Form.Group>
   );
