@@ -388,7 +388,9 @@ export class TournamentService {
           )
           .sort(randomize);
 
-        for (let cubeIndex = podsPerDraft - 1; cubeIndex >= 0; --cubeIndex) {
+        for (let podNumber = 1; podNumber <= podsPerDraft; ++podNumber) {
+          const cubeIndex = podsPerDraft - podNumber;
+
           const cubesByPreference = cubes
             // filter out cubes already used in this draft
             .filter((cube) => !draftPods.find((pod) => pod.cube.id === cube.id))
@@ -467,12 +469,10 @@ export class TournamentService {
             );
           }
 
-          assignments[draftIndex][cubeIndex] = preferredPlayers;
+          assignments[draftIndex][podNumber - 1] = preferredPlayers;
 
           console.log(
-            `Draft ${draftIndex + 1}, pod ${
-              cubeIndex + 1
-            } (cube ${currentCubeId})`,
+            `Draft ${draftIndex + 1}, pod ${podNumber} (cube ${currentCubeId})`,
             JSON.stringify(
               preferredPlayers.map(
                 (pp) =>
@@ -506,7 +506,7 @@ export class TournamentService {
 
           draftPods.push(
             await this.appDataSource.getRepository(DraftPod).save({
-              podNumber: cubeIndex + 1,
+              podNumber,
               draft,
               cube: cubesByPreference[cubeIndex],
             })
