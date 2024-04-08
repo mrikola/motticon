@@ -22,17 +22,6 @@ const CubeSelect = ({
     const foo = e.target.value;
     const newOption = options.find((opt) => opt.key === foo);
     switchOption(priority, newOption);
-    // if (newOption) {
-    //   switchOption(priority, newOption);
-    // } else {
-    //   const noPref = {
-    //     key: undefined,
-    //     value: undefined,
-    //     displayText: "No preference",
-    //     disabled: false,
-    //   };
-    //   switchOption(priority, noPref);
-    // }
   };
 
   useEffect(() => {

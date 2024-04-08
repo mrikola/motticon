@@ -33,6 +33,7 @@ const UserCubePreferences = () => {
     const preferences: UserCubePreference[] = [];
     if (user) {
       for (let i = 0; i < selectedOptions.length; ++i) {
+        // check for value so that the "no preference" are not added
         if (selectedOptions[i]?.value) {
           preferences.push({
             playerId: user.id,
@@ -43,7 +44,8 @@ const UserCubePreferences = () => {
         }
       }
     }
-    console.log(preferences);
+    // if 0 preferences selected (i.e. all are "no preference"), just reset preferences
+    // mainly relevant if user has selected preferences previously, but then wants to unselect
     if (preferences.length === 0) {
       resetPreferences();
     } else {
@@ -65,6 +67,7 @@ const UserCubePreferences = () => {
       cubeId: "",
       points: "",
     };
+    // endpoint deletes all cube preferences for tournamentId & userId
     post(`/cubePreferences/delete`, send).then(async (_resp) => {
       const success = (await _resp.json()) as boolean;
       if (success) {
@@ -100,6 +103,7 @@ const UserCubePreferences = () => {
   useEffect(() => {
     if (user) {
       const fetchData = async () => {
+        // get existing preferences
         const resp = await get(
           `/tournament/${tournamentId}/preferences/${user?.id}`
         );
