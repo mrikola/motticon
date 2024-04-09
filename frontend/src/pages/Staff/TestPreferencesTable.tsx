@@ -1,12 +1,12 @@
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { get, post } from "../../services/ApiService";
+import { get } from "../../services/ApiService";
 import { useParams } from "react-router";
 import { useIsAdmin } from "../../utils/auth";
 import Loading from "../../components/general/Loading";
 import { Enrollment, Player, Preference } from "../../types/User";
 import { Cube } from "../../types/Cube";
-import { Draft, DraftPod, Tournament } from "../../types/Tournament";
+import { Draft, Tournament } from "../../types/Tournament";
 
 type DryPlayer = {
   playerId: number;
@@ -162,7 +162,7 @@ const TestPreferencesTable = () => {
   function dryRun() {
     console.log("calling dry runn");
     const fetchData = async () => {
-      const response = await get(`/dry-run`);
+      await get(`/dry-run`);
     };
     fetchData();
   }
@@ -170,7 +170,7 @@ const TestPreferencesTable = () => {
   function dryRunUsers() {
     console.log("calling dry run users");
     const fetchData = async () => {
-      const response = await get(`/dry-run/users`);
+      await get(`/dry-run/users`);
     };
     fetchData();
   }

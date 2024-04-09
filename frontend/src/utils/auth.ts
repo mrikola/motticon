@@ -5,6 +5,7 @@ import { UserInfoContext } from "../components/provider/UserInfoProvider";
 
 export type LoggedInUser = {
   id: number;
+  email: string;
   firstName: string;
   lastName: string;
   isAdmin: boolean;
