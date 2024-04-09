@@ -120,16 +120,8 @@ const UserCubePreferences = () => {
               displayText: prefs[i].cube.title,
               disabled: false,
             });
-            setPreviousSelections((obj) => [
-              ...obj,
-              {
-                key: prefs[i].cube.id.toString(),
-                value: prefs[i].cube.id.toString(),
-                displayText: prefs[i].cube.title,
-                disabled: false,
-              },
-            ]);
           }
+          setPreviousSelections(opts);
           setSelectedOptions(opts);
         }
       };
@@ -161,6 +153,8 @@ const UserCubePreferences = () => {
     ...opt,
     disabled: Boolean(selectedOptions.find((so) => so?.key === opt.key)),
   }));
+
+  console.log("previous", previousSelections);
 
   return user &&
     cubes &&
