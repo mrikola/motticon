@@ -5,7 +5,7 @@ import { Container, Row, Form, Button, Col } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import CubeSelect from "./CubeSelect";
 import { generatePriorityArray } from "../../utils/preferences";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import Loading from "../general/Loading";
 import { Tournament } from "../../types/Tournament";
 import HelmetTitle from "../general/HelmetTitle";
@@ -15,7 +15,6 @@ import BackButton from "../general/BackButton";
 
 const UserCubePreferences = () => {
   const user = useContext(UserInfoContext);
-  const navigate = useNavigate();
   const { tournamentId } = useParams();
   const [tournament, setTournament] = useState<Tournament>();
   const [cubes, setCubes] = useState<Cube[]>([]);
@@ -72,9 +71,6 @@ const UserCubePreferences = () => {
       const success = (await _resp.json()) as boolean;
       if (success) {
         toast.success("Preferences saved");
-        // navigate(0);
-        // navigate(0) refreshes immediately, no time for toast to render
-        // toast.success("Preferences reset");
       } else {
         toast.error("Unable to save preferences");
       }
