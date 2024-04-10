@@ -2,7 +2,11 @@ import { Brackets, DataSource, Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Tournament } from "../entity/Tournament";
 import { partition, round } from "lodash";
-import { TournamentsByType } from "../dto/tournaments.dto";
+import {
+  DraftPodGenerationStrategy,
+  PreferencesByPlayer,
+  TournamentsByType,
+} from "../dto/tournaments.dto";
 import { Round } from "../entity/Round";
 import { Draft } from "../entity/Draft";
 import { MatchService } from "./match.service";
@@ -20,19 +24,6 @@ import { PreferenceService } from "./preference.service";
 import { randomize } from "../util/random";
 import { makeArray } from "../util/array";
 import { Preference } from "../entity/Preference";
-
-type PreferencesByPlayer = {
-  [key: string]: [
-    {
-      player: number;
-      cube: number;
-      points: number;
-      used: boolean;
-    }
-  ];
-};
-
-type DraftPodGenerationStrategy = "greedy" | "sparing";
 
 export class TournamentService {
   private appDataSource: DataSource;

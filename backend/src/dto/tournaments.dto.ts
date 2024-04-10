@@ -40,6 +40,19 @@ export type TournamentsByType = {
   future: TournamentDto[];
 };
 
+export type PreferencesByPlayer = {
+  [key: string]: [
+    {
+      player: number;
+      cube: number;
+      points: number;
+      used: boolean;
+    }
+  ];
+};
+
+export type DraftPodGenerationStrategy = "greedy" | "sparing";
+
 export const tournamentToDto = (tournament: Tournament): TournamentDto =>
   tournament
     ? {
