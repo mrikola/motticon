@@ -31,6 +31,7 @@ function DraftPods() {
           }
         }
         setUserDraftPods(userPods);
+        console.log(userPods);
       };
       fetchData();
     }
@@ -55,8 +56,9 @@ function DraftPods() {
               .sort((a, b) => a.id - b.id)
               .map((pod, index) => (
                 <Row key={index}>
+                  <h2>Draft {index + 1}</h2>
                   <h3>
-                    Draft {index + 1}, pod {pod.podNumber}
+                    Pod {pod.podNumber}, {pod.cube.title}
                   </h3>
                   <Table striped borderless responsive>
                     <thead>
