@@ -1,6 +1,5 @@
 import { CubeService } from "../service/cube.service";
 import { EnrollmentService } from "../service/enrollment.service";
-import { PodGenerationService } from "../service/podGeneration.service";
 import { PreferenceService } from "../service/preference.service";
 import { TournamentService } from "../service/tournament.service";
 import { UserService } from "../service/user.service";
@@ -11,7 +10,6 @@ const tournamentService = new TournamentService();
 const cubeService = new CubeService();
 const enrollmentService = new EnrollmentService();
 const preferenceService = new PreferenceService();
-const podGenerationService = new PodGenerationService();
 
 const DRAFTS = 3;
 const PREFERENCES_REQUIRED = 5;
@@ -138,7 +136,7 @@ export const generateDryRunPods = async () => {
 
   // 4. construct pods
   // await tournamentService.generateDrafts(tournament.id);
-  await podGenerationService.getPreferentialPodAssignments(tournament.id);
+  await tournamentService.getPreferentialPodAssignments(tournament.id);
 
   console.log("Theoretical maximum score: ", 15 * (64 - wildCards));
 };
