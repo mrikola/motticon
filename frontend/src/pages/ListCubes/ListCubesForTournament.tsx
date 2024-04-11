@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { PenFill } from "react-bootstrap-icons";
@@ -9,11 +9,14 @@ import { Badge, Card, Col, Container, Row } from "react-bootstrap";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import LoadingCubes from "../../components/general/LoadingCubes";
+import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 
 const ListCubesForTournament = () => {
   const { tournamentId } = useParams();
+  const user = useContext(UserInfoContext);
   const [cubes, setCubes] = useState<Cube[]>([]);
   const [tournament, setTournament] = useState<Tournament>();
+  const [userCubes, setUserCubes] = useState<number[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,14 +27,37 @@ const ListCubesForTournament = () => {
     fetchData();
   }, []);
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const resp = await get(`/tournament/${tournamentId}`);
+  //     const tourny = (await resp.json()) as Tournament;
+  //     setTournament(tourny);
+  //     console.log(tourny);
+  //   };
+  //   fetchData();
+  // }, []);
+
   useEffect(() => {
-    const fetchData = async () => {
-      const resp = await get(`/tournament/${tournamentId}`);
-      const tourny = (await resp.json()) as Tournament;
-      setTournament(tourny);
-    };
-    fetchData();
-  }, []);
+    if (user) {
+      const fetchData = async () => {
+        const resp = await get(`/tournament/${tournamentId}/drafts`);
+        const tourny = (await resp.json()) as Tournament;
+        setTournament(tourny);
+        const draftCubes = [];
+        for (const draft of tourny.drafts) {
+          for (const pod of draft.pods) {
+            for (const seat of pod.seats) {
+              if (seat.player.id === user?.id) {
+                draftCubes.push(pod.cube.id);
+              }
+            }
+          }
+        }
+        setUserCubes(draftCubes);
+      };
+      fetchData();
+    }
+  }, [user]);
 
   return tournament ? (
     <Container className="mt-3 my-md-4">
@@ -71,11 +97,11 @@ const ListCubesForTournament = () => {
                     style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
                   >
                     <div className="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                      {cube.id === 1 ? (
+                      {userCubes.includes(cube.id) ? (
                         <>
                           <p className="mt-auto pt-4">
                             <Badge bg="primary" className="py-2">
-                              Test badge for preference indication
+                              Playing this cube
                             </Badge>
                           </p>
                           <h3 className="mb-4 display-4 lh-1">

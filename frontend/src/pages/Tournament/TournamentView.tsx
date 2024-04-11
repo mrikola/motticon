@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { get } from "../../services/ApiService";
-import { Round, Tournament } from "../../types/Tournament";
+import { Draft, Round, Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row } from "react-bootstrap";
@@ -17,6 +17,7 @@ import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import GoToCubes from "./TournamentView/GoToCubes";
 import ManagePreferences from "./TournamentView/ManagePreferences";
+import GoToPods from "./TournamentView/GoToPods";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
@@ -28,6 +29,7 @@ const TournamentView = () => {
   const [newestRoundNumber, setNewestRoundNumber] = useState<number>(0);
   const [freeSeats, setFreeSeats] = useState<number>(0);
   const [date, setDate] = useState<string>();
+  const [drafts, setDrafts] = useState<Draft[]>([]);
 
   const isStaff =
     user?.isAdmin || user?.tournamentsStaffed.includes(Number(tournamentId));
@@ -48,7 +50,6 @@ const TournamentView = () => {
       setActiveTournament(tournament);
       setFreeSeats(tournament.totalSeats - tournament.enrollments.length);
       checkEnrolled(enrollment);
-      console.log(tournament);
     };
 
     if (user) {
@@ -79,6 +80,16 @@ const TournamentView = () => {
       const resp = await get(`/tournament/${tournamentId}/cubes`);
       const tournamentCubes = (await resp.json()) as Cube[];
       setCubes(tournamentCubes);
+    };
+    fetchData();
+  }, [tournamentId]);
+
+  // get drafts for this tournament
+  useEffect(() => {
+    const fetchData = async () => {
+      const resp = await get(`/tournament/${tournamentId}/drafts`);
+      const tournament = (await resp.json()) as Tournament;
+      setDrafts(tournament.drafts);
     };
     fetchData();
   }, [tournamentId]);
@@ -134,6 +145,9 @@ const TournamentView = () => {
         activeTournament.preferencesRequired > 0 && (
           <ManagePreferences tournamentId={activeTournament.id} />
         )}
+      {isEnrolled && drafts?.length > 0 && (
+        <GoToPods tournamentId={activeTournament.id} />
+      )}
       {isEnrolled && activeTournament.status === "started" && (
         <GoToOngoing tournamentId={activeTournament.id} />
       )}
