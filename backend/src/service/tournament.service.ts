@@ -580,6 +580,11 @@ export class TournamentService {
               .sort((a, b) => b.points - a.points);
 
             const currentCubeId = cubesByPreference[cubeIndex].id;
+            // TODO see if it's possible to use a different cube IF:
+            // * draftNumber > 1
+            // podNumber = max
+            // a previous draft's last pod also used this cube
+
             const preferredPlayers = preferences // find players who..
               .filter((pref) => pref.cube.id === currentCubeId) // want to play this cube
               .sort(randomize)
@@ -644,24 +649,6 @@ export class TournamentService {
             }
 
             assignments[draftIndex][podNumber - 1] = preferredPlayers;
-
-            /* 
-            console.log(
-              `Draft ${
-                draftIndex + 1
-              }, pod ${podNumber} (cube ${currentCubeId})`,
-              JSON.stringify(
-                preferredPlayers.map(
-                  (pp) =>
-                    `${pp.firstName} ${pp.lastName} (${
-                      preferencesByPlayer[pp.id]?.find(
-                        (p) => p.cube === currentCubeId
-                      )?.points ?? "W"
-                    })`
-                )
-              )
-            );
-            */
 
             // clear assigned players from the unassigned list for this draft
             unassignedPlayers = unassignedPlayers.filter(
