@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 type Props = {
   matches: Match[];
   submitResultClicked: (match: Match) => void;
+  editResultClicked: (match: Match) => void;
   roundTimerStarted: boolean;
 };
 
 const MatchTable = ({
   matches,
   submitResultClicked,
+  editResultClicked,
   roundTimerStarted,
 }: Props) => {
   const [ongoingMatches, setOngoingMatches] = useState<Match[]>();
@@ -27,7 +29,7 @@ const MatchTable = ({
         <Row>
           <Col xs={12}>
             <h2>Ongoing matches</h2>
-            <Table striped bordered hover>
+            <Table striped borderless hover>
               <thead>
                 <tr>
                   <th>Table</th>
@@ -74,14 +76,14 @@ const MatchTable = ({
         <Row>
           <Col xs={12}>
             <h2>Done matches</h2>
-            <Table striped bordered hover>
+            <Table striped borderless hover>
               <thead>
                 <tr>
                   <th>Table</th>
                   <th>Player 1</th>
                   <th>Player 2</th>
                   <th>Result</th>
-                  <th>Staff result entry</th>
+                  <th>Staff result edit</th>
                 </tr>
               </thead>
               <tbody>
@@ -99,13 +101,12 @@ const MatchTable = ({
                     </td>
                     <td>
                       <Button
-                        variant="primary"
+                        variant="danger"
                         type="submit"
-                        onClick={() => submitResultClicked(match)}
-                        disabled={match.resultSubmittedBy ? true : false}
+                        onClick={() => editResultClicked(match)}
                         aria-disabled={match.resultSubmittedBy ? true : false}
                       >
-                        Submit result
+                        Edit result
                       </Button>
                     </td>
                   </tr>

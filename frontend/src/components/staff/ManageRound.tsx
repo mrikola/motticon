@@ -146,7 +146,6 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
       const jwt = (await resp.json()) as Match[];
       if (jwt !== null) {
         toast.success("Result for table " + match.tableNumber + " submitted");
-        // console.log(jwt);
         setMatches(
           jwt.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1))
         );
@@ -163,6 +162,16 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
       show: true,
       onHide: () => null,
       heading: "Submit result",
+      actionFunction: submitResult,
+      match: clickedMatch,
+    });
+  }
+
+  function editResultClicked(clickedMatch: Match) {
+    setModal({
+      show: true,
+      onHide: () => null,
+      heading: "Edit result",
       actionFunction: submitResult,
       match: clickedMatch,
     });
@@ -239,6 +248,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
         <MatchTable
           matches={matches}
           submitResultClicked={submitResultClicked}
+          editResultClicked={editResultClicked}
           roundTimerStarted={roundTimerStarted}
         />
         <VerticallyCenteredModal
