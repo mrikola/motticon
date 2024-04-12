@@ -2,7 +2,7 @@ import { Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Loading from "../../components/general/Loading";
 import { useIsAdmin } from "../../utils/auth";
-import { Box, TrophyFill } from "react-bootstrap-icons";
+import { Box, PersonFillGear, TrophyFill } from "react-bootstrap-icons";
 import HelmetTitle from "../../components/general/HelmetTitle";
 
 const AdminPage = () => {
@@ -29,6 +29,13 @@ const AdminPage = () => {
           <Link to="/admin/add-cube" className="btn btn-primary btn-lg">
             <div className="icon-link">
               <Box className="fs-3" /> Add cube
+            </div>
+          </Link>
+        </Col>
+        <Col xs={10} sm={8} className="d-grid gap-2 mx-auto mt-3">
+          <Link to="/admin/manage-users" className="btn btn-primary btn-lg">
+            <div className="icon-link">
+              <PersonFillGear className="fs-3" /> Manage users
             </div>
           </Link>
         </Col>

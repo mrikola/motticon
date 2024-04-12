@@ -27,6 +27,7 @@ import LoadingCubes from "./components/general/LoadingCubes";
 import EditCube from "./components/admin/EditCube";
 import TestPreferencesTable from "./pages/Staff/TestPreferencesTable";
 import DraftPods from "./pages/Tournament/DraftPods";
+import ManageUsers from "./components/admin/ManageUsers";
 
 function App() {
   const routes: RouteObject[] = [
@@ -142,6 +143,10 @@ function App() {
             {
               path: "admin/add-cube",
               Component: AddCube,
+            },
+            {
+              path: "admin/manage-users",
+              Component: ManageUsers,
             },
             {
               path: "*",

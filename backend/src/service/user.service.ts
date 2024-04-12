@@ -39,6 +39,21 @@ export class UserService {
     }
   }
 
+  async deleteUser(userId: number): Promise<boolean> {
+    try {
+      // todo: make sure this actually works and doesn't break stuff horribly
+      this.appDataSource
+        .createQueryBuilder()
+        .delete()
+        .from(User)
+        .where("id = :userId", { userId })
+        .execute();
+      return true;
+    } catch (err: unknown) {
+      return false;
+    }
+  }
+
   async getUser(id: number): Promise<User> {
     return await this.repository.findOne({
       where: { id },

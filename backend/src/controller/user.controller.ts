@@ -25,6 +25,11 @@ export const getUser = async (req): Promise<PlayerWithRatingDto> => {
   return playerToRatedDto(await userService.getUser(id as number));
 };
 
+export const deleteUser = async (req): Promise<boolean> => {
+  const { userId } = req.params;
+  return await userService.deleteUser(userId as number);
+};
+
 export const getAllUsers = async (): Promise<PlayerWithRatingDto[]> => {
   return (await userService.getAllUsers()).map(playerToRatedDto);
 };
