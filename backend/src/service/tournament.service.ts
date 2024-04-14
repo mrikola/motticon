@@ -492,6 +492,27 @@ export class TournamentService {
     return { tournament, enrollments, cubes, podsPerDraft, preferences };
   };
 
+  getPlayerPreferencesForPodGeneration = (
+    preferences: Preference[],
+    preferencesByPlayer: PreferencesByPlayer
+  ) => {
+    preferences.forEach((preference) => {
+      let currentPlayerPreference = preferencesByPlayer[preference.player.id];
+      const pref = {
+        player: preference.playerId,
+        cube: preference.cube.id,
+        points: preference.points,
+        used: false,
+      };
+
+      if (!currentPlayerPreference) {
+        preferencesByPlayer[preference.player.id] = [pref];
+      } else {
+        currentPlayerPreference.push(pref);
+      }
+    });
+  };
+
   resolvePodGenerationStrategy = async (
     iterationsPerStrategy: number,
     strategy: DraftPodGenerationStrategy[],
@@ -505,21 +526,10 @@ export class TournamentService {
     for (let iteration = 0; iteration < iterationsPerStrategy; ++iteration) {
       // SET UP FOR A PARTICULAR ITERATION
       const preferencesByPlayer: PreferencesByPlayer = {};
-      preferences.forEach((preference) => {
-        let currentPlayerPreference = preferencesByPlayer[preference.player.id];
-        const pref = {
-          player: preference.playerId,
-          cube: preference.cube.id,
-          points: preference.points,
-          used: false,
-        };
-
-        if (!currentPlayerPreference) {
-          preferencesByPlayer[preference.player.id] = [pref];
-        } else {
-          currentPlayerPreference.push(pref);
-        }
-      });
+      this.getPlayerPreferencesForPodGeneration(
+        preferences,
+        preferencesByPlayer
+      );
 
       const wildCardAssignments: {
         [key: number]: number[];
