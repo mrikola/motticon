@@ -51,7 +51,16 @@ export type PreferencesByPlayer = {
   ];
 };
 
-export type DraftPodGenerationStrategy = "greedy" | "sparing";
+export type DraftPodGenerationStrategy =
+  | "greedy"
+  | "sparing"
+  | "middle"
+  | "semi-greedy"
+  | "third"
+  | "fourth"
+  | "fifth"
+  | "sixth"
+  | "seventh";
 
 export const tournamentToDto = (tournament: Tournament): TournamentDto =>
   tournament

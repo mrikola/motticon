@@ -53,6 +53,7 @@ const generatePriorityArray = (size: number): number[] => {
 };
 
 export const generateDryRunUsers = async () => {
+  console.info("Generating test users");
   for (const firstName of FIRST_NAMES) {
     for (const lastName of LAST_NAMES) {
       await userService.createUser(
