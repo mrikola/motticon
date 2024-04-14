@@ -514,6 +514,38 @@ export class TournamentService {
     });
   };
 
+  getCubeIndexForStrategy = (
+    strategy: DraftPodGenerationStrategy[],
+    draftIndex: number,
+    podsPerDraft: number,
+    podNumber: number
+  ) => {
+    switch (strategy[draftIndex]) {
+      case "greedy":
+        return 0; // for greedy strategy, take the most popular cube available
+      case "semi-greedy":
+        return 1; // for semi-greedy strategy, take the second most popular cube available
+      // Begin adding jitter to the permutations
+      case "third":
+        return 2;
+      case "fourth":
+        return 3;
+      case "fifth":
+        return 4;
+      case "sixth":
+        return 5;
+      case "seventh":
+        return 6;
+      // End adding jitter to the permutations
+      case "sparing":
+        return podsPerDraft - podNumber; // for sparing strategy, take the Nth most popular where N is pods to be generated
+      case "middle":
+        return Math.floor((podsPerDraft - podNumber) / 2); // for middle strategy, take the of the two above
+      default:
+        throw new Error("invalid strategy");
+    }
+  };
+
   resolvePodGenerationStrategy = async (
     iterationsPerStrategy: number,
     strategy: DraftPodGenerationStrategy[],
@@ -568,10 +600,12 @@ export class TournamentService {
           .sort(randomize);
 
         for (let podNumber = 1; podNumber <= podsPerDraft; ++podNumber) {
-          const cubeIndex =
-            strategy[draftIndex] === "greedy"
-              ? 0 // for greedy strategy, take the most popular cube available
-              : podsPerDraft - podNumber; // for sparing strategy, take the Nth most popular where N is pods to be generated
+          const cubeIndex = this.getCubeIndexForStrategy(
+            strategy,
+            draftIndex,
+            podsPerDraft,
+            podNumber
+          );
 
           const cubesByPreference = cubes
             // filter out cubes already used in this draft
@@ -590,6 +624,7 @@ export class TournamentService {
             }))
             .sort((a, b) => b.points - a.points);
 
+          console.info(cubesByPreference, strategy);
           const currentCubeId = cubesByPreference[cubeIndex].id;
           // TODO see if it's possible to use a different cube IF:
           // * draftNumber > 1
@@ -781,6 +816,12 @@ export class TournamentService {
         "sparing",
         "sparing",
         "sparing",
+        "middle",
+        "middle",
+        "middle",
+        "semi-greedy",
+        "semi-greedy",
+        "semi-greedy",
       ] as DraftPodGenerationStrategy[]);
 
     console.info("Strategies: ", podGenerationStrategies);
