@@ -735,6 +735,34 @@ export class TournamentService {
     }
   };
 
+  permutatePodGenerationStrategies = (
+    strategies: DraftPodGenerationStrategy[]
+  ) => {
+    let resultSet: Set<string> = new Set();
+
+    const permute = (
+      current: DraftPodGenerationStrategy[],
+      accumulator: DraftPodGenerationStrategy[] = []
+    ) => {
+      if (accumulator.length === 3) {
+        resultSet.add(JSON.stringify(accumulator));
+      } else {
+        for (let i = 0; i < current.length; i++) {
+          let curr = current.slice();
+          let next = curr.splice(i, 1);
+          permute(curr.slice(), accumulator.concat(next));
+        }
+      }
+    };
+    permute(strategies);
+
+    let result: DraftPodGenerationStrategy[][] = [];
+    for (let item of resultSet) {
+      result.push(JSON.parse(item));
+    }
+    return result;
+  };
+
   generatePodAssignments = async (
     podAssignments: PreferentialPodAssignments[],
     preferences: Preference[],
@@ -745,16 +773,17 @@ export class TournamentService {
   ) => {
     const iterationsPerStrategy = 10;
 
-    const podGenerationStrategies: DraftPodGenerationStrategy[][] = [
-      ["greedy", "sparing", "sparing"],
-      ["greedy", "greedy", "sparing"],
-      ["greedy", "greedy", "greedy"],
-      ["greedy", "sparing", "greedy"],
-      ["sparing", "sparing", "sparing"],
-      ["sparing", "greedy", "greedy"],
-      ["sparing", "sparing", "greedy"],
-      ["sparing", "greedy", "sparing"],
-    ];
+    const podGenerationStrategies: DraftPodGenerationStrategy[][] =
+      this.permutatePodGenerationStrategies([
+        "greedy",
+        "greedy",
+        "greedy",
+        "sparing",
+        "sparing",
+        "sparing",
+      ] as DraftPodGenerationStrategy[]);
+
+    console.info("Strategies: ", podGenerationStrategies);
 
     for (const strategy of podGenerationStrategies) {
       await this.resolvePodGenerationStrategy(
