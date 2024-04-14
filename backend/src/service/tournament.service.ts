@@ -28,6 +28,7 @@ import { Enrollment } from "../entity/Enrollment";
 
 type PreferentialPodAssignments = {
   preferencePoints: number;
+  strategy: DraftPodGenerationStrategy[];
   assignments: {
     draftNumber: number;
     pods: {
@@ -546,6 +547,7 @@ export class TournamentService {
       let currentIterationAssignments: PreferentialPodAssignments = {
         preferencePoints: 0,
         assignments: [],
+        strategy,
       };
 
       let draftIndex = 0;
@@ -709,6 +711,7 @@ export class TournamentService {
         draftIndex++;
       }
       podAssignments.push(currentIterationAssignments);
+      console.log("Used strategy:", strategy.join(", "));
       console.log("Total preference points used", totalPreferencePointsUsed);
     }
   };
@@ -727,6 +730,11 @@ export class TournamentService {
       ["greedy", "sparing", "sparing"],
       ["greedy", "greedy", "sparing"],
       ["greedy", "greedy", "greedy"],
+      ["greedy", "sparing", "greedy"],
+      ["sparing", "sparing", "sparing"],
+      ["sparing", "greedy", "greedy"],
+      ["sparing", "sparing", "greedy"],
+      ["sparing", "greedy", "sparing"],
     ];
 
     for (const strategy of podGenerationStrategies) {
@@ -787,6 +795,7 @@ export class TournamentService {
     console.log(
       `best assignment with ${sortedAssignments[0].preferencePoints} spent:`
     );
+    console.log("Strategy: ", sortedAssignments[0].strategy.join(", "));
     sortedAssignments[0].assignments.forEach((assignment) => {
       console.log("DRAFT", assignment.draftNumber);
       assignment.pods.forEach((pod, index) => {
