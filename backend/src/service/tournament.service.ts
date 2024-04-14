@@ -24,6 +24,7 @@ import { randomize } from "../util/random";
 import { makeArray } from "../util/array";
 import { Preference } from "../entity/Preference";
 import { playerToDto } from "../dto/user.dto";
+import { Enrollment } from "../entity/Enrollment";
 
 type PreferentialPodAssignments = {
   preferencePoints: number;
@@ -479,18 +480,26 @@ export class TournamentService {
     );
   }
 
-  async getPreferentialPodAssignments(tournamentId: number) {
+  getAssetsForAssignments = async (tournamentId: number) => {
     const tournament = await this.getTournamentAndDrafts(tournamentId);
     const enrollments = (await this.getTournamentEnrollments(tournamentId))
       .enrollments;
     const cubes = await this.cubeService.getCubesForTournament(tournamentId);
     const podsPerDraft = tournament.totalSeats / 8;
 
-    const podAssignments: PreferentialPodAssignments[] = [];
-
     const preferences =
       await this.preferenceService.getPreferencesForTournament(tournamentId);
+    return { tournament, enrollments, cubes, podsPerDraft, preferences };
+  };
 
+  generatePodAssignments = async (
+    podAssignments: PreferentialPodAssignments[],
+    preferences: Preference[],
+    tournament: Tournament,
+    podsPerDraft: number,
+    enrollments: Enrollment[],
+    cubes: Cube[]
+  ) => {
     const iterationsPerStrategy = 10;
 
     const podGenerationStrategies: DraftPodGenerationStrategy[][] = [
@@ -705,6 +714,22 @@ export class TournamentService {
         console.log("Total preference points used", totalPreferencePointsUsed);
       }
     }
+  };
+
+  async getPreferentialPodAssignments(tournamentId: number) {
+    const { tournament, enrollments, cubes, podsPerDraft, preferences } =
+      await this.getAssetsForAssignments(tournamentId);
+
+    const podAssignments: PreferentialPodAssignments[] = [];
+
+    await this.generatePodAssignments(
+      podAssignments,
+      preferences,
+      tournament,
+      podsPerDraft,
+      enrollments,
+      cubes
+    );
 
     const sortedAssignments = podAssignments.sort(
       (a, b) => b.preferencePoints - a.preferencePoints
@@ -732,7 +757,9 @@ export class TournamentService {
       }
     });
 
-    console.log("best assignment:");
+    console.log(
+      `best assignment with ${sortedAssignments[0].preferencePoints} spent:`
+    );
     sortedAssignments[0].assignments.forEach((assignment) => {
       console.log("DRAFT", assignment.draftNumber);
       assignment.pods.forEach((pod, index) => {
