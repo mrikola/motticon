@@ -645,16 +645,35 @@ export class TournamentService {
           }
 
           // if pod is STILL not full, fill it with randoms
-          while (preferredPlayers.length < 8) {
+          if (preferredPlayers.length < 8) {
             preferredPlayers.push(
               ...unassignedPlayers
+                // filter out assigned players for this cube
                 .filter(
                   (player) =>
                     !preferredPlayers.find((pp) => pp.id === player.id)
                 )
-                // TODO remove players who already played this cube
+                .filter(
+                  // filter out users who have already played this cube
+                  (user, _) =>
+                    !preferencesByPlayer[user.id]?.find(
+                      (x) => x.cube === currentCubeId
+                    )?.used ||
+                    !(wildCardAssignments[user.id] ?? []).includes(
+                      currentCubeId
+                    )
+                )
                 .slice(0, 8 - preferredPlayers.length)
             );
+          }
+
+          if (preferredPlayers.length < 8) {
+            console.log(
+              "pod not full, could only fit: ",
+              preferredPlayers.length
+            );
+            console.info(currentCubeId);
+            throw new Error("pod not full");
           }
 
           assignments[draftIndex][podNumber - 1] = preferredPlayers;
