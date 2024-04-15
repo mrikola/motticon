@@ -855,6 +855,7 @@ export class TournamentService {
         {};
       for (let draft of assignment.assignments) {
         for (let pod of draft.pods) {
+          let unIntentionalWildcardsUsed = 0;
           for (let player of pod.players) {
             // Check that players are not assigned to the same cube multiple times
             if (
@@ -894,6 +895,23 @@ export class TournamentService {
               );
               assignment.penaltyPoints += 5;
             }
+            if (
+              playerPreferences &&
+              !playerPreferences
+                .map((preference) => preference.cube)
+                .includes(pod.cube.id)
+            ) {
+              unIntentionalWildcardsUsed++;
+            }
+          }
+
+          // Check that not too many wildcards are in use. Setting this limit to 0 is
+          // equivalent to the prefennce check above
+          if (unIntentionalWildcardsUsed > 1) {
+            assignment.penaltyReasons.push(
+              `Draft ${draft.draftNumber} cube ${pod.cube.id} has ${unIntentionalWildcardsUsed} unintentional wildcards`
+            );
+            assignment.penaltyPoints += 5 * unIntentionalWildcardsUsed;
           }
         }
       }
