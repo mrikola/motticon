@@ -909,8 +909,7 @@ export class TournamentService {
             );
           }
 
-          // Check that not too many wildcards are in use. Setting this limit to 0 is
-          // equivalent to the prefennce check above
+          // Check that not too many wildcards are in use
           if (unIntentionalWildcardsUsed > 1) {
             assignment.penaltyReasons.push(
               `Draft ${draft.draftNumber} cube ${pod.cube.id} has ${unIntentionalWildcardsUsed} unintentional wildcards`
