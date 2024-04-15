@@ -853,56 +853,60 @@ export class TournamentService {
       );
       let playerCounts: { [cubeId: number]: { [playerId: number]: number } } =
         {};
+
+      const validatePlayerNoInMultipleCubes = (
+        pod: { cube: Cube; players: User[] },
+        player: User
+      ) => {
+        if (playerCounts[pod.cube.id] && playerCounts[pod.cube.id][player.id]) {
+          playerCounts[pod.cube.id][player.id]++;
+          if (playerCounts[pod.cube.id][player.id] > 1) {
+            assignment.penaltyReasons.push(
+              `Player ${player.firstName} ${player.lastName} is on the same cube (${pod.cube.id}) multiple times`
+            );
+            assignment.penaltyPoints += 50;
+          }
+        } else {
+          playerCounts[pod.cube.id] = { [player.id]: 1 };
+        }
+      };
+
+      const validatePlayerWithinPreferences = (
+        pod: { cube: Cube; players: User[] },
+        player: User
+      ): number => {
+        const playerPreferences = preferencesByPlayer[player.id];
+        if (
+          playerPreferences &&
+          playerPreferences.length === 5 &&
+          !playerPreferences
+            .map((preference) => preference.cube)
+            .includes(pod.cube.id)
+        ) {
+          assignment.penaltyReasons.push(
+            `Player ${player.firstName} ${
+              player.lastName
+            } with 5 preferences (${playerPreferences
+              .map((preference) => preference.cube)
+              .join(", ")}) is assigned to a cube not in their preferences (${
+              pod.cube.id
+            })`
+          );
+          assignment.penaltyPoints += 5;
+          return 1;
+        }
+        return 0;
+      };
+
       for (let draft of assignment.assignments) {
         for (let pod of draft.pods) {
           let unIntentionalWildcardsUsed = 0;
           for (let player of pod.players) {
-            // Check that players are not assigned to the same cube multiple times
-            if (
-              playerCounts[pod.cube.id] &&
-              playerCounts[pod.cube.id][player.id]
-            ) {
-              playerCounts[pod.cube.id][player.id]++;
-              if (playerCounts[pod.cube.id][player.id] > 1) {
-                assignment.penaltyReasons.push(
-                  `Player ${player.firstName} ${player.lastName} is on the same cube (${pod.cube.id}) multiple times`
-                );
-                assignment.penaltyPoints += 50;
-              }
-            } else {
-              playerCounts[pod.cube.id] = { [player.id]: 1 };
-            }
-
-            // Check that a player with 5 preferences is assigned to a cube in their preferences
-            let playerPreferences = preferencesByPlayer[player.id];
-            if (
-              playerPreferences &&
-              playerPreferences.length === 5 &&
-              !playerPreferences
-                .map((preference) => preference.cube)
-                .includes(pod.cube.id)
-            ) {
-              assignment.penaltyReasons.push(
-                `Player ${player.firstName} ${
-                  player.lastName
-                } with 5 preferences (${playerPreferences
-                  .map((preference) => preference.cube)
-                  .join(
-                    ", "
-                  )}) is assigned to a cube not in their preferences (${
-                  pod.cube.id
-                })`
-              );
-              assignment.penaltyPoints += 5;
-            }
-            if (
-              playerPreferences &&
-              !playerPreferences
-                .map((preference) => preference.cube)
-                .includes(pod.cube.id)
-            ) {
-              unIntentionalWildcardsUsed++;
-            }
+            validatePlayerNoInMultipleCubes(pod, player);
+            unIntentionalWildcardsUsed += validatePlayerWithinPreferences(
+              pod,
+              player
+            );
           }
 
           // Check that not too many wildcards are in use. Setting this limit to 0 is
