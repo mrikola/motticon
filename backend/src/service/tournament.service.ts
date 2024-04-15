@@ -28,6 +28,8 @@ import { Enrollment } from "../entity/Enrollment";
 
 type PreferentialPodAssignments = {
   preferencePoints: number;
+  penaltyPoints: number;
+  penaltyReasons: string[];
   strategy: DraftPodGenerationStrategy[];
   assignments: {
     draftNumber: number;
@@ -578,6 +580,8 @@ export class TournamentService {
 
       let currentIterationAssignments: PreferentialPodAssignments = {
         preferencePoints: 0,
+        penaltyPoints: 0,
+        penaltyReasons: [],
         assignments: [],
         strategy,
       };
@@ -819,9 +823,6 @@ export class TournamentService {
         "middle",
         "middle",
         "middle",
-        "semi-greedy",
-        "semi-greedy",
-        "semi-greedy",
       ] as DraftPodGenerationStrategy[]);
 
     console.info("Strategies: ", podGenerationStrategies);
@@ -840,6 +841,68 @@ export class TournamentService {
     }
   };
 
+  validatePodAssignments = (
+    podAssignments: PreferentialPodAssignments[],
+    preferencesByPlayer: PreferencesByPlayer
+  ) => {
+    console.info("Validating pod assignments");
+    for (let assignment of podAssignments) {
+      console.info(
+        "Validating assignment with preference points:",
+        assignment.preferencePoints
+      );
+      let playerCounts: { [cubeId: number]: { [playerId: number]: number } } =
+        {};
+      for (let draft of assignment.assignments) {
+        for (let pod of draft.pods) {
+          for (let player of pod.players) {
+            // Check that players are not assigned to the same cube multiple times
+            if (
+              playerCounts[pod.cube.id] &&
+              playerCounts[pod.cube.id][player.id]
+            ) {
+              playerCounts[pod.cube.id][player.id]++;
+              if (playerCounts[pod.cube.id][player.id] > 1) {
+                assignment.penaltyReasons.push(
+                  `Player ${player.firstName} ${player.lastName} is on the same cube (${pod.cube.id}) multiple times`
+                );
+                assignment.penaltyPoints += 50;
+              }
+            } else {
+              playerCounts[pod.cube.id] = { [player.id]: 1 };
+            }
+
+            // Check that a player with 5 preferences is assigned to a cube in their preferences
+            let playerPreferences = preferencesByPlayer[player.id];
+            if (
+              playerPreferences &&
+              playerPreferences.length === 5 &&
+              !playerPreferences
+                .map((preference) => preference.cube)
+                .includes(pod.cube.id)
+            ) {
+              assignment.penaltyReasons.push(
+                `Player ${player.firstName} ${
+                  player.lastName
+                } with 5 preferences (${playerPreferences
+                  .map((preference) => preference.cube)
+                  .join(
+                    ", "
+                  )}) is assigned to a cube not in their preferences (${
+                  pod.cube.id
+                })`
+              );
+              assignment.penaltyPoints += 5;
+            }
+          }
+        }
+      }
+      console.info(
+        "Final penalty points of assignment: ",
+        assignment.penaltyPoints
+      );
+    }
+  };
   async getPreferentialPodAssignments(tournamentId: number) {
     const { tournament, enrollments, cubes, podsPerDraft, preferences } =
       await this.getAssetsForAssignments(tournamentId);
@@ -855,20 +918,11 @@ export class TournamentService {
       cubes
     );
 
-    const sortedAssignments = podAssignments.sort(
-      (a, b) => b.preferencePoints - a.preferencePoints
-    );
-
-    console.log(
-      "points used in each iteration",
-      sortedAssignments.map((assignment) => assignment.preferencePoints)
-    );
-
     const preferencesByPlayer: PreferencesByPlayer = {};
     preferences.forEach((preference) => {
       let currentPlayerPreference = preferencesByPlayer[preference.player.id];
       const pref = {
-        player: preference.playerId,
+        player: preference.player.id,
         cube: preference.cube.id,
         points: preference.points,
         used: false,
@@ -881,10 +935,28 @@ export class TournamentService {
       }
     });
 
+    this.validatePodAssignments(podAssignments, preferencesByPlayer);
+
+    const sortedAssignments = podAssignments.sort(
+      (a, b) =>
+        b.preferencePoints -
+        b.penaltyPoints -
+        (a.preferencePoints - a.penaltyPoints)
+    );
+
     console.log(
-      `best assignment with ${sortedAssignments[0].preferencePoints} spent:`
+      "points used in each iteration and penalties",
+      sortedAssignments.map((assignment) => ({
+        points: assignment.preferencePoints,
+        penalties: assignment.penaltyPoints,
+      }))
+    );
+
+    console.log(
+      `best assignment with ${sortedAssignments[0].preferencePoints} spent with ${sortedAssignments[0].penaltyPoints} penalty points:`
     );
     console.log("Strategy: ", sortedAssignments[0].strategy.join(", "));
+    console.info("Penalties: ", sortedAssignments[0].penaltyReasons);
     sortedAssignments[0].assignments.forEach((assignment) => {
       console.log("DRAFT", assignment.draftNumber);
       assignment.pods.forEach((pod, index) => {
