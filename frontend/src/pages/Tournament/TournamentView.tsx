@@ -18,6 +18,7 @@ import BackButton from "../../components/general/BackButton";
 import GoToCubes from "./TournamentView/GoToCubes";
 import ManagePreferences from "./TournamentView/ManagePreferences";
 import GoToPods from "./TournamentView/GoToPods";
+import GoToManageStaff from "./TournamentView/GoToManageStaff";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
@@ -33,6 +34,8 @@ const TournamentView = () => {
 
   const isStaff =
     user?.isAdmin || user?.tournamentsStaffed.includes(Number(tournamentId));
+
+  const isAdmin = user?.isAdmin;
 
   function checkEnrolled(enrollment: Enrollment) {
     if (enrollment && enrollment.player.id === user?.id) {
@@ -139,6 +142,7 @@ const TournamentView = () => {
         </Col>
       </Row>
       {cubes.length > 0 && <GoToCubes tournamentId={activeTournament.id} />}
+      {isAdmin && <GoToManageStaff tournamentId={activeTournament.id} />}
       {isStaff && <Staff tournamentId={activeTournament.id} />}
       {isEnrolled &&
         activeTournament.status === "pending" &&

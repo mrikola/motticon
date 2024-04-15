@@ -28,6 +28,7 @@ import EditCube from "./components/admin/EditCube";
 import TestPreferencesTable from "./pages/Staff/TestPreferencesTable";
 import DraftPods from "./pages/Tournament/DraftPods";
 import ManageUsers from "./components/admin/ManageUsers";
+import ManageStaff from "./pages/Staff/ManageStaff";
 
 function App() {
   const routes: RouteObject[] = [
@@ -119,6 +120,10 @@ function App() {
             {
               path: "tournament/:tournamentId/staff",
               Component: StaffView,
+            },
+            {
+              path: "tournament/:tournamentId/manage-staff",
+              Component: ManageStaff,
             },
             {
               path: "tournament/:tournamentId/pools",

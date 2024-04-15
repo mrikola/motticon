@@ -1,6 +1,11 @@
 import express from "express";
 import { isValidAdminToken } from "../auth/auth";
-import { createTournament } from "../controller/tournament.controller";
+import {
+  addToStaff,
+  createTournament,
+  getTournamentStaff,
+  removeFromStaff,
+} from "../controller/tournament.controller";
 import { resetEloForUser, updateElo } from "../controller/rating.controller";
 import { addCube, editCube } from "../controller/cube.controller";
 import { setDeckPhotoForUser } from "../controller/draft.controller";
@@ -44,6 +49,24 @@ adminRouter.post("/deleteUser/:userId", async (req, res) => {
   res.send(await deleteUser(req));
 });
 
+adminRouter.post(
+  "/tournament/:tournamentId/staff/:userId/add",
+  async (req, res) => {
+    res.send(await addToStaff(req));
+  }
+);
+
+adminRouter.post(
+  "/tournament/:tournamentId/staff/:userId/remove",
+  async (req, res) => {
+    res.send(await removeFromStaff(req));
+  }
+);
+
 adminRouter.post("/setDeckPhoto", async (req, res) => {
   res.send(await setDeckPhotoForUser(req));
+});
+
+adminRouter.get("/tournament/:tournamentId/staff", async (req, res) => {
+  res.send(await getTournamentStaff(req));
 });

@@ -2,6 +2,7 @@ import { DraftDto, draftToDto } from "../dto/draft.dto";
 import { MatchDto, RoundDto, matchToDto, roundToDto } from "../dto/round.dto";
 import { TournamentDto, tournamentToDto } from "../dto/tournaments.dto";
 import { Preference } from "../entity/Preference";
+import { Tournament } from "../entity/Tournament";
 import { EnrollmentService } from "../service/enrollment.service";
 import { TournamentService } from "../service/tournament.service";
 
@@ -57,6 +58,13 @@ export const getTournament = async (req): Promise<TournamentDto> => {
   const { tournamentId } = req.params;
   return tournamentToDto(
     await tournamentService.getTournament(tournamentId as number)
+  );
+};
+
+export const getTournamentStaff = async (req): Promise<TournamentDto> => {
+  const { tournamentId } = req.params;
+  return tournamentToDto(
+    await tournamentService.getTournamentStaff(tournamentId as number)
   );
 };
 
@@ -222,6 +230,22 @@ export const getPreferences = async (req): Promise<Preference[]> => {
 export const getPreferencesForUser = async (req): Promise<Preference[]> => {
   const { tournamentId, userId } = req.params;
   return await tournamentService.getPreferencesForUser(
+    tournamentId as number,
+    userId as number
+  );
+};
+
+export const addToStaff = async (req): Promise<Tournament> => {
+  const { tournamentId, userId } = req.params;
+  return await tournamentService.addToStaff(
+    tournamentId as number,
+    userId as number
+  );
+};
+
+export const removeFromStaff = async (req): Promise<Tournament> => {
+  const { tournamentId, userId } = req.params;
+  return await tournamentService.removeFromStaff(
     tournamentId as number,
     userId as number
   );

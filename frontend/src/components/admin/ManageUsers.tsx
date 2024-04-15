@@ -63,16 +63,16 @@ function ManageUsers() {
     if (item) {
       const userId = item.id;
       console.log("deleting user " + item.value + ", id: " + userId);
-      // post(`/deleteUser/${userId}`, {}).then(async (resp) => {
-      //   const success = (await resp.json()) as boolean;
-      //   if (success) {
-      //     toast.success("Deleted " + item.value);
-      //     setItem(undefined);
-      //     setSelectedUser("No player selected");
-      //   } else {
-      //     console.log("delete failed");
-      //   }
-      // });
+      post(`/deleteUser/${userId}`, {}).then(async (resp) => {
+        const success = (await resp.json()) as boolean;
+        if (success) {
+          toast.success("Deleted " + item.value);
+          setItem(undefined);
+          setSelectedUser("No player selected");
+        } else {
+          console.log("delete failed");
+        }
+      });
     } else {
       console.log("no player selected");
     }
@@ -83,7 +83,7 @@ function ManageUsers() {
       show: true,
       onHide: () => null,
       heading: "Confirm user delete",
-      text: "Are you sure you want to delete user: " + item.value + "?",
+      text: "Are you sure you want to delete user: " + item.value + "?  ",
       actionText: "Confirm delete",
       actionFunction: deleteUser,
     });

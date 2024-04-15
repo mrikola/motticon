@@ -25,6 +25,7 @@ import { makeArray } from "../util/array";
 import { Preference } from "../entity/Preference";
 import { playerToDto } from "../dto/user.dto";
 import { Enrollment } from "../entity/Enrollment";
+import { UserService } from "./user.service";
 
 type PreferentialPodAssignments = {
   preferencePoints: number;
@@ -46,6 +47,7 @@ export class TournamentService {
   private cubeService: CubeService;
   private ratingService: RatingService;
   private scoreService: ScoreService;
+  private userService: UserService;
   private tournamentCache: LRUCache<number, Tournament>;
   private userMatchCache: LRUCache<string, Match>;
 
@@ -57,6 +59,7 @@ export class TournamentService {
     this.cubeService = new CubeService();
     this.ratingService = new RatingService();
     this.scoreService = new ScoreService();
+    this.userService = new UserService();
     this.tournamentCache = new LRUCache({
       ttl: 1000 * 10,
       ttlAutopurge: true,
@@ -183,6 +186,14 @@ export class TournamentService {
       .getOne();
   }
 
+  async getTournamentStaff(id: number): Promise<Tournament> {
+    return await this.repository
+      .createQueryBuilder("tournament")
+      .leftJoinAndSelect("tournament.staffMembers", "staffMembers")
+      .where("tournament.id = :id", { id })
+      .getOne();
+  }
+
   async getTournamentAndDrafts(id: number): Promise<Tournament> {
     return await this.repository
       .createQueryBuilder("tournament")
@@ -193,6 +204,46 @@ export class TournamentService {
       .leftJoinAndSelect("seat.player", "player")
       .where("tournament.id = :id", { id })
       .getOne();
+  }
+
+  async addToStaff(tournamentId: number, userId: number): Promise<Tournament> {
+    const tourny = await this.getTournamentStaff(tournamentId);
+    const id = Number(userId);
+    if (tourny.staffMembers.some((user) => user.id === id)) {
+      // user is already staff
+      return tourny;
+    } else {
+      const user = await this.userService.getUser(id);
+      tourny.staffMembers.push(user);
+      try {
+        await this.repository.save(tourny);
+        return await this.getTournamentStaff(tournamentId);
+      } catch (err: unknown) {
+        return null;
+      }
+    }
+  }
+
+  async removeFromStaff(
+    tournamentId: number,
+    userId: number
+  ): Promise<Tournament> {
+    const tourny = await this.getTournamentStaff(tournamentId);
+    const id = Number(userId);
+    if (tourny.staffMembers.some((u) => u.id === id)) {
+      tourny.staffMembers = tourny.staffMembers.filter(function (staff) {
+        return staff.id !== id;
+      });
+      try {
+        await this.repository.save(tourny);
+        return await this.getTournamentStaff(tournamentId);
+      } catch (err: unknown) {
+        return null;
+      }
+    } else {
+      // user not in staff
+      return tourny;
+    }
   }
 
   async getCurrentRound(tournamentId: number): Promise<Round> {
