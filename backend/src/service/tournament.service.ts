@@ -29,6 +29,8 @@ import { UserService } from "./user.service";
 
 type PreferentialPodAssignments = {
   preferencePoints: number;
+  penaltyPoints: number;
+  penaltyReasons: string[];
   strategy: DraftPodGenerationStrategy[];
   assignments: {
     draftNumber: number;
@@ -600,13 +602,13 @@ export class TournamentService {
   resolvePodGenerationStrategy = async (
     iterationsPerStrategy: number,
     strategy: DraftPodGenerationStrategy[],
-    podAssignments: PreferentialPodAssignments[],
     preferences: Preference[],
     tournament: Tournament,
     podsPerDraft: number,
     enrollments: Enrollment[],
     cubes: Cube[]
-  ) => {
+  ): Promise<PreferentialPodAssignments[]> => {
+    const podAssignments: PreferentialPodAssignments[] = [];
     for (let iteration = 0; iteration < iterationsPerStrategy; ++iteration) {
       // SET UP FOR A PARTICULAR ITERATION
       const preferencesByPlayer: PreferencesByPlayer = {};
@@ -629,6 +631,8 @@ export class TournamentService {
 
       let currentIterationAssignments: PreferentialPodAssignments = {
         preferencePoints: 0,
+        penaltyPoints: 0,
+        penaltyReasons: [],
         assignments: [],
         strategy,
       };
@@ -819,6 +823,7 @@ export class TournamentService {
       console.log("Used strategy:", strategy.join(", "));
       console.log("Total preference points used", totalPreferencePointsUsed);
     }
+    return podAssignments;
   };
 
   permutatePodGenerationStrategies = (
@@ -850,7 +855,6 @@ export class TournamentService {
   };
 
   generatePodAssignments = async (
-    podAssignments: PreferentialPodAssignments[],
     preferences: Preference[],
     tournament: Tournament,
     podsPerDraft: number,
@@ -870,35 +874,126 @@ export class TournamentService {
         "middle",
         "middle",
         "middle",
-        "semi-greedy",
-        "semi-greedy",
-        "semi-greedy",
       ] as DraftPodGenerationStrategy[]);
 
     console.info("Strategies: ", podGenerationStrategies);
 
-    for (const strategy of podGenerationStrategies) {
-      await this.resolvePodGenerationStrategy(
-        iterationsPerStrategy,
-        strategy,
-        podAssignments,
-        preferences,
-        tournament,
-        podsPerDraft,
-        enrollments,
-        cubes
-      );
-    }
+    const podAssigmments = await Promise.all(
+      podGenerationStrategies.map(
+        async (strategy) =>
+          await this.resolvePodGenerationStrategy(
+            iterationsPerStrategy,
+            strategy,
+            preferences,
+            tournament,
+            podsPerDraft,
+            enrollments,
+            cubes
+          )
+      )
+    );
+    return podAssigmments.flat();
   };
 
+  validatePodAssignments = (
+    podAssignments: PreferentialPodAssignments[],
+    preferencesByPlayer: PreferencesByPlayer
+  ): PreferentialPodAssignments[] => {
+    console.info("Validating pod assignments");
+
+    // Initialize how many times players have played each draft (0 times)
+    let playerCounts: { [cubeId: number]: { [playerId: number]: number } } = {};
+
+    const validatedPodAssignments = podAssignments.map((assignment) => {
+      let penaltyPoints = 0;
+      let penaltyReasons: string[] = [];
+
+      // Define the validation function in the closure so we'll have a view of
+      // the entire assigments
+      const validatePlayerNotInMultipleCubes = (
+        pod: { cube: Cube; players: User[] },
+        player: User
+      ) => {
+        if (playerCounts[pod.cube.id] && playerCounts[pod.cube.id][player.id]) {
+          playerCounts[pod.cube.id][player.id]++;
+          if (playerCounts[pod.cube.id][player.id] > 1) {
+            penaltyReasons.push(
+              `Player ${player.firstName} ${player.lastName} is on the same cube (${pod.cube.id}) multiple times`
+            );
+            penaltyPoints += 50;
+          }
+        } else {
+          playerCounts[pod.cube.id] = { [player.id]: 1 };
+        }
+      };
+
+      const validatePlayerWithinPreferences = (
+        pod: { cube: Cube; players: User[] },
+        player: User
+      ): boolean => {
+        const playerPreferences = preferencesByPlayer[player.id];
+        if (
+          playerPreferences &&
+          playerPreferences.length === 5 &&
+          !playerPreferences
+            .map((preference) => preference.cube)
+            .includes(pod.cube.id)
+        ) {
+          penaltyReasons.push(
+            `Player ${player.firstName} ${
+              player.lastName
+            } with 5 preferences (${playerPreferences
+              .map((preference) => preference.cube)
+              .join(", ")}) is assigned to a cube not in their preferences (${
+              pod.cube.id
+            })`
+          );
+          penaltyPoints += 5;
+          return false;
+        }
+        return true;
+      };
+
+      console.info(
+        "Validating assignment with preference points:",
+        assignment.preferencePoints
+      );
+      for (let draft of assignment.assignments) {
+        for (let pod of draft.pods) {
+          let unIntentionalWildcardsUsed = 0;
+          for (let player of pod.players) {
+            validatePlayerNotInMultipleCubes(pod, player);
+            unIntentionalWildcardsUsed += validatePlayerWithinPreferences(
+              pod,
+              player
+            )
+              ? 0
+              : 1;
+          }
+
+          // Check that not too many unintentional wildcards are in use
+          if (unIntentionalWildcardsUsed >= 2) {
+            penaltyReasons.push(
+              `Draft ${draft.draftNumber} cube ${pod.cube.id} has ${unIntentionalWildcardsUsed} unintentional wildcards`
+            );
+            penaltyPoints += 10 * unIntentionalWildcardsUsed;
+          }
+        }
+      }
+      console.info("Final penalty points of assignment: ", penaltyPoints);
+      return {
+        ...assignment,
+        penaltyPoints,
+        penaltyReasons,
+      };
+    });
+    return validatedPodAssignments;
+  };
   async getPreferentialPodAssignments(tournamentId: number) {
     const { tournament, enrollments, cubes, podsPerDraft, preferences } =
       await this.getAssetsForAssignments(tournamentId);
 
-    const podAssignments: PreferentialPodAssignments[] = [];
-
-    await this.generatePodAssignments(
-      podAssignments,
+    const podAssignments = await this.generatePodAssignments(
       preferences,
       tournament,
       podsPerDraft,
@@ -906,20 +1001,11 @@ export class TournamentService {
       cubes
     );
 
-    const sortedAssignments = podAssignments.sort(
-      (a, b) => b.preferencePoints - a.preferencePoints
-    );
-
-    console.log(
-      "points used in each iteration",
-      sortedAssignments.map((assignment) => assignment.preferencePoints)
-    );
-
     const preferencesByPlayer: PreferencesByPlayer = {};
     preferences.forEach((preference) => {
       let currentPlayerPreference = preferencesByPlayer[preference.player.id];
       const pref = {
-        player: preference.playerId,
+        player: preference.player.id,
         cube: preference.cube.id,
         points: preference.points,
         used: false,
@@ -932,10 +1018,31 @@ export class TournamentService {
       }
     });
 
+    const validatedPodAssigments = this.validatePodAssignments(
+      podAssignments,
+      preferencesByPlayer
+    );
+
+    const sortedAssignments = validatedPodAssigments.sort(
+      (a, b) =>
+        b.preferencePoints -
+        b.penaltyPoints -
+        (a.preferencePoints - a.penaltyPoints)
+    );
+
     console.log(
-      `best assignment with ${sortedAssignments[0].preferencePoints} spent:`
+      "points used in each iteration and penalties",
+      sortedAssignments.map((assignment) => ({
+        points: assignment.preferencePoints,
+        penalties: assignment.penaltyPoints,
+      }))
+    );
+
+    console.log(
+      `best assignment with ${sortedAssignments[0].preferencePoints} spent with ${sortedAssignments[0].penaltyPoints} penalty points:`
     );
     console.log("Strategy: ", sortedAssignments[0].strategy.join(", "));
+    console.info("Penalties: ", sortedAssignments[0].penaltyReasons);
     sortedAssignments[0].assignments.forEach((assignment) => {
       console.log("DRAFT", assignment.draftNumber);
       assignment.pods.forEach((pod, index) => {

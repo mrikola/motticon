@@ -41,14 +41,12 @@ export type TournamentsByType = {
 };
 
 export type PreferencesByPlayer = {
-  [key: string]: [
-    {
-      player: number;
-      cube: number;
-      points: number;
-      used: boolean;
-    }
-  ];
+  [key: string]: {
+    player: number;
+    cube: number;
+    points: number;
+    used: boolean;
+  }[];
 };
 
 export type DraftPodGenerationStrategy =
