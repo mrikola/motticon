@@ -350,7 +350,9 @@ export class TournamentService {
     players: User[]
   ): Promise<void> {
     pods.forEach((pod, podIndex) => {
-      const podPlayers = players.slice(podIndex * 8, (podIndex + 1) * 8);
+      const podPlayers = players
+        .slice(podIndex * 8, (podIndex + 1) * 8)
+        .sort(randomize);
       podPlayers.forEach(async (player, playerIndex) => {
         await this.appDataSource.getRepository(DraftPodSeat).insert({
           pod,
@@ -368,8 +370,6 @@ export class TournamentService {
       .enrollments;
     const cubes = await this.cubeService.getCubesForTournament(tournamentId);
     const podsPerDraft = tournament.totalSeats / 8;
-
-    let totalPreferencePointsUsed = 0;
 
     if (tournament.preferencesRequired === 0) {
       // TODO for non-preference cases, this just randomizes players and cubes + assigns them afterwards
@@ -401,9 +401,28 @@ export class TournamentService {
         })
       );
     } else {
-      console.log(
-        "TODO: generate preferential pod assignments, pick the best one and use it"
+      const assignments = await this.getPreferentialPodAssignments(
+        tournamentId
       );
+      tournament.drafts.map(async (draft) => {
+        const assignment = assignments.find(
+          (ass) => ass.draftNumber === draft.draftNumber
+        );
+        const draftPods = await Promise.all(
+          assignment.pods.map(
+            async (pod, index) =>
+              await this.appDataSource.getRepository(DraftPod).save({
+                podNumber: index + 1,
+                draft,
+                cube: pod.cube,
+              })
+          )
+        );
+        await this.generateDraftSeatings(
+          draftPods,
+          assignment.pods.map((pod) => pod.players).flat()
+        );
+      });
     }
 
     return await this.getTournamentAndDrafts(tournamentId);
@@ -481,6 +500,7 @@ export class TournamentService {
       .set({ status: "completed" })
       .where({ id: roundId })
       .execute();
+
     // run updateElo() for all matches at this point
     const matches = await this.matchService.getMatchesForRound(roundId);
     const kvalue = 8;
@@ -643,7 +663,10 @@ export class TournamentService {
       )) {
         let preferencePointsUsed = 0;
         let unassignedPlayers = enrollments.map((enroll) => enroll.player);
-        const draftPods: DraftPod[] = [];
+        const draftPods: {
+          cube: Cube;
+          podNumber: number;
+        }[] = [];
 
         const wildCards = unassignedPlayers
           .filter(
@@ -813,23 +836,11 @@ export class TournamentService {
             }
           });
 
-          const draftPod = await this.appDataSource
-            .getRepository(DraftPod)
-            .create({
-              podNumber,
-              draft,
-              cube: cubesByPreference[cubeIndex],
-            });
-
-          draftPods.push(draftPod);
+          draftPods.push({
+            podNumber,
+            cube: cubes.find((cube) => cube.id === currentCubeId),
+          });
         }
-
-        /* add nothing to db in this method
-        await this.tournamentService.generateDraftSeatings(
-          draftPods,
-          assignments[draftIndex].flat()
-        );
-        */
 
         console.log("Preference points used", preferencePointsUsed);
 
@@ -1093,5 +1104,7 @@ export class TournamentService {
         );
       });
     });
+
+    return sortedAssignments[0].assignments;
   }
 }

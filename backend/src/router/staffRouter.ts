@@ -76,6 +76,7 @@ staffRouter.put(
   "/tournament/:tournamentId/round/:roundId/end",
   async (req, res) => {
     res.send(await endRound(req));
+    // TODO generate CSV of matches this round, return it as attachment
   }
 );
 

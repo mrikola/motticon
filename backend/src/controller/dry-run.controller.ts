@@ -142,8 +142,7 @@ export const generateDryRunPods = async () => {
   });
 
   // 4. construct pods
-  // await tournamentService.generateDrafts(tournament.id);
-  await tournamentService.getPreferentialPodAssignments(tournament.id);
+  await tournamentService.generateDrafts(tournament.id);
 
   console.log("Theoretical maximum score: ", 15 * realUsers.length);
 };
