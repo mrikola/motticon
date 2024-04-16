@@ -648,10 +648,15 @@ export class TournamentService {
         const wildCards = unassignedPlayers
           .filter(
             (player) =>
-              !preferencesByPlayer[player.id] ||
-              preferencesByPlayer[player.id].filter((pref) => !pref.used)
-                .length === 0
+              !player.isDummy &&
+              (!preferencesByPlayer[player.id] ||
+                preferencesByPlayer[player.id].filter((pref) => !pref.used)
+                  .length === 0)
           )
+          .sort(randomize);
+
+        const dummyPlayers = unassignedPlayers
+          .filter((player) => player.isDummy)
           .sort(randomize);
 
         for (let podNumber = 1; podNumber <= podsPerDraft; ++podNumber) {
@@ -679,15 +684,23 @@ export class TournamentService {
             }))
             .sort((a, b) => b.points - a.points);
 
-          console.info(cubesByPreference, strategy);
+          // console.info(cubesByPreference, strategy);
           const currentCubeId = cubesByPreference[cubeIndex].id;
           // TODO see if it's possible to use a different cube IF:
           // * draftNumber > 1
           // podNumber = max
           // a previous draft's last pod also used this cube
 
+          const dummyPlayersInPod =
+            Math.floor(dummyPlayers.length / podsPerDraft) +
+            (dummyPlayers.length % podsPerDraft > podsPerDraft - podNumber
+              ? 1
+              : 0);
+
           const preferredPlayers = preferences // find players who..
-            .filter((pref) => pref.cube.id === currentCubeId) // want to play this cube
+            .filter(
+              (pref) => !pref.player.isDummy && pref.cube.id === currentCubeId // want to play this cube
+            )
             .sort(randomize)
             .sort((a, b) => b.points - a.points) // have rated it highly
             .filter(
@@ -703,12 +716,24 @@ export class TournamentService {
               ) =>
                 unassignedPlayers.find((player) => player.id === pref.player.id)
             )
-            .slice(0, 8)
+            .slice(0, 8 - dummyPlayersInPod)
             .map((pref) => {
               preferencePointsUsed += pref.points;
               return pref;
             })
             .map((pref) => pref.player);
+
+          for (let dummy = 0; dummy < dummyPlayersInPod; ++dummy) {
+            const dummyPlayer = dummyPlayers.pop();
+            preferredPlayers.push(dummyPlayer);
+
+            // mark this as a wildcard assignment as dummy players don't have preferences
+            wildCardAssignments[dummyPlayer.id] = wildCardAssignments[
+              dummyPlayer.id
+            ]
+              ? wildCardAssignments[dummyPlayer.id].concat(currentCubeId)
+              : [currentCubeId];
+          }
 
           // if pod is not full, fill it with wildcards
           while (preferredPlayers.length < 8 && wildCards.length > 0) {
@@ -726,6 +751,7 @@ export class TournamentService {
             }
 
             if (assigned) {
+              preferredPlayers.push(assigned);
               wildCardAssignments[assigned.id] = wildCardAssignments[
                 assigned.id
               ]

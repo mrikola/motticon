@@ -22,7 +22,8 @@ export class UserService {
     firstName: string,
     lastName: string,
     email: string,
-    password: string
+    password: string,
+    isDummy: boolean = false
   ): Promise<boolean> {
     // TODO improve return values
     try {
@@ -32,6 +33,7 @@ export class UserService {
         email,
         password: encodePassword(password),
         isAdmin: false,
+        isDummy,
       });
       return true;
     } catch {

@@ -30,6 +30,9 @@ export class User {
   @Column()
   isAdmin: boolean;
 
+  @Column({ default: false })
+  isDummy: boolean;
+
   @Column({ type: "decimal", default: 1600 })
   rating: number;
 

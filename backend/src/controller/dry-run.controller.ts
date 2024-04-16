@@ -15,6 +15,7 @@ const DRAFTS = 3;
 const PREFERENCES_REQUIRED = 5;
 const MINIMUM_WILDCARDS = 5;
 const MAXIMUM_WILDCARDS = 12;
+const DUMMY_PLAYERS = 3;
 
 const FIRST_NAMES = [
   "Lars",
@@ -54,14 +55,18 @@ const generatePriorityArray = (size: number): number[] => {
 
 export const generateDryRunUsers = async () => {
   console.info("Generating test users");
+  let playersCreated = 0;
   for (const firstName of FIRST_NAMES) {
     for (const lastName of LAST_NAMES) {
+      const isDummy = playersCreated < DUMMY_PLAYERS;
       await userService.createUser(
-        firstName,
+        isDummy ? firstName : "DUMMY",
         lastName,
         getEmail(firstName, lastName),
-        "asdf"
+        "asdf",
+        isDummy
       );
+      ++playersCreated;
     }
   }
 };
@@ -123,7 +128,8 @@ export const generateDryRunPods = async () => {
   );
 
   // 3. generate preferences
-  users.slice(wildCards).forEach((user) => {
+  const realUsers = users.filter((user) => !user.isDummy).slice(wildCards);
+  realUsers.forEach((user) => {
     const shuffledCubes = cubes.sort(randomize);
     for (let i = 0; i < PREFERENCES_REQUIRED; ++i) {
       preferenceService.setPreference(
@@ -139,5 +145,5 @@ export const generateDryRunPods = async () => {
   // await tournamentService.generateDrafts(tournament.id);
   await tournamentService.getPreferentialPodAssignments(tournament.id);
 
-  console.log("Theoretical maximum score: ", 15 * (64 - wildCards));
+  console.log("Theoretical maximum score: ", 15 * realUsers.length);
 };
