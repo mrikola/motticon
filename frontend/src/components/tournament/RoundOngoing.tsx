@@ -204,7 +204,13 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
           <Container>
             <h2 className="">Round: {round.roundNumber}</h2>
             {roundTimerStarted ? (
-              <h2>Round started: {dayjs(roundStartTime).format("HH:mm")}</h2>
+              <>
+                <h2>Round started: {dayjs(roundStartTime).format("HH:mm")}</h2>
+                <h2>
+                  Round ends:{" "}
+                  {dayjs(roundStartTime).add(50, "m").format("HH:mm")}
+                </h2>
+              </>
             ) : (
               <h2>Round not started yet</h2>
             )}
@@ -212,10 +218,10 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
               squareFillContent={match.tableNumber.toString()}
               cardTitle="Table"
             />
-            <CardCountdownTimer
+            {/* <CardCountdownTimer
               initialSeconds={timeRemaining}
               started={roundTimerStarted}
-            />
+            /> */}
             <Col xs={12}>
               <MatchesRemainingProgressBar
                 remainingMatches={resultsMissing}
@@ -260,7 +266,9 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
               variant="primary"
               className="btn-lg"
               type="submit"
-              disabled={submissionDisabled}
+              disabled={
+                submissionDisabled || playerRadioValue === opponentRadioValue
+              }
               aria-disabled={match.resultSubmittedBy ? true : false}
               onClick={() => handleSubmitClicked()}
             >
