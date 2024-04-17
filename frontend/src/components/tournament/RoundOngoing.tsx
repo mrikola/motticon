@@ -8,12 +8,17 @@ import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 import MatchesRemainingProgressBar from "../general/MatchesRemainingProgressBar";
 import MatchResultRadioButtons from "../general/MatchResultRadioButtons";
-import { Match, Round, Tournament } from "../../types/Tournament";
+import {
+  Match,
+  PlayerTournamentScore,
+  Round,
+  Tournament,
+} from "../../types/Tournament";
 import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
 } from "../general/VerticallyCenteredModal";
 import { Player } from "../../types/User";
-import CardCountdownTimer from "../general/CardCountdownTimer";
+// import CardCountdownTimer from "../general/CardCountdownTimer";
 import HorizontalCard from "../general/HorizontalCard";
 import HelmetTitle from "../general/HelmetTitle";
 import { toast } from "react-toastify";
@@ -44,6 +49,9 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   const [player, setPlayer] = useState<Player>();
   const [opponent, setOpponent] = useState<Player>();
   const [roundTimerStarted, setRoundTimerStarted] = useState<boolean>(false);
+  const [playerTournamentScore, setPlayerTournamentScore] =
+    useState<PlayerTournamentScore>();
+  const [currentRoundPoints, setCurrentRoundPoints] = useState<number>(0);
 
   const {
     playerGoingFirst: { id: onThePlay },
@@ -192,9 +200,29 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
     }
   }, [matches]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await get(
+        `/tournament/${tournament.id}/score/${user?.id}`
+      );
+      const score = await response.json();
+      setPlayerTournamentScore(score);
+    };
+
+    fetchData();
+  }, [user]);
+
+  useEffect(() => {
+    if (match.resultSubmittedBy && playerRadioValue && opponentRadioValue) {
+      if (playerRadioValue > opponentRadioValue) {
+        setCurrentRoundPoints(3);
+      }
+    }
+  }, [match]);
+
   const submissionDisabled = !roundTimerStarted || !!match.resultSubmittedBy;
 
-  if (user && timeRemaining && player && opponent) {
+  if (user && timeRemaining && player && opponent && playerTournamentScore) {
     return (
       <>
         <HelmetTitle
@@ -202,17 +230,22 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
         />
         <Row>
           <Container>
-            <h2 className="">Round: {round.roundNumber}</h2>
+            <HorizontalCard
+              squareFillContent={(
+                playerTournamentScore?.points + currentRoundPoints
+              ).toString()}
+              cardTitle="Your match points"
+            />
+            <h2 className="display-2">Round: {round.roundNumber}</h2>
             {roundTimerStarted ? (
               <>
-                <h2>Round started: {dayjs(roundStartTime).format("HH:mm")}</h2>
-                <h2>
-                  Round ends:{" "}
+                <h3>
+                  Started: {dayjs(roundStartTime).format("HH:mm")}, ends:{" "}
                   {dayjs(roundStartTime).add(50, "m").format("HH:mm")}
-                </h2>
+                </h3>
               </>
             ) : (
-              <h2>Round not started yet</h2>
+              <h3>Round not started yet</h3>
             )}
             <HorizontalCard
               squareFillContent={match.tableNumber.toString()}

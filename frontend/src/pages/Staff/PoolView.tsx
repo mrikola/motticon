@@ -119,7 +119,7 @@ function PoolView() {
       <Row>
         <BackButton
           buttonText="Back to tournament"
-          path={`/tournament/${tournamentId}`}
+          path={`/tournament/${tournamentId}/staff`}
         />
         <h1 className="display-1">{tournament.name} draft pools</h1>
         <p className="lead">
