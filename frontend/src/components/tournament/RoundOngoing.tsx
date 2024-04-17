@@ -236,6 +236,15 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
               ).toString()}
               cardTitle="Your match points"
             />
+            {match.resultSubmittedBy ? (
+              <p className="small">
+                Including match points from round {round.roundNumber}.
+              </p>
+            ) : (
+              <p className="small">
+                Points before round {round.roundNumber}, current match ongoing.
+              </p>
+            )}
             <h2 className="display-2">Round: {round.roundNumber}</h2>
             {roundTimerStarted ? (
               <>
