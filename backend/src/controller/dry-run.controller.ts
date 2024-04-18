@@ -129,15 +129,37 @@ export const generateDryRunPods = async () => {
 
   // 3. generate preferences
   const realUsers = users.filter((user) => !user.isDummy).slice(wildCards);
-  realUsers.forEach((user) => {
-    const shuffledCubes = cubes.sort(randomize);
-    for (let i = 0; i < PREFERENCES_REQUIRED; ++i) {
+  realUsers.forEach((user, index) => {
+    const shuffledCubes = cubes
+      .filter((sc) => sc.id !== cubes[0].id)
+      .sort(randomize);
+
+    if (index < 24) {
+      // make one cube the overwhelming favorite
       preferenceService.setPreference(
         tournament.id,
         user.id,
-        shuffledCubes[i].id,
-        priorityScores[i]
+        cubes[0].id,
+        priorityScores[0]
       );
+
+      for (let i = 1; i < PREFERENCES_REQUIRED; ++i) {
+        preferenceService.setPreference(
+          tournament.id,
+          user.id,
+          shuffledCubes[i].id,
+          priorityScores[i]
+        );
+      }
+    } else {
+      for (let i = 0; i < PREFERENCES_REQUIRED; ++i) {
+        preferenceService.setPreference(
+          tournament.id,
+          user.id,
+          shuffledCubes[i].id,
+          priorityScores[i]
+        );
+      }
     }
   });
 

@@ -568,23 +568,29 @@ export class TournamentService {
 
   getPlayerPreferencesForPodGeneration = (
     preferences: Preference[],
-    preferencesByPlayer: PreferencesByPlayer
+    enrollments: Enrollment[]
   ) => {
+    let preferencesByPlayer = {};
     preferences.forEach((preference) => {
-      let currentPlayerPreference = preferencesByPlayer[preference.player.id];
-      const pref = {
-        player: preference.playerId,
-        cube: preference.cube.id,
-        points: preference.points,
-        used: false,
-      };
+      if (
+        enrollments.find((enroll) => enroll.player.id === preference.player.id)
+      ) {
+        let currentPlayerPreference = preferencesByPlayer[preference.player.id];
+        const pref = {
+          player: preference.playerId,
+          cube: preference.cube.id,
+          points: preference.points,
+          used: false,
+        };
 
-      if (!currentPlayerPreference) {
-        preferencesByPlayer[preference.player.id] = [pref];
-      } else {
-        currentPlayerPreference.push(pref);
+        if (!currentPlayerPreference) {
+          preferencesByPlayer[preference.player.id] = [pref];
+        } else {
+          currentPlayerPreference.push(pref);
+        }
       }
     });
+    return preferencesByPlayer;
   };
 
   getCubeIndexForStrategy = (
@@ -619,6 +625,15 @@ export class TournamentService {
     }
   };
 
+  getOverwhelmingFavoriteIfExists = (
+    cubes: { id: number; points: number }[]
+  ) => {
+    if (cubes[0].points > cubes[1].points + 60) {
+      return 0;
+    }
+    return undefined;
+  };
+
   resolvePodGenerationStrategy = async (
     iterationsPerStrategy: number,
     strategy: DraftPodGenerationStrategy[],
@@ -631,11 +646,8 @@ export class TournamentService {
     const podAssignments: PreferentialPodAssignments[] = [];
     for (let iteration = 0; iteration < iterationsPerStrategy; ++iteration) {
       // SET UP FOR A PARTICULAR ITERATION
-      const preferencesByPlayer: PreferencesByPlayer = {};
-      this.getPlayerPreferencesForPodGeneration(
-        preferences,
-        preferencesByPlayer
-      );
+      const preferencesByPlayer: PreferencesByPlayer =
+        this.getPlayerPreferencesForPodGeneration(preferences, enrollments);
 
       const wildCardAssignments: {
         [key: number]: number[];
@@ -683,13 +695,6 @@ export class TournamentService {
           .sort(randomize);
 
         for (let podNumber = 1; podNumber <= podsPerDraft; ++podNumber) {
-          const cubeIndex = this.getCubeIndexForStrategy(
-            strategy,
-            draftIndex,
-            podsPerDraft,
-            podNumber
-          );
-
           const cubesByPreference = cubes
             // filter out cubes already used in this draft
             .filter((cube) => !draftPods.find((pod) => pod.cube.id === cube.id))
@@ -706,6 +711,22 @@ export class TournamentService {
                 .reduce((acc, cur) => acc + cur.points, 0),
             }))
             .sort((a, b) => b.points - a.points);
+
+          const regularCubeIndex = this.getCubeIndexForStrategy(
+            strategy,
+            draftIndex,
+            podsPerDraft,
+            podNumber
+          );
+
+          const cubeIndex =
+            (podNumber === 1
+              ? this.getOverwhelmingFavoriteIfExists(cubesByPreference)
+              : undefined) ?? regularCubeIndex;
+
+          if (cubeIndex !== regularCubeIndex) {
+            console.log("POPULARITY OVERRIDE ACTIVATED");
+          }
 
           // console.info(cubesByPreference, strategy);
           const currentCubeId = cubesByPreference[cubeIndex].id;
@@ -898,7 +919,7 @@ export class TournamentService {
     enrollments: Enrollment[],
     cubes: Cube[]
   ) => {
-    const iterationsPerStrategy = 10;
+    const iterationsPerStrategy = 20;
 
     const podGenerationStrategies: DraftPodGenerationStrategy[][] =
       this.permutatePodGenerationStrategies([
