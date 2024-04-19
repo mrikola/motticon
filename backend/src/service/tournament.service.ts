@@ -628,7 +628,7 @@ export class TournamentService {
   getOverwhelmingFavoriteIfExists = (
     cubes: { id: number; points: number }[]
   ) => {
-    if (cubes[0].points > cubes[1].points + 60) {
+    if (cubes[0].points > cubes[1].points + 55) {
       return 0;
     }
     return undefined;
@@ -693,6 +693,9 @@ export class TournamentService {
         const dummyPlayers = unassignedPlayers
           .filter((player) => player.isDummy)
           .sort(randomize);
+        const dummyPlayerCount = dummyPlayers.length;
+
+        let isGreedyOverride = false;
 
         for (let podNumber = 1; podNumber <= podsPerDraft; ++podNumber) {
           const cubesByPreference = cubes
@@ -724,22 +727,23 @@ export class TournamentService {
               ? this.getOverwhelmingFavoriteIfExists(cubesByPreference)
               : undefined) ?? regularCubeIndex;
 
-          if (cubeIndex !== regularCubeIndex) {
-            console.log("POPULARITY OVERRIDE ACTIVATED");
-          }
+          isGreedyOverride ||= cubeIndex !== regularCubeIndex;
 
           // console.info(cubesByPreference, strategy);
           const currentCubeId = cubesByPreference[cubeIndex].id;
-          // TODO see if it's possible to use a different cube IF:
-          // * draftNumber > 1
-          // podNumber = max
-          // a previous draft's last pod also used this cube
+
+          const shouldAssignExtraDummy =
+            strategy[draftIndex] === "greedy"
+              ? // with greedy strat, put dummies in last pods
+                dummyPlayerCount % podsPerDraft > podsPerDraft - podNumber
+              : // otherwise, if override is on, pods 2..n; if not, pods 1..n
+                !(isGreedyOverride && podNumber === 1) &&
+                dummyPlayerCount % podsPerDraft >=
+                  podNumber - (isGreedyOverride ? 1 : 0);
 
           const dummyPlayersInPod =
-            Math.floor(dummyPlayers.length / podsPerDraft) +
-            (dummyPlayers.length % podsPerDraft > podsPerDraft - podNumber
-              ? 1
-              : 0);
+            Math.floor(dummyPlayerCount / podsPerDraft) +
+            (shouldAssignExtraDummy ? 1 : 0);
 
           const preferredPlayers = preferences // find players who..
             .filter(
@@ -919,7 +923,7 @@ export class TournamentService {
     enrollments: Enrollment[],
     cubes: Cube[]
   ) => {
-    const iterationsPerStrategy = 20;
+    const iterationsPerStrategy = 25;
 
     const podGenerationStrategies: DraftPodGenerationStrategy[][] =
       this.permutatePodGenerationStrategies([
@@ -957,7 +961,7 @@ export class TournamentService {
     podAssignments: PreferentialPodAssignments[],
     preferencesByPlayer: PreferencesByPlayer
   ): PreferentialPodAssignments[] => {
-    console.info("Validating pod assignments");
+    // console.info("Validating pod assignments");
 
     // Initialize how many times players have played each draft (0 times)
     let playerCounts: { [cubeId: number]: { [playerId: number]: number } } = {};
@@ -1012,10 +1016,12 @@ export class TournamentService {
         return true;
       };
 
+      /*
       console.info(
         "Validating assignment with preference points:",
         assignment.preferencePoints
       );
+      */
       for (let draft of assignment.assignments) {
         for (let pod of draft.pods) {
           let unIntentionalWildcardsUsed = 0;
@@ -1038,7 +1044,7 @@ export class TournamentService {
           }
         }
       }
-      console.info("Final penalty points of assignment: ", penaltyPoints);
+      // console.info("Final penalty points of assignment: ", penaltyPoints);
       return {
         ...assignment,
         penaltyPoints,

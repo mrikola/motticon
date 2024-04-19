@@ -41,6 +41,6 @@ notLoggedInRouter.get("/dry-run/users", async (req, res) => {
 });
 
 notLoggedInRouter.get("/dry-run", async (req, res) => {
-  await generateDryRunPods();
+  await generateDryRunPods(req.query.live !== undefined);
   res.sendStatus(201);
 });

@@ -3,6 +3,7 @@ import { EnrollmentService } from "../service/enrollment.service";
 import { PreferenceService } from "../service/preference.service";
 import { TournamentService } from "../service/tournament.service";
 import { UserService } from "../service/user.service";
+import { LIVE_DATA } from "../util/live-data";
 import { randomize } from "../util/random";
 
 const userService = new UserService();
@@ -71,7 +72,7 @@ export const generateDryRunUsers = async () => {
   }
 };
 
-export const generateDryRunPods = async () => {
+export const generateDryRunPods = async (live?: boolean) => {
   // 0. setup
   const cubes = await cubeService.getAllCubes();
 
@@ -129,42 +130,61 @@ export const generateDryRunPods = async () => {
 
   // 3. generate preferences
   const realUsers = users.filter((user) => !user.isDummy).slice(wildCards);
-  realUsers.forEach((user, index) => {
-    const shuffledCubes = cubes
-      .filter((sc) => sc.id !== cubes[0].id)
-      .sort(randomize);
 
-    if (index < 24) {
-      // make one cube the overwhelming favorite
-      preferenceService.setPreference(
-        tournament.id,
-        user.id,
-        cubes[0].id,
-        priorityScores[0]
-      );
+  if (live) {
+    console.log("LIVE DATA BAYBAY");
+    users.forEach((user, index) => {
+      if (index < LIVE_DATA.length) {
+        Object.entries(LIVE_DATA[index]).forEach(([key, value]) => {
+          preferenceService.setPreference(
+            tournament.id,
+            user.id,
+            Number(key),
+            value
+          );
+        });
+      }
+    });
+  } else {
+    realUsers.forEach((user, index) => {
+      const shuffledCubes = cubes
+        .filter((sc) => sc.id !== cubes[0].id)
+        .sort(randomize);
 
-      for (let i = 1; i < PREFERENCES_REQUIRED; ++i) {
+      if (index < 24) {
+        // make one cube the overwhelming favorite
         preferenceService.setPreference(
           tournament.id,
           user.id,
-          shuffledCubes[i].id,
-          priorityScores[i]
+          cubes[0].id,
+          priorityScores[0]
         );
-      }
-    } else {
-      for (let i = 0; i < PREFERENCES_REQUIRED; ++i) {
-        preferenceService.setPreference(
-          tournament.id,
-          user.id,
-          shuffledCubes[i].id,
-          priorityScores[i]
-        );
-      }
-    }
-  });
 
+        for (let i = 1; i < PREFERENCES_REQUIRED; ++i) {
+          preferenceService.setPreference(
+            tournament.id,
+            user.id,
+            shuffledCubes[i].id,
+            priorityScores[i]
+          );
+        }
+      } else {
+        for (let i = 0; i < PREFERENCES_REQUIRED; ++i) {
+          preferenceService.setPreference(
+            tournament.id,
+            user.id,
+            shuffledCubes[i].id,
+            priorityScores[i]
+          );
+        }
+      }
+    });
+  }
   // 4. construct pods
   await tournamentService.generateDrafts(tournament.id);
 
-  console.log("Theoretical maximum score: ", 15 * realUsers.length);
+  console.log(
+    "Theoretical maximum score: ",
+    15 * (live ? LIVE_DATA.length : realUsers.length)
+  );
 };
