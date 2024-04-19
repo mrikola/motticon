@@ -237,11 +237,11 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
               cardTitle="Your match points"
             />
             {match.resultSubmittedBy ? (
-              <p className="small">
+              <p className="small text-center">
                 Including match points from round {round.roundNumber}.
               </p>
             ) : (
-              <p className="small">
+              <p className="small text-center">
                 Points before round {round.roundNumber}, current match ongoing.
               </p>
             )}
@@ -285,7 +285,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
           <Col xs={12} className="text-center">
             <h2>
               {player.firstName} {player.lastName}
-              {player.id === onThePlay && <> (plays first)</>}
+              {/* {player.id === onThePlay && <> (plays first)</>} */}
             </h2>
           </Col>
           <Col xs={12} className="text-center">
@@ -294,7 +294,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
           <Col xs={12} className="text-center">
             <h2>
               {opponent.firstName} {opponent.lastName}
-              {opponent.id === onThePlay && <> (plays first)</>}
+              {/* {opponent.id === onThePlay && <> (plays first)</>} */}
             </h2>
           </Col>
           <MatchResultRadioButtons
