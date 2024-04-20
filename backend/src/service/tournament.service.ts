@@ -26,7 +26,10 @@ import { Preference } from "../entity/Preference";
 import { playerToDto } from "../dto/user.dto";
 import { Enrollment } from "../entity/Enrollment";
 import { UserService } from "./user.service";
-import { alternateGeneratePodAssignments } from "./anoterGreedyAlgorithm";
+import {
+  WILD_CARD_IDENTIFIER,
+  alternateGeneratePodAssignments,
+} from "./anoterGreedyAlgorithm";
 
 type PreferentialPodAssignments = {
   preferencePoints: number;
@@ -981,6 +984,9 @@ export class TournamentService {
         pod: { cube: Cube; players: User[] },
         player: User
       ) => {
+        if (player.id === WILD_CARD_IDENTIFIER) {
+          return;
+        }
         if (!playerCounts[pod.cube.id]) {
           playerCounts[pod.cube.id] = { [player.id]: 1 };
         } else {
@@ -1005,6 +1011,9 @@ export class TournamentService {
         pod: { cube: Cube; players: User[] },
         player: User
       ): boolean => {
+        if (player.id === WILD_CARD_IDENTIFIER) {
+          return true;
+        }
         const playerPreferences = preferencesByPlayer[player.id];
         if (
           playerPreferences &&
@@ -1077,42 +1086,6 @@ export class TournamentService {
       cubes
     );
 
-    return [
-      {
-        draftNumber: 1,
-        pods: [
-          {
-            cube: {
-              id: 1,
-            },
-            players: [],
-          },
-        ],
-      },
-      {
-        draftNumber: 2,
-        pods: [
-          {
-            cube: {
-              id: 1,
-            },
-            players: [],
-          },
-        ],
-      },
-      {
-        draftNumber: 3,
-        pods: [
-          {
-            cube: {
-              id: 1,
-            },
-            players: [],
-          },
-        ],
-      },
-    ];
-
     const podAssignments = await this.generatePodAssignments(
       preferences,
       tournament,
@@ -1139,7 +1112,7 @@ export class TournamentService {
     });
 
     const validatedPodAssigments = this.validatePodAssignments(
-      podAssignments,
+      alternatePodAssignments,
       preferencesByPlayer
     );
 

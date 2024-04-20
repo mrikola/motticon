@@ -8,7 +8,7 @@ import { Preference } from "../entity/Preference";
 import { Tournament } from "../entity/Tournament";
 import { User } from "../entity/User";
 
-const WILD_CARD_IDENTIFIER = 999999;
+export const WILD_CARD_IDENTIFIER = 999999;
 
 type DraftPod = {
   players: [number, number, number, number, number, number, number, number];
@@ -308,6 +308,46 @@ const placeWildCardIntoCubeCon = (cubeCon: CubeCon) => {
     WILD_CARD_IDENTIFIER;
 };
 
+const cubeConIntoPreferentialPodAssignments = (
+  cubeCon: CubeCon,
+  preferencePoints: number
+): PreferentialPodAssignments[] => {
+  return [
+    {
+      strategy: ["greedy", "greedy", "greedy"],
+      penaltyPoints: 0,
+      penaltyReasons: [],
+      preferencePoints: preferencePoints,
+      assignments: cubeCon.rounds.map((round, index) => ({
+        draftNumber: index + 1,
+        pods: round.pods.map((pod) => ({
+          cube: {
+            id: pod.cubeId,
+            title: "foo",
+            description: "bar",
+            owner: "baz",
+            url: "boz",
+            imageUrl: "fuu",
+            tournaments: [],
+          },
+          players: pod.players.map((player) => ({
+            id: player,
+            firstName: `F${player}`,
+            lastName: `L${player}`,
+            email: "email",
+            password: "asd",
+            isAdmin: false,
+            isDummy: false,
+            rating: 123,
+            enrollments: [],
+            tournamentsStaffed: [],
+          })),
+        })),
+      })),
+    },
+  ];
+};
+
 export const alternateGeneratePodAssignments = async (
   preferences: Preference[],
   tournament: Tournament,
@@ -371,5 +411,7 @@ export const alternateGeneratePodAssignments = async (
     0
   );
   console.info("Spent Preference Points: ", spentPreferencePoints);
-  return Promise.resolve([]);
+  return Promise.resolve(
+    cubeConIntoPreferentialPodAssignments(cubeCon, spentPreferencePoints)
+  );
 };
