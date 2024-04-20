@@ -26,6 +26,7 @@ import { Preference } from "../entity/Preference";
 import { playerToDto } from "../dto/user.dto";
 import { Enrollment } from "../entity/Enrollment";
 import { UserService } from "./user.service";
+import { alternateGeneratePodAssignments } from "./anoterGreedyAlgorithm";
 
 type PreferentialPodAssignments = {
   preferencePoints: number;
@@ -1067,6 +1068,50 @@ export class TournamentService {
   async getPreferentialPodAssignments(tournamentId: number) {
     const { tournament, enrollments, cubes, podsPerDraft, preferences } =
       await this.getAssetsForAssignments(tournamentId);
+
+    const alternatePodAssignments = await alternateGeneratePodAssignments(
+      preferences,
+      tournament,
+      podsPerDraft,
+      enrollments,
+      cubes
+    );
+
+    return [
+      {
+        draftNumber: 1,
+        pods: [
+          {
+            cube: {
+              id: 1,
+            },
+            players: [],
+          },
+        ],
+      },
+      {
+        draftNumber: 2,
+        pods: [
+          {
+            cube: {
+              id: 1,
+            },
+            players: [],
+          },
+        ],
+      },
+      {
+        draftNumber: 3,
+        pods: [
+          {
+            cube: {
+              id: 1,
+            },
+            players: [],
+          },
+        ],
+      },
+    ];
 
     const podAssignments = await this.generatePodAssignments(
       preferences,
