@@ -628,6 +628,7 @@ export class TournamentService {
   getOverwhelmingFavoriteIfExists = (
     cubes: { id: number; points: number }[]
   ) => {
+    // use this half the time
     if (cubes[0].points > cubes[1].points + 55) {
       return 0;
     }
@@ -648,6 +649,8 @@ export class TournamentService {
       // SET UP FOR A PARTICULAR ITERATION
       const preferencesByPlayer: PreferencesByPlayer =
         this.getPlayerPreferencesForPodGeneration(preferences, enrollments);
+
+      const useOverwhelmingOverride = Math.random() > 0.5;
 
       const wildCardAssignments: {
         [key: number]: number[];
@@ -680,7 +683,7 @@ export class TournamentService {
           podNumber: number;
         }[] = [];
 
-        const wildCards = unassignedPlayers
+        let wildCards = unassignedPlayers
           .filter(
             (player) =>
               !player.isDummy &&
@@ -723,7 +726,7 @@ export class TournamentService {
           );
 
           const cubeIndex =
-            (podNumber === 1
+            (podNumber === 1 && useOverwhelmingOverride
               ? this.getOverwhelmingFavoriteIfExists(cubesByPreference)
               : undefined) ?? regularCubeIndex;
 
@@ -800,6 +803,7 @@ export class TournamentService {
 
             if (assigned) {
               preferredPlayers.push(assigned);
+              wildCards = wildCards.filter((p) => p.id !== assigned.id);
               wildCardAssignments[assigned.id] = wildCardAssignments[
                 assigned.id
               ]
@@ -923,7 +927,7 @@ export class TournamentService {
     enrollments: Enrollment[],
     cubes: Cube[]
   ) => {
-    const iterationsPerStrategy = 25;
+    const iterationsPerStrategy = 50;
 
     const podGenerationStrategies: DraftPodGenerationStrategy[][] =
       this.permutatePodGenerationStrategies([
@@ -963,10 +967,10 @@ export class TournamentService {
   ): PreferentialPodAssignments[] => {
     // console.info("Validating pod assignments");
 
-    // Initialize how many times players have played each draft (0 times)
-    let playerCounts: { [cubeId: number]: { [playerId: number]: number } } = {};
-
     const validatedPodAssignments = podAssignments.map((assignment) => {
+      // Initialize how many times players have played each draft (0 times)
+      let playerCounts: { [cubeId: number]: { [playerId: number]: number } } =
+        {};
       let penaltyPoints = 0;
       let penaltyReasons: string[] = [];
 
@@ -976,16 +980,23 @@ export class TournamentService {
         pod: { cube: Cube; players: User[] },
         player: User
       ) => {
-        if (playerCounts[pod.cube.id] && playerCounts[pod.cube.id][player.id]) {
-          playerCounts[pod.cube.id][player.id]++;
-          if (playerCounts[pod.cube.id][player.id] > 1) {
-            penaltyReasons.push(
-              `Player ${player.firstName} ${player.lastName} is on the same cube (${pod.cube.id}) multiple times`
-            );
-            penaltyPoints += 50;
-          }
-        } else {
+        if (!playerCounts[pod.cube.id]) {
           playerCounts[pod.cube.id] = { [player.id]: 1 };
+        } else {
+          if (playerCounts[pod.cube.id][player.id]) {
+            playerCounts[pod.cube.id][player.id]++;
+            if (playerCounts[pod.cube.id][player.id] > 1) {
+              penaltyReasons.push(
+                `Player ${player.firstName} ${player.lastName} is on the same cube (${pod.cube.id}) multiple times`
+              );
+              penaltyPoints += 50;
+            }
+          } else {
+            playerCounts[pod.cube.id] = {
+              ...playerCounts[pod.cube.id],
+              [player.id]: 1,
+            };
+          }
         }
       };
 

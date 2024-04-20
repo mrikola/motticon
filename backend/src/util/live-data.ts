@@ -394,4 +394,11 @@ export const LIVE_DATA: { [key: string]: number }[] = [
     11: 2,
     12: 1,
   },
+  {
+    10: 7,
+    12: 5,
+    9: 3,
+    11: 2,
+    7: 1,
+  },
 ];
