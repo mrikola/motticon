@@ -8,7 +8,7 @@ type Props = {
 
 function GoToCubes({ tournamentId }: Props) {
   return (
-    <Row>
+    <Row className="my-3">
       <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
         <Link
           to={`/tournament/${tournamentId}/cubes/`}

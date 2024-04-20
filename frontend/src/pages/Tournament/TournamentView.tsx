@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { get } from "../../services/ApiService";
-import { Draft, Round, Tournament } from "../../types/Tournament";
+import { Draft, DraftPod, Round, Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row } from "react-bootstrap";
@@ -31,6 +31,7 @@ const TournamentView = () => {
   const [freeSeats, setFreeSeats] = useState<number>(0);
   const [date, setDate] = useState<string>();
   const [drafts, setDrafts] = useState<Draft[]>([]);
+  const [pods, setPods] = useState<number>(0);
 
   const isStaff =
     user?.isAdmin || user?.tournamentsStaffed.includes(Number(tournamentId));
@@ -93,6 +94,13 @@ const TournamentView = () => {
       const resp = await get(`/tournament/${tournamentId}/drafts`);
       const tournament = (await resp.json()) as Tournament;
       setDrafts(tournament.drafts);
+      let p: number = 0;
+      for (const draft of tournament.drafts) {
+        if (draft.pods.length > 0) {
+          p++;
+        }
+      }
+      setPods(p);
     };
     fetchData();
   }, [tournamentId]);
@@ -149,7 +157,7 @@ const TournamentView = () => {
         activeTournament.preferencesRequired > 0 && (
           <ManagePreferences tournamentId={activeTournament.id} />
         )}
-      {isEnrolled && drafts?.length > 0 && (
+      {isEnrolled && pods > 0 && (
         <GoToPods tournamentId={activeTournament.id} />
       )}
       {isEnrolled && activeTournament.status === "started" && (
