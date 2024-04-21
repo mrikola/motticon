@@ -10,6 +10,7 @@ import { User } from "../entity/User";
 import { randomize } from "../util/random";
 
 export const WILD_CARD_IDENTIFIER = 999999;
+export const DUMMY_IDENTIFIER = 999998;
 
 type DraftPod = {
   players: [number, number, number, number, number, number, number, number];
@@ -96,7 +97,7 @@ const placePlayerIntoCube = (
   cubeCon: CubeCon
 ) => {
   if (playerId === WILD_CARD_IDENTIFIER) {
-    placeWildCardIntoCubeCon(cubeCon);
+    placeWildCardIntoCubeCon(cubeCon, cubeId);
     return true;
   }
   for (let i = 0; i < cubeCon.rounds.length; ++i) {
@@ -133,6 +134,16 @@ const hasPlayerPlayedTheCube = (
     round.pods.some(
       (pod) => pod.cubeId === cubeId && pod.players.includes(playerId)
     )
+  );
+};
+
+const isPlayerInThreeRounds = (playerId: number, cubeCon: CubeCon) => {
+  return (
+    cubeCon.rounds
+      .flatMap((round) =>
+        round.pods.flatMap((pod) => pod.players.includes(playerId))
+      )
+      .filter((x) => x).length === 3
   );
 };
 
@@ -208,27 +219,19 @@ const hasPlayerUsedAllPreferences = (
   );
 };
 
-const findHighestPlayerForCube = (
+const findHighestPlayersForCube = (
   prefernces: PreferencesByPlayer,
   cubeId: number
 ) => {
-  let highestPlayer = -1;
-  let highestPoints = -1;
+  const allPReferences = Object.values(prefernces).flatMap((x) => x);
+  const preferencesForCube = allPReferences.filter(
+    (pref) => pref.cube === cubeId && !pref.used
+  );
+  const highestPlayers = preferencesForCube
+    .sort((a, b) => b.points - a.points)
+    .map((pref) => pref.player);
 
-  Object.values(prefernces).forEach((prefs) => {
-    const pref = prefs.find((x) => x.cube === cubeId && !x.used);
-
-    if (
-      pref &&
-      pref.points > highestPoints &&
-      !hasPlayerUsedAllPreferences(pref.player, prefernces)
-    ) {
-      highestPlayer = pref.player;
-      highestPoints = pref.points;
-    }
-  });
-
-  return highestPlayer !== -1 ? highestPlayer : WILD_CARD_IDENTIFIER;
+  return highestPlayers.length > 0 ? highestPlayers : [WILD_CARD_IDENTIFIER];
 };
 
 const markCubeAsUsed = (
@@ -318,10 +321,19 @@ const findEmptiestDraft = (cubeCon: CubeCon): [number, number, number] => {
   return [draftNumber, podNumber, playerNumber];
 };
 
-const placeWildCardIntoCubeCon = (cubeCon: CubeCon) => {
-  const [draftNumber, podNumber, playerNumber] = findEmptiestDraft(cubeCon);
-  cubeCon.rounds[draftNumber].pods[podNumber].players[playerNumber] =
-    WILD_CARD_IDENTIFIER;
+const placeWildCardIntoCubeCon = (cubeCon: CubeCon, cubeId: number) => {
+  // const [draftNumber, podNumber, playerNumber] = findEmptiestDraft(cubeCon);
+  // cubeCon.rounds[draftNumber].pods[podNumber].players[playerNumber] =
+  //   WILD_CARD_IDENTIFIER;
+  let placed = false;
+  cubeCon.rounds.forEach((round) => {
+    round.pods.forEach((pod) => {
+      if (pod.cubeId === cubeId && pod.players.includes(-1) && !placed) {
+        pod.players[pod.players.indexOf(-1)] = WILD_CARD_IDENTIFIER;
+        placed = true;
+      }
+    });
+  });
 };
 
 const cubeConIntoPreferentialPodAssignments = (
@@ -375,7 +387,6 @@ const handleCubeConWildCards = (
       !preferncesByPlayer[user.id] ||
       !hasPlayerUsedAllPreferences(user.id, preferncesByPlayer)
   );
-  console.info(usersWithoutAllPreferencesMet.length);
   const cubeConWithRealUsers = initializeCubeCon();
   cubeCon.rounds.forEach((round, roundIndex) => {
     round.pods.forEach((pod, podIndex) => {
@@ -397,12 +408,22 @@ const handleCubeConWildCards = (
                 user.id,
                 cubeCon.rounds[roundIndex].pods[podIndex].cubeId,
                 cubeConWithRealUsers
-              )
+              ) &&
+              !isPlayerInThreeRounds(user.id, cubeConWithRealUsers)
           );
           wildCardUsers.sort(randomize);
-          const wildCardUser =
-            wildCardUsers[0] || usersWithoutAllPreferencesMet[0];
-          console.info(wildCardUser);
+          const wildCardUser = wildCardUsers[0] || {
+            id: DUMMY_IDENTIFIER,
+            firstName: "Dummy",
+            lastName: "Dummy",
+            email: "dummy",
+            password: "dummy",
+            isAdmin: false,
+            isDummy: true,
+            rating: 0,
+            enrollments: [],
+            tournamentsStaffed: [],
+          };
           cubeConWithRealUsers.rounds[roundIndex].pods[podIndex].players[
             playerIndex
           ] = wildCardUser.id;
@@ -453,27 +474,39 @@ export const alternateGeneratePodAssignments = async (
     let targetCubeFound = false;
     do {
       targetCube = cubesByPreference[targetCubeIndex].id;
-      targetPlayer = findHighestPlayerForCube(preferencesByPlayer, targetCube);
-      cubePlacedInCubecon =
-        targetPlayer === WILD_CARD_IDENTIFIER ||
-        placeCubeIntoCubeCon(targetCube, targetPlayer, cubeCon);
-      targetCubeFound = cubePlacedInCubecon;
+      const targetPlayers = findHighestPlayersForCube(
+        preferencesByPlayer,
+        targetCube
+      );
+      targetPlayer = targetPlayers.find(
+        (player) =>
+          player === WILD_CARD_IDENTIFIER ||
+          placeCubeIntoCubeCon(targetCube, player, cubeCon)
+      );
+      console.info("Target Player: ", targetPlayer);
+      if (!targetPlayer) {
+        targetPlayer = WILD_CARD_IDENTIFIER;
+      }
+      console.info("Target Cube and Player ", targetCube, targetPlayer);
+
+      targetCubeFound = !!targetPlayer;
       targetCubeIndex++;
     } while (!targetCubeFound && targetCubeIndex < cubesByPreference.length);
-    console.info("Target Cube: ", targetCube);
-    console.info("Target Player: ", targetPlayer);
+    // console.info("Target Cube: ", targetCube);
+    // console.info("Target Player: ", targetPlayer);
     playerPlacedInCubecon =
       targetPlayer === WILD_CARD_IDENTIFIER ||
       placePlayerIntoCube(targetPlayer, targetCube, cubeCon);
-    console.info("Cube Placed in Cubecon: ", cubePlacedInCubecon);
-    console.info("Player Placed in Cubecon: ", playerPlacedInCubecon);
+    // console.info("Cube Placed in Cubecon: ", cubePlacedInCubecon);
+    // console.info("Player Placed in Cubecon: ", playerPlacedInCubecon);
     if (targetPlayer === WILD_CARD_IDENTIFIER) {
-      placeWildCardIntoCubeCon(cubeCon);
+      placeWildCardIntoCubeCon(cubeCon, targetCube);
       cubePlacedInCubecon = true;
       playerPlacedInCubecon = true;
     }
+    console.info(getAvailableCubes(cubes, cubeCon).map((x) => x.id));
   } while (getAvailableCubes(cubes, cubeCon).length > 0);
-  console.info(JSON.stringify(cubeCon, null, 2));
+  // console.info(JSON.stringify(cubeCon, null, 2));
   const spentPreferencePoints = Object.values(preferencesByPlayer).reduce(
     (acc, cur) => {
       return (
@@ -489,15 +522,14 @@ export const alternateGeneratePodAssignments = async (
   );
   console.info("Spent Preference Points: ", spentPreferencePoints);
 
+  // console.info("Preferences By Player: ", preferencesByPlayer);
+
   const wildCardsHandled = handleCubeConWildCards(
     cubeCon,
     enrollments,
     preferencesByPlayer
   );
   return Promise.resolve(
-    cubeConIntoPreferentialPodAssignments(
-      wildCardsHandled,
-      spentPreferencePoints
-    )
+    cubeConIntoPreferentialPodAssignments(cubeCon, spentPreferencePoints)
   );
 };
