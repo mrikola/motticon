@@ -552,8 +552,11 @@ export class TournamentService {
     const cubes = await this.cubeService.getCubesForTournament(tournamentId);
     const podsPerDraft = tournament.totalSeats / 8;
 
-    const preferences =
-      await this.preferenceService.getPreferencesForTournament(tournamentId);
+    const preferences = (
+      await this.preferenceService.getPreferencesForTournament(tournamentId)
+    ).filter((preference) =>
+      enrollments.find((enroll) => enroll.player.id === preference.player.id)
+    );
     return { tournament, enrollments, cubes, podsPerDraft, preferences };
   };
 
