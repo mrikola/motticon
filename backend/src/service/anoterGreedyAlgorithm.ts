@@ -404,12 +404,19 @@ const handleCubeConWildCards = (
                 user.id,
                 cubeConWithRealUsers.rounds[roundIndex]
               ) &&
+              !isPlayerInRound(user.id, cubeCon.rounds[roundIndex]) &&
               !hasPlayerPlayedTheCube(
                 user.id,
                 cubeConWithRealUsers.rounds[roundIndex].pods[podIndex].cubeId,
                 cubeConWithRealUsers
               ) &&
-              !isPlayerInThreeRounds(user.id, cubeConWithRealUsers)
+              !hasPlayerPlayedTheCube(
+                user.id,
+                cubeCon.rounds[roundIndex].pods[podIndex].cubeId,
+                cubeCon
+              ) &&
+              !isPlayerInThreeRounds(user.id, cubeConWithRealUsers) &&
+              !isPlayerInThreeRounds(user.id, cubeCon)
           );
           wildCardUsers.sort(randomize);
           const wildCardUser = wildCardUsers[0] || {
