@@ -557,7 +557,7 @@ const validateCubeCons = (
 
 const iterationAmount = 2000;
 
-export const alternateGeneratePodAssignments = async (
+export const popularPriorityPodAssignemnts = async (
   preferences: Preference[],
   tournament: Tournament,
   podsPerDraft: number,

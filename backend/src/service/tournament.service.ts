@@ -29,7 +29,7 @@ import { Enrollment } from "../entity/Enrollment";
 import { UserService } from "./user.service";
 import {
   WILD_CARD_IDENTIFIER,
-  alternateGeneratePodAssignments,
+  popularPriorityPodAssignemnts,
 } from "./anotherGreedyAlgorithm";
 
 export class TournamentService {
@@ -1066,14 +1066,13 @@ export class TournamentService {
     const { tournament, enrollments, cubes, podsPerDraft, preferences } =
       await this.getAssetsForAssignments(tournamentId);
 
-    const popularCubePrioirityAssignments =
-      await alternateGeneratePodAssignments(
-        preferences,
-        tournament,
-        podsPerDraft,
-        enrollments,
-        cubes
-      );
+    const popularCubePrioirityAssignments = await popularPriorityPodAssignemnts(
+      preferences,
+      tournament,
+      podsPerDraft,
+      enrollments,
+      cubes
+    );
 
     const roundByRoundAssignments = await this.generatePodAssignments(
       preferences,
