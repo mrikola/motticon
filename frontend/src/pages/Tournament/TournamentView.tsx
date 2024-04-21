@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { get } from "../../services/ApiService";
-import { Draft, DraftPod, Round, Tournament } from "../../types/Tournament";
+import { Draft, Round, Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row } from "react-bootstrap";
@@ -30,7 +30,7 @@ const TournamentView = () => {
   const [newestRoundNumber, setNewestRoundNumber] = useState<number>(0);
   const [freeSeats, setFreeSeats] = useState<number>(0);
   const [date, setDate] = useState<string>();
-  const [drafts, setDrafts] = useState<Draft[]>([]);
+  const [_drafts, setDrafts] = useState<Draft[]>([]);
   const [pods, setPods] = useState<number>(0);
 
   const isStaff =

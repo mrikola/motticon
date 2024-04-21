@@ -53,10 +53,6 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
     useState<PlayerTournamentScore>();
   const [currentRoundPoints, setCurrentRoundPoints] = useState<number>(0);
 
-  const {
-    playerGoingFirst: { id: onThePlay },
-  } = match;
-
   useEffect(() => {
     // check player id's from match and set correct player & opponent objects
     if (match && user) {
