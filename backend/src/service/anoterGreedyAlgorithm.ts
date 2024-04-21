@@ -7,6 +7,7 @@ import { Enrollment } from "../entity/Enrollment";
 import { Preference } from "../entity/Preference";
 import { Tournament } from "../entity/Tournament";
 import { User } from "../entity/User";
+import { randomize } from "../util/random";
 
 export const WILD_CARD_IDENTIFIER = 999999;
 
@@ -123,6 +124,18 @@ const placePlayerIntoCube = (
   return false;
 };
 
+const hasPlayerPlayedTheCube = (
+  playerId: number,
+  cubeId: number,
+  cubeCon: CubeCon
+) => {
+  return cubeCon.rounds.some((round) =>
+    round.pods.some(
+      (pod) => pod.cubeId === cubeId && pod.players.includes(playerId)
+    )
+  );
+};
+
 const initializeCubeCon = (): CubeCon => {
   return {
     rounds: [
@@ -189,7 +202,10 @@ const hasPlayerUsedAllPreferences = (
   playerId: number,
   preferences: PreferencesByPlayer
 ) => {
-  return preferences[playerId].every((pref) => pref.used);
+  return (
+    preferences[playerId].filter((pref) => pref.used).length >= 3 ||
+    preferences[playerId].every((pref) => pref.used)
+  );
 };
 
 const findHighestPlayerForCube = (
@@ -348,6 +364,67 @@ const cubeConIntoPreferentialPodAssignments = (
   ];
 };
 
+const handleCubeConWildCards = (
+  cubeCon: CubeCon,
+  enrollments: Enrollment[],
+  preferncesByPlayer: PreferencesByPlayer
+): CubeCon => {
+  const users = enrollments.map((enrollment) => enrollment.player);
+  const usersWithoutAllPreferencesMet = users.filter(
+    (user) =>
+      !preferncesByPlayer[user.id] ||
+      !hasPlayerUsedAllPreferences(user.id, preferncesByPlayer)
+  );
+  console.info(usersWithoutAllPreferencesMet.length);
+  const cubeConWithRealUsers = initializeCubeCon();
+  cubeCon.rounds.forEach((round, roundIndex) => {
+    round.pods.forEach((pod, podIndex) => {
+      cubeConWithRealUsers.rounds[roundIndex].pods[podIndex].cubeId =
+        cubeCon.rounds[roundIndex].pods[podIndex].cubeId;
+      pod.players.forEach((player, playerIndex) => {
+        if (player !== WILD_CARD_IDENTIFIER) {
+          cubeConWithRealUsers.rounds[roundIndex].pods[podIndex].players[
+            playerIndex
+          ] = cubeCon.rounds[roundIndex].pods[podIndex].players[playerIndex];
+        } else {
+          const wildCardUsers = usersWithoutAllPreferencesMet.filter(
+            (user) =>
+              !isPlayerInRound(
+                user.id,
+                cubeConWithRealUsers.rounds[roundIndex]
+              ) &&
+              !hasPlayerPlayedTheCube(
+                user.id,
+                cubeCon.rounds[roundIndex].pods[podIndex].cubeId,
+                cubeConWithRealUsers
+              )
+          );
+          wildCardUsers.sort(randomize);
+          const wildCardUser =
+            wildCardUsers[0] || usersWithoutAllPreferencesMet[0];
+          console.info(wildCardUser);
+          cubeConWithRealUsers.rounds[roundIndex].pods[podIndex].players[
+            playerIndex
+          ] = wildCardUser.id;
+          if (preferncesByPlayer[wildCardUser.id]) {
+            const unusedPreference = preferncesByPlayer[wildCardUser.id].find(
+              (pref) => !pref.used
+            );
+            if (unusedPreference) {
+              markCubeAsUsed(
+                wildCardUser.id,
+                unusedPreference.cube,
+                preferncesByPlayer
+              );
+            }
+          }
+        }
+      });
+    });
+  });
+  return cubeConWithRealUsers;
+};
+
 export const alternateGeneratePodAssignments = async (
   preferences: Preference[],
   tournament: Tournament,
@@ -411,7 +488,16 @@ export const alternateGeneratePodAssignments = async (
     0
   );
   console.info("Spent Preference Points: ", spentPreferencePoints);
+
+  const wildCardsHandled = handleCubeConWildCards(
+    cubeCon,
+    enrollments,
+    preferencesByPlayer
+  );
   return Promise.resolve(
-    cubeConIntoPreferentialPodAssignments(cubeCon, spentPreferencePoints)
+    cubeConIntoPreferentialPodAssignments(
+      wildCardsHandled,
+      spentPreferencePoints
+    )
   );
 };

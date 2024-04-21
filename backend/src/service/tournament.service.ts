@@ -1086,13 +1086,13 @@ export class TournamentService {
       cubes
     );
 
-    const podAssignments = await this.generatePodAssignments(
-      preferences,
-      tournament,
-      podsPerDraft,
-      enrollments,
-      cubes
-    );
+    // const podAssignments = await this.generatePodAssignments(
+    //   preferences,
+    //   tournament,
+    //   podsPerDraft,
+    //   enrollments,
+    //   cubes
+    // );
 
     const preferencesByPlayer: PreferencesByPlayer = {};
     preferences.forEach((preference) => {
