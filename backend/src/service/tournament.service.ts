@@ -30,7 +30,7 @@ import { UserService } from "./user.service";
 import {
   WILD_CARD_IDENTIFIER,
   popularPriorityPodAssignemnts,
-} from "./anotherGreedyAlgorithm";
+} from "./popularPriorityPodAssigments";
 
 export class TournamentService {
   private appDataSource: DataSource;
