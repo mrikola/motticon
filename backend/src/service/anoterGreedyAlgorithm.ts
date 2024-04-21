@@ -243,6 +243,7 @@ const findHighestPlayersForCube = (
     (pref) => pref.cube === cubeId && !pref.used
   );
   const highestPlayers = preferencesForCube
+    .sort(randomize)
     .sort((a, b) => b.points - a.points)
     .map((pref) => pref.player);
 
@@ -543,6 +544,42 @@ const generateCubeCon = (
   return { cubeCon: wildCardsHandled, preferencePoints: spentPreferencePoints };
 };
 
+const isCubeConValid = (
+  cubeCon: CubeCon,
+  enrollments: Enrollment[]
+): boolean => {
+  const noInvalidPlayers = cubeCon.rounds.every((round) =>
+    round.pods.every((pod) =>
+      pod.players.every(
+        (player) =>
+          player !== WILD_CARD_IDENTIFIER &&
+          player !== DUMMY_IDENTIFIER &&
+          player !== -1
+      )
+    )
+  );
+  const everyoneAssignedThreeTimes = enrollments.every((enrollment) => {
+    const user = enrollment.player;
+    return isPlayerInThreeRounds(user.id, cubeCon);
+  });
+  return noInvalidPlayers && everyoneAssignedThreeTimes;
+};
+
+const validateCubeCons = (
+  potentialCubeCons: ReturnType<typeof generateCubeCon>[],
+  enrollments: Enrollment[]
+) => {
+  const validCubeCons = potentialCubeCons.filter((cubeCon) =>
+    isCubeConValid(cubeCon.cubeCon, enrollments)
+  );
+  return {
+    validCubeCons,
+    invalidCubeConAmount: potentialCubeCons.length - validCubeCons.length,
+  };
+};
+
+const iterationAmount = 1000;
+
 export const alternateGeneratePodAssignments = async (
   preferences: Preference[],
   tournament: Tournament,
@@ -550,17 +587,20 @@ export const alternateGeneratePodAssignments = async (
   enrollments: Enrollment[],
   cubes: Cube[]
 ): Promise<PreferentialPodAssignments[]> => {
-  const generationResult = generateCubeCon(
-    preferences,
-    tournament,
-    podsPerDraft,
-    enrollments,
-    cubes
+  const potentialCubeCons = Array.from({ length: iterationAmount }).map(() =>
+    generateCubeCon(preferences, tournament, podsPerDraft, enrollments, cubes)
+  );
+  const validationResult = validateCubeCons(potentialCubeCons, enrollments);
+  validationResult.validCubeCons.sort(
+    (a, b) => b.preferencePoints - a.preferencePoints
+  );
+  console.info(
+    `After ${iterationAmount} iterations, ${validationResult.validCubeCons.length} valid cube cons were found and ${validationResult.invalidCubeConAmount} were discarded.`
   );
   return Promise.resolve(
     cubeConIntoPreferentialPodAssignments(
-      generationResult.cubeCon,
-      generationResult.preferencePoints
+      validationResult.validCubeCons[0].cubeCon,
+      validationResult.validCubeCons[0].preferencePoints
     )
   );
 };
