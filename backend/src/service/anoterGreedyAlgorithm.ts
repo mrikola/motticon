@@ -206,6 +206,21 @@ const getPreferencesByPlayer = (preferences: Preference[]) => {
     });
   });
 
+  const dummyPreference = (playerId: number) => ({
+    player: playerId,
+    cube: -1,
+    points: 0,
+    used: false,
+  });
+
+  Object.values(preferencesByPlayer).forEach((prefs) => {
+    if (prefs.length < 3) {
+      for (let i = prefs.length; i < 3; i++) {
+        prefs.push(dummyPreference(prefs[0].player));
+      }
+    }
+  });
+
   return preferencesByPlayer;
 };
 
@@ -490,30 +505,22 @@ export const alternateGeneratePodAssignments = async (
           player === WILD_CARD_IDENTIFIER ||
           placeCubeIntoCubeCon(targetCube, player, cubeCon)
       );
-      console.info("Target Player: ", targetPlayer);
       if (!targetPlayer) {
         targetPlayer = WILD_CARD_IDENTIFIER;
       }
-      console.info("Target Cube and Player ", targetCube, targetPlayer);
 
       targetCubeFound = !!targetPlayer;
       targetCubeIndex++;
     } while (!targetCubeFound && targetCubeIndex < cubesByPreference.length);
-    // console.info("Target Cube: ", targetCube);
-    // console.info("Target Player: ", targetPlayer);
     playerPlacedInCubecon =
       targetPlayer === WILD_CARD_IDENTIFIER ||
       placePlayerIntoCube(targetPlayer, targetCube, cubeCon);
-    // console.info("Cube Placed in Cubecon: ", cubePlacedInCubecon);
-    // console.info("Player Placed in Cubecon: ", playerPlacedInCubecon);
     if (targetPlayer === WILD_CARD_IDENTIFIER) {
       placeWildCardIntoCubeCon(cubeCon, targetCube);
       cubePlacedInCubecon = true;
       playerPlacedInCubecon = true;
     }
-    console.info(getAvailableCubes(cubes, cubeCon).map((x) => x.id));
   } while (getAvailableCubes(cubes, cubeCon).length > 0);
-  // console.info(JSON.stringify(cubeCon, null, 2));
   const spentPreferencePoints = Object.values(preferencesByPlayer).reduce(
     (acc, cur) => {
       return (
@@ -527,9 +534,6 @@ export const alternateGeneratePodAssignments = async (
     },
     0
   );
-  console.info("Spent Preference Points: ", spentPreferencePoints);
-
-  // console.info("Preferences By Player: ", preferencesByPlayer);
 
   const wildCardsHandled = handleCubeConWildCards(
     cubeCon,
