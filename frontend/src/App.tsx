@@ -18,12 +18,10 @@ import TournamentView from "./pages/Tournament/TournamentView";
 import AdminPage from "./pages/Admin/AdminPage";
 import AddCube from "./components/admin/AddCube";
 import CreateTournament from "./components/admin/CreateTournament";
-import AutocompleteTest from "./pages/Test/AutocompleteTest";
 import PublicProfile from "./pages/User/PublicProfile";
 import AllUsers from "./pages/User/AllUsers";
 import PoolView from "./pages/Staff/PoolView";
 import ViewCubeGeneral from "./pages/ViewCube/ViewCubeGeneral";
-import LoadingCubes from "./components/general/LoadingCubes";
 import EditCube from "./components/admin/EditCube";
 import TestPreferencesTable from "./pages/Staff/TestPreferencesTable";
 import DraftPods from "./pages/Tournament/DraftPods";
@@ -42,16 +40,6 @@ function App() {
               path: "/",
               index: true,
               Component: Landing,
-            },
-            {
-              path: "/test", // todo: remove
-              index: true,
-              Component: AutocompleteTest,
-            },
-            {
-              path: "/placeholder", // todo: remove
-              index: true,
-              Component: LoadingCubes,
             },
             {
               path: "login",

@@ -19,7 +19,8 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link package.json ./
-RUN npm install 
+COPY --link yarn.lock ./
+RUN yarn 
 
 # Copy application code
 COPY --link . .
