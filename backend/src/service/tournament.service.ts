@@ -1066,7 +1066,16 @@ export class TournamentService {
     const { tournament, enrollments, cubes, podsPerDraft, preferences } =
       await this.getAssetsForAssignments(tournamentId);
 
-    const alternatePodAssignments = await alternateGeneratePodAssignments(
+    const popularCubePrioirityAssignments =
+      await alternateGeneratePodAssignments(
+        preferences,
+        tournament,
+        podsPerDraft,
+        enrollments,
+        cubes
+      );
+
+    const roundByRoundAssignments = await this.generatePodAssignments(
       preferences,
       tournament,
       podsPerDraft,
@@ -1074,13 +1083,10 @@ export class TournamentService {
       cubes
     );
 
-    // const podAssignments = await this.generatePodAssignments(
-    //   preferences,
-    //   tournament,
-    //   podsPerDraft,
-    //   enrollments,
-    //   cubes
-    // );
+    const podAssignments = [
+      ...popularCubePrioirityAssignments,
+      ...roundByRoundAssignments,
+    ];
 
     const preferencesByPlayer: PreferencesByPlayer = {};
     preferences.forEach((preference) => {
@@ -1100,7 +1106,7 @@ export class TournamentService {
     });
 
     const validatedPodAssigments = this.validatePodAssignments(
-      alternatePodAssignments,
+      podAssignments,
       preferencesByPlayer
     );
 
@@ -1123,6 +1129,7 @@ export class TournamentService {
       `best assignment with ${sortedAssignments[0].preferencePoints} spent with ${sortedAssignments[0].penaltyPoints} penalty points:`
     );
     console.log("Strategy: ", sortedAssignments[0].strategy.join(", "));
+    console.log("Algorithm: ", sortedAssignments[0].algorithmType);
     console.info("Penalties: ", sortedAssignments[0].penaltyReasons);
     sortedAssignments[0].assignments.forEach((assignment) => {
       console.log("DRAFT", assignment.draftNumber);
