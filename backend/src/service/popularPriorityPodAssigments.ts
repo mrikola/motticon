@@ -634,7 +634,19 @@ const isCubeConValid = (
     const user = enrollment.player;
     return isPlayerInThreeRounds(user.id, cubeCon);
   });
-  return noInvalidPlayers && everyoneAssignedThreeTimes;
+
+  const noTwoDummiesInAnyPod = cubeCon.rounds.every((round) => {
+    return round.pods.every((pod) => {
+      const dummies = pod.players.filter((player) => {
+        return (
+          player !== DUMMY_IDENTIFIER &&
+          enrollments.find((x) => x.player.id === player).player.isDummy
+        );
+      });
+      return dummies.length <= 1;
+    });
+  });
+  return noInvalidPlayers && everyoneAssignedThreeTimes && noTwoDummiesInAnyPod;
 };
 
 const validateCubeCons = (
@@ -650,7 +662,7 @@ const validateCubeCons = (
   };
 };
 
-const iterationAmount = 2000;
+const iterationAmount = 2_000;
 
 /**
  * Generate preferential pod assignments based on popular cube priority.
