@@ -66,6 +66,7 @@ export type PreferentialPodAssignments = {
   preferencePoints: number;
   penaltyPoints: number;
   penaltyReasons: string[];
+  algorithmType: string;
   strategy: DraftPodGenerationStrategy[];
   assignments: {
     draftNumber: number;

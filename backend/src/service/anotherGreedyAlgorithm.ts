@@ -340,13 +340,15 @@ const placeWildCardIntoCubeCon = (cubeCon: CubeCon, cubeId: number) => {
 };
 
 const cubeConsIntoPreferentialPodAssignments = (
-  cubeCons: ReturnType<typeof generateCubeCon>[]
+  cubeCons: ReturnType<typeof generateCubeCon>[],
+  enrollments: Enrollment[]
 ): PreferentialPodAssignments[] => {
   return cubeCons.map((cubeCon) => ({
     strategy: ["greedy", "greedy", "greedy"],
     penaltyPoints: 0,
     penaltyReasons: [],
     preferencePoints: cubeCon.preferencePoints,
+    algorithmType: "popular-cube-priority",
     assignments: cubeCon.cubeCon.rounds.map((round, index) => ({
       draftNumber: index + 1,
       pods: round.pods.map((pod) => ({
@@ -359,18 +361,9 @@ const cubeConsIntoPreferentialPodAssignments = (
           imageUrl: "fuu",
           tournaments: [],
         },
-        players: pod.players.map((player) => ({
-          id: player,
-          firstName: `F${player}`,
-          lastName: `L${player}`,
-          email: "email",
-          password: "asd",
-          isAdmin: false,
-          isDummy: false,
-          rating: 123,
-          enrollments: [],
-          tournamentsStaffed: [],
-        })),
+        players: pod.players.map(
+          (player) => enrollments.find((x) => x.player.id === player).player
+        ),
       })),
     })),
   }));
@@ -596,6 +589,9 @@ export const alternateGeneratePodAssignments = async (
   );
   console.info("End run of the popular cube priority algorithm.");
   return Promise.resolve(
-    cubeConsIntoPreferentialPodAssignments(validationResult.validCubeCons)
+    cubeConsIntoPreferentialPodAssignments(
+      validationResult.validCubeCons,
+      enrollments
+    )
   );
 };

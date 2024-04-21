@@ -658,6 +658,7 @@ export class TournamentService {
       let currentIterationAssignments: PreferentialPodAssignments = {
         preferencePoints: 0,
         penaltyPoints: 0,
+        algorithmType: "generate-round-by-round",
         penaltyReasons: [],
         assignments: [],
         strategy,
