@@ -5,6 +5,7 @@ import { partition, round } from "lodash";
 import {
   DraftPodGenerationStrategy,
   PreferencesByPlayer,
+  PreferentialPodAssignments,
 } from "../dto/tournaments.dto";
 import { Round } from "../entity/Round";
 import { Draft } from "../entity/Draft";
@@ -29,21 +30,7 @@ import { UserService } from "./user.service";
 import {
   WILD_CARD_IDENTIFIER,
   alternateGeneratePodAssignments,
-} from "./anoterGreedyAlgorithm";
-
-type PreferentialPodAssignments = {
-  preferencePoints: number;
-  penaltyPoints: number;
-  penaltyReasons: string[];
-  strategy: DraftPodGenerationStrategy[];
-  assignments: {
-    draftNumber: number;
-    pods: {
-      cube: Cube;
-      players: User[];
-    }[];
-  }[];
-};
+} from "./anotherGreedyAlgorithm";
 
 export class TournamentService {
   private appDataSource: DataSource;

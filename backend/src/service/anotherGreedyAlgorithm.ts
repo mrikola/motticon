@@ -1,6 +1,7 @@
 import {
   DraftPodGenerationStrategy,
   PreferencesByPlayer,
+  PreferentialPodAssignments,
 } from "../dto/tournaments.dto";
 import { Cube } from "../entity/Cube";
 import { Enrollment } from "../entity/Enrollment";
@@ -299,20 +300,6 @@ const isCubeFullInCubecon = (cubeId: number, cubeCon: CubeCon): boolean => {
   return isFull;
 };
 
-type PreferentialPodAssignments = {
-  preferencePoints: number;
-  penaltyPoints: number;
-  penaltyReasons: string[];
-  strategy: DraftPodGenerationStrategy[];
-  assignments: {
-    draftNumber: number;
-    pods: {
-      cube: Cube;
-      players: User[];
-    }[];
-  }[];
-};
-
 const getAvailableCubes = (cubes: Cube[], cubeCon: CubeCon) => {
   return cubes.filter((cube) => {
     return !isCubeFullInCubecon(cube.id, cubeCon);
@@ -584,6 +571,8 @@ export const alternateGeneratePodAssignments = async (
   enrollments: Enrollment[],
   cubes: Cube[]
 ): Promise<PreferentialPodAssignments[]> => {
+  console.info("Start run of the popular cube priority algorithm.");
+  console.info(`Generating ${iterationAmount} cube cons.`);
   const potentialCubeCons = Array.from({ length: iterationAmount }).map(
     (_, index) => {
       if (index % 100 === 0) {
@@ -605,6 +594,7 @@ export const alternateGeneratePodAssignments = async (
   console.info(
     `After ${iterationAmount} iterations, ${validationResult.validCubeCons.length} valid cube cons were found and ${validationResult.invalidCubeConAmount} were discarded.`
   );
+  console.info("End run of the popular cube priority algorithm.");
   return Promise.resolve(
     cubeConsIntoPreferentialPodAssignments(validationResult.validCubeCons)
   );
