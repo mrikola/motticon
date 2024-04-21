@@ -59,9 +59,11 @@ export const generateDryRunUsers = async () => {
   let playersCreated = 0;
   for (const firstName of FIRST_NAMES) {
     for (const lastName of LAST_NAMES) {
-      const isDummy = playersCreated < DUMMY_PLAYERS;
+      const isDummy =
+        FIRST_NAMES.length * LAST_NAMES.length - playersCreated - 1 <
+        DUMMY_PLAYERS;
       await userService.createUser(
-        isDummy ? firstName : "DUMMY",
+        !isDummy ? firstName : "DUMMY",
         lastName,
         getEmail(firstName, lastName),
         "asdf",
