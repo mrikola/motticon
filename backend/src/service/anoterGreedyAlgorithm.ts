@@ -406,7 +406,7 @@ const handleCubeConWildCards = (
               ) &&
               !hasPlayerPlayedTheCube(
                 user.id,
-                cubeCon.rounds[roundIndex].pods[podIndex].cubeId,
+                cubeConWithRealUsers.rounds[roundIndex].pods[podIndex].cubeId,
                 cubeConWithRealUsers
               ) &&
               !isPlayerInThreeRounds(user.id, cubeConWithRealUsers)
@@ -530,6 +530,9 @@ export const alternateGeneratePodAssignments = async (
     preferencesByPlayer
   );
   return Promise.resolve(
-    cubeConIntoPreferentialPodAssignments(cubeCon, spentPreferencePoints)
+    cubeConIntoPreferentialPodAssignments(
+      wildCardsHandled,
+      spentPreferencePoints
+    )
   );
 };
