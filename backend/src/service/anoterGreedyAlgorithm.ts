@@ -468,13 +468,13 @@ const handleCubeConWildCards = (
   return cubeConWithRealUsers;
 };
 
-export const alternateGeneratePodAssignments = async (
+const generateCubeCon = (
   preferences: Preference[],
   tournament: Tournament,
   podsPerDraft: number,
   enrollments: Enrollment[],
   cubes: Cube[]
-): Promise<PreferentialPodAssignments[]> => {
+) => {
   const cubeCon = initializeCubeCon();
   let targetCube: number = -1;
   let targetPlayer: number = -1;
@@ -540,10 +540,27 @@ export const alternateGeneratePodAssignments = async (
     enrollments,
     preferencesByPlayer
   );
+  return { cubeCon: wildCardsHandled, preferencePoints: spentPreferencePoints };
+};
+
+export const alternateGeneratePodAssignments = async (
+  preferences: Preference[],
+  tournament: Tournament,
+  podsPerDraft: number,
+  enrollments: Enrollment[],
+  cubes: Cube[]
+): Promise<PreferentialPodAssignments[]> => {
+  const generationResult = generateCubeCon(
+    preferences,
+    tournament,
+    podsPerDraft,
+    enrollments,
+    cubes
+  );
   return Promise.resolve(
     cubeConIntoPreferentialPodAssignments(
-      wildCardsHandled,
-      spentPreferencePoints
+      generationResult.cubeCon,
+      generationResult.preferencePoints
     )
   );
 };
