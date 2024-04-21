@@ -871,7 +871,7 @@ export class TournamentService {
           });
         }
 
-        console.log("Preference points used", preferencePointsUsed);
+        // console.log("Preference points used", preferencePointsUsed);
 
         currentIterationAssignments.preferencePoints += preferencePointsUsed;
         currentIterationAssignments.assignments.push({
@@ -1051,7 +1051,7 @@ export class TournamentService {
             penaltyReasons.push(
               `Draft ${draft.draftNumber} cube ${pod.cube.id} has ${unIntentionalWildcardsUsed} unintentional wildcards`
             );
-            penaltyPoints += 10 * unIntentionalWildcardsUsed;
+            penaltyPoints += 10 * (unIntentionalWildcardsUsed - 1);
           }
         }
       }
