@@ -352,44 +352,41 @@ const placeWildCardIntoCubeCon = (cubeCon: CubeCon, cubeId: number) => {
   });
 };
 
-const cubeConIntoPreferentialPodAssignments = (
-  cubeCon: CubeCon,
-  preferencePoints: number
+const cubeConsIntoPreferentialPodAssignments = (
+  cubeCons: ReturnType<typeof generateCubeCon>[]
 ): PreferentialPodAssignments[] => {
-  return [
-    {
-      strategy: ["greedy", "greedy", "greedy"],
-      penaltyPoints: 0,
-      penaltyReasons: [],
-      preferencePoints: preferencePoints,
-      assignments: cubeCon.rounds.map((round, index) => ({
-        draftNumber: index + 1,
-        pods: round.pods.map((pod) => ({
-          cube: {
-            id: pod.cubeId,
-            title: "foo",
-            description: "bar",
-            owner: "baz",
-            url: "boz",
-            imageUrl: "fuu",
-            tournaments: [],
-          },
-          players: pod.players.map((player) => ({
-            id: player,
-            firstName: `F${player}`,
-            lastName: `L${player}`,
-            email: "email",
-            password: "asd",
-            isAdmin: false,
-            isDummy: false,
-            rating: 123,
-            enrollments: [],
-            tournamentsStaffed: [],
-          })),
+  return cubeCons.map((cubeCon) => ({
+    strategy: ["greedy", "greedy", "greedy"],
+    penaltyPoints: 0,
+    penaltyReasons: [],
+    preferencePoints: cubeCon.preferencePoints,
+    assignments: cubeCon.cubeCon.rounds.map((round, index) => ({
+      draftNumber: index + 1,
+      pods: round.pods.map((pod) => ({
+        cube: {
+          id: pod.cubeId,
+          title: "foo",
+          description: "bar",
+          owner: "baz",
+          url: "boz",
+          imageUrl: "fuu",
+          tournaments: [],
+        },
+        players: pod.players.map((player) => ({
+          id: player,
+          firstName: `F${player}`,
+          lastName: `L${player}`,
+          email: "email",
+          password: "asd",
+          isAdmin: false,
+          isDummy: false,
+          rating: 123,
+          enrollments: [],
+          tournamentsStaffed: [],
         })),
       })),
-    },
-  ];
+    })),
+  }));
 };
 
 const handleCubeConWildCards = (
@@ -578,7 +575,7 @@ const validateCubeCons = (
   };
 };
 
-const iterationAmount = 1000;
+const iterationAmount = 2000;
 
 export const alternateGeneratePodAssignments = async (
   preferences: Preference[],
@@ -587,8 +584,19 @@ export const alternateGeneratePodAssignments = async (
   enrollments: Enrollment[],
   cubes: Cube[]
 ): Promise<PreferentialPodAssignments[]> => {
-  const potentialCubeCons = Array.from({ length: iterationAmount }).map(() =>
-    generateCubeCon(preferences, tournament, podsPerDraft, enrollments, cubes)
+  const potentialCubeCons = Array.from({ length: iterationAmount }).map(
+    (_, index) => {
+      if (index % 100 === 0) {
+        console.info(`Generating cube con ${index + 1} of ${iterationAmount}.`);
+      }
+      return generateCubeCon(
+        preferences,
+        tournament,
+        podsPerDraft,
+        enrollments,
+        cubes
+      );
+    }
   );
   const validationResult = validateCubeCons(potentialCubeCons, enrollments);
   validationResult.validCubeCons.sort(
@@ -598,9 +606,6 @@ export const alternateGeneratePodAssignments = async (
     `After ${iterationAmount} iterations, ${validationResult.validCubeCons.length} valid cube cons were found and ${validationResult.invalidCubeConAmount} were discarded.`
   );
   return Promise.resolve(
-    cubeConIntoPreferentialPodAssignments(
-      validationResult.validCubeCons[0].cubeCon,
-      validationResult.validCubeCons[0].preferencePoints
-    )
+    cubeConsIntoPreferentialPodAssignments(validationResult.validCubeCons)
   );
 };
