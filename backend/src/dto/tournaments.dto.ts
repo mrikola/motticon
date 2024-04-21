@@ -10,6 +10,8 @@ import {
   enrollmentToDto,
   playerToDto,
 } from "./user.dto";
+import { Cube } from "../entity/Cube";
+import { User } from "../entity/User";
 
 export type TournamentDto = {
   id: number;
@@ -59,6 +61,21 @@ export type DraftPodGenerationStrategy =
   | "fifth"
   | "sixth"
   | "seventh";
+
+export type PreferentialPodAssignments = {
+  preferencePoints: number;
+  penaltyPoints: number;
+  penaltyReasons: string[];
+  algorithmType: string;
+  strategy: DraftPodGenerationStrategy[];
+  assignments: {
+    draftNumber: number;
+    pods: {
+      cube: Cube;
+      players: User[];
+    }[];
+  }[];
+};
 
 export const tournamentToDto = (tournament: Tournament): TournamentDto =>
   tournament
