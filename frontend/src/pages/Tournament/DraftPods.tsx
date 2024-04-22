@@ -21,7 +21,9 @@ function DraftPods() {
         const tourny = (await resp.json()) as Tournament;
         setTournament(tourny);
         const userPods = [];
-        for (const draft of tourny.drafts) {
+        for (const draft of tourny.drafts.sort(
+          (a, b) => a.draftNumber - b.draftNumber
+        )) {
           for (const pod of draft.pods) {
             for (const seat of pod.seats) {
               if (seat.player.id === user?.id) {
@@ -31,11 +33,10 @@ function DraftPods() {
           }
         }
         setUserDraftPods(userPods);
-        console.log(userPods);
       };
       fetchData();
     }
-  }, [user]);
+  }, [tournamentId, user]);
 
   if (user) {
     return (
@@ -52,41 +53,39 @@ function DraftPods() {
             <h2 className="display-2">My draft pods</h2>
           </Row>
           <Row>
-            {userDraftPods
-              .sort((a, b) => a.id - b.id)
-              .map((pod, index) => (
-                <Row key={index}>
-                  <h2>Draft {index + 1}</h2>
-                  <h3>
-                    Pod {pod.podNumber}, {pod.cube.title}
-                  </h3>
-                  <Table striped borderless responsive>
-                    <thead>
-                      <tr>
-                        <th>Seat</th>
-                        <th>Player</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pod.seats
-                        .sort((a, b) => a.seat - b.seat)
-                        .map((seat) => (
-                          <tr
-                            key={seat.id}
-                            className={
-                              user.id === seat.player.id ? "table-primary" : ""
-                            }
-                          >
-                            <td>{seat.seat}</td>
-                            <td className="td-no-wrap">
-                              {seat.player.firstName} {seat.player.lastName}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </Table>
-                </Row>
-              ))}
+            {userDraftPods.map((pod, index) => (
+              <Row key={index}>
+                <h2>Draft {index + 1}</h2>
+                <h3>
+                  Pod {pod.podNumber}, {pod.cube.title}
+                </h3>
+                <Table striped borderless responsive>
+                  <thead>
+                    <tr>
+                      <th>Seat</th>
+                      <th>Player</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pod.seats
+                      .sort((a, b) => a.seat - b.seat)
+                      .map((seat) => (
+                        <tr
+                          key={seat.id}
+                          className={
+                            user.id === seat.player.id ? "table-primary" : ""
+                          }
+                        >
+                          <td>{seat.seat}</td>
+                          <td className="td-no-wrap">
+                            {seat.player.firstName} {seat.player.lastName}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </Table>
+              </Row>
+            ))}
           </Row>
         </Container>
       )
