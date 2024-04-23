@@ -3,7 +3,7 @@ import { Match, Round } from "../../types/Tournament";
 import dayjs, { Dayjs } from "dayjs";
 import ResultsInputModal, { ModalProps } from "../general/ResultsInputModal";
 import { Player } from "../../types/User";
-import { get, post, put } from "../../services/ApiService";
+import { get, getURL, post, put } from "../../services/ApiService";
 import { UserInfoContext } from "../provider/UserInfoProvider";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import CardCountdownTimer from "../general/CardCountdownTimer";
@@ -186,6 +186,10 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
     if (response.status === 200 || response.status === 204) {
       // round ended successfully, tell the tournament there is no round
       toast.success("Round ended");
+      window.open(
+        getURL(`/tournament/${tournamentId}/round/${currentRound.id}/results`),
+        "_blank"
+      );
       setCurrentRound(undefined);
     }
   };

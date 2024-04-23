@@ -1,7 +1,7 @@
 import path = require("path");
 import { getUserFromToken } from "../auth/auth";
 import { DraftService } from "../service/draft.service";
-import { createDirIfNotExists } from "../util/fs";
+import { FILE_ROOT, createDirIfNotExists } from "../util/fs";
 import { writeFileSync } from "fs";
 import mime from "mime-types";
 import {
@@ -67,9 +67,7 @@ export const uploadDeckPhoto = async (req): Promise<DraftDto> => {
   const user = getUserFromToken(req.headers.authorization);
   const file = req.file;
 
-  const photosRoot = "/photos";
-
-  const filePath = path.join(photosRoot, tournamentId, seatId);
+  const filePath = path.join(FILE_ROOT, tournamentId, seatId);
   const fileName = `${user.firstName}_${user.lastName}.${mime.extension(
     file.mimetype
   )}`;

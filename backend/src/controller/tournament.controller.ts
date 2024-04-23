@@ -1,3 +1,4 @@
+import path from "path";
 import { DraftDto, draftToDto } from "../dto/draft.dto";
 import { MatchDto, RoundDto, matchToDto, roundToDto } from "../dto/round.dto";
 import { TournamentDto, tournamentToDto } from "../dto/tournaments.dto";
@@ -5,6 +6,10 @@ import { Preference } from "../entity/Preference";
 import { Tournament } from "../entity/Tournament";
 import { EnrollmentService } from "../service/enrollment.service";
 import { TournamentService } from "../service/tournament.service";
+import { FILE_ROOT, createDirIfNotExists } from "../util/fs";
+import { writeFileSync } from "fs";
+import { format } from "@fast-csv/format";
+import { text } from "stream/consumers";
 
 const tournamentService = new TournamentService();
 const enrollmentService = new EnrollmentService();
@@ -249,4 +254,42 @@ export const removeFromStaff = async (req): Promise<Tournament> => {
     tournamentId as number,
     userId as number
   );
+};
+
+export const generateCsvFromRound = async (
+  roundId: string,
+  tournamentId: string
+): Promise<string> => {
+  const filePath = path.join(FILE_ROOT, tournamentId, roundId.toString());
+  createDirIfNotExists(filePath);
+
+  const round = await tournamentService.getMostRecentRound(
+    Number(tournamentId)
+  );
+
+  const fileName = `round${round.roundNumber}.csv`;
+  const localFileFullPath = path.join(filePath, fileName);
+
+  const stream = format({
+    headers: ["Player 1", "P1 wins", "Player 2", "P2 wins"],
+  });
+
+  for (let match of round.matches.sort(
+    (a, b) => a.tableNumber - b.tableNumber
+  )) {
+    stream.write([
+      `${match.player1.firstName} ${match.player1.lastName}`,
+      match.player1GamesWon,
+      `${match.player2.firstName} ${match.player2.lastName}`,
+      match.player2GamesWon,
+    ]);
+  }
+
+  stream.end();
+
+  const content = await text(stream);
+
+  writeFileSync(localFileFullPath, content);
+
+  return localFileFullPath;
 };

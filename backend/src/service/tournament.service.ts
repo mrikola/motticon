@@ -255,7 +255,13 @@ export class TournamentService {
       .getRepository(Round)
       .createQueryBuilder("round")
       .leftJoin("round.tournament", "tournament")
+      .leftJoinAndSelect("round.matches", "match")
+      .leftJoinAndSelect("match.player1", "player1")
+      .leftJoinAndSelect("match.player2", "player2")
       .where("round.status = 'completed'")
+      .andWhere("match.roundId = round.id")
+      .andWhere("player1.id = match.player1Id")
+      .andWhere("player2.id = match.player2Id")
       .andWhere("tournament.id = :tournamentId", { tournamentId })
       .orderBy('"roundNumber"', "DESC")
       .getOne();
@@ -495,7 +501,7 @@ export class TournamentService {
     // run updateElo() for all matches at this point
     const matches = await this.matchService.getMatchesForRound(roundId);
     const kvalue = 8;
-    console.log(matches);
+    // console.log(matches);
     await Promise.all(
       matches.map(async (match) => {
         const { player1, player2 } = match;

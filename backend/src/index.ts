@@ -7,6 +7,7 @@ import { notLoggedInRouter } from "./router/notLoggedInRouter";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import path = require("node:path/posix");
 import { staffRouter } from "./router/staffRouter";
+import { FILE_ROOT } from "./util/fs";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -17,9 +18,9 @@ AppDataSource.initialize()
       readFileSync(path.join(__dirname, "..", "db", "markku.sql"), "utf8")
     );
 
-    if (existsSync("/photos")) {
+    if (existsSync(FILE_ROOT)) {
       console.log("writing to volume");
-      writeFileSync("/photos/foo.txt", "this is a test");
+      writeFileSync(`${FILE_ROOT}/foo.txt`, "this is a test");
     }
 
     app.use(
@@ -33,8 +34,8 @@ AppDataSource.initialize()
       res.send("Hello world, how are you doing");
     });
 
-    app.get("/photos/*", (req, res) => {
-      if (existsSync("/photos")) {
+    app.get(`${FILE_ROOT}/*`, (req, res) => {
+      if (existsSync(FILE_ROOT)) {
         res.sendFile(path.join("/", req.path), {
           headers: {
             "Content-Disposition": "inline",
