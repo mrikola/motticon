@@ -70,7 +70,7 @@ function PoolView() {
   function markReturned(seat: DraftPodSeat) {
     if (seat) {
       const seatId = seat.id;
-      post(`/setDraftPoolReturned`, {
+      post(`/tournament/${tournamentId}/setDraftPoolReturned`, {
         tournamentId,
         seatId,
       }).then(async (resp) => {

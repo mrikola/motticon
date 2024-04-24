@@ -30,6 +30,7 @@ export const isValidStaffMemberToken = (
 ) => {
   try {
     const decoded = verify(token, JWT_SECRET_KEY) as JwtPayload;
+
     return (
       decoded.isAdmin ||
       (decoded.tournamentsStaffed ?? []).includes(tournamentId)

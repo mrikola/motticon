@@ -4,7 +4,6 @@ import {
   endDraft,
   endRound,
   endTournament,
-  generateCsvFromRound,
   generateDrafts,
   initiateDraft,
   staffCancelEnrollment,
@@ -18,7 +17,7 @@ import { setDraftPoolReturned } from "../controller/draft.controller";
 
 export const staffRouter = express.Router();
 
-staffRouter.use((req, res, next) => {
+const staffMiddleware = (req, res, next) => {
   if (
     !isValidStaffMemberToken(
       req.headers.authorization,
@@ -28,7 +27,10 @@ staffRouter.use((req, res, next) => {
     return res.sendStatus(401);
   }
   next();
-});
+};
+
+staffRouter.use("/tournament/:tournamentId/*", staffMiddleware);
+staffRouter.use("/staff/tournament/:tournamentId/*", staffMiddleware);
 
 staffRouter.put("/tournament/:tournamentId/start", async (req, res) => {
   res.send(await startTournament(req));
@@ -108,6 +110,9 @@ staffRouter.post(
   }
 );
 
-staffRouter.post("/setDraftPoolReturned", async (req, res) => {
-  res.send(await setDraftPoolReturned(req));
-});
+staffRouter.post(
+  "/tournament/:tournamentId/setDraftPoolReturned",
+  async (req, res) => {
+    res.send(await setDraftPoolReturned(req));
+  }
+);
