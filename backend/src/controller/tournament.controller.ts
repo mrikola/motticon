@@ -271,17 +271,28 @@ export const generateCsvFromRound = async (
   const localFileFullPath = path.join(filePath, fileName);
 
   const stream = format({
-    headers: ["Player 1", "P1 wins", "Player 2", "P2 wins"],
+    headers: [
+      "Player 1",
+      "P1 wins",
+      "P1 match points",
+      "Player 2",
+      "P2 wins",
+      "P2 match points",
+    ],
   });
 
   for (let match of round.matches.sort(
     (a, b) => a.tableNumber - b.tableNumber
   )) {
+    const player1points = match.player1GamesWon > match.player2GamesWon ? 3 : 0;
+    const player2points = match.player2GamesWon > match.player1GamesWon ? 3 : 0;
     stream.write([
       `${match.player1.firstName} ${match.player1.lastName}`,
       match.player1GamesWon,
+      player1points,
       `${match.player2.firstName} ${match.player2.lastName}`,
       match.player2GamesWon,
+      player2points,
     ]);
   }
 
