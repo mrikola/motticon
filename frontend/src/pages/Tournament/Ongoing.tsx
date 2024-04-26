@@ -34,7 +34,6 @@ const Ongoing = () => {
           startTime: new Date(round.startTime),
         };
         setCurrentRound(roundParsed);
-        // console.log(roundParsed);
       } catch {
         // TODO handle invalid response
         // set current round as null when inbetween rounds
@@ -44,7 +43,6 @@ const Ongoing = () => {
       try {
         const draft = (await draftResponse.json()) as Draft;
         setCurrentDraft(draft);
-        // console.log(draft);
       } catch {
         // TODO handle invalid response
         if (
@@ -75,7 +73,6 @@ const Ongoing = () => {
       const response = await get(`/tournament/${tournamentId}`);
       const tourny = (await response.json()) as Tournament;
       setTournament(tourny);
-      // console.log(tourny);
     };
 
     const doFetch = () => {
@@ -101,7 +98,6 @@ const Ongoing = () => {
         );
         const match = (await response.json()) as Match;
         setCurrentMatch(match);
-        // console.log(match);
       }
     };
 
@@ -130,7 +126,6 @@ const Ongoing = () => {
       try {
         const round = (await response.json()) as Round;
         setLatestRound(round);
-        // console.log(round);
       } catch {
         // TODO handle invalid response
       }
@@ -164,9 +159,10 @@ const Ongoing = () => {
         </Row>
         {tournament.status === "started" && (
           <>
-            {currentRound && currentMatch && (
+            {currentRound && currentMatch && currentDraft && (
               <RoundOngoing
                 tournament={tournament}
+                draft={currentDraft}
                 round={currentRound}
                 match={currentMatch}
                 setCurrentMatch={setCurrentMatch}
@@ -174,7 +170,8 @@ const Ongoing = () => {
             )}
             {!currentRound && currentDraft && (
               <>
-                {latestRound ? (
+                {latestRound &&
+                latestRound.roundNumber >= currentDraft.firstRound ? (
                   <BetweenRounds
                     latestRoundNumber={latestRound.roundNumber}
                     lastRoundNumber={currentDraft.lastRound}
@@ -188,6 +185,20 @@ const Ongoing = () => {
                     setDraft={setCurrentDraft}
                   />
                 )}
+                {/* {latestRound ? (
+                  <BetweenRounds
+                    latestRoundNumber={latestRound.roundNumber}
+                    lastRoundNumber={currentDraft.lastRound}
+                    draft={currentDraft}
+                    user={user}
+                  />
+                ) : (
+                  <DraftOngoing
+                    draft={currentDraft}
+                    tournament={tournament}
+                    setDraft={setCurrentDraft}
+                  />
+                )} */}
               </>
             )}
             {!currentRound && !currentDraft && (

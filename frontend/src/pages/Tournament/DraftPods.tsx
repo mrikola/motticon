@@ -1,4 +1,4 @@
-import { Container, Row, Table } from "react-bootstrap";
+import { Col, Container, Row, Table } from "react-bootstrap";
 import { useParams } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
@@ -7,6 +7,7 @@ import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import Loading from "../../components/general/Loading";
 import { DraftPod, Tournament } from "../../types/Tournament";
+import DraftPoolButton from "../../components/general/DraftPoolButton";
 
 function DraftPods() {
   const { tournamentId } = useParams();
@@ -59,6 +60,24 @@ function DraftPods() {
                 <h3>
                   Pod {pod.podNumber}, {pod.cube.title}
                 </h3>
+                {pod.seats
+                  .sort((a, b) => a.seat - b.seat)
+                  .map((seat) => (
+                    <div key={seat.id}>
+                      {user.id === seat.player.id && seat.deckPhotoUrl ? (
+                        <Col
+                          xs={10}
+                          sm={8}
+                          className="d-grid gap-2 my-3 mx-auto"
+                          key={seat.id}
+                        >
+                          <DraftPoolButton seat={seat} />
+                        </Col>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  ))}
                 <Table striped borderless responsive>
                   <thead>
                     <tr>

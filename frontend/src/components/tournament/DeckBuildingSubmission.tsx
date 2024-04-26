@@ -100,9 +100,9 @@ function DeckBuildingSubmission({
               variant="primary"
               className="btn-lg"
               onClick={() => handleUpload()}
-              disabled={done}
+              disabled={done || !file}
             >
-              Complete deck building
+              Upload draft pool photo
             </Button>
           </Col>
         </>

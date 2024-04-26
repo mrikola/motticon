@@ -106,6 +106,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
   // callback function for modal once player confirms submit
   function doneSetter(value: boolean) {
     setDeckBuildingDone(value);
+    console.log("done set to: " + value);
   }
 
   if (user && draft && playerPod && playerSeat) {

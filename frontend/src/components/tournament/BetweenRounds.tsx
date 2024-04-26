@@ -3,6 +3,7 @@ import { Draft, DraftPodSeat } from "../../types/Tournament";
 import { User } from "../../types/User";
 import { Col, Row } from "react-bootstrap";
 import { CheckSquare, CheckSquareFill } from "react-bootstrap-icons";
+import DraftPoolButton from "../general/DraftPoolButton";
 
 type Props = {
   latestRoundNumber: number;
@@ -21,20 +22,10 @@ function BetweenRounds({
   // get pod info from draft-object rather than having to do extra backend call
   useEffect(() => {
     if (user) {
-      // console.log(draft);
       Object.values(draft.pods).forEach((pod) => {
-        // console.log(pod);
         Object.values(pod.seats).forEach((seat) => {
           if (seat.player.id === user.id) {
-            console.log("found user pod");
             setDraftPodSeat(seat);
-            // console.log(pod);
-            // console.log(seat);
-            // setPlayerPod(pod);
-            // setPlayerSeat(seat);
-            // seat.deckPhotoUrl
-            //   ? setDeckBuildingDone(true)
-            //   : setDeckBuildingDone(false);
           }
         });
       });
@@ -68,10 +59,17 @@ function BetweenRounds({
                 your draft pool.
               </h3>
             ) : (
-              <h3 className="icon-link">
-                <CheckSquare className="text-danger" /> Please return your draft
-                pool.
-              </h3>
+              <>
+                <h3 className="icon-link">
+                  <CheckSquare className="text-danger" /> Please return your
+                  draft pool.
+                </h3>
+                {draftPodSeat && (
+                  <Col xs={10} sm={8} className="d-grid gap-2 my-3 mx-auto">
+                    <DraftPoolButton seat={draftPodSeat} />
+                  </Col>
+                )}
+              </>
             )}
           </Col>
         </Row>

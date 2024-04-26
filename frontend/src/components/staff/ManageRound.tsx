@@ -234,7 +234,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
                 className="btn-lg"
                 onClick={() => startRound()}
               >
-                Start next round
+                Start round {currentRound.roundNumber}
               </Button>
             ) : (
               <Button

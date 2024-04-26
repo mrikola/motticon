@@ -9,6 +9,8 @@ dayjs.extend(duration);
 import MatchesRemainingProgressBar from "../general/MatchesRemainingProgressBar";
 import MatchResultRadioButtons from "../general/MatchResultRadioButtons";
 import {
+  Draft,
+  DraftPodSeat,
   Match,
   PlayerTournamentScore,
   Round,
@@ -18,19 +20,26 @@ import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
 } from "../general/VerticallyCenteredModal";
 import { Player } from "../../types/User";
-// import CardCountdownTimer from "../general/CardCountdownTimer";
 import HorizontalCard from "../general/HorizontalCard";
 import HelmetTitle from "../general/HelmetTitle";
 import { toast } from "react-toastify";
+import DraftPoolButton from "../general/DraftPoolButton";
 
 type Props = {
   tournament: Tournament;
+  draft: Draft;
   round: Round;
   match: Match;
   setCurrentMatch: (match: Match) => void;
 };
 
-function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
+function RoundOngoing({
+  tournament,
+  draft,
+  round,
+  match,
+  setCurrentMatch,
+}: Props) {
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
   const [roundStartTime, _setRoundStartTime] = useState<Dayjs>();
@@ -52,6 +61,7 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
   const [playerTournamentScore, setPlayerTournamentScore] =
     useState<PlayerTournamentScore>();
   const [currentRoundPoints, setCurrentRoundPoints] = useState<number>(0);
+  const [draftPodSeat, setDraftPodSeat] = useState<DraftPodSeat>();
 
   useEffect(() => {
     // check player id's from match and set correct player & opponent objects
@@ -216,6 +226,19 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
     }
   }, [match]);
 
+  // get pod info from draft-object rather than having to do extra backend call
+  useEffect(() => {
+    if (user) {
+      Object.values(draft.pods).forEach((pod) => {
+        Object.values(pod.seats).forEach((seat) => {
+          if (seat.player.id === user.id) {
+            setDraftPodSeat(seat);
+          }
+        });
+      });
+    }
+  }, [draft, user]);
+
   const submissionDisabled = !roundTimerStarted || !!match.resultSubmittedBy;
 
   if (user && timeRemaining && player && opponent && playerTournamentScore) {
@@ -256,10 +279,6 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
               squareFillContent={match.tableNumber.toString()}
               cardTitle="Table"
             />
-            {/* <CardCountdownTimer
-              initialSeconds={timeRemaining}
-              started={roundTimerStarted}
-            /> */}
             <Col xs={12}>
               <MatchesRemainingProgressBar
                 remainingMatches={resultsMissing}
@@ -313,6 +332,18 @@ function RoundOngoing({ tournament, round, match, setCurrentMatch }: Props) {
               {match.resultSubmittedBy ? "Result submitted" : "Submit result"}
             </Button>
           </Col>
+          <hr></hr>
+          {draftPodSeat && (
+            <>
+              <p>
+                Remember to return your draft pool after the last round of the
+                draft.
+              </p>
+              <Col xs={10} sm={8} className="d-grid gap-2 my-3 mx-auto">
+                <DraftPoolButton seat={draftPodSeat} />
+              </Col>
+            </>
+          )}
           <VerticallyCenteredModal
             show={modal.show}
             onHide={() =>

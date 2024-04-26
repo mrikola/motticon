@@ -2,6 +2,7 @@ import { Accordion, Col, Row, Table } from "react-bootstrap";
 import { Draft, DraftPod, DraftPodSeat } from "../../types/Tournament";
 import { useEffect, useState } from "react";
 import { CheckSquare, CheckSquareFill } from "react-bootstrap-icons";
+import { Link } from "react-router-dom";
 
 type Props = {
   draft: Draft;
@@ -48,7 +49,9 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
                       <tr key={seat.id}>
                         <td>{seat.seat}</td>
                         <td>
-                          {seat.player.firstName} {seat.player.lastName}
+                          <Link to={seat.deckPhotoUrl} target="_blank">
+                            {seat.player.firstName} {seat.player.lastName}
+                          </Link>
                         </td>
                         <td className="cursor-pointer text-center">
                           {seat.draftPoolReturned ? (

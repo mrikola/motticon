@@ -265,7 +265,7 @@ const ManageDraft = ({
                       className="btn-lg"
                       onClick={() => startRound()}
                     >
-                      Start next round
+                      Start round {firstPendingRound.roundNumber}
                     </Button>
                   </>
                 ) : (
@@ -276,7 +276,7 @@ const ManageDraft = ({
                       onClick={() => generatePairings()}
                       disabled={buildingRemaining > 0}
                     >
-                      Generate pairings
+                      Generate pairings (round {firstPendingRound.roundNumber})
                     </Button>
                     {!lastCompletedRound && buildingRemaining !== 0 && (
                       <p className="small text-center">
