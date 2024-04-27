@@ -119,7 +119,7 @@ function App() {
               Component: PoolView,
             },
             {
-              path: "tournament/:tournamentId/pools/all",
+              path: "tournament/:tournamentId/pools",
               Component: AllPoolsView,
             },
             {
