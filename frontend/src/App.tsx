@@ -27,6 +27,7 @@ import TestPreferencesTable from "./pages/Staff/TestPreferencesTable";
 import DraftPods from "./pages/Tournament/DraftPods";
 import ManageUsers from "./components/admin/ManageUsers";
 import ManageStaff from "./pages/Staff/ManageStaff";
+import AllPoolsView from "./pages/Staff/AllPoolsView";
 
 function App() {
   const routes: RouteObject[] = [
@@ -114,8 +115,12 @@ function App() {
               Component: ManageStaff,
             },
             {
-              path: "tournament/:tournamentId/pools",
+              path: "tournament/:tournamentId/pools/:draftId",
               Component: PoolView,
+            },
+            {
+              path: "tournament/:tournamentId/pools/all",
+              Component: AllPoolsView,
             },
             {
               path: "user/:userId",

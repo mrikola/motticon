@@ -149,9 +149,15 @@ const TournamentView = () => {
           <p>Type: Draft</p>
         </Col>
       </Row>
-      {cubes.length > 0 && <GoToCubes tournamentId={activeTournament.id} />}
       {isAdmin && <GoToManageStaff tournamentId={activeTournament.id} />}
-      {isStaff && <Staff tournamentId={activeTournament.id} />}
+      {isStaff && (
+        <>
+          <Staff tournamentId={activeTournament.id} />
+          <hr></hr>
+        </>
+      )}
+      {cubes.length > 0 && <GoToCubes tournamentId={activeTournament.id} />}
+
       {isEnrolled &&
         activeTournament.status === "pending" &&
         activeTournament.preferencesRequired > 0 && (
@@ -175,10 +181,13 @@ const TournamentView = () => {
         />
       )}
       {activeTournament.status !== "pending" && newestRoundNumber > 0 && (
-        <Standings
-          roundNumber={newestRoundNumber}
-          tournamentId={activeTournament.id}
-        />
+        <>
+          <hr></hr>
+          <Standings
+            roundNumber={newestRoundNumber}
+            tournamentId={activeTournament.id}
+          />
+        </>
       )}
     </Container>
   ) : (

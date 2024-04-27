@@ -12,9 +12,9 @@ function GoToManageStaff({ tournamentId }: Props) {
       <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
         <Link
           to={`/tournament/${tournamentId}/manage-staff`}
-          className="btn-primary btn btn-lg"
+          className="btn-info btn btn-lg"
         >
-          <div className="icon-link">
+          <div className="icon-link text-light">
             <GearFill className="fs-3" /> Manage staff
           </div>
         </Link>

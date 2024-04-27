@@ -248,7 +248,7 @@ const ManageDraft = ({
             <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
               <Link
                 className="btn btn-primary btn-lg"
-                to={`/tournament/${tournamentId}/pools`}
+                to={`/tournament/${tournamentId}/pools/${currentDraft.id}`}
               >
                 Manage draft pools
               </Link>

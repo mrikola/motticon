@@ -21,7 +21,7 @@ import PoolReturnedModal, {
 import { toast } from "react-toastify";
 
 function PoolView() {
-  const { tournamentId } = useParams();
+  const { tournamentId, draftId } = useParams();
   const user = useIsTournamentStaff(Number(tournamentId));
   const [currentDraft, setCurrentDraft] = useState<Draft>();
   const [tournament, setTournament] = useState<Tournament>();
@@ -43,7 +43,6 @@ function PoolView() {
       try {
         const draft = (await draftResponse.json()) as Draft;
         setCurrentDraft(draft);
-        // console.log(draft);
       } catch {
         // TODO handle invalid response
       }
@@ -127,7 +126,7 @@ function PoolView() {
         </p>
       </Row>
       {currentDraft && (
-        <Accordion defaultActiveKey="0" flush>
+        <Accordion defaultActiveKey="0" flush className="staff-accordion">
           {currentDraft.pods
             .sort((a, b) => a.podNumber - b.podNumber)
             .map((pod: DraftPod) => {

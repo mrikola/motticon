@@ -9,3 +9,13 @@ $card-spacer-x: 0.5rem;
 .cursor-pointer {
   cursor: pointer;
 }
+
+.staff-accordion {
+  .accordion-button {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  // .accordion-button:not(.collapsed) {
+  //   background-color: $info;
+  // }
+}

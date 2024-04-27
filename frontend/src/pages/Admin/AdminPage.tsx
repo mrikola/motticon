@@ -16,25 +16,22 @@ const AdminPage = () => {
           <h1 className="display-1">Admin page</h1>
         </Col>
         <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
-          <Link
-            to="/admin/create-tournament"
-            className="btn btn-primary btn-lg"
-          >
-            <div className="icon-link">
+          <Link to="/admin/create-tournament" className="btn btn-info btn-lg">
+            <div className="icon-link text-light">
               <TrophyFill className="fs-3" /> Create tournament
             </div>
           </Link>
         </Col>
         <Col xs={10} sm={8} className="d-grid gap-2 mx-auto mt-3">
-          <Link to="/admin/add-cube" className="btn btn-primary btn-lg">
-            <div className="icon-link">
+          <Link to="/admin/add-cube" className="btn btn-info btn-lg">
+            <div className="icon-link text-light">
               <Box className="fs-3" /> Add cube
             </div>
           </Link>
         </Col>
         <Col xs={10} sm={8} className="d-grid gap-2 mx-auto mt-3">
-          <Link to="/admin/manage-users" className="btn btn-primary btn-lg">
-            <div className="icon-link">
+          <Link to="/admin/manage-users" className="btn btn-info btn-lg">
+            <div className="icon-link text-light">
               <PersonFillGear className="fs-3" /> Manage users
             </div>
           </Link>
