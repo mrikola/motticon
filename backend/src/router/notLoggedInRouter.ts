@@ -19,8 +19,12 @@ notLoggedInRouter.post("/signup", async (req, res) => {
   }
 });
 
-notLoggedInRouter.get("/user/:email", async (req, res) => {
-  res.send(await userExists(req));
+notLoggedInRouter.get("/user/:email", async (req, res, next) => {
+  try {
+    res.send(await userExists(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
 notLoggedInRouter.post("/login", async (req, res) => {
@@ -48,11 +52,15 @@ notLoggedInRouter.get("/dry-run", async (req, res) => {
 
 notLoggedInRouter.get(
   "/tournament/:tournamentId/round/:roundId/results",
-  async (req, res) => {
-    const resultsFile = await generateCsvFromRound(
-      req.params.roundId,
-      req.params.tournamentId
-    );
-    res.download(resultsFile);
+  async (req, res, next) => {
+    try {
+      const resultsFile = await generateCsvFromRound(
+        req.params.roundId,
+        req.params.tournamentId
+      );
+      res.download(resultsFile);
+    } catch (err) {
+      next(err);
+    }
   }
 );

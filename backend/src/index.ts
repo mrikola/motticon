@@ -8,6 +8,7 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 import path = require("node:path/posix");
 import { staffRouter } from "./router/staffRouter";
 import { FILE_ROOT } from "./util/fs";
+import errorMiddleware from "./middleware/errorMiddleware";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -54,6 +55,7 @@ AppDataSource.initialize()
     app.use(userRouter);
     app.use(staffRouter);
     app.use(adminRouter);
+    app.use(errorMiddleware);
 
     app.listen(port, () => {
       console.log("Listening on port", port);

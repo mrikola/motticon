@@ -60,35 +60,66 @@ userRouter.use((req, res, next) => {
   next();
 });
 
-userRouter.get("/user/:id/tournaments", async (req, res) => {
-  res.send(await getUsersTournaments(req));
+userRouter.get("/user/:id/tournaments", async (req, res, next) => {
+  try {
+    res.send(await getUsersTournaments(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
-userRouter.get("/user/:userId/tournament/:tournamentId", async (req, res) => {
-  res.send(await getUserTournamentInfo(req));
-});
+userRouter.get(
+  "/user/:userId/tournament/:tournamentId",
+  async (req, res, next) => {
+    try {
+      res.send(await getUserTournamentInfo(req));
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
-userRouter.get("/match/round/:roundId", async (req, res) => {
-  res.send(await getMatchesForRound(req));
+userRouter.get("/match/round/:roundId", async (req, res, next) => {
+  try {
+    res.send(await getMatchesForRound(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
 userRouter.get(
   "/user/:userId/tournament/:tournamentId/matches",
-  async (req, res) => {
-    res.send(await getPlayerMatchHistory(req));
+  async (req, res, next) => {
+    try {
+      res.send(await getPlayerMatchHistory(req));
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
-userRouter.post("/submitResult", async (req, res) => {
-  res.send(await submitResult(req));
+userRouter.post("/submitResult", async (req, res, next) => {
+  try {
+    res.send(await submitResult(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
-userRouter.get("/user/:userId/staff", async (req, res) => {
-  res.send(await getTournamentsStaffed(req));
+userRouter.get("/user/:userId/staff", async (req, res, next) => {
+  try {
+    res.send(await getTournamentsStaffed(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
-userRouter.get("/user/:id", async (req, res) => {
-  res.send(await getUser(req));
+userRouter.get("/user/:id", async (req, res, next) => {
+  try {
+    res.send(await getUser(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
 userRouter.get("/user", async (req, res) => {
@@ -99,20 +130,36 @@ userRouter.get("/cube", async (req, res) => {
   res.send(await getAllCubes());
 });
 
-userRouter.get("/cube/:id", async (req, res) => {
-  res.send(await getCube(req));
+userRouter.get("/cube/:id", async (req, res, next) => {
+  try {
+    res.send(await getCube(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
-userRouter.get("/draft/pods/:draftId", async (req, res) => {
-  res.send(await getPodsForDraft(req));
+userRouter.get("/draft/pods/:draftId", async (req, res, next) => {
+  try {
+    res.send(await getPodsForDraft(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
-userRouter.get("/draft/seats/:draftPodId", async (req, res) => {
-  res.send(await getSeatsForPod(req));
+userRouter.get("/draft/seats/:draftPodId", async (req, res, next) => {
+  try {
+    res.send(await getSeatsForPod(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
-userRouter.get("/draft/:draftId/user/:userId", async (req, res) => {
-  res.send(await getDraftInfoForUser(req));
+userRouter.get("/draft/:draftId/user/:userId", async (req, res, next) => {
+  try {
+    res.send(await getDraftInfoForUser(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
 userRouter.get("/tournaments", async (req, res) => {
@@ -131,45 +178,90 @@ userRouter.get("/tournaments/ongoing", async (req, res) => {
   res.send(await getOngoingTournaments());
 });
 
-userRouter.get("/tournament/:tournamentId", async (req, res) => {
-  res.send(await getTournament(req));
+userRouter.get("/tournament/:tournamentId", async (req, res, next) => {
+  try {
+    res.send(await getTournament(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
-userRouter.get("/tournament/:tournamentId/enrollment", async (req, res) => {
-  res.send(await getTournamentEnrollments(req));
+userRouter.get(
+  "/tournament/:tournamentId/enrollment",
+  async (req, res, next) => {
+    try {
+      res.send(await getTournamentEnrollments(req));
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+userRouter.get("/tournament/:tournamentId/drafts", async (req, res, next) => {
+  try {
+    res.send(await getTournamentAndDrafts(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
-userRouter.get("/tournament/:tournamentId/drafts", async (req, res) => {
-  res.send(await getTournamentAndDrafts(req));
+userRouter.get("/tournament/:tournamentId/round", async (req, res, next) => {
+  try {
+    res.send(await getCurrentRound(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
-userRouter.get("/tournament/:tournamentId/round", async (req, res) => {
-  res.send(await getCurrentRound(req));
-});
+userRouter.get(
+  "/tournament/:tournamentId/round/recent",
+  async (req, res, next) => {
+    try {
+      res.send(await getMostRecentRound(req));
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
-userRouter.get("/tournament/:tournamentId/round/recent", async (req, res) => {
-  res.send(await getMostRecentRound(req));
-});
-
-userRouter.get("/tournament/:tournamentId/draft", async (req, res) => {
-  res.send(await getCurrentDraft(req));
+userRouter.get("/tournament/:tournamentId/draft", async (req, res, next) => {
+  try {
+    res.send(await getCurrentDraft(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
 userRouter.get(
   "/tournament/:tournamentId/round/:roundId/match/:userId",
-  async (req, res) => {
-    res.send(await getCurrentMatch(req));
+  async (req, res, next) => {
+    try {
+      res.send(await getCurrentMatch(req));
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
-userRouter.get("/tournament/:tournamentId/preferences", async (req, res) => {
-  res.send(await getPreferences(req));
-});
+userRouter.get(
+  "/tournament/:tournamentId/preferences",
+  async (req, res, next) => {
+    try {
+      res.send(await getPreferences(req));
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 userRouter.get(
   "/tournament/:tournamentId/preferences/:userId",
-  async (req, res) => {
-    res.send(await getPreferencesForUser(req));
+  async (req, res, next) => {
+    try {
+      res.send(await getPreferencesForUser(req));
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
@@ -181,43 +273,77 @@ userRouter.post("/cubePreferences/delete", async (req, res) => {
   res.send(await deleteCubePreferences(req));
 });
 
-userRouter.get("/tournament/:id/cubes", async (req, res) => {
-  res.send(await getCubesForTournament(req));
+userRouter.get("/tournament/:id/cubes", async (req, res, next) => {
+  try {
+    res.send(await getCubesForTournament(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
-userRouter.get("/draft/:draftId/rounds", async (req, res) => {
-  res.send(await getRoundsForDraft(req));
+userRouter.get("/draft/:draftId/rounds", async (req, res, next) => {
+  try {
+    res.send(await getRoundsForDraft(req));
+  } catch (err) {
+    next(err);
+  }
 });
 
 userRouter.get(
   "/tournament/:tournamentId/standings/:roundNumber",
-  async (req, res) => {
-    res.send(await getStandings(req));
+  async (req, res, next) => {
+    try {
+      res.send(await getStandings(req));
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
-userRouter.get("/tournament/:tournamentId/score/:userId", async (req, res) => {
-  res.send(await getPreviousScore(req));
-});
+userRouter.get(
+  "/tournament/:tournamentId/score/:userId",
+  async (req, res, next) => {
+    try {
+      res.send(await getPreviousScore(req));
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 // todo: move tournament stuff to own router
 userRouter.post(
   "/tournament/:tournamentId/enroll/:userId",
-  async (req, res) => {
-    res.send(await enrollIntoTournament(req));
+  async (req, res, next) => {
+    try {
+      res.send(await enrollIntoTournament(req));
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
 userRouter.post(
   "/tournament/:tournamentId/cancel/:userId",
-  async (req, res) => {
-    res.send(await cancelEnrollment(req));
+  async (req, res, next) => {
+    try {
+      res.send(await cancelEnrollment(req));
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
-userRouter.post("/tournament/:tournamentId/drop/:userId", async (req, res) => {
-  res.send(await dropFromTournament(req));
-});
+userRouter.post(
+  "/tournament/:tournamentId/drop/:userId",
+  async (req, res, next) => {
+    try {
+      res.send(await dropFromTournament(req));
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 userRouter.post("/setDeckPhoto", async (req, res) => {
   res.send(await setDeckPhotoForUser(req));
@@ -226,11 +352,19 @@ userRouter.post("/setDeckPhoto", async (req, res) => {
 userRouter.post(
   "/tournament/:tournamentId/submitDeck/:seatId",
   upload.single("photo"),
-  async (req, res) => {
-    res.send(await uploadDeckPhoto(req));
+  async (req, res, next) => {
+    try {
+      res.send(await uploadDeckPhoto(req));
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
-userRouter.get("/card/search/:query", async (req, res) => {
-  res.send(await searchForCard(req));
+userRouter.get("/card/search/:query", async (req, res, next) => {
+  try {
+    res.send(await searchForCard(req));
+  } catch (err) {
+    next(err);
+  }
 });
