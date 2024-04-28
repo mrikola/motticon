@@ -21,7 +21,7 @@ import PoolReturnedModal, {
 import { toast } from "react-toastify";
 
 function PoolView() {
-  const { tournamentId, draftId } = useParams();
+  const { tournamentId } = useParams();
   const user = useIsTournamentStaff(Number(tournamentId));
   const [currentDraft, setCurrentDraft] = useState<Draft>();
   const [tournament, setTournament] = useState<Tournament>();

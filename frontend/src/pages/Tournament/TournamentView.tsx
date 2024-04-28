@@ -156,6 +156,12 @@ const TournamentView = () => {
           <hr></hr>
         </>
       )}
+      {isEnrolled && activeTournament.status === "started" && (
+        <>
+          <GoToOngoing tournamentId={activeTournament.id} />
+          <hr></hr>
+        </>
+      )}
       {cubes.length > 0 && <GoToCubes tournamentId={activeTournament.id} />}
 
       {isEnrolled &&
@@ -166,9 +172,7 @@ const TournamentView = () => {
       {isEnrolled && pods > 0 && (
         <GoToPods tournamentId={activeTournament.id} />
       )}
-      {isEnrolled && activeTournament.status === "started" && (
-        <GoToOngoing tournamentId={activeTournament.id} />
-      )}
+
       {activeTournament.status === "pending" && (
         <Enroll
           isEnrolled={isEnrolled}
