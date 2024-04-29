@@ -80,13 +80,14 @@ function DeckBuildingSubmission({
       {done ? (
         <>
           <h2 className="icon-link">
-            Your deck building done <CheckSquareFill className="text-success" />
+            Your draft pool submission done{" "}
+            <CheckSquareFill className="text-success" />
           </h2>
-          <p>Waiting for other players to submit their decks.</p>
+          <p>Waiting for other players to submit their draft pools.</p>
         </>
       ) : (
         <>
-          <h2>Deck building</h2>
+          <h2>Draft pool submission</h2>
           <p>
             After the draft, please submit a photo showing all the cards you
             have drafted.

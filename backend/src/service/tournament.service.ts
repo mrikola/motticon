@@ -273,6 +273,7 @@ export class TournamentService {
       .createQueryBuilder("draft")
       .leftJoinAndSelect("draft.pods", "pod")
       .leftJoinAndSelect("pod.seats", "seat")
+      .leftJoinAndSelect("pod.cube", "cube")
       .leftJoinAndSelect("seat.pod", "draftPod")
       .leftJoinAndSelect("seat.player", "player")
       .leftJoin("draft.tournament", "tournament")

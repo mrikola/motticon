@@ -124,9 +124,10 @@ const EnrollPlayers = ({
         </Col>
         <Col xs={12} className="my-3 d-grid">
           <Button
-            variant="primary"
+            variant="info"
             onClick={enroll}
             disabled={enrollments.length >= totalSeats}
+            className="text-light"
           >
             <div className="icon-link">
               <PersonPlusFill className="fs-4" /> {selectedPlayer}

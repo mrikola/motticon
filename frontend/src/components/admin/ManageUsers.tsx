@@ -133,6 +133,7 @@ function ManageUsers() {
           text={modal.text}
           actionText={modal.actionText}
           actionFunction={modal.actionFunction}
+          variant="info"
         />
       </Row>
     </Container>

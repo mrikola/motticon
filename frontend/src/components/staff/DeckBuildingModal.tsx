@@ -37,7 +37,13 @@ function DeckBuildingModal({
         <Button onClick={onHide} variant="danger">
           Back
         </Button>
-        <Button onClick={() => actionFunction(seat)}>{actionText}</Button>
+        <Button
+          variant="info"
+          className="btn text-light"
+          onClick={() => actionFunction(seat)}
+        >
+          {actionText}
+        </Button>
       </Modal.Footer>
     </Modal>
   );

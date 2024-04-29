@@ -52,6 +52,7 @@ function ResultsInputModal({
             value={playerRadioValue}
             updateFunction={setPlayerRadioValue}
             disabled={false}
+            variant="info"
           />
           <Col xs={12} className="text-center">
             <h2>
@@ -71,12 +72,14 @@ function ResultsInputModal({
             value={opponentRadioValue}
             updateFunction={setOpponentRadioValue}
             disabled={false}
+            variant="info"
           />
           <div className="d-grid gap-2 my-3">
             <Button
-              variant="primary"
-              className="btn-lg"
+              variant="info"
+              className="btn-lg text-light"
               type="submit"
+              disabled={playerRadioValue === opponentRadioValue}
               onClick={() =>
                 actionFunction(match, playerRadioValue, opponentRadioValue)
               }

@@ -230,16 +230,16 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
           <Col xs={10} sm={8} className="d-grid gap-2 mx-auto my-3">
             {!roundTimerStarted ? (
               <Button
-                variant="primary"
-                className="btn-lg"
+                variant="info"
+                className="btn-lg text-light"
                 onClick={() => startRound()}
               >
                 Start round {currentRound.roundNumber}
               </Button>
             ) : (
               <Button
-                variant="primary"
-                className="btn-lg"
+                variant="info"
+                className="btn-lg text-light"
                 disabled={resultsMissing > 0}
                 aria-disabled={resultsMissing > 0}
                 onClick={() => handleEndRoundClick()}
@@ -267,6 +267,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
           text={endRoundModal.text}
           actionText={endRoundModal.actionText}
           actionFunction={endRoundModal.actionFunction}
+          variant="info"
         />
         <ResultsInputModal
           show={modal.show}

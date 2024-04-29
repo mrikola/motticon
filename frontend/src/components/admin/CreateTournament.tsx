@@ -292,7 +292,7 @@ const CreateTournament = () => {
             </Form.Group>
           </Row>
           <Col xs={12} className="d-grid">
-            <Button variant="primary" type="submit" className="btn-lg">
+            <Button variant="info" type="submit" className="btn-lg text-light">
               Create tournament
             </Button>
           </Col>

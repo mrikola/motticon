@@ -24,7 +24,7 @@ const DraftTable = ({ seats, markDoneClicked, draftTimerStarted }: Props) => {
       <>
         <Row>
           <Col xs={12}>
-            <h2>Deck building incomplete</h2>
+            <h2>Draft pool submission incomplete</h2>
             <Table striped bordered hover>
               <thead>
                 <tr>
@@ -54,7 +54,8 @@ const DraftTable = ({ seats, markDoneClicked, draftTimerStarted }: Props) => {
                     </td>
                     <td>
                       <Button
-                        variant="primary"
+                        variant="info"
+                        className="btn text-light"
                         type="submit"
                         onClick={() => markDoneClicked(seat)}
                         disabled={
@@ -75,7 +76,7 @@ const DraftTable = ({ seats, markDoneClicked, draftTimerStarted }: Props) => {
         </Row>
         <Row>
           <Col xs={12}>
-            <h2>Deck building complete</h2>
+            <h2>Draft pool submission complete</h2>
             <Table striped bordered hover>
               <thead>
                 <tr>
@@ -105,7 +106,8 @@ const DraftTable = ({ seats, markDoneClicked, draftTimerStarted }: Props) => {
                     </td>
                     <td>
                       <Button
-                        variant="primary"
+                        variant="info"
+                        className="btn text-light"
                         type="submit"
                         onClick={() => markDoneClicked(seat)}
                         disabled={

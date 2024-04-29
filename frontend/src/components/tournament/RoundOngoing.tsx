@@ -296,6 +296,7 @@ function RoundOngoing({
             value={playerRadioValue ?? ""}
             updateFunction={setPlayerRadioValue}
             disabled={match.resultSubmittedBy ? true : false}
+            variant="primary"
           />
           <Col xs={12} className="text-center">
             <h2>
@@ -317,6 +318,7 @@ function RoundOngoing({
             value={opponentRadioValue ?? ""}
             updateFunction={setOpponentRadioValue}
             disabled={match.resultSubmittedBy ? true : false}
+            variant="primary"
           />
           <Col xs={12} className="d-grid gap-2 my-3">
             <Button
@@ -358,6 +360,7 @@ function RoundOngoing({
             text3={modal.text3}
             actionText={modal.actionText}
             actionFunction={modal.actionFunction}
+            variant="primary"
           />
         </Row>
       </>

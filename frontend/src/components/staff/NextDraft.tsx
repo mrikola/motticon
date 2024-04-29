@@ -89,8 +89,8 @@ const NextDraft = ({
           <h3>The tournament is over.</h3>
           <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
             <Button
-              variant="primary"
-              className="btn-lg"
+              variant="info"
+              className="btn-lg text-light"
               onClick={() => completeTournament()}
             >
               Complete tournament
@@ -102,16 +102,16 @@ const NextDraft = ({
           <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
             {firstPendingDraft.pods.length ? (
               <Button
-                variant="primary"
-                className="btn-lg"
+                variant="info"
+                className="btn-lg text-light"
                 onClick={() => initiateDraft()}
               >
                 Initiate next draft
               </Button>
             ) : (
               <Button
-                variant="primary"
-                className="btn-lg"
+                variant="info"
+                className="btn-lg text-light"
                 onClick={() => generateDraft()}
               >
                 Generate draft pods
@@ -123,8 +123,8 @@ const NextDraft = ({
         <Row>
           <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
             <Button
-              variant="primary"
-              className="btn-lg"
+              variant="info"
+              className="btn-lg text-light"
               onClick={() => generateDraft()}
             >
               Generate drafts

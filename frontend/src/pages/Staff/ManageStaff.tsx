@@ -21,7 +21,7 @@ const ManageStaff = () => {
   const [selectedUser, setSelectedUser] = useState("No user selected");
   const [staff, setStaff] = useState<User[]>([]);
 
-  // set data list options based on enrolled players
+  // set data list options based on staff
   useEffect(() => {
     if (allUsers.length > 0) {
       const users: User[] = [];
@@ -71,7 +71,7 @@ const ManageStaff = () => {
             console.log(tourny);
             toast.success("Added " + item.value + " to staff");
             setItem(undefined);
-            setSelectedUser("No player selected");
+            setSelectedUser("No user selected");
             const stf = tourny.staffMembers.sort((a, b) =>
               a.firstName.localeCompare(b.firstName)
             );
@@ -137,12 +137,6 @@ const ManageStaff = () => {
     setValue(undefined); // Custom behavior: Clear input field once a value has been selected
   }
 
-  // useEffect(() => {
-  //   if (enrollments) {
-  //     setPlayersEnrolled(enrollments?.length);
-  //   }
-  // }, [enrollments]);
-
   if (user) {
     return (
       <Container className="mt-3 my-md-4">
@@ -171,7 +165,7 @@ const ManageStaff = () => {
           />
         </Col>
         <Col xs={12} className="my-3 d-grid">
-          <Button variant="primary" onClick={addToStaff}>
+          <Button variant="info" className="text-light" onClick={addToStaff}>
             <div className="icon-link">
               <PersonFillAdd className="fs-4" /> {selectedUser}
             </div>
@@ -183,8 +177,8 @@ const ManageStaff = () => {
             <Table striped borderless hover>
               <thead>
                 <tr>
-                  <th>Player name</th>
-                  <th>Cancel enrollment</th>
+                  <th>Name</th>
+                  <th>Remove from staff</th>
                 </tr>
               </thead>
               <tbody>

@@ -63,19 +63,6 @@ export class RatingService {
     var playerANewRating: number;
     var playerBNewRating: number;
 
-    console.log(
-      "called update elo for: " +
-        playerA.firstName +
-        " " +
-        playerA.lastName +
-        " and " +
-        playerB.firstName +
-        " " +
-        playerB.lastName +
-        ". winner: " +
-        winnerId
-    );
-
     switch (winnerId) {
       case 0: {
         // draw

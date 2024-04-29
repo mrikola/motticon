@@ -54,7 +54,8 @@ const MatchTable = ({
                     </td>
                     <td>
                       <Button
-                        variant="primary"
+                        variant="info"
+                        className="text-light"
                         type="submit"
                         onClick={() => submitResultClicked(match)}
                         disabled={

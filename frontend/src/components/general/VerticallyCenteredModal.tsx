@@ -9,6 +9,7 @@ export type VerticallyCenteredModalProps = {
   text3?: string;
   actionFunction: () => void;
   actionText: string;
+  variant: string;
 };
 
 function VerticallyCenteredModal({
@@ -20,6 +21,7 @@ function VerticallyCenteredModal({
   text3,
   actionFunction,
   actionText,
+  variant,
 }: VerticallyCenteredModalProps) {
   return (
     <Modal
@@ -40,7 +42,13 @@ function VerticallyCenteredModal({
         <Button onClick={onHide} variant="danger">
           Back
         </Button>
-        <Button onClick={actionFunction}>{actionText}</Button>
+        <Button
+          onClick={actionFunction}
+          variant={variant}
+          className={variant === "info" ? "text-light" : ""}
+        >
+          {actionText}
+        </Button>
       </Modal.Footer>
     </Modal>
   );

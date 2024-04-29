@@ -90,24 +90,6 @@ function AllPoolsView() {
           </Accordion>
         </Col>
       ))}
-      {/* {currentDraft && (
-        <Accordion defaultActiveKey="0" flush>
-          {currentDraft.pods
-            .sort((a, b) => a.podNumber - b.podNumber)
-            .map((pod: DraftPod) => {
-              pod.seats.sort((a, b) => a.seat - b.seat);
-              return (
-                <PoolsReturnedTable
-                  key={pod.id}
-                  draft={currentDraft}
-                  pod={pod}
-                  seats={pod.seats}
-                  markDoneClicked={markDoneClicked}
-                />
-              );
-            })}
-        </Accordion>
-      )} */}
     </Container>
   ) : (
     <Loading />

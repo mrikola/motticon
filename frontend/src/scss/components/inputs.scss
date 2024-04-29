@@ -6,11 +6,18 @@
       background-color: $gray-400;
     }
   }
+
   .btn-check:checked + .btn,
   .btn.active,
   .btn.show,
   .btn:first-child:active,
   :not(.btn-check) + .btn:active {
-    background-color: $primary !important;
+    &.primary {
+      background-color: $primary !important;
+    }
+    &.info {
+      background-color: $info !important;
+      color: $light;
+    }
   }
 }

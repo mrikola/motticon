@@ -8,13 +8,13 @@ type Props = {
 const DecksSubmittedTable = ({ players }: Props) => {
   return (
     <>
-      <h2>Deck building complete</h2>
+      <h2>Draft pool submission complete</h2>
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>Table</th>
             <th>Player name</th>
-            <th>Deck submitted</th>
+            <th>Pool submitted</th>
           </tr>
         </thead>
         <tbody>
@@ -29,13 +29,13 @@ const DecksSubmittedTable = ({ players }: Props) => {
           ))}
         </tbody>
       </Table>
-      <h2>Deck building incomplete</h2>
+      <h2>Draft pool submission incomplete</h2>
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>Table</th>
             <th>Player name</th>
-            <th>Deck submitted</th>
+            <th>Pool submitted</th>
           </tr>
         </thead>
         <tbody>

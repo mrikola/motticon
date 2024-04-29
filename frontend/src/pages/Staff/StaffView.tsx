@@ -142,8 +142,8 @@ function StaffView() {
           <Row>
             <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
               <Button
-                variant="primary"
-                className="btn-lg"
+                variant="info"
+                className="btn-lg text-light"
                 onClick={() => startTournament()}
               >
                 Start tournament

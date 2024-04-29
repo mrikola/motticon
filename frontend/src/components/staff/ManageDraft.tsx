@@ -188,13 +188,13 @@ const ManageDraft = ({
     setModal({
       show: true,
       onHide: () => null,
-      heading: "Confirm deck building complete",
+      heading: "Confirm draft pool submission",
       text:
-        "Are you sure you want to confirm deck building complete for: " +
+        "Are you sure you want to confirm draft pool submitted for: " +
         clickedSeat.player.firstName +
         " " +
         clickedSeat.player.lastName,
-      actionText: "Confirm complete",
+      actionText: "Confirm submitted",
       actionFunction: markDone,
       seat: clickedSeat,
     });
@@ -226,8 +226,8 @@ const ManageDraft = ({
             <h3>Draft {currentDraft.draftNumber} over.</h3>
             <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
               <Button
-                variant="primary"
-                className="btn-lg"
+                variant="info"
+                className="btn-lg text-light"
                 onClick={() => completeDraft()}
                 disabled={poolsReturned < totalPlayers}
               >
@@ -247,7 +247,7 @@ const ManageDraft = ({
             </Col>
             <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
               <Link
-                className="btn btn-primary btn-lg"
+                className="btn btn-info btn-lg text-light"
                 to={`/tournament/${tournamentId}/pools/${currentDraft.id}`}
               >
                 Manage draft pools
@@ -261,8 +261,8 @@ const ManageDraft = ({
                 {firstPendingRound.matches.length ? (
                   <>
                     <Button
-                      variant="primary"
-                      className="btn-lg"
+                      variant="info"
+                      className="btn-lg text-light"
                       onClick={() => startRound()}
                     >
                       Start round {firstPendingRound.roundNumber}
@@ -271,8 +271,8 @@ const ManageDraft = ({
                 ) : (
                   <>
                     <Button
-                      variant="primary"
-                      className="btn-lg"
+                      variant="info"
+                      className="btn-lg text-light"
                       onClick={() => generatePairings()}
                       disabled={buildingRemaining > 0}
                     >
@@ -280,8 +280,8 @@ const ManageDraft = ({
                     </Button>
                     {!lastCompletedRound && buildingRemaining !== 0 && (
                       <p className="small text-center">
-                        You can only generate pairings once deckbuilding is
-                        complete for all players
+                        You can only generate pairings once all players have
+                        submitted their draft pools
                       </p>
                     )}
                   </>
@@ -290,8 +290,8 @@ const ManageDraft = ({
               <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
                 {!draftTimerStarted && (
                   <Button
-                    variant="primary"
-                    className="btn-lg"
+                    variant="info"
+                    className="btn-lg text-light"
                     onClick={() => startDraft()}
                   >
                     Start draft timer

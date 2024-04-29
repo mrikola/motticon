@@ -5,6 +5,7 @@ type Props = {
   value: string;
   updateFunction: (val: string) => void;
   disabled: boolean;
+  variant: string;
 };
 
 function MatchResultsRadioButton({
@@ -12,6 +13,7 @@ function MatchResultsRadioButton({
   value,
   updateFunction,
   disabled,
+  variant,
 }: Props) {
   const radios = [
     { name: "0", value: "0" },
@@ -31,7 +33,7 @@ function MatchResultsRadioButton({
           name={name}
           value={radio.value}
           checked={value === radio.value}
-          className="result-entry-radio"
+          className={"result-entry-radio " + variant}
           onChange={(e) => updateFunction(e.currentTarget.value)}
           disabled={disabled}
         >

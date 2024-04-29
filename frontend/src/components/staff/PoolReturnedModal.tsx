@@ -37,7 +37,13 @@ function PoolReturnedModal({
         <Button onClick={onHide} variant="danger">
           Back
         </Button>
-        <Button onClick={() => actionFunction(seat)}>{actionText}</Button>
+        <Button
+          onClick={() => actionFunction(seat)}
+          variant="info"
+          className="text-light"
+        >
+          {actionText}
+        </Button>
       </Modal.Footer>
     </Modal>
   );

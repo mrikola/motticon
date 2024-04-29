@@ -43,6 +43,7 @@ function PoolView() {
       try {
         const draft = (await draftResponse.json()) as Draft;
         setCurrentDraft(draft);
+        console.log(draft);
       } catch {
         // TODO handle invalid response
       }

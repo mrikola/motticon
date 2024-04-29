@@ -14,7 +14,7 @@ type Props = {
 const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
   const [completeSeats, setCompleteSeats] = useState<DraftPodSeat[]>([]);
   const [incompleteSeats, setIncompleteSeats] = useState<DraftPodSeat[]>([]);
-
+  console.log(pod);
   useEffect(() => {
     setIncompleteSeats(
       seats.filter((seat) => seat.draftPoolReturned === false)
@@ -25,11 +25,12 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
   if (completeSeats && incompleteSeats) {
     return (
       <>
+        <h2 className="display-3">Draft {draft.draftNumber}</h2>
         <Accordion.Item eventKey={pod.id.toString()} key={pod.id}>
           <Accordion.Header>
             <h3>
-              Draft {draft.draftNumber}, Pod {pod.podNumber},{" "}
-              {completeSeats.length}/{seats.length} returned
+              Pod {pod.podNumber} ({pod.cube.title}), {completeSeats.length}/
+              {seats.length} returned
             </h3>
           </Accordion.Header>
           <Accordion.Body className="px-0">
@@ -49,7 +50,11 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
                       <tr key={seat.id}>
                         <td>{seat.seat}</td>
                         <td>
-                          <Link to={seat.deckPhotoUrl} target="_blank">
+                          <Link
+                            to={seat.deckPhotoUrl}
+                            target="_blank"
+                            className="text-dark"
+                          >
                             {seat.player.firstName} {seat.player.lastName}
                           </Link>
                         </td>

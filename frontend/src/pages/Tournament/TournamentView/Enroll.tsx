@@ -190,6 +190,7 @@ function Enroll({
           text={modal.text}
           actionText={modal.actionText}
           actionFunction={modal.actionFunction}
+          variant="primary"
         />
       </Row>
     );
