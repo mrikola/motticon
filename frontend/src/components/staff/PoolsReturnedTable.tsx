@@ -14,7 +14,7 @@ type Props = {
 const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
   const [completeSeats, setCompleteSeats] = useState<DraftPodSeat[]>([]);
   const [incompleteSeats, setIncompleteSeats] = useState<DraftPodSeat[]>([]);
-  console.log(pod);
+
   useEffect(() => {
     setIncompleteSeats(
       seats.filter((seat) => seat.draftPoolReturned === false)

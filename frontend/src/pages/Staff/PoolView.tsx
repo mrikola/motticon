@@ -43,7 +43,6 @@ function PoolView() {
       try {
         const draft = (await draftResponse.json()) as Draft;
         setCurrentDraft(draft);
-        console.log(draft);
       } catch {
         // TODO handle invalid response
       }
@@ -76,7 +75,6 @@ function PoolView() {
       }).then(async (resp) => {
         const draft = (await resp.json()) as Draft;
         if (draft !== null) {
-          // console.log(draft);
           toast.success(
             seat.player.firstName +
               " " +

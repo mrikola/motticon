@@ -2,14 +2,22 @@ import { Button, Col, Row, Table } from "react-bootstrap";
 import { DraftPodSeat } from "../../types/Tournament";
 import { useEffect, useState } from "react";
 import { CheckSquare, CheckSquareFill } from "react-bootstrap-icons";
+import { Enrollment } from "../../types/User";
+import { isPlayerDropped } from "../../utils/user";
 
 type Props = {
   seats: DraftPodSeat[];
+  enrollments: Enrollment[];
   markDoneClicked: (seat: DraftPodSeat) => void;
   draftTimerStarted: boolean;
 };
 
-const DraftTable = ({ seats, markDoneClicked, draftTimerStarted }: Props) => {
+const DraftTable = ({
+  seats,
+  enrollments,
+  markDoneClicked,
+  draftTimerStarted,
+}: Props) => {
   const [completeSeats, setCompleteSeats] = useState<DraftPodSeat[]>([]);
   const [incompleteSeats, setIncompleteSeats] = useState<DraftPodSeat[]>([]);
 
@@ -43,7 +51,10 @@ const DraftTable = ({ seats, markDoneClicked, draftTimerStarted }: Props) => {
                       )}
                     </td>
                     <td>
-                      {seat.player.firstName} {seat.player.lastName}
+                      {seat.player.firstName} {seat.player.lastName}{" "}
+                      {isPlayerDropped(enrollments, seat.player.id)
+                        ? " DROPPED"
+                        : ""}
                     </td>
                     <td>
                       {seat.deckPhotoUrl ? (

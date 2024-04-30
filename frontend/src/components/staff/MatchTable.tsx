@@ -1,9 +1,12 @@
 import { Button, Col, Row, Table } from "react-bootstrap";
 import { Match } from "../../types/Tournament";
 import { useEffect, useState } from "react";
+import { Enrollment } from "../../types/User";
+import { isPlayerDropped } from "../../utils/user";
 
 type Props = {
   matches: Match[];
+  enrollments: Enrollment[];
   submitResultClicked: (match: Match) => void;
   editResultClicked: (match: Match) => void;
   roundTimerStarted: boolean;
@@ -11,6 +14,7 @@ type Props = {
 
 const MatchTable = ({
   matches,
+  enrollments,
   submitResultClicked,
   editResultClicked,
   roundTimerStarted,
@@ -44,10 +48,16 @@ const MatchTable = ({
                   <tr key={match.id}>
                     <td>{match.tableNumber}</td>
                     <td>
-                      {match.player1.firstName} {match.player1.lastName}
+                      {match.player1.firstName} {match.player1.lastName}{" "}
+                      {isPlayerDropped(enrollments, match.player1.id)
+                        ? " DROPPED"
+                        : ""}
                     </td>
                     <td>
-                      {match.player2.firstName} {match.player2.lastName}
+                      {match.player2.firstName} {match.player2.lastName}{" "}
+                      {isPlayerDropped(enrollments, match.player2.id)
+                        ? " DROPPED"
+                        : ""}
                     </td>
                     <td>
                       {match.player1GamesWon} – {match.player2GamesWon}

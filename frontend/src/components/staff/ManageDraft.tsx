@@ -16,15 +16,18 @@ import CardCountupTimer from "../general/CardCountupTimer";
 import { Link } from "react-router-dom";
 import dayjs, { Dayjs } from "dayjs";
 import { toast } from "react-toastify";
+import { Enrollment } from "../../types/User";
 
 type Props = {
   currentDraft: Draft;
+  enrollments: Enrollment[];
   setCurrentDraft: (draft?: Draft) => void;
   setCurrentRound: (round: Round) => void;
 };
 
 const ManageDraft = ({
   currentDraft,
+  enrollments,
   setCurrentDraft,
   setCurrentRound,
 }: Props) => {
@@ -319,6 +322,7 @@ const ManageDraft = ({
                   </Row>
                   <DraftTable
                     seats={allSeats}
+                    enrollments={enrollments}
                     markDoneClicked={markDoneClicked}
                     draftTimerStarted={draftTimerStarted}
                   />

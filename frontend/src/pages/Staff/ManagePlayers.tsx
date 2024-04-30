@@ -39,18 +39,6 @@ const ManagePlayers = () => {
       setDroppedPlayers(allEnrollments.filter((item) => item.dropped));
       setActivePlayers(allEnrollments.filter((item) => !item.dropped));
     }
-    // if (enrolledUsers.length > 0) {
-    //   const players: Player[] = [];
-    //   for (let i = 0; i < enrollments.length; i++) {
-    //     players.push(enrollments[i].player);
-    //   }
-    //   const playersIdOnly = players.map((x) => x.id);
-    //   const notEnrolled = allPlayers.filter(
-    //     (item) => !playersIdOnly.includes(item.id)
-    //   );
-    //   notEnrolled.sort((a, b) => a.lastName.localeCompare(b.lastName));
-    //   setAvailablePlayers(notEnrolled);
-    // }
   }, [allEnrollments]);
 
   // Make sure each option has an unique id and a value
@@ -83,7 +71,6 @@ const ManagePlayers = () => {
   function dropPlayer() {
     if (item) {
       const userId = item.player.id;
-      console.log("dropping: " + item.value + ", id: " + userId);
       post(`/tournament/${tournamentId}/drop/${userId}`, {}).then(
         async (resp) => {
           const tourny = (await resp.json()) as Tournament;
@@ -97,7 +84,7 @@ const ManagePlayers = () => {
             setSelectedUser("No user selected");
             setAllEnrollments(tourny.enrollments);
           } else {
-            console.log("add to staff failed");
+            console.log("drop failed");
           }
         }
       );
@@ -125,7 +112,7 @@ const ManagePlayers = () => {
 
   function handleSelection(item: Item) {
     setItem(item);
-    console.log(item);
+    // console.log(item);
     setSelectedUser("Drop from tournament: " + item.value);
     setValue(undefined); // Custom behavior: Clear input field once a value has been selected
   }
@@ -202,7 +189,7 @@ const ManagePlayers = () => {
           text={modal.text}
           actionText={modal.actionText}
           actionFunction={modal.actionFunction}
-          variant="primary"
+          variant="info"
         />
       </Container>
     );

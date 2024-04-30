@@ -15,6 +15,7 @@ import NextDraft from "../../components/staff/NextDraft";
 import StaffStandingsTable from "../../components/staff/StaffStandingsTable";
 import BackButton from "../../components/general/BackButton";
 import { toast } from "react-toastify";
+import { Enrollment } from "../../types/User";
 
 function StaffView() {
   const { tournamentId } = useParams();
@@ -22,6 +23,7 @@ function StaffView() {
   const [currentRound, setCurrentRound] = useState<Round>();
   const [currentDraft, setCurrentDraft] = useState<Draft>();
   const [tournament, setTournament] = useState<Tournament>();
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [latestRoundNumber, setLatestRoundNumber] = useState<number>(0);
 
   useEffect(() => {
@@ -77,6 +79,28 @@ function StaffView() {
     }
   }, [user]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await get(`/tournament/${tournamentId}/enrollment`);
+      const tourny = (await response.json()) as Tournament;
+      setEnrollments(tourny.enrollments);
+    };
+
+    const doFetch = () => {
+      if (user) {
+        fetchData();
+      }
+    };
+
+    doFetch();
+    const roundInterval = setInterval(doFetch, 10000);
+
+    // return destructor function from useEffect to clear the interval pinging
+    return () => {
+      clearInterval(roundInterval);
+    };
+  }, [tournamentId, user]);
+
   const startTournament = async () => {
     const resp = await put(`/tournament/${tournamentId}/start`);
     const updatedTournament = (await resp.json()) as Tournament;
@@ -117,12 +141,14 @@ function StaffView() {
             <ManageRound
               currentRound={currentRound}
               currentDraft={currentDraft}
+              enrollments={enrollments}
               setCurrentRound={setCurrentRound}
             />
           )}
           {!currentRound && currentDraft && (
             <ManageDraft
               currentDraft={currentDraft}
+              enrollments={enrollments}
               setCurrentDraft={setCurrentDraft}
               setCurrentRound={setCurrentRound}
             />

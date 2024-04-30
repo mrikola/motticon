@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Draft, Match, Round } from "../../types/Tournament";
 import dayjs, { Dayjs } from "dayjs";
 import ResultsInputModal, { ModalProps } from "../general/ResultsInputModal";
-import { Player } from "../../types/User";
+import { Enrollment, Player } from "../../types/User";
 import { get, getURL, post, put } from "../../services/ApiService";
 import { UserInfoContext } from "../provider/UserInfoProvider";
 import { Button, Col, Container, Row } from "react-bootstrap";
@@ -20,17 +20,20 @@ import { Link } from "react-router-dom";
 type Props = {
   currentRound: Round;
   currentDraft: Draft;
+  enrollments: Enrollment[];
   setCurrentRound: (round?: Round) => void;
 };
 
 const ManageRound = ({
   currentRound,
   currentDraft,
+  enrollments,
   setCurrentRound,
 }: Props) => {
   const user = useContext(UserInfoContext);
   const { tournamentId } = useParams();
   const [timeRemaining, setTimeRemaining] = useState<number>(3000);
+  // const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [matches, setMatches] = useState<Match[]>();
   const [totalMatches, setTotalMatches] = useState<number>(0);
   const [roundStart, setRoundStart] = useState<Dayjs>();
@@ -260,6 +263,7 @@ const ManageRound = ({
         <hr></hr>
         <MatchTable
           matches={matches}
+          enrollments={enrollments}
           submitResultClicked={submitResultClicked}
           editResultClicked={editResultClicked}
           roundTimerStarted={roundTimerStarted}

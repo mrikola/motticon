@@ -19,15 +19,17 @@ import {
 import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
 } from "../general/VerticallyCenteredModal";
-import { Player } from "../../types/User";
+import { Enrollment, Player } from "../../types/User";
 import HorizontalCard from "../general/HorizontalCard";
 import HelmetTitle from "../general/HelmetTitle";
 import { toast } from "react-toastify";
 import DraftPoolButton from "../general/DraftPoolButton";
+import { isPlayerDropped } from "../../utils/user";
 
 type Props = {
   tournament: Tournament;
   draft: Draft;
+  enrollments: Enrollment[];
   round: Round;
   match: Match;
   setCurrentMatch: (match: Match) => void;
@@ -36,6 +38,7 @@ type Props = {
 function RoundOngoing({
   tournament,
   draft,
+  enrollments,
   round,
   match,
   setCurrentMatch,
@@ -63,6 +66,7 @@ function RoundOngoing({
     useState<PlayerTournamentScore>();
   const [currentRoundPoints, setCurrentRoundPoints] = useState<number>(0);
   const [draftPodSeat, setDraftPodSeat] = useState<DraftPodSeat>();
+  const [opponentDropped, setOpponentDropped] = useState<boolean>(false);
 
   useEffect(() => {
     // check player id's from match and set correct player & opponent objects
@@ -71,6 +75,9 @@ function RoundOngoing({
         if (opponent?.id !== match.player2.id) {
           setPlayerRadioValue("0");
           setOpponentRadioValue("0");
+        }
+        if (isPlayerDropped(enrollments, match.player2.id)) {
+          setOpponentDropped(true);
         }
         setPlayer(match.player1);
         setOpponent(match.player2);
@@ -82,6 +89,9 @@ function RoundOngoing({
         if (opponent?.id !== match.player1.id) {
           setPlayerRadioValue("0");
           setOpponentRadioValue("0");
+        }
+        if (isPlayerDropped(enrollments, match.player2.id)) {
+          setOpponentDropped(true);
         }
         setPlayer(match.player2);
         setOpponent(match.player1);
@@ -311,7 +321,8 @@ function RoundOngoing({
           </Col>
           <Col xs={12} className="text-center">
             <h2>
-              {opponent.firstName} {opponent.lastName}
+              {opponent.firstName} {opponent.lastName}{" "}
+              {opponentDropped ? "(DROPPED)" : ""}
               {/* {opponent.id === onThePlay && <> (plays first)</>} */}
             </h2>
           </Col>

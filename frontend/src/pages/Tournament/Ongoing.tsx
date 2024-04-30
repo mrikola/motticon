@@ -11,6 +11,7 @@ import StandingsTable from "../../components/tournament/StandingsTable";
 import BackButton from "../../components/general/BackButton";
 import BetweenRounds from "../../components/tournament/BetweenRounds";
 import LoadingOngoing from "../../components/general/LoadingOngoing";
+import { Enrollment } from "../../types/User";
 
 const Ongoing = () => {
   const { tournamentId } = useParams();
@@ -20,6 +21,7 @@ const Ongoing = () => {
   const [currentDraft, setCurrentDraft] = useState<Draft>();
   const [currentMatch, setCurrentMatch] = useState<Match>();
   const [latestRound, setLatestRound] = useState<Round>();
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,9 +72,32 @@ const Ongoing = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      // NOTE: change back to just :tournamentId
       const response = await get(`/tournament/${tournamentId}`);
       const tourny = (await response.json()) as Tournament;
       setTournament(tourny);
+    };
+
+    const doFetch = () => {
+      if (user) {
+        fetchData();
+      }
+    };
+
+    doFetch();
+    const roundInterval = setInterval(doFetch, 10000);
+
+    // return destructor function from useEffect to clear the interval pinging
+    return () => {
+      clearInterval(roundInterval);
+    };
+  }, [tournamentId, user]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await get(`/tournament/${tournamentId}/enrollment`);
+      const tourny = (await response.json()) as Tournament;
+      setEnrollments(tourny.enrollments);
     };
 
     const doFetch = () => {
@@ -145,7 +170,7 @@ const Ongoing = () => {
     };
   }, [currentRound, tournament, tournamentId]);
 
-  if (user && tournament) {
+  if (user && tournament && enrollments) {
     return (
       <Container className="mt-3 my-md-4">
         <BackButton
@@ -162,6 +187,7 @@ const Ongoing = () => {
             {currentRound && currentMatch && currentDraft && (
               <RoundOngoing
                 tournament={tournament}
+                enrollments={enrollments}
                 draft={currentDraft}
                 round={currentRound}
                 match={currentMatch}
