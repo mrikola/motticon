@@ -8,16 +8,15 @@ import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import DatalistInput, { Item } from "react-datalist-input";
 import { Enrollment } from "../../types/User";
-import { useIsAdmin } from "../../utils/auth";
+import { useIsTournamentStaff } from "../../utils/auth";
 import { PersonFillX } from "react-bootstrap-icons";
 import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
 } from "../../components/general/VerticallyCenteredModal";
 
 const ManagePlayers = () => {
-  const user = useIsAdmin();
   const { tournamentId } = useParams();
-
+  const user = useIsTournamentStaff(Number(tournamentId));
   const [item, setItem] = useState<Item>(); // The selected item will be stored in this state.
   const [value, setValue] = useState<string>();
   const [selectedUser, setSelectedUser] = useState("No player selected");
