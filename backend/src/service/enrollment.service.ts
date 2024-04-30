@@ -86,10 +86,10 @@ export class EnrollmentService {
   async dropFromTournament(
     tournamentId: number,
     userId: number
-  ): Promise<boolean> {
+  ): Promise<Tournament> {
     // placeholder returning just boolean
     try {
-      this.appDataSource
+      await this.appDataSource
         .createQueryBuilder()
         .update(Enrollment)
         .set({
@@ -98,10 +98,13 @@ export class EnrollmentService {
         .where("tournamentId = :tournamentId", { tournamentId })
         .andWhere("playerId = :userId", { userId })
         .execute();
-      return true;
     } catch (err: unknown) {
-      return false;
+      return null;
     }
+    const tournament = await this.tournamentService.getTournamentEnrollments(
+      tournamentId
+    );
+    return tournament;
   }
 
   async getUserTournamentInfo(

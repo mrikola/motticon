@@ -28,6 +28,7 @@ import DraftPods from "./pages/Tournament/DraftPods";
 import ManageUsers from "./components/admin/ManageUsers";
 import ManageStaff from "./pages/Staff/ManageStaff";
 import AllPoolsView from "./pages/Staff/AllPoolsView";
+import ManagePlayers from "./pages/Staff/ManagePlayers";
 
 function App() {
   const routes: RouteObject[] = [
@@ -113,6 +114,10 @@ function App() {
             {
               path: "tournament/:tournamentId/manage-staff",
               Component: ManageStaff,
+            },
+            {
+              path: "tournament/:tournamentId/players",
+              Component: ManagePlayers,
             },
             {
               path: "tournament/:tournamentId/pools/:draftId",

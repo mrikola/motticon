@@ -218,11 +218,13 @@ export const staffCancelEnrollment = async (req): Promise<TournamentDto> => {
   );
 };
 
-export const dropFromTournament = async (req): Promise<boolean> => {
+export const dropFromTournament = async (req): Promise<TournamentDto> => {
   const { tournamentId, userId } = req.params;
-  return await enrollmentService.dropFromTournament(
-    tournamentId as number,
-    userId as number
+  return tournamentToDto(
+    await enrollmentService.dropFromTournament(
+      tournamentId as number,
+      userId as number
+    )
   );
 };
 
