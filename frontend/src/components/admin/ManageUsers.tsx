@@ -26,6 +26,7 @@ function ManageUsers() {
     text: "",
     actionText: "",
     actionFunction: () => {},
+    variant: "info",
   });
 
   // Make sure each option has an unique id and a value
@@ -83,9 +84,10 @@ function ManageUsers() {
       show: true,
       onHide: () => null,
       heading: "Confirm user delete",
-      text: "Are you sure you want to delete user: " + item.value + "?  ",
+      text: "Are you sure you want to delete user: " + item.value + "?",
       actionText: "Confirm delete",
       actionFunction: deleteUser,
+      variant: "info",
     });
   }
 

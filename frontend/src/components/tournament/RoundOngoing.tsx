@@ -54,6 +54,7 @@ function RoundOngoing({
     text: "",
     actionText: "",
     actionFunction: () => {},
+    variant: "primary",
   });
   const [player, setPlayer] = useState<Player>();
   const [opponent, setOpponent] = useState<Player>();
@@ -143,6 +144,7 @@ function RoundOngoing({
       text3: "Is this correct?",
       actionText: "Confirm result",
       actionFunction: submitResult,
+      variant: "primary",
     });
   }
 

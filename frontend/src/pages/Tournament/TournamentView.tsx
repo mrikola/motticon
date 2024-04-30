@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { get } from "../../services/ApiService";
-import { Draft, Round, Tournament } from "../../types/Tournament";
+import { Round, Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row } from "react-bootstrap";
@@ -25,13 +25,11 @@ const TournamentView = () => {
   const user = useContext(UserInfoContext);
   const [activeTournament, setActiveTournament] = useState<Tournament>();
   const [cubes, setCubes] = useState<Cube[]>([]);
-  // const [tournamentStatus, setTournamentStatus] = useState<string>();
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const [newestRoundNumber, setNewestRoundNumber] = useState<number>(0);
   const [freeSeats, setFreeSeats] = useState<number>(0);
   const [date, setDate] = useState<string>();
-  const [_drafts, setDrafts] = useState<Draft[]>([]);
-  const [pods, setPods] = useState<number>(0);
+  const [numberOfPods, setNumberOfPods] = useState<number>(0);
 
   const isStaff =
     user?.isAdmin || user?.tournamentsStaffed.includes(Number(tournamentId));
@@ -88,19 +86,18 @@ const TournamentView = () => {
     fetchData();
   }, [tournamentId]);
 
-  // get drafts for this tournament
+  // get number of pods for this tournament
   useEffect(() => {
     const fetchData = async () => {
       const resp = await get(`/tournament/${tournamentId}/drafts`);
       const tournament = (await resp.json()) as Tournament;
-      setDrafts(tournament.drafts);
       let p: number = 0;
       for (const draft of tournament.drafts) {
         if (draft.pods.length > 0) {
           p++;
         }
       }
-      setPods(p);
+      setNumberOfPods(p);
     };
     fetchData();
   }, [tournamentId]);
@@ -169,7 +166,7 @@ const TournamentView = () => {
         activeTournament.preferencesRequired > 0 && (
           <ManagePreferences tournamentId={activeTournament.id} />
         )}
-      {isEnrolled && pods > 0 && (
+      {isEnrolled && numberOfPods > 0 && (
         <GoToPods tournamentId={activeTournament.id} />
       )}
 

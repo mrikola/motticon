@@ -118,7 +118,7 @@ function PoolView() {
     <Container className="mt-3 my-md-4">
       <Row>
         <BackButton
-          buttonText="Back to tournament"
+          buttonText="Back to staff view"
           path={`/tournament/${tournamentId}/staff`}
         />
         <h1 className="display-1">{tournament.name} draft pools</h1>

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Match, Round } from "../../types/Tournament";
+import { Draft, Match, Round } from "../../types/Tournament";
 import dayjs, { Dayjs } from "dayjs";
 import ResultsInputModal, { ModalProps } from "../general/ResultsInputModal";
 import { Player } from "../../types/User";
@@ -15,13 +15,19 @@ import VerticallyCenteredModal, {
 } from "../general/VerticallyCenteredModal";
 import HorizontalCard from "../general/HorizontalCard";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 type Props = {
   currentRound: Round;
+  currentDraft: Draft;
   setCurrentRound: (round?: Round) => void;
 };
 
-const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
+const ManageRound = ({
+  currentRound,
+  currentDraft,
+  setCurrentRound,
+}: Props) => {
   const user = useContext(UserInfoContext);
   const { tournamentId } = useParams();
   const [timeRemaining, setTimeRemaining] = useState<number>(3000);
@@ -53,6 +59,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
       text: "",
       actionText: "",
       actionFunction: () => {},
+      variant: "info",
     });
 
   useEffect(() => {
@@ -202,6 +209,7 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
       text: "Are you sure you want to end this round?",
       actionText: "Confirm round end",
       actionFunction: endRound,
+      variant: "info",
     });
   }
 
@@ -249,12 +257,25 @@ const ManageRound = ({ currentRound, setCurrentRound }: Props) => {
             )}
           </Col>
         </Row>
+        <hr></hr>
         <MatchTable
           matches={matches}
           submitResultClicked={submitResultClicked}
           editResultClicked={editResultClicked}
           roundTimerStarted={roundTimerStarted}
         />
+        <hr></hr>
+        <Row>
+          <h2>Manage draft pools</h2>
+          <Col xs={10} sm={8} className="d-grid gap-2 mx-auto my-3">
+            <Link
+              className="btn btn-info btn-lg text-light"
+              to={`/tournament/${tournamentId}/pools/${currentDraft.id}`}
+            >
+              Manage draft pools
+            </Link>
+          </Col>
+        </Row>
         <VerticallyCenteredModal
           show={endRoundModal.show}
           onHide={() =>

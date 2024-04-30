@@ -40,6 +40,7 @@ function Enroll({
     text: "",
     actionText: "",
     actionFunction: () => {},
+    variant: "primary",
   });
   const [enrollButtonText, setEnrollButtonText] = useState<string>();
   // consider creating an Icon component and passing it the icon name as a prop
@@ -118,6 +119,7 @@ function Enroll({
       text: "Are you sure you want to enroll to this tournament?",
       actionText: "Confirm enrollment",
       actionFunction: doEnroll,
+      variant: "primary",
     });
   }
 
@@ -129,6 +131,7 @@ function Enroll({
       text: "Are you sure you want to cancel your enrollment to this tournament?",
       actionText: "Confirm cancellation",
       actionFunction: doCancel,
+      variant: "primary",
     });
   }
 

@@ -113,9 +113,10 @@ function StaffView() {
       </Row>
       {tournament.status === "started" && (
         <>
-          {currentRound && (
+          {currentRound && currentDraft && (
             <ManageRound
               currentRound={currentRound}
+              currentDraft={currentDraft}
               setCurrentRound={setCurrentRound}
             />
           )}
