@@ -46,6 +46,7 @@ export const generatePairings = async (
 
   tournamentService.initiateRound(tournamentId, roundId);
   const { pods } = draft;
+  const numberOfPods = pods.length;
 
   const roundInDraft = currentRound.roundNumber - draft.firstRound + 1;
   const matchRepo = AppDataSource.getRepository(Match);
@@ -69,28 +70,28 @@ export const generatePairings = async (
                 round: currentRound,
                 player1: seats.find((seat) => seat.seat === 1).player,
                 player2: seats.find((seat) => seat.seat === 5).player,
-                tableNumber: (pod.podNumber - 1) * 4 + 1,
+                tableNumber: pod.podNumber + numberOfPods * 0,
                 matchType: "1v5",
               }),
               matchRepo.create({
                 round: currentRound,
                 player1: seats.find((seat) => seat.seat === 3).player,
                 player2: seats.find((seat) => seat.seat === 7).player,
-                tableNumber: (pod.podNumber - 1) * 4 + 2,
+                tableNumber: pod.podNumber + numberOfPods * 1,
                 matchType: "3v7",
               }),
               matchRepo.create({
                 round: currentRound,
                 player1: seats.find((seat) => seat.seat === 2).player,
                 player2: seats.find((seat) => seat.seat === 6).player,
-                tableNumber: (pod.podNumber - 1) * 4 + 3,
+                tableNumber: pod.podNumber + numberOfPods * 2,
                 matchType: "2v6",
               }),
               matchRepo.create({
                 round: currentRound,
                 player1: seats.find((seat) => seat.seat === 4).player,
                 player2: seats.find((seat) => seat.seat === 8).player,
-                tableNumber: (pod.podNumber - 1) * 4 + 4,
+                tableNumber: pod.podNumber + numberOfPods * 3,
                 matchType: "4v8",
               }),
             ]);
@@ -108,7 +109,7 @@ export const generatePairings = async (
                     (match) => match.matchType === "3v7"
                   )
                 ),
-                tableNumber: (pod.podNumber - 1) * 4 + 1,
+                tableNumber: pod.podNumber + numberOfPods * 0,
                 matchType: "oddsWinners",
               }),
               matchRepo.create({
@@ -123,7 +124,7 @@ export const generatePairings = async (
                     (match) => match.matchType === "4v8"
                   )
                 ),
-                tableNumber: (pod.podNumber - 1) * 4 + 2,
+                tableNumber: pod.podNumber + numberOfPods * 1,
                 matchType: "evensWinners",
               }),
               matchRepo.create({
@@ -138,7 +139,7 @@ export const generatePairings = async (
                     (match) => match.matchType === "3v7"
                   )
                 ),
-                tableNumber: (pod.podNumber - 1) * 4 + 3,
+                tableNumber: pod.podNumber + numberOfPods * 2,
                 matchType: "oddsLosers",
               }),
               matchRepo.create({
@@ -153,7 +154,7 @@ export const generatePairings = async (
                     (match) => match.matchType === "4v8"
                   )
                 ),
-                tableNumber: (pod.podNumber - 1) * 4 + 4,
+                tableNumber: pod.podNumber + numberOfPods * 3,
                 matchType: "evensLosers",
               }),
             ]);
@@ -171,23 +172,8 @@ export const generatePairings = async (
                     (match) => match.matchType === "evensWinners"
                   )
                 ),
-                tableNumber: (pod.podNumber - 1) * 4 + 1,
+                tableNumber: pod.podNumber + numberOfPods * 0,
                 matchType: "final",
-              }),
-              matchRepo.create({
-                round: currentRound,
-                player1: loserFrom(
-                  previousRoundMatches.find(
-                    (match) => match.matchType === "oddsLosers"
-                  )
-                ),
-                player2: loserFrom(
-                  previousRoundMatches.find(
-                    (match) => match.matchType === "evensLosers"
-                  )
-                ),
-                tableNumber: (pod.podNumber - 1) * 4 + 2,
-                matchType: "jumbofinal",
               }),
               matchRepo.create({
                 round: currentRound,
@@ -201,7 +187,7 @@ export const generatePairings = async (
                     (match) => match.matchType === "evensWinners"
                   )
                 ),
-                tableNumber: (pod.podNumber - 1) * 4 + 3,
+                tableNumber: pod.podNumber + numberOfPods * 1,
                 matchType: "mid1",
               }),
               matchRepo.create({
@@ -216,8 +202,23 @@ export const generatePairings = async (
                     (match) => match.matchType === "oddsWinners"
                   )
                 ),
-                tableNumber: (pod.podNumber - 1) * 4 + 4,
+                tableNumber: pod.podNumber + numberOfPods * 2,
                 matchType: "mid2",
+              }),
+              matchRepo.create({
+                round: currentRound,
+                player1: loserFrom(
+                  previousRoundMatches.find(
+                    (match) => match.matchType === "oddsLosers"
+                  )
+                ),
+                player2: loserFrom(
+                  previousRoundMatches.find(
+                    (match) => match.matchType === "evensLosers"
+                  )
+                ),
+                tableNumber: pod.podNumber + numberOfPods * 3,
+                matchType: "jumbofinal",
               }),
             ]);
         }
