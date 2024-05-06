@@ -4,14 +4,20 @@ import { AppDataSource } from "../data-source";
 import { ScoreHistory } from "../entity/ScoreHistory";
 import { OMWView } from "../entity/OMWView";
 import { RecordByPlayer, StandingsRow } from "../dto/score.dto";
+import { UserService } from "./user.service";
+import { EnrollmentService } from "./enrollment.service";
 
 export class ScoreService {
   private appDataSource: DataSource;
   private repository: Repository<PlayerTournamentScore>;
+  private userService: UserService;
+  private enrollmentService: EnrollmentService;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(PlayerTournamentScore);
+    this.userService = new UserService();
+    this.enrollmentService = new EnrollmentService();
   }
 
   async getPreviousScore(
@@ -35,6 +41,7 @@ export class ScoreService {
       .createQueryBuilder("omw")
       .where("omw.tournamentId = :tournamentId", { tournamentId })
       .andWhere("omw.roundNumber <= :roundNumber", { roundNumber })
+      .orderBy("omw.roundNumber")
       .getMany();
 
     const tournamentScores = await this.appDataSource
@@ -46,8 +53,17 @@ export class ScoreService {
       .getMany();
 
     const records: RecordByPlayer = new Map();
-    matches.forEach((row) => {
+    for (let row of matches) {
       const previousRecord = records.get(row.playerId);
+      const opponentIsBye =
+        (await this.userService.getUser(row.opponentId)).isDummy ||
+        (
+          await this.enrollmentService.getEnrollment(
+            row.opponentId,
+            tournamentId
+          )
+        ).dropped;
+
       records.set(row.playerId, {
         ...previousRecord,
         id: row.playerId,
@@ -55,7 +71,9 @@ export class ScoreService {
         gamesPlayed: (previousRecord?.gamesPlayed ?? 0) + row.gamesPlayed,
         matchPoints: (previousRecord?.matchPoints ?? 0) + row.playerPoints,
         matchesPlayed: (previousRecord?.matchesPlayed ?? 0) + 1,
-        opponentIds: (previousRecord?.opponentIds ?? []).concat(row.opponentId),
+        opponentIds: (previousRecord?.opponentIds ?? []).concat(
+          opponentIsBye ? [] : row.opponentId
+        ),
       });
 
       const currentRecord = records.get(row.playerId);
@@ -63,10 +81,11 @@ export class ScoreService {
         ...currentRecord,
         matchPointPercentage: Math.max(
           1 / 3,
-          currentRecord.matchPoints / (currentRecord.matchesPlayed * 3)
+          currentRecord.matchPoints /
+            (Math.max(currentRecord.matchesPlayed, 1) * 3)
         ),
       });
-    });
+    }
 
     const standings: StandingsRow[] = [];
 
@@ -78,7 +97,8 @@ export class ScoreService {
       const omw =
         player.opponentIds
           .map((id) => records.get(id).matchPointPercentage)
-          .reduce((acc, curr) => acc + curr, 0) / player.opponentIds.length;
+          .reduce((acc, curr) => acc + curr, 0) /
+        Math.max(player.opponentIds.length, 1);
 
       standings.push({
         playerId: scoreRow.player.id,

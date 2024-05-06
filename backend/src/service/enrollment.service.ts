@@ -144,4 +144,17 @@ export class EnrollmentService {
       preferences: preferences.map(preferenceToDto),
     };
   }
+
+  async getEnrollment(userId: number, tournamentId: number) {
+    return await this.repository
+      .createQueryBuilder("enrollment")
+      .where(
+        "enrollment.userId = :userId and enrollment.tournamentId = :tournamentId",
+        {
+          userId,
+          tournamentId,
+        }
+      )
+      .getOne();
+  }
 }
