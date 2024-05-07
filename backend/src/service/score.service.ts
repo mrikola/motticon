@@ -55,14 +55,10 @@ export class ScoreService {
     const records: RecordByPlayer = new Map();
     for (let row of matches) {
       const previousRecord = records.get(row.playerId);
-      const opponentIsBye =
-        (await this.userService.getUser(row.opponentId)).isDummy ||
-        (
-          await this.enrollmentService.getEnrollment(
-            row.opponentId,
-            tournamentId
-          )
-        ).dropped;
+      const opponentIsBye = (await this.userService.getUser(row.opponentId))
+        .isDummy;
+      // TODO when dropping is linked to round number, check against that
+      // || (await this.enrollmentService.getEnrollment(row.opponentId,tournamentId)).dropped
 
       records.set(row.playerId, {
         ...previousRecord,
