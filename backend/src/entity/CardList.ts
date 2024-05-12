@@ -4,7 +4,6 @@ import {
   Unique,
   ManyToOne,
   Column,
-  JoinColumn,
   ManyToMany,
 } from "typeorm";
 import { Cube } from "./Cube";
@@ -22,6 +21,6 @@ export class CardList {
   @ManyToOne(() => Cube)
   cube: Cube;
 
-  @ManyToMany(() => ListedCard, (listedcard) => listedcard.cardlists)
+  @ManyToMany(() => ListedCard, (listedcard) => listedcard.cardlist)
   card: ListedCard[];
 }
