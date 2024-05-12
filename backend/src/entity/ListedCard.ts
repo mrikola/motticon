@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { CardList } from "./CardList";
 import { Card } from "./Card";
 
@@ -7,7 +13,7 @@ export class ListedCard {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @ManyToOne(() => Card)
   card: Card;
 
   @ManyToOne(() => CardList)
