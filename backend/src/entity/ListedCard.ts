@@ -10,8 +10,8 @@ export class ListedCard {
   @Column()
   card: Card;
 
-  @OneToMany(() => CardList, (cardlist) => cardlist.card)
-  cardlists: CardList[];
+  @ManyToOne(() => CardList)
+  cardlist: CardList;
 
   @Column("smallint")
   quantityInCube: number;
