@@ -1,16 +1,12 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Unique,
-} from "typeorm";
-import { CardList } from "./CardList";
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
 @Unique(["scryfallId"])
 export class Card {
   @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
   scryfallId: string;
 
   @Column()
@@ -18,7 +14,4 @@ export class Card {
 
   @Column()
   set: string;
-
-  @OneToMany(() => CardList, (cardlist) => cardlist.card)
-  cardlists: CardList[];
 }

@@ -5,9 +5,10 @@ import {
   ManyToOne,
   Column,
   JoinColumn,
+  ManyToMany,
 } from "typeorm";
 import { Cube } from "./Cube";
-import { Card } from "./Card";
+import { ListedCard } from "./ListedCard";
 
 @Entity()
 @Unique(["cube"])
@@ -15,18 +16,12 @@ export class CardList {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @JoinColumn()
+  @Column()
   cubeId: number;
 
   @ManyToOne(() => Cube)
   cube: Cube;
 
-  @ManyToOne(() => Card, (card) => card.cardlists)
-  card: Card;
-
-  @Column("smallint")
-  quantityInCube: number;
-
-  @Column("smallint")
-  quantityInUse: number;
+  @ManyToMany(() => ListedCard, (listedcard) => listedcard.cardlists)
+  card: ListedCard[];
 }

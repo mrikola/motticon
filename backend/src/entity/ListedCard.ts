@@ -1,0 +1,21 @@
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { CardList } from "./CardList";
+import { Card } from "./Card";
+
+@Entity()
+export class ListedCard {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  card: Card;
+
+  @OneToMany(() => CardList, (cardlist) => cardlist.card)
+  cardlists: CardList[];
+
+  @Column("smallint")
+  quantityInCube: number;
+
+  @Column("smallint")
+  quantityInUse: number;
+}
