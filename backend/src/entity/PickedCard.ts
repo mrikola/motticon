@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -23,6 +24,6 @@ export class PickedCard {
   @Column("smallint")
   quantityPicked: number;
 
-  @OneToOne(() => DraftPodSeat)
+  @ManyToMany(() => DraftPodSeat)
   picker: DraftPodSeat;
 }
