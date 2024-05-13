@@ -2,7 +2,9 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { CardList } from "./CardList";
@@ -20,8 +22,8 @@ export class ListedCard {
   @ManyToOne(() => CardList)
   cardlist: CardList;
 
-  @ManyToOne(() => CardList)
-  picked: PickedCard[];
+  @OneToMany(() => PickedCard, (pickedCard) => pickedCard.listedCard)
+  pickedCards: PickedCard[];
 
   @Column("smallint")
   quantityInCube: number;
