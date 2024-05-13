@@ -2,10 +2,11 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   ManyToMany,
+  ManyToOne,
 } from "typeorm";
 import { Tournament } from "./Tournament";
+import { CardList } from "./CardList";
 
 @Entity()
 export class Cube {
@@ -26,6 +27,9 @@ export class Cube {
 
   @Column({ nullable: true })
   imageUrl: string;
+
+  @ManyToOne(() => CardList, { nullable: true })
+  cardlist: CardList;
 
   @ManyToMany(() => Tournament, (tournament) => tournament.cubes)
   tournaments: Tournament[];

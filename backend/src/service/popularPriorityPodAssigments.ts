@@ -390,6 +390,7 @@ const cubeConsIntoPreferentialPodAssignments = (
           url: "boz",
           imageUrl: "fuu",
           tournaments: [],
+          cardlist: null,
         },
         players: pod.players.map(
           (player) => enrollments.find((x) => x.player.id === player).player
