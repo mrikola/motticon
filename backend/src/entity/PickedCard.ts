@@ -1,16 +1,16 @@
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { CardList } from "./CardList";
 import { Card } from "./Card";
-import { PickedCard } from "./PickedCard";
+import { DraftPodSeat } from "./DraftPodSeat";
 
 @Entity()
-export class ListedCard {
+export class PickedCard {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,9 +20,9 @@ export class ListedCard {
   @ManyToOne(() => CardList)
   cardlist: CardList;
 
-  @ManyToOne(() => CardList)
-  picked: PickedCard[];
-
   @Column("smallint")
-  quantityInCube: number;
+  quantityPicked: number;
+
+  @OneToOne(() => DraftPodSeat)
+  picker: DraftPodSeat;
 }

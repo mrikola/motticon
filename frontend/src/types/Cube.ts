@@ -5,6 +5,7 @@ export type Cube = {
   url: string;
   owner: string;
   imageUrl: string;
+  cardlist: CardList;
 };
 
 export type CubeSelection = {
@@ -18,4 +19,17 @@ export type Card = {
   name: string;
   set: string;
   scryfallId: string;
+};
+
+export type ListedCard = {
+  card: Card;
+  cardlist: CardList;
+  quantityInCube: number;
+  quantityInUse: number;
+};
+
+export type CardList = {
+  cubeId: number;
+  cube: Cube;
+  card: ListedCard[];
 };
