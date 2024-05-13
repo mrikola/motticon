@@ -24,6 +24,6 @@ export class PickedCard {
   @Column("smallint")
   quantityPicked: number;
 
-  @ManyToMany(() => DraftPodSeat)
+  @ManyToOne(() => DraftPodSeat)
   picker: DraftPodSeat;
 }
