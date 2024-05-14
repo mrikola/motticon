@@ -5,19 +5,16 @@ import { ScoreHistory } from "../entity/ScoreHistory";
 import { OMWView } from "../entity/OMWView";
 import { RecordByPlayer, StandingsRow } from "../dto/score.dto";
 import { UserService } from "./user.service";
-import { EnrollmentService } from "./enrollment.service";
 
 export class ScoreService {
   private appDataSource: DataSource;
   private repository: Repository<PlayerTournamentScore>;
   private userService: UserService;
-  private enrollmentService: EnrollmentService;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(PlayerTournamentScore);
     this.userService = new UserService();
-    this.enrollmentService = new EnrollmentService();
   }
 
   async getPreviousScore(
