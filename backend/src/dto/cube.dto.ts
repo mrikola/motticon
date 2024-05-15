@@ -1,3 +1,4 @@
+import { CardList } from "../entity/CardList";
 import { Cube } from "../entity/Cube";
 
 export type CubeDto = {
@@ -7,6 +8,7 @@ export type CubeDto = {
   owner: string;
   url: string;
   imageUrl: string;
+  cardlist: CardList;
 };
 
 export const cubeToDto = (cube: Cube): CubeDto =>
@@ -18,5 +20,6 @@ export const cubeToDto = (cube: Cube): CubeDto =>
         owner: cube.owner,
         url: cube.url,
         imageUrl: cube.imageUrl,
+        cardlist: cube.cardlist,
       }
     : undefined;

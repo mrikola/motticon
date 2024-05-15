@@ -49,7 +49,7 @@ import {
   uploadDeckPhoto,
 } from "../controller/draft.controller";
 import { getPreviousScore, getStandings } from "../controller/score.controller";
-import { searchForCard } from "../controller/card.controller";
+import { getCard, searchForCard } from "../controller/card.controller";
 
 export const userRouter = express.Router();
 
@@ -364,6 +364,14 @@ userRouter.post(
 userRouter.get("/card/search/:query", async (req, res, next) => {
   try {
     res.send(await searchForCard(req));
+  } catch (err) {
+    next(err);
+  }
+});
+
+userRouter.get("/card/id/:scryfallId", async (req, res, next) => {
+  try {
+    res.send(await getCard(req));
   } catch (err) {
     next(err);
   }

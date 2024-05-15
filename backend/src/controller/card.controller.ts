@@ -12,6 +12,11 @@ export const getCardDb = async (req): Promise<Card[]> => {
   return await cardService.getCardDb();
 };
 
+export const getCard = async (req): Promise<Card> => {
+  const { scryfallId } = req.params;
+  return await cardService.getCard(scryfallId);
+};
+
 export const searchForCard = async (req): Promise<Card[]> => {
   const { query } = req.params;
   return await cardService.searchForCard(query);

@@ -4,14 +4,17 @@ import { Cube } from "../entity/Cube";
 import { CardList } from "../entity/CardList";
 import { ListedCard } from "../entity/ListedCard";
 import { CubeCardDto } from "../dto/card.dto";
+import { CardService } from "./card.service";
 
 export class CubeService {
   private appDataSource: DataSource;
   private repository: Repository<Cube>;
+  private cardService: CardService;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.repository = this.appDataSource.getRepository(Cube);
+    this.cardService = new CardService();
   }
 
   async getAllCubes(): Promise<Cube[]> {
@@ -19,9 +22,20 @@ export class CubeService {
   }
 
   async getCube(id: number): Promise<Cube> {
-    return await this.repository.findOne({
-      where: { id },
-    });
+    // const cid = 8;
+    // const cardlist: CardList = await this.appDataSource
+    //   .getRepository(CardList)
+    //   .createQueryBuilder("cardlist")
+    //   .leftJoinAndSelect("cardlist.card", "card")
+    //   .where("cardlist.id = :cid", { cid })
+    //   .getOne();
+    // console.log(cardlist);
+    return await this.repository
+      .createQueryBuilder("cube")
+      .leftJoinAndSelect("cube.cardlist", "cardlist")
+      .leftJoinAndSelect("cardlist.card", "card")
+      .where("cube.id = :id", { id })
+      .getOne();
   }
 
   async getCubesForTournament(tournamentId: number): Promise<Cube[]> {
@@ -49,15 +63,6 @@ export class CubeService {
         owner,
         imageUrl,
       });
-      console.log(cube);
-      // const cube: Cube = this.repository.create({
-      //   title,
-      //   description,
-      //   url,
-      //   owner,
-      //   imageUrl,
-      // });
-
       // transform list of cards to ListedCard-objects
       const listedCards: ListedCard[] = await this.cardsToListedCards(cards);
       // create CardList object from ListedCard[]
@@ -66,13 +71,17 @@ export class CubeService {
         cube,
         listedCards
       );
+      console.log("we have cards: " + cardlist.card.length);
+      // update the created cube with the cardlist
       await this.repository
-        .createQueryBuilder("cube")
-        .update()
+        .createQueryBuilder()
+        .update(Cube)
         .set({ cardlist: cardlist })
         .where({ id: cube.id })
         .execute();
-      return this.getCube(cube.id);
+      const c: Cube = await this.getCube(cube.id);
+      console.log("c has card: " + c.cardlist.card.length);
+      return await this.getCube(cube.id);
     } catch {
       return null;
     }
@@ -102,11 +111,11 @@ export class CubeService {
   }
 
   async cardsToListedCards(cards: CubeCardDto[]): Promise<ListedCard[]> {
-    console.log("called cardsToListedCards");
     const listedCards: ListedCard[] = [];
     cards.forEach(async (card) => {
+      const cardObj = await this.cardService.getCard(card.scryfallId);
       const listedCard = this.appDataSource.getRepository(ListedCard).create({
-        card: card,
+        card: cardObj,
         quantityInCube: card.quantity,
       });
       listedCards.push(listedCard);
@@ -119,23 +128,13 @@ export class CubeService {
     cube: Cube,
     cards: ListedCard[]
   ): Promise<CardList> {
-    console.log(
-      "called createCardList with: id: " +
-        cubeId +
-        ", cube: " +
-        cube +
-        ", cards: " +
-        cards
-    );
     const cardlist: CardList = await this.appDataSource
       .getRepository(CardList)
       .save({
         cubeId,
         cube,
-        cards,
+        card: cards,
       });
-    console.log("cardlist:");
-    console.log(cardlist);
     return cardlist;
   }
 }

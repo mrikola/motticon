@@ -20,6 +20,7 @@ const ViewCubeGeneral = () => {
     const fetchData = async () => {
       const resp = await get(`/cube/${cubeId}`);
       const cube = (await resp.json()) as Cube;
+      console.log(cube);
       setCube(cube);
     };
 

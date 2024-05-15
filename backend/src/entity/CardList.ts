@@ -5,6 +5,7 @@ import {
   ManyToOne,
   Column,
   ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { Cube } from "./Cube";
 import { ListedCard } from "./ListedCard";
@@ -22,5 +23,6 @@ export class CardList {
   cube: Cube;
 
   @ManyToMany(() => ListedCard, (listedcard) => listedcard.cardlist)
+  @JoinTable({ name: "cardlist_card" })
   card: ListedCard[];
 }

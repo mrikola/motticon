@@ -1,7 +1,7 @@
 import { DataSource, Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import cards from "../cards_no_duplicates.json";
-import { Color, SimpleCard } from "../dto/card.dto";
+import { Color } from "../dto/card.dto";
 import { Card } from "../entity/Card";
 const cardsArray = cards as Card[];
 
@@ -46,6 +46,12 @@ export class CardService {
     } catch {
       return null;
     }
+  }
+
+  async getCard(scryfallId: string): Promise<Card> {
+    return await this.repository.findOne({
+      where: { scryfallId },
+    });
   }
 
   async getCardDb(): Promise<Card[]> {

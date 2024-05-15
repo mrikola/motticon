@@ -29,12 +29,7 @@ export type Card = {
 };
 
 export type CubeCard = {
-  name: string;
-  set: string;
   scryfallId: string;
-  cmc: number;
-  colors: Color[];
-  type: string;
   quantity: number;
 };
 

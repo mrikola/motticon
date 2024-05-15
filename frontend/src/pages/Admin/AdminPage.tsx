@@ -26,6 +26,12 @@ const AdminPage = () => {
     }
   };
 
+  const getTestCard = async () => {
+    const response = await get(`/card/id/a5d1f66f-75b5-4a9b-8b98-f237f065de9c`);
+    const card = (await response.json()) as Card;
+    console.log(card);
+  };
+
   return user ? (
     <Container className="mt-3 my-md-4">
       <HelmetTitle titleText="Admin" />
@@ -65,6 +71,13 @@ const AdminPage = () => {
           <Button className="btn btn-info btn-lg" onClick={getCardDb}>
             <div className="icon-link text-light">
               <PersonFillGear className="fs-3" /> Get card database
+            </div>
+          </Button>
+        </Col>
+        <Col xs={10} sm={8} className="d-grid gap-2 mx-auto mt-3">
+          <Button className="btn btn-info btn-lg" onClick={getTestCard}>
+            <div className="icon-link text-light">
+              <PersonFillGear className="fs-3" /> Get test card
             </div>
           </Button>
         </Col>
