@@ -71,6 +71,7 @@ export class CubeService {
         cube,
         listedCards
       );
+
       await this.appDataSource
         .getRepository(ListedCard)
         .save(listedCards.map((lc) => ({ ...lc, cardlist })));
