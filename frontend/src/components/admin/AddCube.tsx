@@ -15,7 +15,7 @@ import { Item } from "react-datalist-input";
 import HelmetTitle from "../general/HelmetTitle";
 import BackButton from "../general/BackButton";
 import MTGAutocompleteInput from "../general/MTGAutocompleteInput";
-import { Card, Cube, CubeCard } from "../../types/Cube";
+import { Cube, CubeCard } from "../../types/Cube";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
@@ -26,7 +26,7 @@ type AddCubeForm = {
   owner: string;
   imageUrl: string;
   cubecobraId: string;
-  cards: Card[];
+  cards: CubeCard[];
 };
 
 function AddCube() {
@@ -116,18 +116,12 @@ function AddCube() {
           (c) => c.scryfallId === card.details.scryfall_id
         );
         if (match) {
-          // console.log("found duplicate: " + match.name);
           match.quantity++;
           totalcards++;
         } else {
           totalcards++;
           cards.push({
-            name: card.details.name,
-            set: card.details.set,
             scryfallId: card.details.scryfall_id,
-            cmc: card.details.cmc,
-            colors: card.details.colors,
-            type: card.details.type,
             quantity: 1,
           });
         }

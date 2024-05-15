@@ -22,18 +22,11 @@ export class CubeService {
   }
 
   async getCube(id: number): Promise<Cube> {
-    // const cid = 8;
-    // const cardlist: CardList = await this.appDataSource
-    //   .getRepository(CardList)
-    //   .createQueryBuilder("cardlist")
-    //   .leftJoinAndSelect("cardlist.card", "card")
-    //   .where("cardlist.id = :cid", { cid })
-    //   .getOne();
-    // console.log(cardlist);
     return await this.repository
       .createQueryBuilder("cube")
       .leftJoinAndSelect("cube.cardlist", "cardlist")
-      .leftJoinAndSelect("cardlist.card", "card")
+      .leftJoinAndSelect("cardlist.cards", "cards")
+      .leftJoinAndSelect("cards.card", "card")
       .where("cube.id = :id", { id })
       .getOne();
   }
@@ -75,8 +68,6 @@ export class CubeService {
       await this.appDataSource
         .getRepository(ListedCard)
         .save(listedCards.map((lc) => ({ ...lc, cardlist })));
-
-      console.log("we have cards: " + cardlist.card.length);
       // update the created cube with the cardlist
       await this.repository
         .createQueryBuilder()
@@ -84,8 +75,6 @@ export class CubeService {
         .set({ cardlist: cardlist })
         .where({ id: cube.id })
         .execute();
-      const c: Cube = await this.getCube(cube.id);
-      console.log("c has card: " + c.cardlist.card.length);
       return await this.getCube(cube.id);
     } catch {
       return null;
@@ -142,7 +131,7 @@ export class CubeService {
       .save({
         cubeId,
         cube,
-        card: cards,
+        cards: cards,
       });
     return cardlist;
   }
