@@ -71,6 +71,10 @@ export class CubeService {
         cube,
         listedCards
       );
+      await this.appDataSource
+        .getRepository(ListedCard)
+        .save(listedCards.map((lc) => ({ ...lc, cardlist })));
+
       console.log("we have cards: " + cardlist.card.length);
       // update the created cube with the cardlist
       await this.repository
@@ -112,14 +116,18 @@ export class CubeService {
 
   async cardsToListedCards(cards: CubeCardDto[]): Promise<ListedCard[]> {
     const listedCards: ListedCard[] = [];
-    cards.forEach(async (card) => {
-      const cardObj = await this.cardService.getCard(card.scryfallId);
-      const listedCard = this.appDataSource.getRepository(ListedCard).create({
-        card: cardObj,
-        quantityInCube: card.quantity,
-      });
-      listedCards.push(listedCard);
-    });
+    await Promise.all(
+      cards.map(async (card) => {
+        const cardObj = await this.cardService.getCard(card.scryfallId);
+        const listedCard = await this.appDataSource
+          .getRepository(ListedCard)
+          .create({
+            card: cardObj,
+            quantityInCube: card.quantity,
+          });
+        listedCards.push(listedCard);
+      })
+    );
     return listedCards;
   }
 
