@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Color } from "../dto/card.dto";
 
 @Entity()
 @Unique(["scryfallId"])
@@ -14,4 +15,13 @@ export class Card {
 
   @Column()
   set: string;
+
+  @Column({ nullable: true })
+  cmc: number;
+
+  @Column("simple-array", { nullable: true })
+  colors: Color[];
+
+  @Column()
+  type: string;
 }

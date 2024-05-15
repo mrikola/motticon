@@ -7,12 +7,21 @@ const response = JSON.parse(fs.readFileSync("AllIdentifiers.json"));
 let cards = [];
 for (const [key, cardinfo] of Object.entries(response.data)) {
   if (typeof response.data[key] === "object") {
-    let card_obj = {
-      name: cardinfo.name,
-      set: cardinfo.setCode,
-      scryfallId: cardinfo.identifiers.scryfallId,
-    };
-    cards.push(card_obj);
+    if (cardinfo.identifiers.scryfallId) {
+      // check to handle UN-set cards with non-integer mana costs
+      const cmc = Number.isInteger(cardinfo.convertedManaCost)
+        ? cardinfo.convertedManaCost
+        : undefined;
+      let card_obj = {
+        name: cardinfo.name,
+        set: cardinfo.setCode,
+        scryfallId: cardinfo.identifiers.scryfallId,
+        cmc: cmc,
+        colors: cardinfo.colors,
+        type: cardinfo.type,
+      };
+      cards.push(card_obj);
+    }
   }
 }
 

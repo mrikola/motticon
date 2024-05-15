@@ -18,9 +18,9 @@ export const getCubesForTournament = async (req): Promise<CubeDto[]> => {
 };
 
 export const addCube = async (req) => {
-  const { title, description, url, owner, imageUrl } = req.body;
+  const { title, description, url, owner, imageUrl, cards } = req.body;
   return cubeToDto(
-    await cubeService.addCube(title, description, url, owner, imageUrl)
+    await cubeService.addCube(title, description, url, owner, imageUrl, cards)
   );
 };
 

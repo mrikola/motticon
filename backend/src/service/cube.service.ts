@@ -1,6 +1,9 @@
 import { DataSource, Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Cube } from "../entity/Cube";
+import { CardList } from "../entity/CardList";
+import { ListedCard } from "../entity/ListedCard";
+import { CubeCardDto } from "../dto/card.dto";
 
 export class CubeService {
   private appDataSource: DataSource;
@@ -34,7 +37,8 @@ export class CubeService {
     description: string,
     url: string,
     owner: string,
-    imageUrl: string
+    imageUrl: string,
+    cards: CubeCardDto[]
   ): Promise<Cube> {
     // TODO improve return values
     try {
@@ -45,7 +49,30 @@ export class CubeService {
         owner,
         imageUrl,
       });
-      return cube;
+      console.log(cube);
+      // const cube: Cube = this.repository.create({
+      //   title,
+      //   description,
+      //   url,
+      //   owner,
+      //   imageUrl,
+      // });
+
+      // transform list of cards to ListedCard-objects
+      const listedCards: ListedCard[] = await this.cardsToListedCards(cards);
+      // create CardList object from ListedCard[]
+      const cardlist: CardList = await this.createCardList(
+        cube.id,
+        cube,
+        listedCards
+      );
+      await this.repository
+        .createQueryBuilder("cube")
+        .update()
+        .set({ cardlist: cardlist })
+        .where({ id: cube.id })
+        .execute();
+      return this.getCube(cube.id);
     } catch {
       return null;
     }
@@ -59,11 +86,6 @@ export class CubeService {
     owner: string,
     imageUrl: string
   ): Promise<Cube> {
-    console.log("received:");
-    console.log("title: " + title);
-    console.log("description: " + description);
-    console.log("url: " + url);
-    console.log("owner: " + owner);
     await this.repository
       .createQueryBuilder("cube")
       .update(Cube)
@@ -77,5 +99,43 @@ export class CubeService {
       .where("id = :cubeId", { cubeId })
       .execute();
     return await this.getCube(cubeId);
+  }
+
+  async cardsToListedCards(cards: CubeCardDto[]): Promise<ListedCard[]> {
+    console.log("called cardsToListedCards");
+    const listedCards: ListedCard[] = [];
+    cards.forEach(async (card) => {
+      const listedCard = this.appDataSource.getRepository(ListedCard).create({
+        card: card,
+        quantityInCube: card.quantity,
+      });
+      listedCards.push(listedCard);
+    });
+    return listedCards;
+  }
+
+  async createCardList(
+    cubeId: number,
+    cube: Cube,
+    cards: ListedCard[]
+  ): Promise<CardList> {
+    console.log(
+      "called createCardList with: id: " +
+        cubeId +
+        ", cube: " +
+        cube +
+        ", cards: " +
+        cards
+    );
+    const cardlist: CardList = await this.appDataSource
+      .getRepository(CardList)
+      .save({
+        cubeId,
+        cube,
+        cards,
+      });
+    console.log("cardlist:");
+    console.log(cardlist);
+    return cardlist;
   }
 }

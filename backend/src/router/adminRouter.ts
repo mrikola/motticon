@@ -10,6 +10,7 @@ import { resetEloForUser, updateElo } from "../controller/rating.controller";
 import { addCube, editCube } from "../controller/cube.controller";
 import { setDeckPhotoForUser } from "../controller/draft.controller";
 import { deleteUser } from "../controller/user.controller";
+import { generateCardDb, getCardDb } from "../controller/card.controller";
 
 export const adminRouter = express.Router();
 
@@ -69,4 +70,12 @@ adminRouter.post("/setDeckPhoto", async (req, res) => {
 
 adminRouter.get("/tournament/:tournamentId/staff", async (req, res) => {
   res.send(await getTournamentStaff(req));
+});
+
+adminRouter.get("/generateCardDb", async (req, res) => {
+  res.send(await generateCardDb(req));
+});
+
+adminRouter.get("/getCardDb", async (req, res) => {
+  res.send(await getCardDb(req));
 });
