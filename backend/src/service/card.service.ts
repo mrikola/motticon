@@ -48,14 +48,28 @@ export class CardService {
     }
   }
 
-  async getCard(scryfallId: string): Promise<Card> {
+  async getCardById(scryfallId: string): Promise<Card> {
     return await this.repository.findOne({
       where: { scryfallId },
     });
   }
 
+  async getCardByName(cardname: string): Promise<Card> {
+    return await this.repository.findOne({
+      where: { name: cardname },
+    });
+  }
+
+  async getCards(cards: string[]): Promise<Card[]> {
+    const foundCards: Card[] = [];
+    for (const card of cards) {
+      const c = await this.getCardByName(card);
+      foundCards.push(c);
+    }
+    return foundCards;
+  }
+
   async getCardDb(): Promise<Card[]> {
-    console.log("cards in json: " + cardsArray.length);
     return await this.repository.find();
   }
 

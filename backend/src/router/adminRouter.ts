@@ -11,6 +11,11 @@ import { addCube, editCube } from "../controller/cube.controller";
 import { setDeckPhotoForUser } from "../controller/draft.controller";
 import { deleteUser } from "../controller/user.controller";
 import { generateCardDb, getCardDb } from "../controller/card.controller";
+import {
+  getCardsFromImageUrl,
+  getTextFromUrl,
+  textsToMagicCards,
+} from "../controller/computerVision.controller";
 
 export const adminRouter = express.Router();
 
@@ -78,4 +83,16 @@ adminRouter.get("/generateCardDb", async (req, res) => {
 
 adminRouter.get("/getCardDb", async (req, res) => {
   res.send(await getCardDb(req));
+});
+
+adminRouter.post("/computerVision/cardsFromImageUrl", async (req, res) => {
+  res.send(await getCardsFromImageUrl(req));
+});
+
+adminRouter.post("/computerVision/textFromImageUrl", async (req, res) => {
+  res.send(await getTextFromUrl(req));
+});
+
+adminRouter.post("/computerVision/textsToCards", async (req, res) => {
+  res.send(await textsToMagicCards(req));
 });

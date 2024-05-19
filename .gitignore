@@ -4,3 +4,5 @@ mtg_json/AtomicCards.json
 cards/AllPrintings.json
 cards/AtomicCards.json
 cards/AllIdentifiers.json
+backend/.env
+backend/.env

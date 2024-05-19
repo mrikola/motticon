@@ -29,6 +29,7 @@ import ManageUsers from "./components/admin/ManageUsers";
 import ManageStaff from "./pages/Staff/ManageStaff";
 import AllPoolsView from "./pages/Staff/AllPoolsView";
 import ManagePlayers from "./pages/Staff/ManagePlayers";
+import ComputerVisionTest from "./pages/Test/ComputerVisionTest";
 
 function App() {
   const routes: RouteObject[] = [
@@ -42,6 +43,10 @@ function App() {
               path: "/",
               index: true,
               Component: Landing,
+            },
+            {
+              path: "test",
+              Component: ComputerVisionTest,
             },
             {
               path: "login",

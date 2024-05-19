@@ -108,7 +108,7 @@ export class CubeService {
     const listedCards: ListedCard[] = [];
     await Promise.all(
       cards.map(async (card) => {
-        const cardObj = await this.cardService.getCard(card.scryfallId);
+        const cardObj = await this.cardService.getCardById(card.scryfallId);
         const listedCard = await this.appDataSource
           .getRepository(ListedCard)
           .create({
