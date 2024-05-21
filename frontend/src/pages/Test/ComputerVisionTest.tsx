@@ -5,15 +5,20 @@ import {
   FloatingLabel,
   Form,
   Row,
+  Spinner,
+  Table,
 } from "react-bootstrap";
 import { Deck } from "../../cv/Deck";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { post } from "../../services/ApiService";
+import CubeAutocompleteInput from "../../components/general/CubeAutocompleteInput";
+import { Card } from "../../types/Cube";
+import { XCircleFill } from "react-bootstrap-icons";
+import { toast } from "react-toastify";
 
-// Temporary testing, this should be moved to a backend endpoint that returns relevant stuff(tm)
 const ComputerVisionTest = () => {
   // placeholder, cards should get sent as a parameter
-  const cards = [
+  const cards: string[] = [
     "Giver of Runes",
     "Blade Splicer",
     "Flickerwisp",
@@ -212,7 +217,7 @@ const ComputerVisionTest = () => {
     "Deathrite Shaman",
     "Abrupt Decay",
     "Pernicious Deed",
-    "Fire",
+    "Fire // Ice",
     "Dack Fayden",
     "Bloodbraid Elf",
     "Lightning Helix",
@@ -531,7 +536,7 @@ const ComputerVisionTest = () => {
     "Scholar of New Horizons",
     "Novice Inspector",
     "Kappa Cannoneer",
-    "Life",
+    "Life // Death",
     "Nishoba Brawler",
     "Unruly Krasis",
     "Esika's Chariot",
@@ -555,6 +560,20 @@ const ComputerVisionTest = () => {
     "Mawloc",
     "Chaos Defiler",
   ];
+
+  const [cubeCards, setCubeCards] = useState<Card[]>([]);
+  // get Card[] from string[]
+  useEffect(() => {
+    try {
+      post("/card/list", { cards }).then(async (resp) => {
+        const cardlist = (await resp.json()) as Card[];
+        setCubeCards(cardlist);
+        setSpinnerVisibility("d-none");
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
   // Deck object that holds all the cards in the draft pool
   const [cardpool, setCardpool] = useState<Deck>(new Deck());
@@ -613,11 +632,19 @@ const ComputerVisionTest = () => {
   const cardsFromImageTest = async () => {
     const url = searchUrl;
     const dictionary = cards;
+    console.log("searching with: " + url);
     try {
       post("/computerVision/cardsFromImageUrl", { url, dictionary }).then(
         async (resp) => {
-          const data = (await resp.json()) as string[];
-          console.log(data);
+          const cards = (await resp.json()) as Card[];
+          console.log(cards);
+          setAutomaticallyAddedCards(cards);
+
+          // addToUsedCards(cards);
+          // for (const card of cards) {
+          //   console.log("adding: " + card.name);
+          //   addToUsedCards(cards);
+          // }
         }
       );
     } catch (error) {
@@ -625,13 +652,64 @@ const ComputerVisionTest = () => {
     }
   };
 
+  const [usedCards, setUsedCards] = useState<Card[]>([]);
+  const [automaticallyAddedCards, setAutomaticallyAddedCards] = useState<
+    Card[]
+  >([]);
+  const [manuallyAddedCards, setManuallyAddedCards] = useState<Card[]>([]);
+
+  // update the total used cards when either manually or automatically is updated
+  useEffect(() => {
+    setUsedCards([...manuallyAddedCards, ...automaticallyAddedCards]);
+  }, [automaticallyAddedCards, manuallyAddedCards]);
+
+  const addToManuallyAddedCards = (cards: Card[]) => {
+    setManuallyAddedCards((manuallyAddedCards) => [
+      ...new Set([...manuallyAddedCards, ...cards]),
+    ]);
+    for (const card of cards) {
+      toast.success(card.name + " added");
+    }
+  };
+
+  const addToAutomaticallyAddedCards = (cards: Card[]) => {
+    setAutomaticallyAddedCards((automaticallyAddedCards) => [
+      ...new Set([...automaticallyAddedCards, ...cards]),
+    ]);
+  };
+
+  const removeFromManuallyAddedCards = (card: Card) => {
+    setManuallyAddedCards((manuallyAddedCards) =>
+      manuallyAddedCards.filter((c) => c.id != card.id)
+    );
+    toast.warning(card.name + " removed");
+  };
+
+  const removeFromAutomaticallyAddedCards = (card: Card) => {
+    setAutomaticallyAddedCards((automaticallyAddedCards) =>
+      automaticallyAddedCards.filter((c) => c.id != card.id)
+    );
+    toast.warning(card.name + " removed");
+  };
+
+  const [spinnerVisibility, setSpinnerVisibility] = useState<string>(
+    "d-flex align-items-center"
+  );
+
   if (cardpool) {
     return (
       <Container>
         <Row>
-          <h1>computer vision test</h1>
+          <h1>computer vision test {spinnerVisibility}</h1>
+          <div className={spinnerVisibility}>
+            <strong>Loading cube cards...</strong>
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
         </Row>
-        <Row>
+
+        {/* <Row>
           <Button
             variant="primary"
             className="btn-lg my-3"
@@ -648,7 +726,7 @@ const ComputerVisionTest = () => {
           >
             Fire imageUrl-to-texts test
           </Button>
-        </Row>
+        </Row> */}
         <Row>
           <Col xs={12}>
             <FloatingLabel controlId="url" label="URL" className="mb-3">
@@ -671,18 +749,70 @@ const ComputerVisionTest = () => {
           </Col>
         </Row>
         <Row>
+          <CubeAutocompleteInput
+            labelText={"Add card"}
+            cubeCards={cubeCards}
+            usedCards={usedCards}
+            addToUsedCards={addToManuallyAddedCards}
+            disabled={usedCards.length >= 45 || cubeCards.length === 0}
+          />
+        </Row>
+        <hr />
+        <Row>
           <Col xs={12}>
             <h2>Your current draft pool:</h2>
             <h3>
-              {cardpool.length}/45 cards found, {45 - cardpool.length}/45 cards
-              missing
+              {usedCards.length}/45 cards found, {45 - usedCards.length}/45
+              cards missing
             </h3>
-            {cardpool.maindeck.cards.map((card, index) => (
-              <p className="small" key={index}>
-                {card.quantity} {card.cardname}
-              </p>
-            ))}
+            <h3>Used cards:</h3>
+            <p>{usedCards.length} cards used</p>
           </Col>
+        </Row>
+        <Row>
+          <Col xs={6}>
+            <h4>Manually added</h4>
+            <Table striped borderless responsive>
+              <tbody>
+                {manuallyAddedCards.reverse().map((card, index) => (
+                  <tr key={index}>
+                    <td>
+                      <XCircleFill
+                        className="text-danger fs-4"
+                        onClick={() => removeFromManuallyAddedCards(card)}
+                      />
+                    </td>
+                    <td>{card.name}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Col>
+          <Col xs={6}>
+            <p className="lead">Automatically detected</p>
+            <Table striped borderless responsive>
+              <tbody>
+                {automaticallyAddedCards.reverse().map((card, index) => (
+                  <tr key={index}>
+                    <td>
+                      <XCircleFill
+                        className="text-danger fs-4"
+                        onClick={() => removeFromAutomaticallyAddedCards(card)}
+                      />
+                    </td>
+                    <td>{card.name}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Col>
+          <hr />
+          <h3>With deck structure:</h3>
+          {cardpool.maindeck.cards.map((card, index) => (
+            <p className="small" key={index}>
+              {card.quantity} {card.cardname}
+            </p>
+          ))}
         </Row>
       </Container>
     );

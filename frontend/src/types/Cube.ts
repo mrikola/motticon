@@ -20,9 +20,10 @@ export type CubeSelection = {
 export type Color = "W" | "U" | "B" | "R" | "G";
 
 export type Card = {
+  id: number;
+  scryfallId: string;
   name: string;
   set: string;
-  scryfallId: string;
   cmc: number;
   colors: Color[];
   type: string;
@@ -50,4 +51,9 @@ export type CardList = {
   cubeId: number;
   cube: Cube;
   cards: ListedCard[];
+};
+
+export type CardAndQuantity = {
+  listedCard: ListedCard;
+  quantityPicked: number;
 };

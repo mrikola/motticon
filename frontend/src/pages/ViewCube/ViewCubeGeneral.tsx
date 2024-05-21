@@ -15,7 +15,7 @@ const ViewCubeGeneral = () => {
   const isAdmin = user?.isAdmin;
   const { cubeId } = useParams();
   const [cube, setCube] = useState<Cube>();
-  const [cardDictionary, setCardDictionary] = useState<string[]>([]);
+  // const [cardDictionary, setCardDictionary] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,27 +23,25 @@ const ViewCubeGeneral = () => {
       const cube = (await resp.json()) as Cube;
       console.log(cube);
       setCube(cube);
-      const cards: string[] = [];
-      for (const listedCard of cube.cardlist.cards) {
-        const words = listedCard.card.name.split(" //");
-        let name = "";
-        if (words.length > 1) {
-          console.log(words);
-          name = words[0];
-        } else {
-          name = listedCard.card.name;
-        }
-
-        cards.push(name);
-      }
-      setCardDictionary(cards);
+      // const cards: string[] = [];
+      // for (const listedCard of cube.cardlist.cards) {
+      //   const words = listedCard.card.name.split(" //");
+      //   let name = "";
+      //   if (words.length > 1) {
+      //     name = words[0];
+      //   } else {
+      //     name = listedCard.card.name;
+      //   }
+      //   cards.push(name);
+      // }
+      // setCardDictionary(cards);
       // console.log(cards);
     };
 
     fetchData();
   }, [cubeId]);
 
-  if (cube && cardDictionary) {
+  if (cube) {
     return (
       <>
         <HelmetTitle titleText={cube.title} />
@@ -94,8 +92,7 @@ const ViewCubeGeneral = () => {
             </Col>
           </Row>
           <Row>
-            <h2>Cards {cardDictionary.length}</h2>
-            {JSON.stringify(cardDictionary)}
+            <h2>Cards {cube.cardlist.cards.length}</h2>
           </Row>
         </Container>
       </>

@@ -23,7 +23,7 @@ export const getCardByName = async (req): Promise<Card> => {
 };
 
 export const getCards = async (req): Promise<Card[]> => {
-  const { cards } = req.params;
+  const { cards } = req.body;
   return await cardService.getCards(cards);
 };
 

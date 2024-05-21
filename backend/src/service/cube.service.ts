@@ -25,8 +25,8 @@ export class CubeService {
     return await this.repository
       .createQueryBuilder("cube")
       .leftJoinAndSelect("cube.cardlist", "cardlist")
-      .leftJoinAndSelect("cardlist.cards", "cards")
-      .leftJoinAndSelect("cards.card", "card")
+      .leftJoinAndSelect("cardlist.cards", "listedcards")
+      .leftJoinAndSelect("listedcards.card", "card")
       .where("cube.id = :id", { id })
       .getOne();
   }

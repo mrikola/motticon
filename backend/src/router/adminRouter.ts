@@ -12,10 +12,11 @@ import { setDeckPhotoForUser } from "../controller/draft.controller";
 import { deleteUser } from "../controller/user.controller";
 import { generateCardDb, getCardDb } from "../controller/card.controller";
 import {
-  getCardsFromImageUrl,
+  getListedCardsFromImageUrl,
   getTextFromUrl,
-  textsToMagicCards,
+  textsToListedCards,
 } from "../controller/computerVision.controller";
+import { generateDryRunUsers } from "../controller/dry-run.controller";
 
 export const adminRouter = express.Router();
 
@@ -77,6 +78,10 @@ adminRouter.get("/tournament/:tournamentId/staff", async (req, res) => {
   res.send(await getTournamentStaff(req));
 });
 
+adminRouter.get("/dryrunusers", async (req, res) => {
+  res.send(await generateDryRunUsers());
+});
+
 adminRouter.get("/generateCardDb", async (req, res) => {
   res.send(await generateCardDb(req));
 });
@@ -86,7 +91,7 @@ adminRouter.get("/getCardDb", async (req, res) => {
 });
 
 adminRouter.post("/computerVision/cardsFromImageUrl", async (req, res) => {
-  res.send(await getCardsFromImageUrl(req));
+  res.send(await getListedCardsFromImageUrl(req));
 });
 
 adminRouter.post("/computerVision/textFromImageUrl", async (req, res) => {
@@ -94,5 +99,5 @@ adminRouter.post("/computerVision/textFromImageUrl", async (req, res) => {
 });
 
 adminRouter.post("/computerVision/textsToCards", async (req, res) => {
-  res.send(await textsToMagicCards(req));
+  res.send(await textsToListedCards(req));
 });

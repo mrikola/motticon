@@ -29,7 +29,7 @@ AppDataSource.initialize()
         origin: process.env.FRONTEND_URL,
       })
     );
-    app.use(express.json());
+    app.use(express.json({ limit: "500kb" }));
 
     app.get("/", (req, res) => {
       res.send("Hello world, how are you doing");

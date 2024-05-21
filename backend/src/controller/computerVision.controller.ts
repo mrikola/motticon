@@ -1,10 +1,13 @@
+import { ListedCard } from "../entity/ListedCard";
 import { ComputerVisionService } from "../service/computerVision.service";
 
 const computerVisionService = new ComputerVisionService();
 
-export const getCardsFromImageUrl = async (req): Promise<string[]> => {
-  const { url, dictionary } = req.body;
-  return await computerVisionService.getCardsFromImageUrl(url, dictionary);
+export const getListedCardsFromImageUrl = async (
+  req
+): Promise<ListedCard[]> => {
+  const { url, cubeCards } = req.body;
+  return await computerVisionService.getListedCardsFromImageUrl(url, cubeCards);
 };
 
 export const getTextFromUrl = async (req): Promise<string[]> => {
@@ -12,7 +15,7 @@ export const getTextFromUrl = async (req): Promise<string[]> => {
   return await computerVisionService.getTextFromUrl(url);
 };
 
-export const textsToMagicCards = async (req): Promise<string[]> => {
+export const textsToListedCards = async (req): Promise<ListedCard[]> => {
   const { rawTexts, dictionary } = req.body;
-  return await computerVisionService.textsToMagicCards(rawTexts, dictionary);
+  return await computerVisionService.textsToListedCards(rawTexts, dictionary);
 };

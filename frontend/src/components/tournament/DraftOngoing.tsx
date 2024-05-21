@@ -13,6 +13,7 @@ import DecksSubmittedProgressBar from "../staff/DecksSubmittedProgressBar";
 import HorizontalCard from "../general/HorizontalCard";
 import HorizontalIconCard from "../general/HorizontalIconCard";
 import HelmetTitle from "../general/HelmetTitle";
+import { Cube } from "../../types/Cube";
 
 type Props = {
   tournament: Tournament;
@@ -22,8 +23,10 @@ type Props = {
 
 function DraftOngoing({ tournament, draft, setDraft }: Props) {
   const user = useContext(UserInfoContext);
+  const [playerCube, setPlayerCube] = useState<Cube>();
   const [playerPod, setPlayerPod] = useState<DraftPod>();
   const [playerSeat, setPlayerSeat] = useState<DraftPodSeat>();
+  const [playerPoolPhotoUrl, setPlayerPoolPhotoUrl] = useState<string>();
   const [deckBuildingDone, setDeckBuildingDone] = useState<boolean>(false);
   const [buildingRemaining, setBuildingRemaining] = useState<number>(0);
   const [allSeats, setAllSeats] = useState<DraftPodSeat[]>([]);
@@ -34,12 +37,15 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
     const fetchData = async () => {
       const response = await get(`/draft/${draft.id}/user/${user?.id}`);
       const draftPod = (await response.json()) as DraftPod;
-      // console.log(draftPod);
       setPlayerPod(draftPod);
       setPlayerSeat(draftPod.seats[0]);
+      // need to set deckBuildingDone another way, not just looking at if pool photo exists
+      // draftPod.seats[0].deckPhotoUrl
+      //   ? setDeckBuildingDone(true)
+      //   : setDeckBuildingDone(false);
       draftPod.seats[0].deckPhotoUrl
-        ? setDeckBuildingDone(true)
-        : setDeckBuildingDone(false);
+        ? setPlayerPoolPhotoUrl(draftPod.seats[0].deckPhotoUrl)
+        : setPlayerPoolPhotoUrl(undefined);
     };
     const doFetch = () => {
       if (user && draft) {
@@ -55,6 +61,17 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
       clearInterval(roundInterval);
     };
   }, [user, draft]);
+
+  useEffect(() => {
+    if (!playerCube && playerPod) {
+      const fetchData = async () => {
+        const resp = await get(`/cube/${playerPod.cube.id}`);
+        const cube = (await resp.json()) as Cube;
+        setPlayerCube(cube);
+      };
+      fetchData();
+    }
+  }, [playerCube, playerPod]);
 
   // get pod info from draft-object rather than having to do extra backend call
   // useEffect(() => {
@@ -109,7 +126,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
     console.log("done set to: " + value);
   }
 
-  if (user && draft && playerPod && playerSeat) {
+  if (user && draft && playerPod && playerSeat && playerCube) {
     return (
       <>
         <HelmetTitle
@@ -140,6 +157,8 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
         />
         <DeckBuildingSubmission
           seat={playerSeat}
+          cube={playerCube}
+          photoUrl={playerPoolPhotoUrl}
           tournamentId={tournament.id}
           done={deckBuildingDone}
           setDone={doneSetter}

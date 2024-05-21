@@ -1,9 +1,6 @@
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import { AppDataSource } from "../data-source";
-import cards from "../cards_no_duplicates.json";
-import { Color } from "../dto/card.dto";
 import { Card } from "../entity/Card";
-const cardsArray = cards as Card[];
 import {
   ImageAnalysisClient,
   ImageAnalysisResultOutput,
@@ -13,25 +10,41 @@ import { AzureKeyCredential } from "@azure/core-auth";
 import { SymSpell } from "mnemonist";
 import { SymSpellMatch } from "mnemonist/symspell";
 import levenshtein from "js-levenshtein";
+import { CardService } from "./card.service";
+import { ListedCard } from "../entity/ListedCard";
 
 export class ComputerVisionService {
   private appDataSource: DataSource;
+  private cardService: CardService;
   private credential: AzureKeyCredential;
   private client: ImageAnalysisClient;
 
   constructor() {
     this.appDataSource = AppDataSource;
+    this.cardService = new CardService();
     this.credential = new AzureKeyCredential(process.env.VISION_KEY);
     this.client = createClient(process.env.VISION_ENDPOINT, this.credential);
   }
 
-  async getCardsFromImageUrl(
-    url: string,
-    dictionary: string[]
-  ): Promise<string[]> {
-    const texts = await this.getTextFromUrl(url);
-    const cards = await this.textsToMagicCards(texts, dictionary);
+  async getListedCardsFromImageUrl(
+    photoUrl: string,
+    cubeCards: ListedCard[]
+  ): Promise<ListedCard[]> {
+    const texts: string[] = await this.getTextFromUrl(photoUrl);
+    const cards: ListedCard[] = await this.textsToListedCards(texts, cubeCards);
     return cards;
+  }
+
+  async listedCardsToString(listedCards: ListedCard[]): Promise<string[]> {
+    const stringCards: string[] = [];
+    for (const listedCard of listedCards) {
+      if (listedCard.card.name.indexOf("//") === -1) {
+        stringCards.push(listedCard.card.name);
+      } else {
+        stringCards.push(listedCard.card.name.split(" // ")[0]);
+      }
+    }
+    return stringCards;
   }
 
   async getTextFromUrl(url: string): Promise<string[]> {
@@ -50,7 +63,6 @@ export class ComputerVisionService {
     if (result.body) {
       const lines: string[] = [];
       const iaResult = result.body as ImageAnalysisResultOutput;
-
       if (iaResult.readResult) {
         iaResult.readResult.blocks[0].lines.forEach((line) => {
           lines.push(line.text);
@@ -61,26 +73,73 @@ export class ComputerVisionService {
     return null;
   }
 
-  async textsToMagicCards(
+  async textsToListedCards(
     rawTexts: string[],
-    dictionary: string[]
-  ): Promise<string[]> {
-    const results = [];
+    cubeCards: ListedCard[]
+  ): Promise<ListedCard[]> {
+    const results: ListedCard[] = [];
     const symSpell = new SymSpell();
-    for (const card of dictionary) {
-      symSpell.add(card);
+    for (const listedCard of cubeCards) {
+      symSpell.add(listedCard.card.name);
     }
+    // string[] dictionary of cards for symSpell search
+    const dictionary = await this.listedCardsToString(cubeCards);
     for (const line of rawTexts) {
+      let foundForLine = false;
       // run a symspell search for each card using a 0.5 maxRatioDiff
-      const card = await this.symSearch(symSpell, dictionary, line, 0.5);
+      const symSpellResult: string = await this.symSearch(
+        symSpell,
+        dictionary,
+        line,
+        0.5
+      );
       // if something relevant is found, add it to the list of results
-      if (card) {
-        results.push(card);
+      if (symSpellResult) {
+        // find ListedCard with card name that matches the symSpell result
+        const listedCard: ListedCard = cubeCards.find((c) =>
+          c.card.name.includes(symSpellResult)
+        );
+        results.push(listedCard);
+        foundForLine = true;
+      } else {
+        // console.log("symspell search did not find match");
+      }
+      // if no card found for line of text, try looking for direct match within string
+      if (!foundForLine) {
+        for (const cc of cubeCards) {
+          // Card-object has full "foo // bar" name for complex card, but lines of text will not.
+          // Split by the "//" separator and assign name-value based on outcome
+          let name: string = "";
+          if (cc.card.name.indexOf("//") === -1) {
+            name = cc.card.name;
+          } else {
+            name = cc.card.name.split(" // ")[0];
+          }
+          if (line.includes(name)) {
+            // determine distance between card name and text line
+            const distance = levenshtein(name, line);
+            // add result if under cutoff point
+            if (distance < 7) {
+              // console.log("found intext match, distance: " + distance);
+              results.push(cc);
+              foundForLine = true;
+              break;
+            } else {
+              // console.log("found, but too long match – distance: " + distance);
+            }
+          }
+        }
       }
     }
+    console.log(results.length);
     return results;
   }
 
+  // Function for doing symSpell search() on OCR returned textx
+  // @SynSpell: a SymSpell instance instantiated elsewhere
+  // @cards: a dictionary of cards to search against (have been added to SymSpell elsewhere already)
+  // @text: piece of text to search for
+  // @maxRatioDiff: default to use is 0.5
   async symSearch(
     symSpell: SymSpell,
     cards: string[],
@@ -93,7 +152,7 @@ export class ComputerVisionService {
       return null;
     }
     // card names can not be this long
-    if (text.length > 30) {
+    if (text.length > 40) {
       //console.log(`Too long: ${text}`);
       return null;
     }
@@ -107,9 +166,8 @@ export class ComputerVisionService {
       let dist = maxRatioDiff * i;
       let card = null;
       const t = text.substring(0, i);
-      // console.log("t: " + t);
       for (const c of cards) {
-        // levenshtein compare function from additional package
+        // levenshtein compare function to measure distance between strings
         const d = levenshtein(t, c.substring(0, i));
         if (d !== -1 && d < dist) {
           card = c;
@@ -123,7 +181,6 @@ export class ComputerVisionService {
         return card;
       }
     } else {
-      // should use different max edit distance here, per: max_edit_distance=min(6, int(self.max_ratio_diff * len(text))
       const suggestion = symSpell.search(text);
       if (suggestion.length !== 0) {
         const card = suggestion[0].term;

@@ -1,12 +1,16 @@
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Draft, DraftPodSeat } from "../../types/Tournament";
 import { postFormData } from "../../services/ApiService";
 import { CheckSquareFill } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
+import CardPool from "./CardPool";
+import { Cube } from "../../types/Cube";
 
 type Props = {
   seat: DraftPodSeat;
+  cube: Cube;
+  photoUrl: string | undefined;
   tournamentId: number;
   done: boolean;
   setDone: (value: boolean) => void;
@@ -15,6 +19,8 @@ type Props = {
 
 function DeckBuildingSubmission({
   seat,
+  cube,
+  photoUrl,
   tournamentId,
   done,
   setDone,
@@ -88,24 +94,33 @@ function DeckBuildingSubmission({
       ) : (
         <>
           <h2>Draft pool submission</h2>
-          <p>
-            After the draft, please submit a photo showing all the cards you
-            have drafted.
-          </p>
-          <Col className="d-grid gap-2">
-            <Form.Group controlId="formFile" className="mb-3">
-              <Form.Label>Draft pool photo</Form.Label>
-              <Form.Control type="file" onChange={handleFileChange} />
-            </Form.Group>
-            <Button
-              variant="primary"
-              className="btn-lg"
-              onClick={() => handleUpload()}
-              disabled={done || !file}
-            >
-              Upload draft pool photo
-            </Button>
-          </Col>
+
+          {photoUrl ? (
+            <CardPool
+              cubeCards={cube.cardlist.cards}
+              photoUrl={photoUrl}
+              seat={seat}
+            />
+          ) : (
+            <Col className="d-grid gap-2">
+              <p>
+                After the draft, please submit a photo showing all the cards you
+                have drafted.
+              </p>
+              <Form.Group controlId="formFile" className="mb-3">
+                <Form.Label>Draft pool photo</Form.Label>
+                <Form.Control type="file" onChange={handleFileChange} />
+              </Form.Group>
+              <Button
+                variant="primary"
+                className="btn-lg"
+                onClick={() => handleUpload()}
+                disabled={done || !file}
+              >
+                Upload draft pool photo
+              </Button>
+            </Col>
+          )}
         </>
       )}
     </Row>
