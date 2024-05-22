@@ -13,6 +13,7 @@ import {
   seatToDto,
 } from "../dto/draft.dto";
 import { RoundDto, roundToDto } from "../dto/round.dto";
+import { DraftPodSeat } from "../entity/DraftPodSeat";
 
 const draftService = new DraftService();
 
@@ -59,6 +60,15 @@ export const setDeckPhotoForUser = async (req): Promise<DraftDto> => {
       tournamentId as number,
       seatId as number
     )
+  );
+};
+
+export const submitRandomPool = async (req) => {
+  const { tournamentId, seat } = req.body;
+
+  await draftService.submitRandomPool(
+    tournamentId as number,
+    seat as DraftPodSeat
   );
 };
 

@@ -10,10 +10,10 @@ type Props = {
 };
 
 function HorizontalIconCard({ iconName, cardTitle }: Props) {
-  const [textSize, setTextSize] = useState<string>();
+  const [textSize, setTextSize] = useState<string>("large");
 
   useEffect(() => {
-    if (cardTitle.length > 10) {
+    if (cardTitle.length > 9) {
       setTextSize("small");
     } else {
       setTextSize("large");

@@ -6,15 +6,19 @@ import { Round } from "../entity/Round";
 import { TournamentService } from "./tournament.service";
 import { Draft } from "../entity/Draft";
 import { LRUCache } from "lru-cache";
+import { CardService } from "./card.service";
+import { PickedCard } from "../entity/PickedCard";
 
 export class DraftService {
   private appDataSource: DataSource;
   private tournamentService: TournamentService;
+  private cardService: CardService;
   private userDraftPodCache: LRUCache<string, DraftPod>;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.tournamentService = new TournamentService();
+    this.cardService = new CardService();
     this.userDraftPodCache = new LRUCache({
       ttl: 1000 * 10,
       ttlAutopurge: true,
@@ -54,6 +58,11 @@ export class DraftService {
       .getRepository(DraftPod)
       .createQueryBuilder("pod")
       .leftJoinAndSelect("pod.cube", "cube")
+      .leftJoinAndSelect("cube.cardlist", "cardlist")
+      .leftJoinAndSelect("cardlist.cards", "listedcards")
+      .leftJoinAndSelect("listedcards.card", "card")
+      .leftJoinAndSelect("listedcards.pickedCards", "pickedCards")
+      .leftJoinAndSelect("pickedCards.picker", "picker")
       .leftJoinAndSelect("pod.seats", "seats")
       .leftJoinAndSelect("seats.player", "player")
       .where('pod."draftId" = :draftId', { draftId })
@@ -93,6 +102,19 @@ export class DraftService {
       .where("id = :seatId", { seatId })
       .execute();
     const draft = await this.tournamentService.getCurrentDraft(tournamentId);
+    return draft;
+  }
+
+  async submitRandomPool(
+    tournamentId: number,
+    seat: DraftPodSeat
+  ): Promise<Draft> {
+    const draft: Draft = await this.setDeckPhotoForUser(tournamentId, seat.id);
+    const cards: PickedCard[] = await this.cardService.setRandomPickedCards(
+      seat
+    );
+    console.log("added these random cards for seat " + seat.seat);
+    console.log(cards);
     return draft;
   }
 

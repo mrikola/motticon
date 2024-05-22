@@ -5,7 +5,14 @@ import { Color } from "../dto/card.dto";
 import { Card } from "../entity/Card";
 import { ListedCard } from "../entity/ListedCard";
 import { PickedCard } from "../entity/PickedCard";
+import { DraftPodSeat } from "../entity/DraftPodSeat";
 const cardsArray = cards as Card[];
+
+type PickedCardDto = {
+  listedCard: ListedCard;
+  quantityPicked: number;
+  picker: DraftPodSeat;
+};
 
 export class CardService {
   private appDataSource: DataSource;
@@ -130,6 +137,84 @@ export class CardService {
       foundCards.push(c);
     }
     return foundCards;
+  }
+
+  async createPickedCard(
+    card: ListedCard,
+    quantity: number,
+    picker: DraftPodSeat
+  ): Promise<PickedCard> {
+    const picked: PickedCard = await this.pickedCardRepository.save({
+      listedCard: card,
+      quantityPicked: quantity,
+      picker: picker,
+    });
+    return picked;
+  }
+
+  async setPickedCards(cards: PickedCardDto[]): Promise<PickedCard[]> {
+    let picker: DraftPodSeat;
+    for (const picked of cards) {
+      const pc = await this.createPickedCard(
+        picked.listedCard,
+        picked.quantityPicked,
+        picked.picker
+      );
+      picker = picked.picker;
+    }
+    return await this.getPlayerPickedCards(picker.playerId);
+  }
+
+  // staff-only helper function for testing purposes (auto-submit pools for test players)
+  async setRandomPickedCards(picker: DraftPodSeat): Promise<PickedCard[]> {
+    const RANDOM_CARDS = 45;
+    const pickedCards: PickedCard[] = [];
+    for (let i = 1; i < RANDOM_CARDS; ++i) {
+      const listedCard = await this.listedCardRepository
+        .createQueryBuilder("listedCard")
+        .select()
+        .orderBy("RANDOM()")
+        .getOne();
+      console.log("random card chosen");
+      console.log(listedCard);
+      const pc = await this.createPickedCard(listedCard, 1, picker);
+      pickedCards.push(pc);
+    }
+    return pickedCards;
+  }
+
+  async playerReturnedCards(playerId: number): Promise<boolean> {
+    // get all PickedCards associated with this player
+    const cards = await this.getPlayerPickedCards(playerId);
+    return await this.removePickedCards(cards);
+  }
+
+  async getPlayerPickedCards(playerId: number): Promise<PickedCard[]> {
+    const cards: PickedCard[] = await this.pickedCardRepository.find({
+      where: {
+        picker: {
+          id: playerId,
+        },
+      },
+    });
+    return cards;
+  }
+
+  async removePickedCards(cards: PickedCard[]): Promise<boolean> {
+    try {
+      for (const card of cards) {
+        const cardId = card.id;
+        await this.pickedCardRepository
+          .createQueryBuilder()
+          .delete()
+          .from(PickedCard)
+          .where("id = :cardId", { cardId })
+          .execute();
+      }
+      return true;
+    } catch (err: unknown) {
+      return false;
+    }
   }
 
   async getCardDb(): Promise<Card[]> {

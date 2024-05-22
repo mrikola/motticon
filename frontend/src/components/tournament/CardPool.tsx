@@ -2,15 +2,18 @@ import { Button, Col, Container, Row, Spinner, Table } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { post } from "../../services/ApiService";
 import CubeAutocompleteInput from "../../components/general/CubeAutocompleteInput";
-import { CardAndQuantity, ListedCard } from "../../types/Cube";
+import { CardAndQuantity, ListedCard, PickedCard } from "../../types/Cube";
 import { XCircleFill } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 import { DraftPodSeat } from "../../types/Tournament";
+import CardPoolProgressBar from "../general/CardPoolProgressBar";
 
 type Props = {
   cubeCards: ListedCard[];
+  cubeId: number;
   photoUrl: string | undefined;
   seat: DraftPodSeat;
+  setPlayerPickedCards: (cards: PickedCard[]) => void;
 };
 
 type PickedCardDto = {
@@ -19,7 +22,13 @@ type PickedCardDto = {
   picker: DraftPodSeat;
 };
 
-const CardPool = ({ cubeCards, photoUrl, seat }: Props) => {
+const CardPool = ({
+  cubeCards,
+  cubeId,
+  photoUrl,
+  seat,
+  setPlayerPickedCards,
+}: Props) => {
   const [usedCards, setUsedCards] = useState<CardAndQuantity[]>([]);
   const [automaticallyAddedCards, setAutomaticallyAddedCards] = useState<
     CardAndQuantity[]
@@ -27,6 +36,8 @@ const CardPool = ({ cubeCards, photoUrl, seat }: Props) => {
   const [manuallyAddedCards, setManuallyAddedCards] = useState<
     CardAndQuantity[]
   >([]);
+  const [automaticallyIdentifiedCards, setAutomaticallyIdentifiedCards] =
+    useState<number>(0);
 
   const getUsedCardsQuantity = () => {
     return usedCards.reduce((n, { quantityPicked }) => n + quantityPicked, 0);
@@ -34,15 +45,17 @@ const CardPool = ({ cubeCards, photoUrl, seat }: Props) => {
 
   useEffect(() => {
     if (automaticallyAddedCards.length === 0) {
-      //const url = photoUrl;
+      console.log("computer vision called");
+      const url = photoUrl;
       // placeholder to be able to test from localhost
-      const url =
-        "https://motticon-backend-prod.fly.dev/photos/2/200/Teemu_Halonen.jpeg";
+      // const url =
+      //   "https://motticon-backend-prod.fly.dev/photos/2/200/Teemu_Halonen.jpeg";
       try {
         post("/computerVision/cardsFromImageUrl", { url, cubeCards }).then(
           async (resp) => {
             const cards = (await resp.json()) as ListedCard[];
             addToAutomaticallyAddedCards(cards);
+            setAutomaticallyIdentifiedCards(cards.length);
             // console.log(cards);
           }
         );
@@ -121,15 +134,20 @@ const CardPool = ({ cubeCards, photoUrl, seat }: Props) => {
       };
       pickedCards.push(pc);
     }
-    console.log(pickedCards);
-    // try {
-    //   post("/cube/setPickedCards", { pickedCards }).then(async (resp) => {
-    //     const cards = (await resp.json()) as Card[];
-    //     console.log(cards);
-    //   });
-    // } catch (error) {
-    //   console.error(error);
-    // }
+    try {
+      post(`/cube/${cubeId}/pickedCards/set`, { pickedCards }).then(
+        async (resp) => {
+          const cards = (await resp.json()) as PickedCard[];
+          if (cards) {
+            //console.log(cards);
+            setPlayerPickedCards(cards);
+            //console.log("success")
+          }
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   if (automaticallyAddedCards.length > 0) {
@@ -137,9 +155,9 @@ const CardPool = ({ cubeCards, photoUrl, seat }: Props) => {
       <Container>
         <Row>
           <p>
-            The system has identified {automaticallyAddedCards.length} cards
-            from your photo. Please correct any mistakes and add missing cards,
-            then submit your draft pool.
+            The system has identified {automaticallyIdentifiedCards} cards from
+            your photo. Please correct any mistakes and add missing cards, then
+            submit your draft pool.
           </p>
         </Row>
         <hr />
@@ -153,51 +171,14 @@ const CardPool = ({ cubeCards, photoUrl, seat }: Props) => {
           />
         </Row>
         <hr />
+
         <Row>
           <Col xs={12}>
             <h2>Your current draft pool:</h2>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={6}>
-            <h4>Manually added</h4>
-            <Table striped borderless responsive>
-              <tbody>
-                {manuallyAddedCards.reverse().map((qcCard, index) => (
-                  <tr key={index}>
-                    <td>
-                      <XCircleFill
-                        className="text-danger fs-4"
-                        onClick={() =>
-                          removeFromManuallyAddedCards(qcCard.listedCard)
-                        }
-                      />
-                    </td>
-                    <td>{qcCard.listedCard.card.name}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </Col>
-          <Col xs={6}>
-            <p className="lead">Automatically detected</p>
-            <Table striped borderless responsive>
-              <tbody>
-                {automaticallyAddedCards.map((qcCard, index) => (
-                  <tr key={index}>
-                    <td>
-                      <XCircleFill
-                        className="text-danger fs-4"
-                        onClick={() =>
-                          removeFromAutomaticallyAddedCards(qcCard.listedCard)
-                        }
-                      />
-                    </td>
-                    <td>{qcCard.listedCard.card.name}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+            <CardPoolProgressBar
+              cardsAdded={usedCards.length}
+              cardsNeeded={45}
+            />
           </Col>
         </Row>
         <Row>
@@ -210,6 +191,48 @@ const CardPool = ({ cubeCards, photoUrl, seat }: Props) => {
             >
               Submit cards
             </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={6}>
+            <p className="lead">Manually added</p>
+            <Table striped borderless responsive>
+              <tbody>
+                {manuallyAddedCards.map((qcCard, index) => (
+                  <tr key={index}>
+                    <td>
+                      <XCircleFill
+                        className="text-danger fs-4"
+                        onClick={() =>
+                          removeFromManuallyAddedCards(qcCard.listedCard)
+                        }
+                      />
+                    </td>
+                    <td className="small p-1">{qcCard.listedCard.card.name}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Col>
+          <Col xs={6}>
+            <p className="lead">Detected</p>
+            <Table striped borderless responsive>
+              <tbody>
+                {automaticallyAddedCards.map((qcCard, index) => (
+                  <tr key={index}>
+                    <td>
+                      <XCircleFill
+                        className="text-danger fs-5"
+                        onClick={() =>
+                          removeFromAutomaticallyAddedCards(qcCard.listedCard)
+                        }
+                      />
+                    </td>
+                    <td className="small p-1">{qcCard.listedCard.card.name}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
           </Col>
         </Row>
       </Container>

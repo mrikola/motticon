@@ -26,24 +26,30 @@ const AdminPage = () => {
     }
   };
 
-  const getTestCardById = async () => {
-    const response = await get(`/card/id/a5d1f66f-75b5-4a9b-8b98-f237f065de9c`);
-    const card = (await response.json()) as Card;
-    console.log(card);
-  };
+  // const getTestCardById = async () => {
+  //   const response = await get(`/card/id/a5d1f66f-75b5-4a9b-8b98-f237f065de9c`);
+  //   const card = (await response.json()) as Card;
+  //   console.log(card);
+  // };
 
-  const getTestCardByName = async () => {
-    const cardname = "The Mightstone and Weakstone";
-    const response = await get(`/card/name/${encodeURIComponent(cardname)}`);
-    const card = (await response.json()) as Card;
-    console.log(card);
-  };
+  // const getTestCardByName = async () => {
+  //   const cardname = "The Mightstone and Weakstone";
+  //   const response = await get(`/card/name/${encodeURIComponent(cardname)}`);
+  //   const card = (await response.json()) as Card;
+  //   console.log(card);
+  // };
 
-  const dryRunUsers = async () => {
-    const response = await get(`/dryrunusers`);
-    const data = await response.json();
-    console.log(data);
-  };
+  // const getRandomCards = async () => {
+  //   const response = await get(`/cube/2/pickedCards/generateRandom/4`);
+  //   const card = (await response.json()) as PickedCard[];
+  //   console.log(card);
+  // };
+
+  // const dryRunUsers = async () => {
+  //   const response = await get(`/dryrunusers`);
+  //   const data = await response.json();
+  //   console.log(data);
+  // };
 
   return user ? (
     <Container className="mt-3 my-md-4">
@@ -84,28 +90,6 @@ const AdminPage = () => {
           <Button className="btn btn-info btn-lg" onClick={getCardDb}>
             <div className="icon-link text-light">
               <PersonFillGear className="fs-3" /> Get card database
-            </div>
-          </Button>
-        </Col>
-        <Col xs={10} sm={8} className="d-grid gap-2 mx-auto mt-3">
-          <Button className="btn btn-info btn-lg" onClick={getTestCardById}>
-            <div className="icon-link text-light">
-              <PersonFillGear className="fs-3" /> Get test card by ID
-            </div>
-          </Button>
-        </Col>
-        <Col xs={10} sm={8} className="d-grid gap-2 mx-auto mt-3">
-          <Button className="btn btn-info btn-lg" onClick={getTestCardByName}>
-            <div className="icon-link text-light">
-              <PersonFillGear className="fs-3" /> Get test card by name (Delver
-              of Secrets)
-            </div>
-          </Button>
-        </Col>
-        <Col xs={10} sm={8} className="d-grid gap-2 mx-auto mt-3">
-          <Button className="btn btn-info btn-lg" onClick={dryRunUsers}>
-            <div className="icon-link text-light">
-              <PersonFillGear className="fs-3" /> Generate dry run users
             </div>
           </Button>
         </Col>

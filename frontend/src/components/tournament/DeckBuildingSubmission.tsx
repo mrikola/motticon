@@ -1,11 +1,11 @@
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Draft, DraftPodSeat } from "../../types/Tournament";
 import { postFormData } from "../../services/ApiService";
 import { CheckSquareFill } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 import CardPool from "./CardPool";
-import { Cube } from "../../types/Cube";
+import { Cube, PickedCard } from "../../types/Cube";
 
 type Props = {
   seat: DraftPodSeat;
@@ -13,8 +13,9 @@ type Props = {
   photoUrl: string | undefined;
   tournamentId: number;
   done: boolean;
-  setDone: (value: boolean) => void;
   setDraft: (draft: Draft) => void;
+  playerPickedCards: PickedCard[];
+  setPlayerPickedCards: (cards: PickedCard[]) => void;
 };
 
 function DeckBuildingSubmission({
@@ -23,8 +24,9 @@ function DeckBuildingSubmission({
   photoUrl,
   tournamentId,
   done,
-  setDone,
   setDraft,
+  playerPickedCards,
+  setPlayerPickedCards,
 }: Props) {
   const [file, setFile] = useState<File | null>(null);
 
@@ -71,7 +73,7 @@ function DeckBuildingSubmission({
         if (draft !== null) {
           console.log(draft);
           uploadSuccess();
-          setDone(true);
+          //setDone(true);
           setDraft(draft);
         }
       } catch (error) {
@@ -81,9 +83,18 @@ function DeckBuildingSubmission({
     }
   };
 
+  // const resetPicked = async () => {
+  //   console.log("attempting to reset picks");
+  //   const response = await get(
+  //     `/cube/${cube.id}/pickedCards/return/${seat.id}`
+  //   );
+  //   const success = (await response.json()) as boolean;
+  //   console.log(success);
+  // };
+
   return (
     <Row>
-      {done ? (
+      {done && playerPickedCards ? (
         <>
           <h2 className="icon-link">
             Your draft pool submission done{" "}
@@ -98,14 +109,16 @@ function DeckBuildingSubmission({
           {photoUrl ? (
             <CardPool
               cubeCards={cube.cardlist.cards}
+              cubeId={cube.id}
               photoUrl={photoUrl}
               seat={seat}
+              setPlayerPickedCards={setPlayerPickedCards}
             />
           ) : (
             <Col className="d-grid gap-2">
               <p>
                 After the draft, please submit a photo showing all the cards you
-                have drafted.
+                drafted. Make sure the names of all cards are visible.
               </p>
               <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label>Draft pool photo</Form.Label>

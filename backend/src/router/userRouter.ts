@@ -54,7 +54,9 @@ import {
   getCardByName,
   getCards,
   searchForCard,
+  setPickedCards,
 } from "../controller/card.controller";
+import { getListedCardsFromImageUrl } from "../controller/computerVision.controller";
 
 export const userRouter = express.Router();
 
@@ -138,6 +140,14 @@ userRouter.get("/cube", async (req, res) => {
 userRouter.get("/cube/:id", async (req, res, next) => {
   try {
     res.send(await getCube(req));
+  } catch (err) {
+    next(err);
+  }
+});
+
+userRouter.post("/cube/:id/pickedCards/set", async (req, res, next) => {
+  try {
+    res.send(await setPickedCards(req));
   } catch (err) {
     next(err);
   }
@@ -396,4 +406,8 @@ userRouter.get("/card/name/:cardname", async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+userRouter.post("/computerVision/cardsFromImageUrl", async (req, res) => {
+  res.send(await getListedCardsFromImageUrl(req));
 });

@@ -13,7 +13,7 @@ import DecksSubmittedProgressBar from "../staff/DecksSubmittedProgressBar";
 import HorizontalCard from "../general/HorizontalCard";
 import HorizontalIconCard from "../general/HorizontalIconCard";
 import HelmetTitle from "../general/HelmetTitle";
-import { Cube } from "../../types/Cube";
+import { Cube, PickedCard } from "../../types/Cube";
 
 type Props = {
   tournament: Tournament;
@@ -31,6 +31,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
   const [buildingRemaining, setBuildingRemaining] = useState<number>(0);
   const [allSeats, setAllSeats] = useState<DraftPodSeat[]>([]);
   const [totalPlayers, setTotalPlayers] = useState<number>(0);
+  const [playerPickedCards, setPlayerPickedCards] = useState<PickedCard[]>([]);
 
   // get relevant draft info
   useEffect(() => {
@@ -39,6 +40,8 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
       const draftPod = (await response.json()) as DraftPod;
       setPlayerPod(draftPod);
       setPlayerSeat(draftPod.seats[0]);
+      console.log("refreshed");
+      console.log(draftPod);
       // need to set deckBuildingDone another way, not just looking at if pool photo exists
       // draftPod.seats[0].deckPhotoUrl
       //   ? setDeckBuildingDone(true)
@@ -73,27 +76,30 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
     }
   }, [playerCube, playerPod]);
 
-  // get pod info from draft-object rather than having to do extra backend call
-  // useEffect(() => {
-  //   if (user) {
-  //     // console.log(draft);
-  //     Object.values(draft.pods).forEach((pod) => {
-  //       // console.log(pod);
-  //       Object.values(pod.seats).forEach((seat) => {
-  //         if (seat.player.id === user.id) {
-  //           // console.log("found user pod");
-  //           // console.log(pod);
-  //           // console.log(seat);
-  //           // setPlayerPod(pod);
-  //           // setPlayerSeat(seat);
-  //           // seat.deckPhotoUrl
-  //           //   ? setDeckBuildingDone(true)
-  //           //   : setDeckBuildingDone(false);
-  //         }
-  //       });
-  //     });
-  //   }
-  // }, [draft, draft.pods, user]);
+  // iterate over cards in cube and check if there are picked cards assigned to user (via seat number)
+  useEffect(() => {
+    if (playerPod && playerSeat && user && playerPickedCards.length === 0) {
+      const pickedCards: PickedCard[] = [];
+      for (const card of playerPod.cube.cardlist.cards) {
+        if (card.pickedCards.length > 0) {
+          for (const pickedCard of card.pickedCards) {
+            if (pickedCard.picker.seat === playerSeat?.seat) {
+              pickedCards.push(pickedCard);
+            }
+          }
+        }
+      }
+      console.log(pickedCards);
+      setPlayerPickedCards(pickedCards);
+    }
+  }, [playerPod, playerSeat]);
+
+  // mark deck building done when user has 45 or more cards registered to them
+  useEffect(() => {
+    if (playerPickedCards.length >= 45) {
+      setDeckBuildingDone(true);
+    }
+  }, [playerPickedCards]);
 
   // get other seats for progress bar
   useEffect(() => {
@@ -114,6 +120,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
   // update progress bar based on number of players done building
   useEffect(() => {
     if (allSeats) {
+      // todo: change this to check PickedCard rather than deckPhotoUrl
       setBuildingRemaining(
         allSeats.filter((seat) => !seat.deckPhotoUrl).length
       );
@@ -121,10 +128,10 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
   }, [allSeats]);
 
   // callback function for modal once player confirms submit
-  function doneSetter(value: boolean) {
-    setDeckBuildingDone(value);
-    console.log("done set to: " + value);
-  }
+  // function doneSetter(value: boolean) {
+  //   setDeckBuildingDone(value);
+  //   console.log("done set to: " + value);
+  // }
 
   if (user && draft && playerPod && playerSeat && playerCube) {
     return (
@@ -161,8 +168,9 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
           photoUrl={playerPoolPhotoUrl}
           tournamentId={tournament.id}
           done={deckBuildingDone}
-          setDone={doneSetter}
           setDraft={setDraft}
+          setPlayerPickedCards={setPlayerPickedCards}
+          playerPickedCards={playerPickedCards}
         />
       </>
     );

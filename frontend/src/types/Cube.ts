@@ -37,7 +37,7 @@ export type CubeCard = {
 export type ListedCard = {
   card: Card;
   cardlist: CardList;
-  pickedCards: PickedCard;
+  pickedCards: PickedCard[];
   quantityInCube: number;
 };
 

@@ -8,14 +8,16 @@ import {
 } from "../controller/tournament.controller";
 import { resetEloForUser, updateElo } from "../controller/rating.controller";
 import { addCube, editCube } from "../controller/cube.controller";
-import { setDeckPhotoForUser } from "../controller/draft.controller";
-import { deleteUser } from "../controller/user.controller";
-import { generateCardDb, getCardDb } from "../controller/card.controller";
 import {
-  getListedCardsFromImageUrl,
-  getTextFromUrl,
-  textsToListedCards,
-} from "../controller/computerVision.controller";
+  setDeckPhotoForUser,
+  submitRandomPool,
+} from "../controller/draft.controller";
+import { deleteUser } from "../controller/user.controller";
+import {
+  generateCardDb,
+  getCardDb,
+  playerReturnedCards,
+} from "../controller/card.controller";
 import { generateDryRunUsers } from "../controller/dry-run.controller";
 
 export const adminRouter = express.Router();
@@ -74,6 +76,11 @@ adminRouter.post("/setDeckPhoto", async (req, res) => {
   res.send(await setDeckPhotoForUser(req));
 });
 
+// admin-only helper function
+adminRouter.post("/submitRandomPool", async (req, res) => {
+  res.send(await submitRandomPool(req));
+});
+
 adminRouter.get("/tournament/:tournamentId/staff", async (req, res) => {
   res.send(await getTournamentStaff(req));
 });
@@ -90,14 +97,24 @@ adminRouter.get("/getCardDb", async (req, res) => {
   res.send(await getCardDb(req));
 });
 
-adminRouter.post("/computerVision/cardsFromImageUrl", async (req, res) => {
-  res.send(await getListedCardsFromImageUrl(req));
-});
+adminRouter.get(
+  "/cube/:id/pickedCards/return/:playerId",
+  async (req, res, next) => {
+    try {
+      res.send(await playerReturnedCards(req));
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
-adminRouter.post("/computerVision/textFromImageUrl", async (req, res) => {
-  res.send(await getTextFromUrl(req));
-});
-
-adminRouter.post("/computerVision/textsToCards", async (req, res) => {
-  res.send(await textsToListedCards(req));
-});
+// adminRouter.get(
+//   "/cube/:cubeId/pickedCards/generateRandom/:playerId",
+//   async (req, res, next) => {
+//     try {
+//       res.send(await setRandomPickedCards(req));
+//     } catch (err) {
+//       next(err);
+//     }
+//   }
+// );
