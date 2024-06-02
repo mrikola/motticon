@@ -1,8 +1,13 @@
 import { Button, Col, Container, Row, Spinner, Table } from "react-bootstrap";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { post } from "../../services/ApiService";
 import CubeAutocompleteInput from "../../components/general/CubeAutocompleteInput";
-import { CardAndQuantity, ListedCard, PickedCard } from "../../types/Cube";
+import {
+  CardAndQuantity,
+  ComputerVisionDto,
+  ListedCard,
+  PickedCard,
+} from "../../types/Card";
 import { XCircleFill } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 import { DraftPodSeat } from "../../types/Tournament";
@@ -22,6 +27,19 @@ type PickedCardDto = {
   picker: DraftPodSeat;
 };
 
+type Rectangle = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  match: boolean;
+};
+
+type OCRBox = {
+  rectangle: Rectangle;
+  text: string;
+};
+
 const CardPool = ({
   cubeCards,
   cubeId,
@@ -38,6 +56,10 @@ const CardPool = ({
   >([]);
   const [automaticallyIdentifiedCards, setAutomaticallyIdentifiedCards] =
     useState<number>(0);
+  const [poolImageUrl, setPoolImageUrl] = useState<string>("");
+  const [viewboxWidth, setViewboxWidth] = useState<number>(0);
+  const [viewboxHeight, setViewboxHeight] = useState<number>(0);
+  const [ocrBoxes, setOcrBoxes] = useState<OCRBox[]>([]);
 
   const getUsedCardsQuantity = () => {
     return usedCards.reduce((n, { quantityPicked }) => n + quantityPicked, 0);
@@ -46,17 +68,26 @@ const CardPool = ({
   useEffect(() => {
     if (automaticallyAddedCards.length === 0) {
       console.log("computer vision called");
-      const url = photoUrl;
+      // const url = photoUrl;
       // placeholder to be able to test from localhost
-      // const url =
-      //   "https://motticon-backend-prod.fly.dev/photos/2/200/Teemu_Halonen.jpeg";
+      const url =
+        "https://motticon-backend.fly.dev/photos/14/478/Sakari_Castren.jpeg";
       try {
         post("/computerVision/cardsFromImageUrl", { url, cubeCards }).then(
           async (resp) => {
-            const cards = (await resp.json()) as ListedCard[];
+            const data = (await resp.json()) as ComputerVisionDto;
+            console.log(data);
+            setAutomaticallyAddedCards([]);
+            const cards: ListedCard[] = [];
+            for (const obj of data.cvCards) {
+              if (obj.listedCard) {
+                cards.push(obj.listedCard);
+              }
+            }
             addToAutomaticallyAddedCards(cards);
             setAutomaticallyIdentifiedCards(cards.length);
-            // console.log(cards);
+            await generateBoxes(data);
+            setPoolImageUrl(url);
           }
         );
       } catch (error) {
@@ -99,27 +130,55 @@ const CardPool = ({
 
   const addToAutomaticallyAddedCards = (cards: ListedCard[]) => {
     const newCards: CardAndQuantity[] = [];
-    for (const card of cards) {
-      const cq: CardAndQuantity = {
-        listedCard: card,
-        quantityPicked: 1,
-      };
-      newCards.push(cq);
+    if (cubeCards) {
+      for (const card of cards) {
+        // check if card already exists in list
+        const existingCard = newCards.filter(
+          (c) => c.listedCard.card.scryfallId === card.card.scryfallId
+        );
+        if (existingCard.length > 0) {
+          // check if there are more in the cube
+          const cardInCube = cubeCards.find(
+            (c) => c.card.scryfallId === card.card.scryfallId
+          );
+          if (
+            cardInCube &&
+            existingCard[0].quantityPicked < cardInCube.quantityInCube
+          ) {
+            existingCard[0].quantityPicked++;
+          }
+        } else {
+          const cq: CardAndQuantity = {
+            listedCard: card,
+            quantityPicked: 1,
+          };
+          newCards.push(cq);
+        }
+      }
+      newCards.sort((a, b) =>
+        a.listedCard.card.name.localeCompare(b.listedCard.card.name)
+      );
+      setAutomaticallyAddedCards((automaticallyAddedCards) => [
+        ...new Set([...automaticallyAddedCards, ...newCards]),
+      ]);
     }
-    newCards.sort((a, b) =>
-      a.listedCard.card.name.localeCompare(b.listedCard.card.name)
-    );
-    setAutomaticallyAddedCards((automaticallyAddedCards) => [
-      ...new Set([...automaticallyAddedCards, ...newCards]),
-    ]);
   };
 
   const removeFromAutomaticallyAddedCards = (card: ListedCard) => {
-    setAutomaticallyAddedCards((automaticallyAddedCards) =>
-      automaticallyAddedCards.filter(
-        (c) => c.listedCard.card.id != card.card.id
-      )
+    const existingCard = automaticallyAddedCards.filter(
+      (c) => c.listedCard.card.id === card.card.id
     );
+    // if more than one has been picked, remove only one
+    if (existingCard[0].quantityPicked > 1) {
+      existingCard[0].quantityPicked--;
+    } else {
+      setAutomaticallyAddedCards((automaticallyAddedCards) =>
+        automaticallyAddedCards.filter(
+          (c) => c.listedCard.card.id != card.card.id
+        )
+      );
+    }
+
     toast.warning(card.card.name + " removed");
   };
 
@@ -150,6 +209,59 @@ const CardPool = ({
     }
   };
 
+  const generateBoxes = async (dto: ComputerVisionDto) => {
+    if (dto.imageHeight && dto.imageWidth) {
+      setViewboxWidth(dto.imageWidth);
+      setViewboxHeight(dto.imageHeight);
+    }
+    const rects: Rectangle[] = [];
+    const ocr: OCRBox[] = [];
+    for (const obj of dto.cvCards) {
+      let x, y, width, height;
+      // in order to handle landscape and portrait images, set width/height according to the larger of two options
+      if (
+        obj.polygon[1].x - obj.polygon[0].x >
+        obj.polygon[0].x - obj.polygon[3].x
+      ) {
+        width = obj.polygon[1].x - obj.polygon[0].x;
+      } else {
+        width = obj.polygon[0].x - obj.polygon[3].x;
+      }
+      if (
+        obj.polygon[3].y - obj.polygon[0].y >
+        obj.polygon[1].y - obj.polygon[0].y
+      ) {
+        height = obj.polygon[3].y - obj.polygon[0].y;
+      } else {
+        height = obj.polygon[1].y - obj.polygon[0].y;
+      }
+      // use width:height ratio to determine if text in image is vertical (if) or horizontal (else)
+      if (width > height) {
+        x = obj.polygon[0].x;
+        y = obj.polygon[0].y;
+      } else {
+        x = obj.polygon[3].x;
+        y = obj.polygon[3].y;
+      }
+      const rect: Rectangle = {
+        x: x,
+        y: y,
+        width: width,
+        height: height,
+        match: obj.matchFound,
+      };
+      if (rect.width > 0 && rect.height > 0) {
+        if (obj.listedCard) {
+          ocr.push({ rectangle: rect, text: obj.listedCard.card.name });
+        } else {
+          ocr.push({ rectangle: rect, text: obj.text });
+        }
+        rects.push(rect);
+      }
+    }
+    setOcrBoxes(ocr);
+  };
+
   if (automaticallyAddedCards.length > 0) {
     return (
       <Container>
@@ -159,16 +271,6 @@ const CardPool = ({
             your photo. Please correct any mistakes and add missing cards, then
             submit your draft pool.
           </p>
-        </Row>
-        <hr />
-        <Row>
-          <CubeAutocompleteInput
-            labelText={"Add card"}
-            cubeCards={cubeCards}
-            usedCards={usedCards}
-            addToUsedCards={addToManuallyAddedCards}
-            disabled={getUsedCardsQuantity() >= 45 || cubeCards.length === 0}
-          />
         </Row>
         <hr />
 
@@ -193,6 +295,61 @@ const CardPool = ({
             </Button>
           </Col>
         </Row>
+        <Row>
+          <Col xs={12}>
+            <div className="pool-wrapper">
+              <img src={poolImageUrl} draggable="false" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox={"0, 0," + viewboxWidth + ", " + viewboxHeight}
+                preserveAspectRatio="xMinYMin meet"
+              >
+                {ocrBoxes.map((box, index) => (
+                  <Fragment key={index}>
+                    <rect
+                      key={index + "-r"}
+                      x={box.rectangle.x}
+                      y={box.rectangle.y}
+                      width={box.rectangle.width}
+                      height={box.rectangle.height}
+                      className={box.rectangle.match ? "is-match" : "not-match"}
+                    />
+                    <text
+                      key={index + "-t"}
+                      x={box.rectangle.x}
+                      y={
+                        box.rectangle.width > box.rectangle.height
+                          ? box.rectangle.y + box.rectangle.height
+                          : box.rectangle.y
+                      }
+                      transform={
+                        box.rectangle.width > box.rectangle.height
+                          ? ""
+                          : "rotate(90, " +
+                            box.rectangle.x +
+                            ", " +
+                            box.rectangle.y +
+                            ")"
+                      }
+                    >
+                      {box.text}
+                    </text>
+                  </Fragment>
+                ))}
+              </svg>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <CubeAutocompleteInput
+            labelText={"Add card"}
+            cubeCards={cubeCards}
+            usedCards={usedCards}
+            addToUsedCards={addToManuallyAddedCards}
+            disabled={getUsedCardsQuantity() >= 45 || cubeCards.length === 0}
+          />
+        </Row>
+        <hr />
         <Row>
           <Col xs={6}>
             <p className="lead">Manually added</p>

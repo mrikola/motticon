@@ -13,7 +13,8 @@ import DecksSubmittedProgressBar from "../staff/DecksSubmittedProgressBar";
 import HorizontalCard from "../general/HorizontalCard";
 import HorizontalIconCard from "../general/HorizontalIconCard";
 import HelmetTitle from "../general/HelmetTitle";
-import { Cube, PickedCard } from "../../types/Cube";
+import { Cube } from "../../types/Cube";
+import { PickedCard } from "../../types/Card";
 
 type Props = {
   tournament: Tournament;
@@ -40,8 +41,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
       const draftPod = (await response.json()) as DraftPod;
       setPlayerPod(draftPod);
       setPlayerSeat(draftPod.seats[0]);
-      console.log("refreshed");
-      console.log(draftPod);
+      // console.log(draftPod);
       // need to set deckBuildingDone another way, not just looking at if pool photo exists
       // draftPod.seats[0].deckPhotoUrl
       //   ? setDeckBuildingDone(true)
@@ -89,7 +89,6 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
           }
         }
       }
-      console.log(pickedCards);
       setPlayerPickedCards(pickedCards);
     }
   }, [playerPod, playerSeat]);

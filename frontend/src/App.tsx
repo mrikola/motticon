@@ -21,7 +21,6 @@ import CreateTournament from "./components/admin/CreateTournament";
 import PublicProfile from "./pages/User/PublicProfile";
 import AllUsers from "./pages/User/AllUsers";
 import PoolView from "./pages/Staff/PoolView";
-import ViewCubeGeneral from "./pages/ViewCube/ViewCubeGeneral";
 import EditCube from "./components/admin/EditCube";
 import TestPreferencesTable from "./pages/Staff/TestPreferencesTable";
 import DraftPods from "./pages/Tournament/DraftPods";
@@ -29,6 +28,7 @@ import ManageUsers from "./components/admin/ManageUsers";
 import ManageStaff from "./pages/Staff/ManageStaff";
 import AllPoolsView from "./pages/Staff/AllPoolsView";
 import ManagePlayers from "./pages/Staff/ManagePlayers";
+import CVTest from "./pages/Test/CVTest";
 
 function App() {
   const routes: RouteObject[] = [
@@ -42,6 +42,10 @@ function App() {
               path: "/",
               index: true,
               Component: Landing,
+            },
+            {
+              path: "test",
+              Component: CVTest,
             },
             {
               path: "login",
@@ -65,7 +69,7 @@ function App() {
             },
             {
               path: "cubes/:cubeId",
-              Component: ViewCubeGeneral,
+              Component: ViewCube,
             },
             {
               path: "cubes/:cubeId/edit",

@@ -17,6 +17,8 @@ import {
   generateCardDb,
   getCardDb,
   playerReturnedCards,
+  resetCardDb,
+  updateCardDb,
 } from "../controller/card.controller";
 import { generateDryRunUsers } from "../controller/dry-run.controller";
 
@@ -95,6 +97,14 @@ adminRouter.get("/generateCardDb", async (req, res) => {
 
 adminRouter.get("/getCardDb", async (req, res) => {
   res.send(await getCardDb(req));
+});
+
+adminRouter.get("/resetCardDb", async (req, res) => {
+  res.send(await resetCardDb(req));
+});
+
+adminRouter.get("/updateCardDb", async (req, res) => {
+  res.send(await updateCardDb(req));
 });
 
 adminRouter.get(

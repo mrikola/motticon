@@ -1,5 +1,22 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from "typeorm";
 import { Color } from "../dto/card.dto";
+
+export type CardFace = {
+  name: string;
+  manaCost: string;
+  oracleText: string;
+  colors: Color[];
+  power: number;
+  toughness: number;
+  imageUri: string;
+};
 
 @Entity()
 @Unique(["scryfallId"])
@@ -14,6 +31,18 @@ export class Card {
   name: string;
 
   @Column()
+  manaCost: string;
+
+  @Column()
+  oracleText: string;
+
+  @Column({ nullable: true })
+  power: number;
+
+  @Column({ nullable: true })
+  toughness: number;
+
+  @Column()
   set: string;
 
   @Column({ nullable: true })
@@ -24,4 +53,17 @@ export class Card {
 
   @Column()
   type: string;
+
+  @Column("simple-array", { nullable: true })
+  faces: CardFace[];
+
+  @ManyToMany(() => Token, (token) => token.tokenFor)
+  @JoinTable({ name: "card_tokens" })
+  tokens: Token[];
+}
+
+@Entity("card")
+export class Token extends Card {
+  @ManyToMany(() => Card, (card) => card.tokens)
+  tokenFor: Card[];
 }

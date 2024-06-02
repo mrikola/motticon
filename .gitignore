@@ -6,3 +6,12 @@ cards/AtomicCards.json
 cards/AllIdentifiers.json
 backend/.env
 backend/.env
+cards/scryfall-oracle-cards.json
+cards/no_duplicates_scryfall.json
+cards/no_duplicates.json
+cards/filtered_scryfall.json
+cards/filtered.json
+cards/default-cards.json
+cards/filtered.json
+cards/no_duplicates.json
+cards/filtered.json

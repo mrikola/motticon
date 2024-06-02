@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import DatalistInput, { Item } from "react-datalist-input";
 import "react-datalist-input/dist/styles.css";
 import { get } from "../../services/ApiService";
-import { Card } from "../../types/Cube";
+import { Card } from "../../types/Card";
 
 type Props = {
   labelText: string;
@@ -41,6 +41,8 @@ const MTGAutocompleteInput = ({ labelText, setSelectedCard }: Props) => {
     if (value.length > 1) {
       const fetchData = async () => {
         const response = await get(`/card/search/${encodeURIComponent(value)}`);
+        // const r = await response.json();
+        // console.log(r);
         const resp = (await response.json()) as Card[];
         setCards(resp);
       };

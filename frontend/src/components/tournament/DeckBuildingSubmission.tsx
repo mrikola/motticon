@@ -1,11 +1,12 @@
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Draft, DraftPodSeat } from "../../types/Tournament";
 import { postFormData } from "../../services/ApiService";
 import { CheckSquareFill } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 import CardPool from "./CardPool";
-import { Cube, PickedCard } from "../../types/Cube";
+import { Cube } from "../../types/Cube";
+import { PickedCard, Token } from "../../types/Card";
 
 type Props = {
   seat: DraftPodSeat;
@@ -29,6 +30,7 @@ function DeckBuildingSubmission({
   setPlayerPickedCards,
 }: Props) {
   const [file, setFile] = useState<File | null>(null);
+  const [tokens, setTokens] = useState<Token[]>([]);
 
   const uploadStarted = () =>
     toast("Uploading, please wait...", {
@@ -92,6 +94,31 @@ function DeckBuildingSubmission({
   //   console.log(success);
   // };
 
+  useEffect(() => {
+    const tokens: Token[] = [];
+    // console.log(playerPickedCards);
+    for (const pc of playerPickedCards) {
+      if (pc.listedCard.card.tokens) {
+        for (const token of pc.listedCard.card.tokens) {
+          const existingTokens = tokens.filter(
+            (t) =>
+              t.name === token.name &&
+              t.oracleText === token.oracleText &&
+              t.power === token.power &&
+              t.toughness === token.toughness
+          );
+          if (existingTokens.length > 0) {
+            existingTokens[0].tokenFor.push(pc.listedCard.card);
+          } else {
+            tokens.push({ ...token, tokenFor: [pc.listedCard.card] });
+          }
+        }
+      }
+    }
+    setTokens(tokens);
+    console.log(tokens);
+  }, [playerPickedCards]);
+
   return (
     <Row>
       {done && playerPickedCards ? (
@@ -101,6 +128,37 @@ function DeckBuildingSubmission({
             <CheckSquareFill className="text-success" />
           </h2>
           <p>Waiting for other players to submit their draft pools.</p>
+          {tokens.length > 0 && (
+            <Col xs={12}>
+              <p className="lead">Remember to pick up these tokens:</p>
+              <Row>
+                {tokens.map((token, index) => (
+                  <Col xs={4} className="mb-3" key={index}>
+                    <p>
+                      {token.power && (
+                        <>
+                          {token.power}/{token.toughness}{" "}
+                        </>
+                      )}
+                      {token.name}
+                    </p>
+                    <img
+                      key={index}
+                      className="cube-token"
+                      src={`https://cards.scryfall.io/normal/front/${token.scryfallId.charAt(
+                        0
+                      )}/${token.scryfallId.charAt(1)}/${token.scryfallId}.jpg`}
+                    />
+                    {token.tokenFor.map((tokenGenerator) => (
+                      <p key={tokenGenerator.id} className="small">
+                        {tokenGenerator.name}
+                      </p>
+                    ))}
+                  </Col>
+                ))}
+              </Row>
+            </Col>
+          )}
         </>
       ) : (
         <>

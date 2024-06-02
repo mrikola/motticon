@@ -1,12 +1,12 @@
 import { DataSource, Like, Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
-import cards from "../cards_no_duplicates.json";
+//import cards from "../cards_no_duplicates.json";
 import { Color } from "../dto/card.dto";
-import { Card } from "../entity/Card";
+import { Card, Token } from "../entity/Card";
 import { ListedCard } from "../entity/ListedCard";
 import { PickedCard } from "../entity/PickedCard";
 import { DraftPodSeat } from "../entity/DraftPodSeat";
-const cardsArray = cards as Card[];
+//const cardsArray = cards as Card[];
 
 type PickedCardDto = {
   listedCard: ListedCard;
@@ -17,21 +17,239 @@ type PickedCardDto = {
 export class CardService {
   private appDataSource: DataSource;
   private cardRepository: Repository<Card>;
+  private tokenRepository: Repository<Token>;
   private listedCardRepository: Repository<ListedCard>;
   private pickedCardRepository: Repository<PickedCard>;
 
   constructor() {
     this.appDataSource = AppDataSource;
     this.cardRepository = this.appDataSource.getRepository(Card);
+    this.tokenRepository = this.appDataSource.getRepository(Token);
     this.listedCardRepository = this.appDataSource.getRepository(ListedCard);
     this.pickedCardRepository = this.appDataSource.getRepository(PickedCard);
   }
 
+  async resetCardDb(): Promise<boolean> {
+    try {
+      console.log("doing card db reset");
+      await this.pickedCardRepository.clear();
+      await this.listedCardRepository.clear();
+      // await this.cardRepository.clear();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async getCardDb(): Promise<Card[]> {
+    return await this.cardRepository.find();
+  }
+
+  async updateCardDb(): Promise<Card[]> {
+    const cardsArray = require("../no_duplicates_scryfall.json") as Card[];
+    console.log("call update card db");
+    const tokens = cardsArray.filter((card) => card.type.includes("Token"));
+    const tokenObjects = [];
+    console.log("updating tokens");
+    for (const token of tokens) {
+      const exists = await this.tokenRepository.exist({
+        where: {
+          scryfallId: token.scryfallId,
+        },
+      });
+      if (exists) {
+        const t = await this.updateToken(token);
+        tokenObjects.push(t);
+      } else {
+        const t = await this.createToken(token);
+        tokenObjects.push(t);
+      }
+    }
+    const cards = cardsArray.filter((card) => !card.type.includes("Token"));
+    const cardObjects = [];
+    console.log("updating cards");
+    for (const card of cards) {
+      const exists = await this.cardRepository.exist({
+        where: {
+          scryfallId: card.scryfallId,
+        },
+      });
+      if (exists) {
+        if (card.scryfallId === "efae4d84-8134-461a-a352-a5bdff7259a7") {
+          console.log("updating mother bear, power: " + card.power);
+        }
+        const c = await this.updateCard(card);
+        cardObjects.push(c);
+      } else {
+        const c = await this.createCard(card);
+        cardObjects.push(c);
+      }
+    }
+    return cardObjects.concat(tokenObjects);
+  }
+
   async generateCardDb(): Promise<Card[]> {
+    const cardsArray = require("../no_duplicates_scryfall.json") as Card[];
+    console.log(cardsArray.length);
     console.log("call generate db");
+    // generate tokens first, so they are ready to be associated with the nontoken cards
+    const tokens = cardsArray.filter((card) => card.type.includes("Token"));
+    console.log("token data: " + tokens.length);
+    const nontokens = cardsArray.filter((card) => !card.type.includes("Token"));
+    console.log("nontoken data: " + nontokens.length);
+    const generatedTokens = await this.generateTokens(tokens);
+    console.log("generated tokens: " + generatedTokens.length);
+    const generatedCards = await this.generateCards(nontokens);
+    console.log("generated cards: " + generatedCards.length);
+    return generatedTokens.concat(generatedCards);
+  }
+
+  async createToken(token: Card): Promise<Card> {
+    let colors: Color[] = [];
+    if (token.colors) {
+      token.colors.forEach((color) => {
+        colors.push(color);
+      });
+    }
+    return await this.tokenRepository.save({
+      name: token.name,
+      set: token.set,
+      scryfallId: token.scryfallId,
+      cmc: token.cmc ?? undefined,
+      colors: colors ?? undefined,
+      type: token.type,
+      manaCost: token.manaCost,
+      oracleText: token.oracleText,
+      power: token.power ?? undefined,
+      toughness: token.toughness ?? undefined,
+      faces: token.faces ?? undefined,
+    });
+  }
+
+  async updateToken(token: Card): Promise<Card> {
+    const existingToken = await this.getCardById(token.scryfallId);
+    const id = existingToken.id;
+    let colors: Color[] = [];
+    if (token.colors) {
+      token.colors.forEach((color) => {
+        colors.push(color);
+      });
+    }
+    await this.tokenRepository
+      .createQueryBuilder()
+      .update(Token)
+      .set({
+        name: token.name,
+        set: token.set,
+        scryfallId: token.scryfallId,
+        cmc: token.cmc ?? undefined,
+        colors: colors ?? undefined,
+        type: token.type,
+        manaCost: token.manaCost,
+        oracleText: token.oracleText,
+        power: token.power ?? undefined,
+        toughness: token.toughness ?? undefined,
+        faces: token.faces ?? undefined,
+      })
+      .where("id = :id", { id })
+      .execute();
+    return await this.getCardById(token.scryfallId);
+  }
+
+  async generateTokens(data: Card[]): Promise<Card[]> {
+    const tokens: Token[] = [];
+    try {
+      data.forEach(async (card) => {
+        let colors: Color[] = [];
+        if (card.colors) {
+          card.colors.forEach((color) => {
+            colors.push(color);
+          });
+        }
+        const exists = await this.tokenRepository.exist({
+          where: {
+            scryfallId: card.scryfallId,
+          },
+        });
+        if (card.scryfallId && !exists) {
+          const dbCard = await this.tokenRepository.save({
+            name: card.name,
+            set: card.set,
+            scryfallId: card.scryfallId,
+            cmc: card.cmc ?? undefined,
+            colors: colors ?? undefined,
+            type: card.type,
+            manaCost: card.manaCost,
+            oracleText: card.oracleText,
+            power: card.power ?? undefined,
+            toughness: card.toughness ?? undefined,
+            faces: card.faces ?? undefined,
+          });
+          tokens.push(dbCard);
+        }
+      });
+      return tokens;
+    } catch {
+      return null;
+    }
+  }
+
+  async createCard(card: Card): Promise<Card> {
+    let colors: Color[] = [];
+    if (card.colors) {
+      card.colors.forEach((color) => {
+        colors.push(color);
+      });
+    }
+    return await this.cardRepository.save({
+      name: card.name,
+      set: card.set,
+      scryfallId: card.scryfallId,
+      cmc: card.cmc ?? undefined,
+      colors: colors ?? undefined,
+      type: card.type,
+      manaCost: card.manaCost,
+      oracleText: card.oracleText,
+      power: card.power ?? undefined,
+      toughness: card.toughness ?? undefined,
+      faces: card.faces ?? undefined,
+    });
+  }
+
+  async updateCard(card: Card): Promise<Card> {
+    const existingCard = await this.getCardById(card.scryfallId);
+    const id = existingCard.id;
+    let colors: Color[] = [];
+    if (card.colors) {
+      card.colors.forEach((color) => {
+        colors.push(color);
+      });
+    }
+    await this.cardRepository
+      .createQueryBuilder()
+      .update(Card)
+      .set({
+        name: card.name,
+        set: card.set,
+        scryfallId: card.scryfallId,
+        cmc: card.cmc ?? undefined,
+        colors: colors ?? undefined,
+        type: card.type,
+        manaCost: card.manaCost,
+        oracleText: card.oracleText,
+        power: card.power ?? undefined,
+        toughness: card.toughness ?? undefined,
+        faces: card.faces ?? undefined,
+      })
+      .where("id = :id", { id })
+      .execute();
+    return await this.getCardById(card.scryfallId);
+  }
+
+  async generateCards(data: Card[]): Promise<Card[]> {
     const cards: Card[] = [];
     try {
-      cardsArray.forEach(async (card) => {
+      data.forEach(async (card) => {
         let colors: Color[] = [];
         if (card.colors) {
           card.colors.forEach((color) => {
@@ -44,6 +262,16 @@ export class CardService {
           },
         });
         if (card.scryfallId && !exists) {
+          const tokens: Token[] = [];
+          // if card has tokens associated with it, add tokens
+          if (card.tokens) {
+            for (const token of card.tokens) {
+              const tokenCard: Token = (await this.getCardById(
+                token.scryfallId
+              )) as Token;
+              tokens.push(tokenCard);
+            }
+          }
           const dbCard = await this.cardRepository.save({
             name: card.name,
             set: card.set,
@@ -51,6 +279,12 @@ export class CardService {
             cmc: card.cmc ?? undefined,
             colors: colors ?? undefined,
             type: card.type,
+            tokens: tokens,
+            manaCost: card.manaCost,
+            oracleText: card.oracleText,
+            power: card.power ?? undefined,
+            toughness: card.toughness ?? undefined,
+            faces: card.faces ?? undefined,
           });
           cards.push(dbCard);
         }
@@ -62,9 +296,14 @@ export class CardService {
   }
 
   async getCardById(scryfallId: string): Promise<Card> {
-    return await this.cardRepository.findOne({
-      where: { scryfallId },
-    });
+    return await this.cardRepository
+      .createQueryBuilder("card")
+      .leftJoinAndSelect("card.tokens", "tokens")
+      .where("card.scryfallId = :scryfallId", { scryfallId })
+      .getOne();
+    // return await this.cardRepository.findOne({
+    //   where: { scryfallId },
+    // });
   }
 
   async getCardByName(cardname: string): Promise<Card> {
@@ -217,12 +456,9 @@ export class CardService {
     }
   }
 
-  async getCardDb(): Promise<Card[]> {
-    return await this.cardRepository.find();
-  }
-
   // used for the MTGAutoComplete DataListInput
   async searchForCard(query: string): Promise<Card[]> {
+    const cardsArray = require("../no_duplicates_scryfall.json") as Card[];
     if (cardsArray) {
       return cardsArray
         .filter((card) =>

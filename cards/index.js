@@ -12,6 +12,7 @@ for (const [key, cardinfo] of Object.entries(response.data)) {
       const cmc = Number.isInteger(cardinfo.convertedManaCost)
         ? cardinfo.convertedManaCost
         : undefined;
+      const related = cardinfo.relatedCards ? cardinfo.relatedCards : undefined;
       let card_obj = {
         name: cardinfo.name,
         set: cardinfo.setCode,
@@ -19,6 +20,7 @@ for (const [key, cardinfo] of Object.entries(response.data)) {
         cmc: cmc,
         colors: cardinfo.colors,
         type: cardinfo.type,
+        related: related,
       };
       cards.push(card_obj);
     }

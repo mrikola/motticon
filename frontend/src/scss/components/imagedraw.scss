@@ -1,0 +1,31 @@
+.pool-wrapper {
+  position: relative;
+  display: inline-block;
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    z-index: 1;
+  }
+  svg {
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    rect {
+      stroke-width: 3;
+      fill-opacity: 0.8;
+      stroke-opacity: 0.9;
+      &.is-match {
+        fill: green;
+      }
+      &.not-match {
+        fill: red;
+      }
+    }
+    text {
+      fill: white;
+      font-size: 2em;
+    }
+  }
+}

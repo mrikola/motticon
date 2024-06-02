@@ -5,6 +5,7 @@ import { CardList } from "../entity/CardList";
 import { ListedCard } from "../entity/ListedCard";
 import { CubeCardDto } from "../dto/card.dto";
 import { CardService } from "./card.service";
+import { Card } from "../entity/Card";
 
 export class CubeService {
   private appDataSource: DataSource;
@@ -27,6 +28,7 @@ export class CubeService {
       .leftJoinAndSelect("cube.cardlist", "cardlist")
       .leftJoinAndSelect("cardlist.cards", "listedcards")
       .leftJoinAndSelect("listedcards.card", "card")
+      .leftJoinAndSelect("card.tokens", "tokens")
       .where("cube.id = :id", { id })
       .getOne();
   }
@@ -108,7 +110,9 @@ export class CubeService {
     const listedCards: ListedCard[] = [];
     await Promise.all(
       cards.map(async (card) => {
-        const cardObj = await this.cardService.getCardById(card.scryfallId);
+        const cardObj: Card = await this.cardService.getCardById(
+          card.scryfallId
+        );
         const listedCard = await this.appDataSource
           .getRepository(ListedCard)
           .create({

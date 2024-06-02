@@ -15,7 +15,8 @@ import { Item } from "react-datalist-input";
 import HelmetTitle from "../general/HelmetTitle";
 import BackButton from "../general/BackButton";
 import MTGAutocompleteInput from "../general/MTGAutocompleteInput";
-import { Cube, CubeCard } from "../../types/Cube";
+import { Cube } from "../../types/Cube";
+import { CubeCard } from "../../types/Card";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
@@ -110,6 +111,7 @@ function AddCube() {
       );
       const data = await response.json();
       const cards: CubeCard[] = [];
+      // const tokens: Token[] = [];
       let totalcards: number = 0;
       for (const card of data.cards.mainboard) {
         const match = cards.find(
@@ -124,6 +126,13 @@ function AddCube() {
             scryfallId: card.details.scryfall_id,
             quantity: 1,
           });
+          // if (card.details.tokens) {
+          //   for (const token of card.details.tokens) {
+          //     tokens.push({
+          //       scryfallId: token,
+          //     });
+          //   }
+          // }
         }
       }
       if (cards.length > 0) {
@@ -139,6 +148,11 @@ function AddCube() {
         );
         setValue("cards", cards);
       }
+      // if (tokens.length > 0) {
+      //   console.log("tokens:");
+      //   console.log(tokens);
+      //   setValue("tokens", tokens);
+      // }
     } catch (error) {
       console.error(error);
       setCubeDataText("Error getting cube data");

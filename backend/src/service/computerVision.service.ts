@@ -13,6 +13,25 @@ import levenshtein from "js-levenshtein";
 import { CardService } from "./card.service";
 import { ListedCard } from "../entity/ListedCard";
 
+type Point = {
+  x: number;
+  y: number;
+};
+
+type ComputerVisionCard = {
+  listedCard: ListedCard | undefined;
+  polygon: Point[];
+  text: string;
+  matchFound: boolean;
+  nearPolygons: number;
+};
+
+export type ComputerVisionDto = {
+  imageWidth: number;
+  imageHeight: number;
+  cvCards: ComputerVisionCard[];
+};
+
 export class ComputerVisionService {
   private appDataSource: DataSource;
   private cardService: CardService;
@@ -29,10 +48,15 @@ export class ComputerVisionService {
   async getListedCardsFromImageUrl(
     photoUrl: string,
     cubeCards: ListedCard[]
-  ): Promise<ListedCard[]> {
-    const texts: string[] = await this.getTextFromUrl(photoUrl);
-    const cards: ListedCard[] = await this.textsToListedCards(texts, cubeCards);
-    return cards;
+  ): Promise<ComputerVisionDto> {
+    const cvNoListedCards: ComputerVisionDto = await this.getTextFromUrl(
+      photoUrl
+    );
+    const cvWithCards: ComputerVisionDto = await this.textsToListedCards(
+      cvNoListedCards,
+      cubeCards
+    );
+    return cvWithCards;
   }
 
   async listedCardsToString(listedCards: ListedCard[]): Promise<string[]> {
@@ -47,8 +71,9 @@ export class ComputerVisionService {
     return stringCards;
   }
 
-  async getTextFromUrl(url: string): Promise<string[]> {
+  async getTextFromUrl(url: string): Promise<ComputerVisionDto> {
     const features = ["Read"];
+    const cvCards: ComputerVisionCard[] = [];
     // get result from Azure
     const result = await this.client.path("/imageanalysis:analyze").post({
       body: {
@@ -65,32 +90,52 @@ export class ComputerVisionService {
       const iaResult = result.body as ImageAnalysisResultOutput;
       if (iaResult.readResult) {
         iaResult.readResult.blocks[0].lines.forEach((line) => {
-          lines.push(line.text);
+          const cvCard: ComputerVisionCard = {
+            listedCard: undefined,
+            polygon: line.boundingPolygon,
+            text: line.text,
+            matchFound: false,
+            nearPolygons: 0,
+          };
+          cvCards.push(cvCard);
         });
       }
-      return lines;
+      let width, height;
+      if (iaResult.metadata) {
+        width = iaResult.metadata.width;
+        height = iaResult.metadata.height;
+      } else {
+        width = null;
+        height = null;
+      }
+      const cvObj: ComputerVisionDto = {
+        imageWidth: width,
+        imageHeight: height,
+        cvCards: cvCards,
+      };
+      return cvObj;
     }
     return null;
   }
 
   async textsToListedCards(
-    rawTexts: string[],
+    cvdtoObj: ComputerVisionDto,
     cubeCards: ListedCard[]
-  ): Promise<ListedCard[]> {
-    const results: ListedCard[] = [];
+  ): Promise<ComputerVisionDto> {
+    const results: ComputerVisionDto[] = [];
     const symSpell = new SymSpell();
     for (const listedCard of cubeCards) {
       symSpell.add(listedCard.card.name);
     }
     // string[] dictionary of cards for symSpell search
     const dictionary = await this.listedCardsToString(cubeCards);
-    for (const line of rawTexts) {
+    for (const cvObj of cvdtoObj.cvCards) {
       let foundForLine = false;
       // run a symspell search for each card using a 0.5 maxRatioDiff
       const symSpellResult: string = await this.symSearch(
         symSpell,
         dictionary,
-        line,
+        cvObj.text,
         0.5
       );
       // if something relevant is found, add it to the list of results
@@ -99,7 +144,9 @@ export class ComputerVisionService {
         const listedCard: ListedCard = cubeCards.find((c) =>
           c.card.name.includes(symSpellResult)
         );
-        results.push(listedCard);
+        cvObj.listedCard = listedCard;
+        cvObj.matchFound = true;
+        // results.push(listedCard);
         foundForLine = true;
       } else {
         // console.log("symspell search did not find match");
@@ -115,13 +162,15 @@ export class ComputerVisionService {
           } else {
             name = cc.card.name.split(" // ")[0];
           }
-          if (line.includes(name)) {
+          if (cvObj.text.includes(name)) {
             // determine distance between card name and text line
-            const distance = levenshtein(name, line);
+            const distance = levenshtein(name, cvObj.text);
             // add result if under cutoff point
             if (distance < 7) {
               // console.log("found intext match, distance: " + distance);
-              results.push(cc);
+              cvObj.listedCard = cc;
+              cvObj.matchFound = true;
+              // results.push(cc);
               foundForLine = true;
               break;
             } else {
@@ -131,12 +180,11 @@ export class ComputerVisionService {
         }
       }
     }
-    console.log(results.length);
-    return results;
+    return cvdtoObj;
   }
 
   // Function for doing symSpell search() on OCR returned textx
-  // @SynSpell: a SymSpell instance instantiated elsewhere
+  // @s ymSpell: a SymSpell instance instantiated elsewhere
   // @cards: a dictionary of cards to search against (have been added to SymSpell elsewhere already)
   // @text: piece of text to search for
   // @maxRatioDiff: default to use is 0.5

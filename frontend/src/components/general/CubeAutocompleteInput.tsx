@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import DatalistInput, { Item } from "react-datalist-input";
 import "react-datalist-input/dist/styles.css";
-import { CardAndQuantity, ListedCard } from "../../types/Cube";
+import { CardAndQuantity, ListedCard } from "../../types/Card";
 
 type Props = {
   labelText: string;

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Table } from "react-bootstrap";
 import { Cube } from "../../types/Cube";
 import { get } from "../../services/ApiService";
 import { PenFill, BoxArrowUpRight } from "react-bootstrap-icons";
@@ -9,13 +9,22 @@ import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import Loading from "../../components/general/Loading";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
+import { Color } from "../../types/Card";
 
 const ViewCube = () => {
-  console.log("what");
   const user = useContext(UserInfoContext);
   const isAdmin = user?.isAdmin;
   const { cubeId, tournamentId } = useParams();
   const [cube, setCube] = useState<Cube>();
+  const colors: Color[] = ["W", "U", "B", "R", "G"];
+  const cardtypes: string[] = [
+    "Creature",
+    "Planeswalker",
+    "Instant",
+    "Sorcery",
+    "Enchantment",
+    "Artifact",
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +35,21 @@ const ViewCube = () => {
 
     fetchData();
   }, [cubeId]);
+
+  const colorSymbolToHeading = (symbol: Color) => {
+    switch (symbol) {
+      case "W":
+        return "White";
+      case "U":
+        return "Blue";
+      case "B":
+        return "Black";
+      case "R":
+        return "Red";
+      case "G":
+        return "Green";
+    }
+  };
 
   if (cube) {
     return (
@@ -41,10 +65,16 @@ const ViewCube = () => {
           >
             <Container className="h-100">
               <Row className="mt-3 my-md-4">
-                <BackButton
-                  buttonText="Back to tournament cubes"
-                  path={`/tournament/${tournamentId}/cubes/`}
-                />
+                {tournamentId ? (
+                  <BackButton
+                    buttonText="Back to tournament cubes"
+                    path={`/tournament/${tournamentId}/cubes/`}
+                  />
+                ) : (
+                  <Row className="mt-3 my-md-4">
+                    <BackButton buttonText="Back to cubes" path={`/cubes/`} />
+                  </Row>
+                )}
               </Row>
               <Row className="h-100 align-items-center">
                 <Col className="text-center">
@@ -82,6 +112,56 @@ const ViewCube = () => {
               <p className="lead">{cube.description}</p>
             </Col>
           </Row>
+          {cube.cardlist && (
+            <Row>
+              <h2>Cards {cube.cardlist.cards.length}</h2>
+
+              {colors.map((color) => {
+                return (
+                  <Col xs={6} sm={4} lg={2} key={color}>
+                    <h3>{colorSymbolToHeading(color)}</h3>
+                    {cardtypes.map((cardtype) => {
+                      return (
+                        <>
+                          <p className="lead">
+                            {cardtype} (
+                            {
+                              cube.cardlist.cards.filter(
+                                (lc) =>
+                                  lc.card.colors.length === 1 &&
+                                  lc.card.colors[0] === color &&
+                                  lc.card.type.includes(cardtype)
+                              ).length
+                            }
+                            )
+                          </p>
+                          <Table striped borderless responsive>
+                            <tbody>
+                              {cube.cardlist.cards
+                                .filter(
+                                  (lc) =>
+                                    lc.card.colors.length === 1 &&
+                                    lc.card.colors[0] === color &&
+                                    lc.card.type.includes(cardtype)
+                                )
+                                .sort((a, b) => a.card.cmc - b.card.cmc)
+                                .map((listedCard, index) => (
+                                  <tr key={index}>
+                                    <td className="small p-1">
+                                      {listedCard.card.name}
+                                    </td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </Table>
+                        </>
+                      );
+                    })}
+                  </Col>
+                );
+              })}
+            </Row>
+          )}
         </Container>
       </>
     );
