@@ -1,4 +1,5 @@
 import { Card } from "../entity/Card";
+import { ListedCard } from "../entity/ListedCard";
 import { PickedCard } from "../entity/PickedCard";
 import { CardService } from "../service/card.service";
 
@@ -16,9 +17,9 @@ export const updateCardDb = async (req): Promise<Card[]> => {
   return await cardService.updateCardDb();
 };
 
-export const resetCardDb = async (req): Promise<boolean> => {
-  return await cardService.resetCardDb();
-};
+// export const resetCardDb = async (req): Promise<boolean> => {
+//   return await cardService.resetCardDb();
+// };
 
 export const getCardById = async (req): Promise<Card> => {
   const { scryfallId } = req.params;
@@ -48,6 +49,10 @@ export const setPickedCards = async (req): Promise<PickedCard[]> => {
 export const playerReturnedCards = async (req): Promise<boolean> => {
   const { playerId } = req.params;
   return await cardService.playerReturnedCards(playerId);
+};
+
+export const getAllListedCards = async (req): Promise<ListedCard[]> => {
+  return await cardService.getAllListedCards();
 };
 
 // admin-only function to generate dummy picked cards for test users

@@ -18,6 +18,7 @@ import MTGAutocompleteInput from "../general/MTGAutocompleteInput";
 import { Cube } from "../../types/Cube";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
+import { CubeCard } from "../../types/Card";
 
 type EditCubeForm = {
   cubeId: number;
@@ -26,6 +27,8 @@ type EditCubeForm = {
   url: string;
   owner: string;
   imageUrl: string;
+  cubecobraId: string;
+  cards: CubeCard[];
 };
 
 function EditCube() {
@@ -35,6 +38,9 @@ function EditCube() {
   const [cardImageUrl, setCardImageUrl] = useState<string>("");
   const [selectedCard, setSelectedCard] = useState<Item>();
   const [currentInfo, setCurrentInfo] = useState<Cube>();
+  const [getCubecobraDataDisabled, setGetCubecobraDataDisabled] =
+    useState<boolean>(false);
+  const [cubeDataText, setCubeDataText] = useState<string>("");
 
   function editCube(form: EditCubeForm) {
     console.log("sending:");
@@ -53,6 +59,7 @@ function EditCube() {
       const resp = await get(`/cube/${cubeId}`);
       const cube = (await resp.json()) as Cube;
       setCurrentInfo(cube);
+      console.log(cube);
       setValue("cubeId", cube.id);
       setValue("title", cube.title);
       setValue("description", cube.description);
@@ -72,6 +79,7 @@ function EditCube() {
     handleSubmit,
     getFieldState,
     setValue,
+    getValues,
     trigger,
     formState: { errors },
   } = useForm<EditCubeForm>({
@@ -83,6 +91,8 @@ function EditCube() {
       url: "",
       owner: "",
       imageUrl: "",
+      cubecobraId: "",
+      cards: undefined,
     },
   });
 
@@ -92,12 +102,87 @@ function EditCube() {
     return baseUrl + uniqueUrl;
   }
 
+  const queryStarted = () =>
+    toast("Getting data, please wait...", {
+      type: "warning",
+      autoClose: false,
+      toastId: "uploadToast",
+    });
+
+  const querySuccess = () =>
+    toast.update("uploadToast", {
+      render: "Got data successfully",
+      type: "success",
+      autoClose: 2000,
+    });
+
+  const queryFailed = () =>
+    toast.update("uploadToast", {
+      render: "Getting data failed",
+      type: "error",
+      autoClose: 2000,
+    });
+
+  async function getCubecobraData(id: string) {
+    queryStarted();
+    setGetCubecobraDataDisabled(true);
+    try {
+      const response = await fetch(
+        "https://cubecobra.com/cube/api/cubeJSON/" + id,
+        {
+          method: "GET",
+          mode: "cors",
+        }
+      );
+      const data = await response.json();
+      const cards: CubeCard[] = [];
+      let totalcards: number = 0;
+      for (const card of data.cards.mainboard) {
+        const match = cards.find(
+          (c) => c.scryfallId === card.details.scryfall_id
+        );
+        if (match) {
+          match.quantity++;
+          totalcards++;
+        } else {
+          totalcards++;
+          cards.push({
+            scryfallId: card.details.scryfall_id,
+            quantity: 1,
+          });
+        }
+      }
+      if (cards.length > 0) {
+        querySuccess();
+        console.log(cards);
+        setCubeDataText(
+          "Loaded " +
+            cards.length +
+            " unique cards (" +
+            totalcards +
+            " total cards) from " +
+            data.name
+        );
+        setValue("cards", cards);
+      }
+    } catch (error) {
+      console.error(error);
+      setCubeDataText("Error getting cube data");
+      queryFailed();
+    }
+  }
+
   async function setImage() {
     const url = getScryfallUrl(selectedCard.id);
     setValue("imageUrl", url);
     await trigger("imageUrl");
     setCardImageUrl(url);
   }
+
+  const cubecobraIdChanged = (value: string) => {
+    const url = "https://cubecobra.com/cube/overview/" + value;
+    setValue("url", url);
+  };
 
   useEffect(() => {
     if (selectedCard) {
@@ -194,36 +279,43 @@ function EditCube() {
               </FloatingLabel>
             </Col>
 
-            <Col xs={12}>
+            <Col xs={6}>
+              <Form.Control hidden {...register("url")}></Form.Control>
               <FloatingLabel
-                controlId="url"
-                label="Link to cube list (e.g. Cube Cobra)"
+                controlId="cubecobraId"
+                label="Cubecobra ID"
                 className="mb-3"
               >
                 <Form.Control
-                  {...register("url", {
-                    required: "Please enter the URL to the cube list",
-                    pattern: {
-                      value: new RegExp(
-                        "/(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?/"
-                      ),
-                      message: "Please enter a valid URL",
-                    },
+                  {...register("cubecobraId", {
+                    required: "Please enter the Cubecobra ID",
                   })}
-                  type="url"
-                  placeholder="http://example.com/"
+                  type="text"
+                  placeholder="abc123"
                   className={
-                    getFieldState("url").isDirty
-                      ? getFieldState("url").invalid
+                    getFieldState("cubecobraId").isDirty
+                      ? getFieldState("cubecobraId").invalid
                         ? "is-invalid"
                         : "is-valid"
                       : ""
                   }
+                  onChange={(e) => cubecobraIdChanged(e.target.value)}
                 />
                 <p className="text-danger">
-                  {errors.url && errors.url.message}
+                  {errors.owner && errors.owner.message}
                 </p>
               </FloatingLabel>
+            </Col>
+            <Col xs={6}>
+              <Button
+                variant="primary"
+                className="btn-lg"
+                disabled={getCubecobraDataDisabled}
+                onClick={() => getCubecobraData(getValues("cubecobraId"))}
+              >
+                Get cube data
+              </Button>
+              <p>{cubeDataText}</p>
             </Col>
           </Row>
           <Row>
@@ -234,7 +326,6 @@ function EditCube() {
                 rules={{
                   required: "Choose a display image",
                 }}
-                // selected card currently not getting passed back properly
                 render={() => (
                   <MTGAutocompleteInput
                     labelText={"Choose display image"}

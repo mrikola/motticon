@@ -1,5 +1,8 @@
+import { Card } from "../entity/Card";
 import { CardList } from "../entity/CardList";
 import { Cube } from "../entity/Cube";
+import { ListedCard } from "../entity/ListedCard";
+import { CubeCardDto } from "./card.dto";
 
 export type CubeDto = {
   id: number;
@@ -9,6 +12,11 @@ export type CubeDto = {
   url: string;
   imageUrl: string;
   cardlist: CardList;
+};
+
+export type CubeDiffDto = {
+  orphanedCards: ListedCard[];
+  newCards: CubeCardDto[];
 };
 
 export const cubeToDto = (cube: Cube): CubeDto =>

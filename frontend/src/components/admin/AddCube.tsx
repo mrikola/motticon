@@ -126,13 +126,6 @@ function AddCube() {
             scryfallId: card.details.scryfall_id,
             quantity: 1,
           });
-          // if (card.details.tokens) {
-          //   for (const token of card.details.tokens) {
-          //     tokens.push({
-          //       scryfallId: token,
-          //     });
-          //   }
-          // }
         }
       }
       if (cards.length > 0) {
@@ -148,11 +141,6 @@ function AddCube() {
         );
         setValue("cards", cards);
       }
-      // if (tokens.length > 0) {
-      //   console.log("tokens:");
-      //   console.log(tokens);
-      //   setValue("tokens", tokens);
-      // }
     } catch (error) {
       console.error(error);
       setCubeDataText("Error getting cube data");

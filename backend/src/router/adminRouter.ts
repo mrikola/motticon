@@ -7,7 +7,13 @@ import {
   removeFromStaff,
 } from "../controller/tournament.controller";
 import { resetEloForUser, updateElo } from "../controller/rating.controller";
-import { addCube, editCube } from "../controller/cube.controller";
+import {
+  addCube,
+  editCube,
+  getCardlist,
+  getCubeDiff,
+  updateCubeCardlist,
+} from "../controller/cube.controller";
 import {
   setDeckPhotoForUser,
   submitRandomPool,
@@ -15,9 +21,9 @@ import {
 import { deleteUser } from "../controller/user.controller";
 import {
   generateCardDb,
+  getAllListedCards,
   getCardDb,
   playerReturnedCards,
-  resetCardDb,
   updateCardDb,
 } from "../controller/card.controller";
 import { generateDryRunUsers } from "../controller/dry-run.controller";
@@ -45,6 +51,14 @@ adminRouter.post("/cube/add", async (req, res) => {
 
 adminRouter.post("/cube/edit", async (req, res) => {
   res.send(await editCube(req));
+});
+
+adminRouter.post("/cube/diff", async (req, res) => {
+  res.send(await getCubeDiff(req));
+});
+
+adminRouter.post("/cube/updateCardList", async (req, res) => {
+  res.send(await updateCubeCardlist(req));
 });
 
 // just here for testing purposes
@@ -99,10 +113,6 @@ adminRouter.get("/getCardDb", async (req, res) => {
   res.send(await getCardDb(req));
 });
 
-adminRouter.get("/resetCardDb", async (req, res) => {
-  res.send(await resetCardDb(req));
-});
-
 adminRouter.get("/updateCardDb", async (req, res) => {
   res.send(await updateCardDb(req));
 });
@@ -117,6 +127,14 @@ adminRouter.get(
     }
   }
 );
+
+adminRouter.get("/cardlist/:id", async (req, res) => {
+  res.send(await getCardlist(req));
+});
+
+adminRouter.get("/listedcards/all", async (req, res) => {
+  res.send(await getAllListedCards(req));
+});
 
 // adminRouter.get(
 //   "/cube/:cubeId/pickedCards/generateRandom/:playerId",

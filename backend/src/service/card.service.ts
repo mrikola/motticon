@@ -301,9 +301,6 @@ export class CardService {
       .leftJoinAndSelect("card.tokens", "tokens")
       .where("card.scryfallId = :scryfallId", { scryfallId })
       .getOne();
-    // return await this.cardRepository.findOne({
-    //   where: { scryfallId },
-    // });
   }
 
   async getCardByName(cardname: string): Promise<Card> {
@@ -338,6 +335,15 @@ export class CardService {
     return foundCards;
   }
 
+  // by actual id, not scryfall id
+  async getListedCardById(id: number): Promise<ListedCard> {
+    return await this.listedCardRepository
+      .createQueryBuilder("listedCard")
+      .leftJoinAndSelect("listedCard.card", "card")
+      .where("listedCard.id = :id", { id })
+      .getOne();
+  }
+
   async getListedCardByName(cardname: string): Promise<ListedCard> {
     const query = decodeURI(cardname);
     // look for exact match first
@@ -369,6 +375,10 @@ export class CardService {
     }
   }
 
+  async getAllListedCards(): Promise<ListedCard[]> {
+    return await this.listedCardRepository.find();
+  }
+
   async getListedCards(cards: string[]): Promise<ListedCard[]> {
     const foundCards: ListedCard[] = [];
     for (const card of cards) {
@@ -376,6 +386,23 @@ export class CardService {
       foundCards.push(c);
     }
     return foundCards;
+  }
+
+  async removeListedCards(cards: ListedCard[]): Promise<boolean> {
+    try {
+      for (const card of cards) {
+        const cardId = card.id;
+        await this.listedCardRepository
+          .createQueryBuilder()
+          .delete()
+          .from(ListedCard)
+          .where("id = :cardId", { cardId })
+          .execute();
+      }
+      return true;
+    } catch (err: unknown) {
+      return false;
+    }
   }
 
   async createPickedCard(
