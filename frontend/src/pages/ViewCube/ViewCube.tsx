@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Col, Container, Row, Table } from "react-bootstrap";
 import { Cube } from "../../types/Cube";
@@ -117,48 +117,48 @@ const ViewCube = () => {
               <h2>Cards {cube.cardlist.cards.length}</h2>
 
               {colors.map((color) => {
-                return (
-                  <Col xs={6} sm={4} lg={2} key={color}>
-                    <h3>{colorSymbolToHeading(color)}</h3>
-                    {cardtypes.map((cardtype) => {
-                      return (
-                        <>
-                          <p className="lead">
-                            {cardtype} (
-                            {
-                              cube.cardlist.cards.filter(
-                                (lc) =>
-                                  lc.card.colors.length === 1 &&
-                                  lc.card.colors[0] === color &&
-                                  lc.card.type.includes(cardtype)
-                              ).length
-                            }
-                            )
-                          </p>
-                          <Table striped borderless responsive>
-                            <tbody>
-                              {cube.cardlist.cards
-                                .filter(
-                                  (lc) =>
-                                    lc.card.colors.length === 1 &&
-                                    lc.card.colors[0] === color &&
-                                    lc.card.type.includes(cardtype)
-                                )
-                                .sort((a, b) => a.card.cmc - b.card.cmc)
-                                .map((listedCard, index) => (
-                                  <tr key={index}>
-                                    <td className="small p-1">
-                                      {listedCard.card.name}
-                                    </td>
-                                  </tr>
-                                ))}
-                            </tbody>
-                          </Table>
-                        </>
-                      );
-                    })}
-                  </Col>
-                );
+                if (
+                  cube.cardlist.cards.filter(
+                    (lc) =>
+                      lc.card.colors.length === 1 && lc.card.colors[0] === color
+                  ).length > 0
+                ) {
+                  return (
+                    <Col xs={6} sm={4} lg={2} key={color}>
+                      <h3>{colorSymbolToHeading(color)}</h3>
+                      {cardtypes.map((cardtype, index) => {
+                        const typeCards = cube.cardlist.cards.filter(
+                          (lc) =>
+                            lc.card.colors.length === 1 &&
+                            lc.card.colors[0] === color &&
+                            lc.card.type.includes(cardtype)
+                        );
+                        if (typeCards.length > 0) {
+                          return (
+                            <Fragment key={index}>
+                              <p className="lead">
+                                {cardtype} ({typeCards.length})
+                              </p>
+                              <Table striped borderless responsive>
+                                <tbody>
+                                  {typeCards
+                                    .sort((a, b) => a.card.cmc - b.card.cmc)
+                                    .map((listedCard, index) => (
+                                      <tr key={index}>
+                                        <td className="small p-1">
+                                          {listedCard.card.name}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                </tbody>
+                              </Table>
+                            </Fragment>
+                          );
+                        }
+                      })}
+                    </Col>
+                  );
+                }
               })}
             </Row>
           )}

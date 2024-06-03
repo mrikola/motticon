@@ -48,7 +48,6 @@ function EditCube() {
     post("/cube/edit", form).then(async (_resp) => {
       // TODO show some kind of success thing
       const cube = (await _resp.json()) as Cube;
-      console.log(cube);
       toast.success("Cube edited");
       navigate("/cubes/" + cube.id);
     });
@@ -66,6 +65,14 @@ function EditCube() {
       setValue("url", cube.url);
       setValue("owner", cube.owner);
       setValue("imageUrl", cube.imageUrl);
+      const cubeCards: CubeCard[] = [];
+      for (const card of cube.cardlist.cards) {
+        cubeCards.push({
+          scryfallId: card.card.scryfallId,
+          quantity: card.quantityInCube,
+        });
+      }
+      setValue("cards", cubeCards);
 
       setCardImageUrl(cube.imageUrl);
     };
@@ -278,7 +285,10 @@ function EditCube() {
                 </p>
               </FloatingLabel>
             </Col>
-
+          </Row>
+          <Row>
+            <h3>Cards</h3>
+            <p>{getValues("cards").length} cards currently in cube</p>
             <Col xs={6}>
               <Form.Control hidden {...register("url")}></Form.Control>
               <FloatingLabel
@@ -319,6 +329,7 @@ function EditCube() {
             </Col>
           </Row>
           <Row>
+            <h3>Display image</h3>
             <Col xs={6}>
               <Controller
                 control={control}

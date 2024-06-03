@@ -1,4 +1,4 @@
-import { DataSource, Like, Repository } from "typeorm";
+import { DataSource, IsNull, Like, Not, Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 //import cards from "../cards_no_duplicates.json";
 import { Color } from "../dto/card.dto";
@@ -29,17 +29,17 @@ export class CardService {
     this.pickedCardRepository = this.appDataSource.getRepository(PickedCard);
   }
 
-  async resetCardDb(): Promise<boolean> {
-    try {
-      console.log("doing card db reset");
-      await this.pickedCardRepository.clear();
-      await this.listedCardRepository.clear();
-      // await this.cardRepository.clear();
-      return true;
-    } catch {
-      return false;
-    }
-  }
+  // async resetCardDb(): Promise<boolean> {
+  //   try {
+  //     console.log("doing card db reset");
+  //     await this.pickedCardRepository.clear();
+  //     await this.listedCardRepository.clear();
+  //     // await this.cardRepository.clear();
+  //     return true;
+  //   } catch {
+  //     return false;
+  //   }
+  // }
 
   async getCardDb(): Promise<Card[]> {
     return await this.cardRepository.find();
@@ -375,8 +375,23 @@ export class CardService {
     }
   }
 
+  // Function for cleaning up ListedCard-objects that have no CardList associated with them
+  // No orphans should exist if cubes are imported correctly
+  async deleteOrphanListedCards(): Promise<ListedCard[]> {
+    await this.listedCardRepository
+      .createQueryBuilder()
+      .delete()
+      .from(ListedCard)
+      .where("cardlist IS NULL")
+      .execute();
+    return await this.getAllListedCards();
+  }
+
   async getAllListedCards(): Promise<ListedCard[]> {
-    return await this.listedCardRepository.find();
+    return await this.listedCardRepository
+      .createQueryBuilder("listedCard")
+      .leftJoinAndSelect("listedCard.cardlist", "cardlist")
+      .getMany();
   }
 
   async getListedCards(cards: string[]): Promise<ListedCard[]> {

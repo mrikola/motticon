@@ -20,6 +20,7 @@ import {
 } from "../controller/draft.controller";
 import { deleteUser } from "../controller/user.controller";
 import {
+  deleteOrphanListedCards,
   generateCardDb,
   getAllListedCards,
   getCardDb,
@@ -134,6 +135,10 @@ adminRouter.get("/cardlist/:id", async (req, res) => {
 
 adminRouter.get("/listedcards/all", async (req, res) => {
   res.send(await getAllListedCards(req));
+});
+
+adminRouter.get("/listedcards/deleteOrphans", async (req, res) => {
+  res.send(await deleteOrphanListedCards(req));
 });
 
 // adminRouter.get(

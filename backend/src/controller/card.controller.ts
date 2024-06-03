@@ -55,6 +55,10 @@ export const getAllListedCards = async (req): Promise<ListedCard[]> => {
   return await cardService.getAllListedCards();
 };
 
+export const deleteOrphanListedCards = async (req): Promise<ListedCard[]> => {
+  return await cardService.deleteOrphanListedCards();
+};
+
 // admin-only function to generate dummy picked cards for test users
 // export const setRandomPickedCards = async (req): Promise<PickedCard[]> => {
 //   const { picker } = req.body;

@@ -29,6 +29,7 @@ import ManageStaff from "./pages/Staff/ManageStaff";
 import AllPoolsView from "./pages/Staff/AllPoolsView";
 import ManagePlayers from "./pages/Staff/ManagePlayers";
 import CVTest from "./pages/Test/CVTest";
+import AdminFunctions from "./components/admin/AdminFunctions";
 
 function App() {
   const routes: RouteObject[] = [
@@ -154,6 +155,10 @@ function App() {
             {
               path: "admin/manage-users",
               Component: ManageUsers,
+            },
+            {
+              path: "admin/admin-functions",
+              Component: AdminFunctions,
             },
             {
               path: "*",
