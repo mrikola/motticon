@@ -22,6 +22,11 @@ type Props = {
   setDraft: (draft: Draft) => void;
 };
 
+type DeckBuildingDto = {
+  seat: number;
+  pickedCards: PickedCard[];
+};
+
 function DraftOngoing({ tournament, draft, setDraft }: Props) {
   const user = useContext(UserInfoContext);
   const [playerCube, setPlayerCube] = useState<Cube>();
@@ -30,9 +35,13 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
   const [playerPoolPhotoUrl, setPlayerPoolPhotoUrl] = useState<string>();
   const [deckBuildingDone, setDeckBuildingDone] = useState<boolean>(false);
   const [buildingRemaining, setBuildingRemaining] = useState<number>(0);
-  const [allSeats, setAllSeats] = useState<DraftPodSeat[]>([]);
+  // const [allSeats, setAllSeats] = useState<DraftPodSeat[]>([]);
   const [totalPlayers, setTotalPlayers] = useState<number>(0);
   const [playerPickedCards, setPlayerPickedCards] = useState<PickedCard[]>([]);
+  const [deckBuildingStatus, setDeckBuildingStatus] = useState<
+    DeckBuildingDto[]
+  >([]);
+  const POOLSIZE = 45;
 
   // get relevant draft info
   useEffect(() => {
@@ -41,11 +50,6 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
       const draftPod = (await response.json()) as DraftPod;
       setPlayerPod(draftPod);
       setPlayerSeat(draftPod.seats[0]);
-      // console.log(draftPod);
-      // need to set deckBuildingDone another way, not just looking at if pool photo exists
-      // draftPod.seats[0].deckPhotoUrl
-      //   ? setDeckBuildingDone(true)
-      //   : setDeckBuildingDone(false);
       draftPod.seats[0].deckPhotoUrl
         ? setPlayerPoolPhotoUrl(draftPod.seats[0].deckPhotoUrl)
         : setPlayerPoolPhotoUrl(undefined);
@@ -93,9 +97,9 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
     }
   }, [playerPod, playerSeat]);
 
-  // mark deck building done when user has 45 or more cards registered to them
+  // mark deck building done when user has POOLSIZE or more cards registered to them
   useEffect(() => {
-    if (playerPickedCards.length >= 45) {
+    if (playerPickedCards.length >= POOLSIZE) {
       setDeckBuildingDone(true);
     }
   }, [playerPickedCards]);
@@ -110,26 +114,43 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
         seats.push({ ...seat, pod });
       }
     }
-    setAllSeats(seats);
+    // setAllSeats(seats);
     if (totalPlayers === 0) {
       setTotalPlayers(seats.length);
     }
-  }, [draft, totalPlayers]);
+    const deckBuilding: DeckBuildingDto[] = [];
+    const pickedCards: PickedCard[] = [];
+    if (playerPod) {
+      for (const card of playerPod.cube.cardlist.cards) {
+        if (card.pickedCards.length > 0) {
+          pickedCards.push(card.pickedCards[0]);
+        }
+      }
+      for (const seat of seats) {
+        const cards = pickedCards.filter((pc) => pc.picker.seat === seat.seat);
+        deckBuilding.push({
+          seat: seat.seat,
+          pickedCards: cards,
+        });
+      }
+      setDeckBuildingStatus(deckBuilding);
+      console.log(deckBuilding);
+    }
+  }, [draft, totalPlayers, playerPod]);
 
   // update progress bar based on number of players done building
   useEffect(() => {
-    if (allSeats) {
-      // todo: change this to check PickedCard rather than deckPhotoUrl
+    if (deckBuildingStatus) {
       setBuildingRemaining(
-        allSeats.filter((seat) => !seat.deckPhotoUrl).length
+        deckBuildingStatus.filter((seat) => seat.pickedCards.length < POOLSIZE)
+          .length
       );
     }
-  }, [allSeats]);
+  }, [deckBuildingStatus]);
 
   // callback function for modal once player confirms submit
   // function doneSetter(value: boolean) {
   //   setDeckBuildingDone(value);
-  //   console.log("done set to: " + value);
   // }
 
   if (user && draft && playerPod && playerSeat && playerCube) {
@@ -170,6 +191,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
           setDraft={setDraft}
           setPlayerPickedCards={setPlayerPickedCards}
           playerPickedCards={playerPickedCards}
+          POOLSIZE={POOLSIZE}
         />
       </>
     );

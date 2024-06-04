@@ -443,7 +443,7 @@ export class CardService {
       );
       picker = picked.picker;
     }
-    return await this.getPlayerPickedCards(picker.playerId);
+    return await this.getPlayerPickedCards(picker.id);
   }
 
   // staff-only helper function for testing purposes (auto-submit pools for test players)
@@ -464,21 +464,22 @@ export class CardService {
     return pickedCards;
   }
 
-  async playerReturnedCards(playerId: number): Promise<boolean> {
-    // get all PickedCards associated with this player
-    const cards = await this.getPlayerPickedCards(playerId);
+  async playerReturnedCards(seatId: number): Promise<boolean> {
+    // get all PickedCards associated with this draft seat
+    const cards = await this.getPlayerPickedCards(seatId);
+    console.log(cards.length);
     return await this.removePickedCards(cards);
   }
 
-  async getPlayerPickedCards(playerId: number): Promise<PickedCard[]> {
-    const cards: PickedCard[] = await this.pickedCardRepository.find({
-      where: {
-        picker: {
-          id: playerId,
-        },
-      },
-    });
-    return cards;
+  async getPlayerPickedCards(seatId: number): Promise<PickedCard[]> {
+    return await this.pickedCardRepository
+      .createQueryBuilder("pickedCard")
+      .leftJoinAndSelect("pickedCard.listedCard", "listedCard")
+      .leftJoinAndSelect("listedCard.card", "card")
+      .leftJoinAndSelect("card.tokens", "tokens")
+      .leftJoinAndSelect("pickedCard.picker", "picker")
+      .where("picker.id = :seatId", { seatId })
+      .getMany();
   }
 
   async removePickedCards(cards: PickedCard[]): Promise<boolean> {

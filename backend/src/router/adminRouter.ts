@@ -119,7 +119,7 @@ adminRouter.get("/updateCardDb", async (req, res) => {
 });
 
 adminRouter.get(
-  "/cube/:id/pickedCards/return/:playerId",
+  "/cube/:id/pickedCards/return/:seatId",
   async (req, res, next) => {
     try {
       res.send(await playerReturnedCards(req));

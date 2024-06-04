@@ -47,8 +47,8 @@ export const setPickedCards = async (req): Promise<PickedCard[]> => {
 };
 
 export const playerReturnedCards = async (req): Promise<boolean> => {
-  const { playerId } = req.params;
-  return await cardService.playerReturnedCards(playerId);
+  const { seatId } = req.params;
+  return await cardService.playerReturnedCards(seatId);
 };
 
 export const getAllListedCards = async (req): Promise<ListedCard[]> => {
