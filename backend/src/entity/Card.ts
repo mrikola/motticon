@@ -30,10 +30,10 @@ export class Card {
   @Column()
   name: string;
 
-  @Column({ default: "" })
+  @Column({ nullable: true, default: "" })
   manaCost: string;
 
-  @Column({ default: "" })
+  @Column({ nullable: true, default: "" })
   oracleText: string;
 
   @Column({ nullable: true })
@@ -42,7 +42,7 @@ export class Card {
   @Column({ nullable: true })
   toughness: number;
 
-  @Column()
+  @Column({ nullable: true, default: "" })
   set: string;
 
   @Column({ nullable: true })
@@ -51,7 +51,7 @@ export class Card {
   @Column("simple-array", { nullable: true })
   colors: Color[];
 
-  @Column()
+  @Column({ nullable: true, default: "" })
   type: string;
 
   @Column("simple-array", { nullable: true })
