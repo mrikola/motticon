@@ -1,0 +1,13 @@
+.photo-popover {
+  // --bs-tooltip-bg: var(--bd-violet-bg);
+  --bs-tooltip-bg: red;
+  --bs-tooltip-color: var(--bs-white);
+  .popover-header {
+    background: $primary;
+  }
+  .popover-arrow {
+    &::after {
+      border-bottom-color: $primary;
+    }
+  }
+}

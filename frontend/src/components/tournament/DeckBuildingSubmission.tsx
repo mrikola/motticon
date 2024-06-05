@@ -1,8 +1,15 @@
-import { Button, Col, Form, Row } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Form,
+  OverlayTrigger,
+  Popover,
+  Row,
+} from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { Draft, DraftPodSeat } from "../../types/Tournament";
-import { get, postFormData } from "../../services/ApiService";
-import { CheckSquareFill } from "react-bootstrap-icons";
+import { postFormData } from "../../services/ApiService";
+import { CheckSquareFill, InfoCircleFill } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 import CardPool from "./CardPool";
 import { Cube } from "../../types/Cube";
@@ -20,6 +27,23 @@ type Props = {
   setPlayerPickedCards: (cards: PickedCard[]) => void;
   POOLSIZE: number;
 };
+
+const photoSubmissionPopover = (
+  <Popover className="photo-popover">
+    <Popover.Header as="h3">Taking a photo</Popover.Header>
+    <Popover.Body>
+      <p>
+        Make sure all your cards are in the photo, and that their card names are
+        visible. Check that cards belonging to other people are not in the
+        photo.
+      </p>
+      <p className="mb-0">
+        Both portrait and landscape modes are OK, but we recommend that you
+        submit a photo with the card names oriented so that you can read them.
+      </p>
+    </Popover.Body>
+  </Popover>
+);
 
 function DeckBuildingSubmission({
   seat,
@@ -89,14 +113,14 @@ function DeckBuildingSubmission({
   };
 
   // for testing only
-  const resetPicked = async () => {
-    console.log("attempting to reset picks for id: " + seat.id);
-    const response = await get(
-      `/cube/${cube.id}/pickedCards/return/${seat.id}`
-    );
-    const success = (await response.json()) as boolean;
-    console.log(success);
-  };
+  // const resetPicked = async () => {
+  //   console.log("attempting to reset picks for id: " + seat.id);
+  //   const response = await get(
+  //     `/cube/${cube.id}/pickedCards/return/${seat.id}`
+  //   );
+  //   const success = (await response.json()) as boolean;
+  //   console.log(success);
+  // };
 
   useEffect(() => {
     const tokens: Token[] = [];
@@ -131,16 +155,24 @@ function DeckBuildingSubmission({
           <h2 className="icon-link">
             Your draft pool submission done{" "}
             <CheckSquareFill className="text-success" />
-            <Button className="btn" onClick={resetPicked}>
-              Reset picks
-            </Button>
           </h2>
           <p>Waiting for other players to submit their draft pools.</p>
           {tokens.length > 0 && <DraftTokens tokens={tokens} />}
         </>
       ) : (
         <>
-          <h2>Draft pool submission</h2>
+          <h2>
+            Draft pool submission{" "}
+            <OverlayTrigger
+              trigger="click"
+              placement="bottom"
+              overlay={photoSubmissionPopover}
+              rootClose
+            >
+              <InfoCircleFill className="text-primary" />
+            </OverlayTrigger>
+          </h2>
+
           {photoUrl ? (
             <CardPool
               cubeCards={cube.cardlist.cards}
@@ -156,8 +188,20 @@ function DeckBuildingSubmission({
                 After the draft, please submit a photo showing all the cards you
                 drafted. Make sure the names of all cards are visible.
               </p>
+              <p>
+                After taking the photo, leave the cards as they were when you
+                took the photo, in order to help you make corrections in the
+                next step.
+              </p>
+              <OverlayTrigger
+                trigger="click"
+                placement="right"
+                overlay={photoSubmissionPopover}
+              >
+                <Button variant="success">Click me to see</Button>
+              </OverlayTrigger>
               <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>Draft pool photo</Form.Label>
+                <Form.Label className="lead">Draft pool photo</Form.Label>
                 <Form.Control type="file" onChange={handleFileChange} />
               </Form.Group>
               <Button

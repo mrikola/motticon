@@ -52,6 +52,15 @@ const AdminFunctions = () => {
     console.log(data);
   };
 
+  const search = async () => {
+    const value = "tarm";
+    const response = await get(`/card/search2/${encodeURIComponent(value)}`);
+    // const r = await response.json();
+    // console.log(r);
+    const resp = (await response.json()) as Card[];
+    console.log(resp);
+  };
+
   return user ? (
     <Container className="mt-3 my-md-4">
       <HelmetTitle titleText="Admin" />
@@ -116,6 +125,16 @@ const AdminFunctions = () => {
           >
             <div className="icon-link text-light">
               <PersonFillGear className="fs-3" /> DELETE orphans
+            </div>
+          </Button>
+        </Col>
+      </Row>
+      <Row className="mt-3">
+        <h2>Testing</h2>
+        <Col xs={10} sm={8} className="d-grid gap-2 mx-auto mt-3">
+          <Button variant="danger" className="btn btn-lg" onClick={search}>
+            <div className="icon-link text-light">
+              <PersonFillGear className="fs-3" /> Do search
             </div>
           </Button>
         </Col>

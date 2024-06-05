@@ -43,6 +43,7 @@ function PoolView() {
       try {
         const draft = (await draftResponse.json()) as Draft;
         setCurrentDraft(draft);
+        console.log(draft);
       } catch {
         // TODO handle invalid response
       }
@@ -67,6 +68,7 @@ function PoolView() {
   }, [user]);
 
   function markReturned(seat: DraftPodSeat) {
+    console.log("trying to return for seat with id: " + seat.id);
     if (seat) {
       const seatId = seat.id;
       post(`/tournament/${tournamentId}/setDraftPoolReturned`, {
@@ -86,6 +88,7 @@ function PoolView() {
             ...modal,
             show: false,
           });
+          console.log(draft);
         }
       });
     } else {

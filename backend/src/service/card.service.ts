@@ -467,7 +467,6 @@ export class CardService {
   async playerReturnedCards(seatId: number): Promise<boolean> {
     // get all PickedCards associated with this draft seat
     const cards = await this.getPlayerPickedCards(seatId);
-    console.log(cards.length);
     return await this.removePickedCards(cards);
   }
 
@@ -499,15 +498,11 @@ export class CardService {
     }
   }
 
-  // used for the MTGAutoComplete DataListInput
   async searchForCard(query: string): Promise<Card[]> {
-    const cardsArray = require("../no_duplicates_scryfall.json") as Card[];
-    if (cardsArray) {
-      return cardsArray
-        .filter((card) =>
-          card.name.toLowerCase().includes(decodeURI(query).toLowerCase())
-        )
-        .slice(0, 20);
-    }
+    return await this.cardRepository
+      .createQueryBuilder()
+      .where("LOWER(name) like LOWER(:query)", { query: `%${query}%` })
+      .take(20)
+      .getMany();
   }
 }

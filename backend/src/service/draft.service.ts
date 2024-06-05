@@ -125,16 +125,23 @@ export class DraftService {
     tournamentId: number,
     seatId: number
   ): Promise<Draft> {
-    await this.appDataSource
-      .getRepository(DraftPodSeat)
-      .createQueryBuilder("seat")
-      .update(DraftPodSeat)
-      .set({
-        draftPoolReturned: true,
-      })
-      .where("id = :seatId", { seatId })
-      .execute();
-    const draft = await this.tournamentService.getCurrentDraft(tournamentId);
-    return draft;
+    // try to return cards (delete PickedCards assigned to this seat)
+    const success: boolean = await this.cardService.playerReturnedCards(seatId);
+    // if succesful, set the draftPoolReturned status for this seat
+    if (success) {
+      await this.appDataSource
+        .getRepository(DraftPodSeat)
+        .createQueryBuilder("seat")
+        .update(DraftPodSeat)
+        .set({
+          draftPoolReturned: true,
+        })
+        .where("id = :seatId", { seatId })
+        .execute();
+      const draft = await this.tournamentService.getCurrentDraft(tournamentId);
+      return draft;
+    } else {
+      return null;
+    }
   }
 }

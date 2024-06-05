@@ -64,6 +64,7 @@ function AllPoolsView() {
                     <thead>
                       <tr>
                         <th>Pod</th>
+                        <th>Seat</th>
                         <th>Player name</th>
                       </tr>
                     </thead>
@@ -71,14 +72,21 @@ function AllPoolsView() {
                       {pod.seats.map((seat) => (
                         <tr key={seat.id}>
                           <td>{pod.podNumber}</td>
+                          <td>{seat.seat}</td>
                           <td>
-                            <Link
-                              to={seat.deckPhotoUrl}
-                              target="_blank"
-                              className="text-dark"
-                            >
-                              {seat.player.firstName} {seat.player.lastName}
-                            </Link>
+                            {seat.deckPhotoUrl ? (
+                              <Link
+                                to={seat.deckPhotoUrl}
+                                target="_blank"
+                                className="text-dark"
+                              >
+                                {seat.player.firstName} {seat.player.lastName}
+                              </Link>
+                            ) : (
+                              <>
+                                {seat.player.firstName} {seat.player.lastName}
+                              </>
+                            )}
                           </td>
                         </tr>
                       ))}

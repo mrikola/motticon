@@ -134,7 +134,6 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
         });
       }
       setDeckBuildingStatus(deckBuilding);
-      console.log(deckBuilding);
     }
   }, [draft, totalPlayers, playerPod]);
 
