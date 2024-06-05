@@ -30,10 +30,10 @@ export class Card {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ default: "" })
   manaCost: string;
 
-  @Column()
+  @Column({ default: "" })
   oracleText: string;
 
   @Column({ nullable: true })

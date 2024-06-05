@@ -193,13 +193,6 @@ function DeckBuildingSubmission({
                 took the photo, in order to help you make corrections in the
                 next step.
               </p>
-              <OverlayTrigger
-                trigger="click"
-                placement="right"
-                overlay={photoSubmissionPopover}
-              >
-                <Button variant="success">Click me to see</Button>
-              </OverlayTrigger>
               <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label className="lead">Draft pool photo</Form.Label>
                 <Form.Control type="file" onChange={handleFileChange} />

@@ -56,10 +56,10 @@ const CardPool = ({
   useEffect(() => {
     if (automaticallyAddedCards.length === 0) {
       console.log("computer vision called");
-      // const url = photoUrl;
+      const url = photoUrl;
       // placeholder to be able to test from localhost
-      const url =
-        "https://motticon-backend.fly.dev/photos/14/478/Sakari_Castren.jpeg";
+      // const url =
+      //   "https://motticon-backend.fly.dev/photos/14/478/Sakari_Castren.jpeg";
       try {
         post("/computerVision/cardsFromImageUrl", { url, cubeCards }).then(
           async (resp) => {
@@ -75,7 +75,9 @@ const CardPool = ({
             addToAutomaticallyAddedCards(cards);
             setAutomaticallyIdentifiedCards(cards.length);
             setCvDto(data);
-            setPoolImageUrl(url);
+            if (url) {
+              setPoolImageUrl(url);
+            }
           }
         );
       } catch (error) {

@@ -54,7 +54,7 @@ const AdminFunctions = () => {
 
   const search = async () => {
     const value = "tarm";
-    const response = await get(`/card/search2/${encodeURIComponent(value)}`);
+    const response = await get(`/card/search/${encodeURIComponent(value)}`);
     // const r = await response.json();
     // console.log(r);
     const resp = (await response.json()) as Card[];

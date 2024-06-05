@@ -10,10 +10,17 @@ const DraftTokens = ({ tokens }: Props) => {
     return (
       <Col xs={12}>
         <p className="lead">Remember to pick up these tokens:</p>
-        <Row>
+        <Row className="cube-tokens">
           {tokens.map((token, index) => (
             <Col xs={4} className="mb-3" key={index}>
-              <p>
+              <img
+                key={index}
+                className="cube-token-img"
+                src={`https://cards.scryfall.io/normal/front/${token.scryfallId.charAt(
+                  0
+                )}/${token.scryfallId.charAt(1)}/${token.scryfallId}.jpg`}
+              />
+              <p className="mb-0">
                 {token.power && (
                   <>
                     {token.power}/{token.toughness}{" "}
@@ -21,18 +28,13 @@ const DraftTokens = ({ tokens }: Props) => {
                 )}
                 {token.name}
               </p>
-              <img
-                key={index}
-                className="cube-token"
-                src={`https://cards.scryfall.io/normal/front/${token.scryfallId.charAt(
-                  0
-                )}/${token.scryfallId.charAt(1)}/${token.scryfallId}.jpg`}
-              />
-              {token.tokenFor.map((tokenGenerator) => (
-                <p key={tokenGenerator.id} className="small">
-                  {tokenGenerator.name}
-                </p>
-              ))}
+              <ul>
+                {token.tokenFor.map((tokenGenerator) => (
+                  <li key={tokenGenerator.id} className="small">
+                    {tokenGenerator.name}
+                  </li>
+                ))}
+              </ul>
             </Col>
           ))}
         </Row>

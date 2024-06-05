@@ -59,7 +59,11 @@
 .add-cube-image {
   max-width: 100%;
 }
-
-.cube-token {
-  width: 100%;
+.cube-tokens {
+  .cube-token-img {
+    width: 100%;
+  }
+  ul {
+    padding-left: 1rem;
+  }
 }

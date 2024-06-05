@@ -501,7 +501,9 @@ export class CardService {
   async searchForCard(query: string): Promise<Card[]> {
     return await this.cardRepository
       .createQueryBuilder()
-      .where("LOWER(name) like LOWER(:query)", { query: `%${query}%` })
+      .where("LOWER(name) like LOWER(:query)", {
+        query: `%${decodeURI(query)}%`,
+      })
       .take(20)
       .getMany();
   }
