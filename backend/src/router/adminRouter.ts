@@ -23,8 +23,11 @@ import {
   deleteOrphanListedCards,
   generateCardDb,
   getAllListedCards,
+  getAllPickedCards,
+  getAllTokens,
   getCardDb,
   playerReturnedCards,
+  removeAllPickedCards,
   updateCardDb,
 } from "../controller/card.controller";
 import { generateDryRunUsers } from "../controller/dry-run.controller";
@@ -118,6 +121,14 @@ adminRouter.get("/updateCardDb", async (req, res) => {
   res.send(await updateCardDb(req));
 });
 
+adminRouter.get("/getAllPickedCards", async (req, res) => {
+  res.send(await getAllPickedCards(req));
+});
+
+adminRouter.get("/getAllTokens", async (req, res) => {
+  res.send(await getAllTokens(req));
+});
+
 adminRouter.get(
   "/cube/:id/pickedCards/return/:seatId",
   async (req, res, next) => {
@@ -139,6 +150,10 @@ adminRouter.get("/listedcards/all", async (req, res) => {
 
 adminRouter.get("/listedcards/deleteOrphans", async (req, res) => {
   res.send(await deleteOrphanListedCards(req));
+});
+
+adminRouter.get("/pickedcards/removeAll", async (req, res) => {
+  res.send(await removeAllPickedCards(req));
 });
 
 // adminRouter.get(

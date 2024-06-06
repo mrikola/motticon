@@ -1,4 +1,4 @@
-import { Card } from "../entity/Card";
+import { Card, Token } from "../entity/Card";
 import { ListedCard } from "../entity/ListedCard";
 import { PickedCard } from "../entity/PickedCard";
 import { CardService } from "../service/card.service";
@@ -36,6 +36,10 @@ export const getCards = async (req): Promise<Card[]> => {
   return await cardService.getCards(cards);
 };
 
+export const getAllTokens = async (req): Promise<Token[]> => {
+  return await cardService.getAllTokens();
+};
+
 export const searchForCard = async (req): Promise<Card[]> => {
   const { query } = req.params;
   return await cardService.searchForCard(query);
@@ -57,6 +61,14 @@ export const getAllListedCards = async (req): Promise<ListedCard[]> => {
 
 export const deleteOrphanListedCards = async (req): Promise<ListedCard[]> => {
   return await cardService.deleteOrphanListedCards();
+};
+
+export const removeAllPickedCards = async (req): Promise<boolean> => {
+  return await cardService.removeAllPickedCards();
+};
+
+export const getAllPickedCards = async (req): Promise<PickedCard[]> => {
+  return await cardService.getAllPickedCards();
 };
 
 // admin-only function to generate dummy picked cards for test users

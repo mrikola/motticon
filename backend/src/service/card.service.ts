@@ -29,27 +29,19 @@ export class CardService {
     this.pickedCardRepository = this.appDataSource.getRepository(PickedCard);
   }
 
-  // async resetCardDb(): Promise<boolean> {
-  //   try {
-  //     console.log("doing card db reset");
-  //     await this.pickedCardRepository.clear();
-  //     await this.listedCardRepository.clear();
-  //     // await this.cardRepository.clear();
-  //     return true;
-  //   } catch {
-  //     return false;
-  //   }
-  // }
-
   async getCardDb(): Promise<Card[]> {
     return await this.cardRepository.find();
+  }
+
+  async getAllTokens(): Promise<Token[]> {
+    return await this.tokenRepository.find();
   }
 
   async updateCardDb(): Promise<Card[]> {
     const cardsArray = require("../no_duplicates_scryfall.json") as Card[];
     console.log("call update card db");
     const tokens = cardsArray.filter((card) => card.type.includes("Token"));
-    const tokenObjects = [];
+    const tokenObjects: Card[] = [];
     console.log("updating tokens");
     for (const token of tokens) {
       const exists = await this.tokenRepository.exist({
@@ -66,7 +58,7 @@ export class CardService {
       }
     }
     const cards = cardsArray.filter((card) => !card.type.includes("Token"));
-    const cardObjects = [];
+    const cardObjects: Card[] = [];
     console.log("updating cards");
     for (const card of cards) {
       const exists = await this.cardRepository.exist({
@@ -75,9 +67,6 @@ export class CardService {
         },
       });
       if (exists) {
-        if (card.scryfallId === "efae4d84-8134-461a-a352-a5bdff7259a7") {
-          console.log("updating mother bear, power: " + card.power);
-        }
         const c = await this.updateCard(card);
         cardObjects.push(c);
       } else {
@@ -94,13 +83,9 @@ export class CardService {
     console.log("call generate db");
     // generate tokens first, so they are ready to be associated with the nontoken cards
     const tokens = cardsArray.filter((card) => card.type.includes("Token"));
-    console.log("token data: " + tokens.length);
     const nontokens = cardsArray.filter((card) => !card.type.includes("Token"));
-    console.log("nontoken data: " + nontokens.length);
     const generatedTokens = await this.generateTokens(tokens);
-    console.log("generated tokens: " + generatedTokens.length);
     const generatedCards = await this.generateCards(nontokens);
-    console.log("generated cards: " + generatedCards.length);
     return generatedTokens.concat(generatedCards);
   }
 
@@ -157,35 +142,17 @@ export class CardService {
   }
 
   async generateTokens(data: Card[]): Promise<Card[]> {
-    const tokens: Token[] = [];
+    const tokens: Card[] = [];
     try {
       data.forEach(async (card) => {
-        let colors: Color[] = [];
-        if (card.colors) {
-          card.colors.forEach((color) => {
-            colors.push(color);
-          });
-        }
         const exists = await this.tokenRepository.exist({
           where: {
             scryfallId: card.scryfallId,
           },
         });
         if (card.scryfallId && !exists) {
-          const dbCard = await this.tokenRepository.save({
-            name: card.name,
-            set: card.set,
-            scryfallId: card.scryfallId,
-            cmc: card.cmc ?? undefined,
-            colors: colors ?? undefined,
-            type: card.type,
-            manaCost: card.manaCost,
-            oracleText: card.oracleText,
-            power: card.power ?? undefined,
-            toughness: card.toughness ?? undefined,
-            faces: card.faces ?? undefined,
-          });
-          tokens.push(dbCard);
+          const dbToken = await this.createToken(card);
+          tokens.push(dbToken);
         }
       });
       return tokens;
@@ -195,11 +162,20 @@ export class CardService {
   }
 
   async createCard(card: Card): Promise<Card> {
+    // get each color, use Color-type
     let colors: Color[] = [];
     if (card.colors) {
       card.colors.forEach((color) => {
         colors.push(color);
       });
+    }
+    // if card has tokens associated with it, add tokens
+    const tokens: Card[] = [];
+    if (card.tokens) {
+      for (const token of card.tokens) {
+        const tokenCard: Card = await this.getCardById(token.scryfallId);
+        tokens.push(tokenCard);
+      }
     }
     return await this.cardRepository.save({
       name: card.name,
@@ -208,6 +184,7 @@ export class CardService {
       cmc: card.cmc ?? undefined,
       colors: colors ?? undefined,
       type: card.type,
+      tokens: tokens,
       manaCost: card.manaCost,
       oracleText: card.oracleText,
       power: card.power ?? undefined,
@@ -219,30 +196,36 @@ export class CardService {
   async updateCard(card: Card): Promise<Card> {
     const existingCard = await this.getCardById(card.scryfallId);
     const id = existingCard.id;
+    // get each color, use Color-type
     let colors: Color[] = [];
     if (card.colors) {
       card.colors.forEach((color) => {
         colors.push(color);
       });
     }
-    await this.cardRepository
-      .createQueryBuilder()
-      .update(Card)
-      .set({
-        name: card.name,
-        set: card.set,
-        scryfallId: card.scryfallId,
-        cmc: card.cmc ?? undefined,
-        colors: colors ?? undefined,
-        type: card.type,
-        manaCost: card.manaCost,
-        oracleText: card.oracleText,
-        power: card.power ?? undefined,
-        toughness: card.toughness ?? undefined,
-        faces: card.faces ?? undefined,
-      })
-      .where("id = :id", { id })
-      .execute();
+    // if card has tokens associated with it, add tokens
+    const tokens: Card[] = [];
+    if (card.tokens) {
+      for (const token of card.tokens) {
+        const tokenCard: Card = await this.getCardById(token.scryfallId);
+        tokens.push(tokenCard);
+      }
+    }
+    await this.cardRepository.save({
+      id: id,
+      name: card.name,
+      set: card.set,
+      scryfallId: card.scryfallId,
+      cmc: card.cmc ?? undefined,
+      colors: colors ?? undefined,
+      type: card.type,
+      tokens: tokens,
+      manaCost: card.manaCost,
+      oracleText: card.oracleText,
+      power: card.power ?? undefined,
+      toughness: card.toughness ?? undefined,
+      faces: card.faces ?? undefined,
+    });
     return await this.getCardById(card.scryfallId);
   }
 
@@ -250,42 +233,13 @@ export class CardService {
     const cards: Card[] = [];
     try {
       data.forEach(async (card) => {
-        let colors: Color[] = [];
-        if (card.colors) {
-          card.colors.forEach((color) => {
-            colors.push(color);
-          });
-        }
         const exists = await this.cardRepository.exist({
           where: {
             scryfallId: card.scryfallId,
           },
         });
         if (card.scryfallId && !exists) {
-          const tokens: Token[] = [];
-          // if card has tokens associated with it, add tokens
-          if (card.tokens) {
-            for (const token of card.tokens) {
-              const tokenCard: Token = (await this.getCardById(
-                token.scryfallId
-              )) as Token;
-              tokens.push(tokenCard);
-            }
-          }
-          const dbCard = await this.cardRepository.save({
-            name: card.name,
-            set: card.set,
-            scryfallId: card.scryfallId,
-            cmc: card.cmc ?? undefined,
-            colors: colors ?? undefined,
-            type: card.type,
-            tokens: tokens,
-            manaCost: card.manaCost,
-            oracleText: card.oracleText,
-            power: card.power ?? undefined,
-            toughness: card.toughness ?? undefined,
-            faces: card.faces ?? undefined,
-          });
+          const dbCard = await this.createCard(card);
           cards.push(dbCard);
         }
       });
@@ -470,6 +424,10 @@ export class CardService {
     return await this.removePickedCards(cards);
   }
 
+  async getAllPickedCards(): Promise<PickedCard[]> {
+    return await this.pickedCardRepository.find();
+  }
+
   async getPlayerPickedCards(seatId: number): Promise<PickedCard[]> {
     return await this.pickedCardRepository
       .createQueryBuilder("pickedCard")
@@ -496,6 +454,11 @@ export class CardService {
     } catch (err: unknown) {
       return false;
     }
+  }
+
+  async removeAllPickedCards(): Promise<boolean> {
+    const cards = await this.getAllPickedCards();
+    return await this.removePickedCards(cards);
   }
 
   async searchForCard(query: string): Promise<Card[]> {
