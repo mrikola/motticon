@@ -76,10 +76,11 @@ const AdminFunctions = () => {
   };
 
   const getById = async () => {
-    const scryfallId = "3b583cc8-95e6-4772-afe3-d405b65836e0";
+    const scryfallId = "764a906c-8b27-4ffa-bdc3-7825c6919d3e";
     if (user) {
       const response = await get(`/card/id/${scryfallId}`);
       const cards = (await response.json()) as Card;
+
       console.log(cards);
     }
   };

@@ -21,7 +21,7 @@ const DraftTokens = ({ tokens }: Props) => {
                 )}/${token.scryfallId.charAt(1)}/${token.scryfallId}.jpg`}
               />
               <p className="mb-0">
-                {token.power && (
+                {token.power !== null && token.toughness !== null && (
                   <>
                     {token.power}/{token.toughness}{" "}
                   </>
