@@ -1,6 +1,9 @@
 {
   "private": true,
-  "workspaces": ["backend", "frontend"],
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
     "dev": "docker compose up",
     "reset": "docker compose down -v && docker compose build && docker compose up",
