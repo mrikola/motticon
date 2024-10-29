@@ -25,7 +25,8 @@
     "react-router": "6.21.1",
     "react-router-dom": "6.21.1",
     "react-toastify": "^10.0.4",
-    "sass": "^1.69.6"
+    "sass": "^1.69.6",
+    "vite": "5.1.8"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.5.0",
