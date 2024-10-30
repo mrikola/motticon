@@ -62,7 +62,7 @@ export const userRouter = express.Router();
 
 userRouter.use((req, res, next) => {
   if (!isValidToken(req.headers.authorization)) {
-    return res.sendStatus(401);
+    res.sendStatus(401);
   }
   next();
 });

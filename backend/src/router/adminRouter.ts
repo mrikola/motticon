@@ -36,7 +36,7 @@ export const adminRouter = express.Router();
 
 adminRouter.use((req, res, next) => {
   if (!isValidAdminToken(req.headers.authorization)) {
-    return res.sendStatus(401);
+    res.sendStatus(401);
   }
   next();
 });

@@ -14,7 +14,7 @@ export class MatchService {
     this.repository = this.appDataSource.getRepository(Match);
     this.roundMatchesCache = new LRUCache({
       ttl: 1000 * 10,
-      ttlAutopurge: false,
+      ttlAutopurge: true,
     });
   }
 
