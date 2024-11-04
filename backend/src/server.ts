@@ -19,7 +19,7 @@ export class Server {
 
   private async setupRoutes(): Promise<void> {
     const router = await setupRoutes();
-    this.app.use('/api', router);
+    this.app.use(router);
   }
 
   private setupErrorHandling(): void {
