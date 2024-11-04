@@ -1,7 +1,7 @@
 import { AppDataSource } from './data-source';
 import { Server } from './server';
 import { loadConfig } from './config/config';
-import { setupDatabase } from './database/setup';
+import { setupDatabase } from './data-source';
 
 async function bootstrap() {
   try {
@@ -9,7 +9,7 @@ async function bootstrap() {
     
     // Initialize database
     await AppDataSource.initialize();
-    await setupDatabase();
+    await setupDatabase(AppDataSource);
 
     // Create and start server
     const server = new Server(config);
