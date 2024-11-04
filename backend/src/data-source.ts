@@ -1,13 +1,14 @@
 import { DataSource } from 'typeorm';
-import { Config, loadConfig } from './config/config';
+import { loadConfig } from './config/config';
+import { readFileSync } from 'fs';
+import path from 'path';
 
 const config = loadConfig();
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
   url: config.databaseUrl,
-  synchronize: process.env.NODE_ENV !== 'production',
-  logging: process.env.NODE_ENV === 'development',
+  logging: process.env.NODE_ENV !== 'production',
   entities: ['src/entity/**/*.ts'],
   migrations: ['src/migration/**/*.ts'],
   subscribers: ['src/subscriber/**/*.ts'],
@@ -16,7 +17,10 @@ export const AppDataSource = new DataSource({
 export const setupDatabase = async (dataSource: DataSource = AppDataSource): Promise<void> => {
   try {
     console.log('Setting up database...');
-    // Add any initial setup queries here if needed
+    const sqlPath = path.join(__dirname, '..', 'db', 'markku.sql');
+    
+    const sqlContent = readFileSync(sqlPath, 'utf8');
+    await dataSource.query(sqlContent);
     console.log('Database setup completed successfully');
   } catch (error) {
     console.error('Database setup failed:', error);
