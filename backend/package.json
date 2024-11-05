@@ -20,6 +20,7 @@
    "dependencies": {
       "@azure-rest/ai-vision-image-analysis": "^1.0.0-beta.2",
       "@fast-csv/format": "^5.0.0",
+      "@tsoa/runtime": "^6.5.1",
       "bcrypt": "^5.1.1",
       "cors": "^2.8.5",
       "elo-rank": "^1.0.4",
@@ -33,6 +34,8 @@
       "multer": "^1.4.5-lts.1",
       "pg": "^8.4.0",
       "reflect-metadata": "0.2.2",
+      "tsoa": "6.4.0",
+      "typedi": "^0.10.0",
       "typeorm": "0.3.20"
    },
    "scripts": {
@@ -40,7 +43,11 @@
       "start": "ts-node src/index.ts",
       "typeorm": "typeorm-ts-node-commonjs -d ./src/data-source.ts",
       "fixtures": "docker compose exec db psql -U postgres -d motticon -f /home/fixtures.sql",
-      "deploy": "fly deploy"
+      "deploy": "fly deploy",
+      "routes": "tsoa routes",
+      "swagger": "tsoa spec",
+      "tsoa": "tsoa routes && tsoa spec",
+      "build": "npm run tsoa && tsc"
    },
    "main": "index.js",
    "license": "MIT"

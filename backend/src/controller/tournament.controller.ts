@@ -10,9 +10,10 @@ import { FILE_ROOT, createDirIfNotExists } from "../util/fs";
 import { writeFileSync } from "fs";
 import { format } from "@fast-csv/format";
 import { text } from "stream/consumers";
+import { Container } from '../container';
 
-const tournamentService = new TournamentService();
-const enrollmentService = new EnrollmentService();
+const tournamentService: TournamentService = Container.get('TournamentService');
+const enrollmentService: EnrollmentService = Container.get('EnrollmentService');
 
 export const createTournament = async (req): Promise<TournamentDto> => {
   const {

@@ -1,9 +1,10 @@
+import { Container } from '../container';
 import { CubeDiffDto, CubeDto, cubeToDto } from "../dto/cube.dto";
 import { CardList } from "../entity/CardList";
 import { Cube } from "../entity/Cube";
 import { CubeService } from "../service/cube.service";
 
-const cubeService = new CubeService();
+const cubeService: CubeService = Container.get('CubeService');
 
 export const getAllCubes = async (): Promise<CubeDto[]> => {
   return (await cubeService.getAllCubes()).map(cubeToDto);

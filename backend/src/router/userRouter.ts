@@ -27,15 +27,6 @@ import {
   getCubesForTournament,
 } from "../controller/cube.controller";
 import {
-  getUserTournamentInfo,
-  getUsersTournaments,
-  getTournamentsStaffed,
-  getUser,
-  getAllUsers,
-  setCubePreferences,
-  deleteCubePreferences,
-} from "../controller/user.controller";
-import {
   getPlayerMatchHistory,
   submitResult,
   getMatchesForRound,
@@ -67,25 +58,6 @@ userRouter.use((req, res, next) => {
   next();
 });
 
-userRouter.get("/user/:id/tournaments", async (req, res, next) => {
-  try {
-    res.send(await getUsersTournaments(req));
-  } catch (err) {
-    next(err);
-  }
-});
-
-userRouter.get(
-  "/user/:userId/tournament/:tournamentId",
-  async (req, res, next) => {
-    try {
-      res.send(await getUserTournamentInfo(req));
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
 userRouter.get("/match/round/:roundId", async (req, res, next) => {
   try {
     res.send(await getMatchesForRound(req));
@@ -111,26 +83,6 @@ userRouter.post("/submitResult", async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
-
-userRouter.get("/user/:userId/staff", async (req, res, next) => {
-  try {
-    res.send(await getTournamentsStaffed(req));
-  } catch (err) {
-    next(err);
-  }
-});
-
-userRouter.get("/user/:id", async (req, res, next) => {
-  try {
-    res.send(await getUser(req));
-  } catch (err) {
-    next(err);
-  }
-});
-
-userRouter.get("/user", async (req, res) => {
-  res.send(await getAllUsers());
 });
 
 userRouter.get("/cube", async (req, res) => {
@@ -279,14 +231,6 @@ userRouter.get(
     }
   }
 );
-
-userRouter.post("/cubePreferences", async (req, res) => {
-  res.send(await setCubePreferences(req));
-});
-
-userRouter.post("/cubePreferences/delete", async (req, res) => {
-  res.send(await deleteCubePreferences(req));
-});
 
 userRouter.get("/tournament/:id/cubes", async (req, res, next) => {
   try {

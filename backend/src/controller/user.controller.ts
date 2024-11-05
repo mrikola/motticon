@@ -1,74 +1,74 @@
+import { Service } from 'typedi';
+import { Route, Controller, Get, Post, Delete, Path, Body, Response } from 'tsoa';
 import {
   PlayerTournamentInfo,
   TournamentDto,
   tournamentToDto,
 } from "../dto/tournaments.dto";
 import {
-  PlayerDto,
   PlayerWithRatingDto,
-  playerToDto,
   playerToRatedDto,
 } from "../dto/user.dto";
 import { EnrollmentService } from "../service/enrollment.service";
 import { UserService } from "../service/user.service";
 
-const userService = new UserService();
-const enrollmentService = new EnrollmentService();
+@Route('user')
+@Service()
+export class UserController extends Controller {
+    constructor(
+        private userService: UserService,
+        private enrollmentService: EnrollmentService
+    ) {
+        super();
+    }
 
-export const signup = async (req): Promise<boolean> => {
-  const { firstName, lastName, email, password } = req.body;
-  return await userService.createUser(firstName, lastName, email, password);
-};
+    @Post('../signup')
+    @Response(201, 'Created')
+    @Response(401, 'Unauthorized')
+    public async signup(@Body() user: any): Promise<void> {
+        const { firstName, lastName, email, password } = user;
+        const success = await this.userService.createUser(firstName, lastName, email, password);
+        
+        if (success) {
+            this.setStatus(201); // Created
+        } else {
+            this.setStatus(401); // Unauthorized
+        }
+    }
 
-export const getUser = async (req): Promise<PlayerWithRatingDto> => {
-  const { id } = req.params;
-  return playerToRatedDto(await userService.getUser(id as number));
-};
+    @Get('{id}')
+    public async getUser(@Path() id: number): Promise<PlayerWithRatingDto> {
+        return playerToRatedDto(await this.userService.getUser(id));
+    }
 
-export const deleteUser = async (req): Promise<boolean> => {
-  const { userId } = req.params;
-  return await userService.deleteUser(userId as number);
-};
+    @Get('{id}/tournaments')
+    public async getUsersTournaments(@Path() id: number): Promise<TournamentDto[]> {
+        console.log('getUsersTournaments', id);
+        return (await this.userService.getUsersTournaments(id)).map(tournamentToDto);
+    }
 
-export const getAllUsers = async (): Promise<PlayerWithRatingDto[]> => {
-  return (await userService.getAllUsers()).map(playerToRatedDto);
-};
+    @Get('{id}/staff')
+    public async getTournamentsStaffed(@Path() id: number): Promise<TournamentDto[]> {
+        return (await this.userService.getTournamentsStaffed(id)).map(tournamentToDto);
+    }
 
-export const getUsersTournaments = async (req): Promise<TournamentDto[]> => {
-  const { id } = req.params;
-  return (await userService.getUsersTournaments(id as number)).map(
-    tournamentToDto
-  );
-};
+    @Get('{id}/{tournamentId}')
+    public async getUserTournamentInfo(@Path() id: number, @Path() tournamentId: number): Promise<PlayerTournamentInfo> {
+        return await this.enrollmentService.getUserTournamentInfo(id, tournamentId);
+    }
 
-export const getTournamentsStaffed = async (req): Promise<TournamentDto[]> => {
-  const { userId } = req.params;
-  return (await userService.getTournamentsStaffed(userId as number)).map(
-    tournamentToDto
-  );
-};
+    @Get('exists/{email}')
+    public async userExists(@Path() email: string): Promise<boolean> {
+        return await this.userService.userExists(email);
+    }
 
-export const getUserTournamentInfo = async (
-  req
-): Promise<PlayerTournamentInfo> => {
-  const { userId, tournamentId } = req.params;
-  return await enrollmentService.getUserTournamentInfo(
-    userId,
-    tournamentId as number
-  );
-};
+    @Post('preferences')
+    public async setCubePreferences(@Body() preferences: any): Promise<boolean> {
+        return await this.userService.setCubePreferences(preferences);
+    }
 
-export const userExists = async (req) => {
-  const { email } = req.params;
-  return await userService.userExists(email);
-};
-
-export const setCubePreferences = async (req): Promise<boolean> => {
-  const preferences = req.body;
-  return await userService.setCubePreferences(preferences);
-};
-
-export const deleteCubePreferences = async (req): Promise<boolean> => {
-  const preferences = req.body;
-  return await userService.deleteCubePreferences(preferences);
-};
+    @Delete('preferences')
+    public async deleteCubePreferences(@Body() preferences: any): Promise<boolean> {
+        return await this.userService.deleteCubePreferences(preferences);
+    }
+}

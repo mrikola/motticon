@@ -18,7 +18,6 @@ import {
   setDeckPhotoForUser,
   submitRandomPool,
 } from "../controller/draft.controller";
-import { deleteUser } from "../controller/user.controller";
 import {
   deleteOrphanListedCards,
   generateCardDb,
@@ -72,10 +71,6 @@ adminRouter.post("/updateElo", async (req, res) => {
 
 adminRouter.get("/resetElo/:playerId", async (req, res) => {
   res.send(await resetEloForUser(req));
-});
-
-adminRouter.post("/deleteUser/:userId", async (req, res) => {
-  res.send(await deleteUser(req));
 });
 
 adminRouter.post(

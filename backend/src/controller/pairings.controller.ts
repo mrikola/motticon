@@ -1,15 +1,13 @@
+import { Container } from '../container';
 import { Match } from "../entity/Match";
 import { TournamentService } from "../service/tournament.service";
 import { MatchService } from "../service/match.service";
 import { AppDataSource } from "../data-source";
 import { Round } from "../entity/Round";
 import { MatchDto, matchToDto } from "../dto/round.dto";
-import { PlayerTournamentScore } from "../entity/PlayerTournamentScore";
-import { ScoreService } from "../service/score.service";
 
-const tournamentService = new TournamentService();
-const matchService = new MatchService();
-const scoreService = new ScoreService();
+const tournamentService: TournamentService = Container.get('TournamentService');
+const matchService: MatchService = Container.get('MatchService');
 
 const winnerFrom = (match: Match) =>
   match.player1GamesWon > match.player2GamesWon ? match.player1 : match.player2;

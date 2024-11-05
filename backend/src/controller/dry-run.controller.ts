@@ -1,3 +1,4 @@
+import { Container } from '../container';
 import { CubeService } from "../service/cube.service";
 import { EnrollmentService } from "../service/enrollment.service";
 import { PreferenceService } from "../service/preference.service";
@@ -6,11 +7,11 @@ import { UserService } from "../service/user.service";
 import { LIVE_DATA } from "../util/live-data";
 import { randomize } from "../util/random";
 
-const userService = new UserService();
-const tournamentService = new TournamentService();
-const cubeService = new CubeService();
-const enrollmentService = new EnrollmentService();
-const preferenceService = new PreferenceService();
+const userService: UserService = Container.get('UserService');
+const tournamentService: TournamentService = Container.get('TournamentService');
+const cubeService: CubeService = Container.get('CubeService');
+const enrollmentService: EnrollmentService = Container.get('EnrollmentService');
+const preferenceService: PreferenceService = Container.get('PreferenceService');
 
 const DRAFTS = 3;
 const PREFERENCES_REQUIRED = 5;

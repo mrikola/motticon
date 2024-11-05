@@ -12,6 +12,7 @@ export const AppDataSource = new DataSource({
   entities: ['src/entity/**/*.ts'],
   migrations: ['src/migration/**/*.ts'],
   subscribers: ['src/subscriber/**/*.ts'],
+  migrationsRun: true,
 });
 
 export const setupDatabase = async (dataSource: DataSource = AppDataSource): Promise<void> => {

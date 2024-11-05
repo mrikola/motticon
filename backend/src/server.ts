@@ -3,6 +3,7 @@ import { setupMiddleware } from './middleware/setup';
 import { setupRoutes } from './router';
 import errorMiddleware from './middleware/errorMiddleware';
 import { Config } from './config/config';
+import { RegisterRoutes } from './generated/routes';
 
 export class Server {
   private app: Application;
@@ -18,6 +19,7 @@ export class Server {
   }
 
   private async setupRoutes(): Promise<void> {
+    RegisterRoutes(this.app);
     const router = await setupRoutes();
     this.app.use(router);
   }

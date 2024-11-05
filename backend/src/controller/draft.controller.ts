@@ -14,8 +14,9 @@ import {
 } from "../dto/draft.dto";
 import { RoundDto, roundToDto } from "../dto/round.dto";
 import { DraftPodSeat } from "../entity/DraftPodSeat";
+import { Container } from "../container";
 
-const draftService = new DraftService();
+const draftService: DraftService = Container.get('DraftService');
 
 export const getPodsForDraft = async (req): Promise<DraftPodDto[]> => {
   const { draftId } = req.params;

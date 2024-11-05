@@ -1,10 +1,11 @@
+import { Container } from '../container';
 import { ListedCard } from "../entity/ListedCard";
 import {
   ComputerVisionDto,
   ComputerVisionService,
 } from "../service/computerVision.service";
 
-const computerVisionService = new ComputerVisionService();
+const computerVisionService: ComputerVisionService = Container.get('ComputerVisionService');
 
 export const getListedCardsFromImageUrl = async (
   req

@@ -1,10 +1,8 @@
-import path from "node:path";
-import { MatchDto, RoundDto, matchToDto } from "../dto/round.dto";
+import { Container } from '../container';
 import { MatchService } from "../service/match.service";
-import { FILE_ROOT, createDirIfNotExists } from "../util/fs";
-import { writeFileSync } from "node:fs";
+import { MatchDto, RoundDto, matchToDto } from "../dto/round.dto";
 
-const matchService = new MatchService();
+const matchService: MatchService = Container.get('MatchService');
 
 export const getPlayerMatchHistory = async (req): Promise<MatchDto[]> => {
   const { userId, tournamentId } = req.params;

@@ -1,14 +1,13 @@
+import { Container } from '../container';
 import { Request, Response } from 'express';
-import { existsSync } from 'fs';
 import path from 'path';
-import { FILE_ROOT } from '../util/fs';
-import { FileService } from '../services/file.service';
+import { FileService } from '../service/file.service';
 
 export class FileController {
   private fileService: FileService;
 
   constructor() {
-    this.fileService = new FileService();
+    this.fileService = Container.get('FileService');
   }
 
   public serveFile = async (req: Request, res: Response): Promise<void> => {

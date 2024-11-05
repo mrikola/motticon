@@ -1,9 +1,10 @@
+import { Container } from '../container';
 import { Card, Token } from "../entity/Card";
 import { ListedCard } from "../entity/ListedCard";
 import { PickedCard } from "../entity/PickedCard";
 import { CardService } from "../service/card.service";
 
-const cardService = new CardService();
+const cardService: CardService = Container.get('CardService');
 
 export const generateCardDb = async (req): Promise<Card[]> => {
   return await cardService.generateCardDb();

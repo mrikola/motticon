@@ -1,6 +1,7 @@
+import { Container } from '../container';
 import { ScoreService } from "../service/score.service";
 
-const scoreService = new ScoreService();
+const scoreService: ScoreService = Container.get('ScoreService');
 
 export const getPreviousScore = async (req) => {
   const { tournamentId, userId } = req.params;
