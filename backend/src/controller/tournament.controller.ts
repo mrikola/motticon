@@ -1,309 +1,314 @@
-import path from "path";
-import { DraftDto, draftToDto } from "../dto/draft.dto";
-import { MatchDto, RoundDto, matchToDto, roundToDto } from "../dto/round.dto";
-import { TournamentDto, tournamentToDto } from "../dto/tournaments.dto";
-import { Preference } from "../entity/Preference";
-import { Tournament } from "../entity/Tournament";
-import { EnrollmentService } from "../service/enrollment.service";
-import { TournamentService } from "../service/tournament.service";
-import { FILE_ROOT, createDirIfNotExists } from "../util/fs";
-import { writeFileSync } from "fs";
-import { format } from "@fast-csv/format";
-import { text } from "stream/consumers";
-import { Container } from '../container';
+import { Service } from 'typedi';
+import { Route, Controller, Get, Post, Put, Delete, Path, Body, Security, Response } from 'tsoa';
+import { TournamentService } from '../service/tournament.service';
+import { EnrollmentService } from '../service/enrollment.service';
+import { TournamentDto, tournamentToDto } from '../dto/tournaments.dto';
+import { DraftDto, draftToDto } from '../dto/draft.dto';
+import { MatchDto, RoundDto, roundToDto } from '../dto/round.dto';
+import { CubeDto, cubeToDto } from '../dto/cube.dto';
+import { ScoreService } from '../service/score.service';
+import { CubeService } from '../service/cube.service';
+import { writeFileSync } from 'fs';
+import path from 'path';
+import { format } from '@fast-csv/format';
+import { createDirIfNotExists, FILE_ROOT } from '../util/fs';
+import { text } from 'stream/consumers';
+import { StandingsRow } from '../dto/score.dto';
+import { PlayerTournamentScore } from '../entity/PlayerTournamentScore';
+import { PairingsService } from '../service/pairings.service';
 
-const tournamentService: TournamentService = Container.get('TournamentService');
-const enrollmentService: EnrollmentService = Container.get('EnrollmentService');
+@Route('tournament')
+@Service()
+export class TournamentController extends Controller {
+    constructor(
+        private tournamentService: TournamentService,
+        private enrollmentService: EnrollmentService,
+        private scoreService: ScoreService,
+        private cubeService: CubeService,
+        private pairingsService: PairingsService
+    ) {
+        super();
+    }
 
-export const createTournament = async (req): Promise<TournamentDto> => {
-  const {
-    name,
-    description,
-    price,
-    players,
-    drafts,
-    preferencesRequired,
-    startDate,
-    endDate,
-    cubeIds,
-    userEnrollmentEnabled,
-  } = req.body;
-  return tournamentToDto(
-    await tournamentService.createTournament(
-      name,
-      description,
-      price,
-      players,
-      drafts,
-      preferencesRequired,
-      startDate,
-      endDate,
-      cubeIds,
-      userEnrollmentEnabled
-    )
-  );
-};
+    // Public endpoints (no auth required)
+    @Get('{tournamentId}/round/{roundId}/results')
+    @Response('200', 'Success', { contentType: 'text/csv' })
+    public async generateCsvFromRound(
+        @Path() tournamentId: number,
+        @Path() roundId: number
+    ): Promise<string> {
+        const round = await this.tournamentService.getRound(tournamentId, roundId);
+        const filePath = path.join(FILE_ROOT, tournamentId.toString(), roundId.toString());
+        createDirIfNotExists(filePath);
 
-export const getAllTournaments = async (): Promise<TournamentDto[]> => {
-  return (await tournamentService.getAllTournaments()).map(tournamentToDto);
-};
+        const fileName = `round${round.roundNumber}.csv`;
+        const localFileFullPath = path.join(filePath, fileName);
 
-export const getOngoingTournaments = async (): Promise<TournamentDto[]> => {
-  return (await tournamentService.getOngoingTournaments()).map(tournamentToDto);
-};
+        const stream = format({
+            headers: [
+                "Player 1",
+                "P1 wins",
+                "P1 match points",
+                "Player 2",
+                "P2 wins",
+                "P2 match points",
+            ],
+        });
 
-export const getFutureTournaments = async (): Promise<TournamentDto[]> => {
-  return (await tournamentService.getFutureTournaments()).map(tournamentToDto);
-};
+        for (let match of round.matches.sort((a, b) => a.tableNumber - b.tableNumber)) {
+            const player1points = match.player1GamesWon > match.player2GamesWon ? 3 : 0;
+            const player2points = match.player2GamesWon > match.player1GamesWon ? 3 : 0;
+            stream.write([
+                `${match.player1.firstName} ${match.player1.lastName}`,
+                match.player1GamesWon,
+                player1points,
+                `${match.player2.firstName} ${match.player2.lastName}`,
+                match.player2GamesWon,
+                player2points,
+            ]);
+        }
 
-export const getPastTournaments = async (): Promise<TournamentDto[]> => {
-  return (await tournamentService.getPastTournaments()).map(tournamentToDto);
-};
+        stream.end();
+        const content = await text(stream);
+        writeFileSync(localFileFullPath, content);
 
-export const getTournament = async (req): Promise<TournamentDto> => {
-  const { tournamentId } = req.params;
-  return tournamentToDto(
-    await tournamentService.getTournament(tournamentId as number)
-  );
-};
+        // Set response headers
+        this.setHeader('Content-Type', 'text/csv');
+        this.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
 
-export const getTournamentStaff = async (req): Promise<TournamentDto> => {
-  const { tournamentId } = req.params;
-  return tournamentToDto(
-    await tournamentService.getTournamentStaff(tournamentId as number)
-  );
-};
+        return content;  // Return content instead of file path
+    }
 
-export const getTournamentEnrollments = async (req): Promise<TournamentDto> => {
-  const { tournamentId } = req.params;
-  return tournamentToDto(
-    await tournamentService.getTournamentEnrollments(tournamentId as number)
-  );
-};
+    // User-level endpoints
+    @Get()
+    @Security('loggedIn')
+    public async getAllTournaments(): Promise<TournamentDto[]> {
+        return (await this.tournamentService.getAllTournaments()).map(tournamentToDto);
+    }
 
-export const getTournamentAndDrafts = async (req): Promise<TournamentDto> => {
-  const { tournamentId } = req.params;
-  return tournamentToDto(
-    await tournamentService.getTournamentAndDrafts(tournamentId as number)
-  );
-};
+    @Get('future')
+    @Security('loggedIn')
+    public async getFutureTournaments(): Promise<TournamentDto[]> {
+        return (await this.tournamentService.getFutureTournaments()).map(tournamentToDto);
+    }
 
-export const getCurrentDraft = async (req): Promise<DraftDto> => {
-  const { tournamentId } = req.params;
-  return draftToDto(
-    await tournamentService.getCurrentDraft(tournamentId as number)
-  );
-};
+    @Get('past')
+    @Security('loggedIn')
+    public async getPastTournaments(): Promise<TournamentDto[]> {
+        return (await this.tournamentService.getPastTournaments()).map(tournamentToDto);
+    }
 
-export const getCurrentRound = async (req): Promise<RoundDto> => {
-  const { tournamentId } = req.params;
-  return roundToDto(
-    await tournamentService.getCurrentRound(tournamentId as number)
-  );
-};
+    @Get('ongoing')
+    @Security('loggedIn')
+    public async getOngoingTournaments(): Promise<TournamentDto[]> {
+        return (await this.tournamentService.getOngoingTournaments()).map(tournamentToDto);
+    }
 
-export const getCurrentMatch = async (req): Promise<MatchDto> => {
-  const { roundId, userId } = req.params;
-  return matchToDto(
-    await tournamentService.getCurrentMatch(userId as number, roundId as number)
-  );
-};
+    @Get('{tournamentId}')
+    @Security('loggedIn')
+    public async getTournament(@Path() tournamentId: number): Promise<TournamentDto> {
+        return tournamentToDto(await this.tournamentService.getTournament(tournamentId));
+    }
 
-export const getMostRecentRound = async (req): Promise<RoundDto> => {
-  const { tournamentId } = req.params;
-  return roundToDto(
-    await tournamentService.getMostRecentRound(tournamentId as number)
-  );
-};
+    @Get('{tournamentId}/enrollment')
+    @Security('loggedIn')
+    public async getTournamentEnrollments(@Path() tournamentId: number): Promise<TournamentDto> {
+        return tournamentToDto(await this.tournamentService.getTournamentEnrollments(tournamentId));
+    }
 
-export const startTournament = async (req): Promise<TournamentDto> => {
-  const { tournamentId } = req.params;
-  return tournamentToDto(
-    await tournamentService.startTournament(tournamentId as number)
-  );
-};
+    @Get('{tournamentId}/drafts')
+    @Security('loggedIn')
+    public async getTournamentAndDrafts(@Path() tournamentId: number): Promise<TournamentDto> {
+        return tournamentToDto(await this.tournamentService.getTournamentAndDrafts(tournamentId));
+    }
 
-export const endTournament = async (req): Promise<TournamentDto> => {
-  const { tournamentId } = req.params;
-  return tournamentToDto(
-    await tournamentService.endTournament(tournamentId as number)
-  );
-};
+    @Get('{tournamentId}/draft')
+    @Security('loggedIn')
+    public async getCurrentDraft(@Path() tournamentId: number): Promise<DraftDto> {
+        return draftToDto(await this.tournamentService.getCurrentDraft(tournamentId));
+    }
 
-export const generateDrafts = async (req): Promise<TournamentDto> => {
-  const { tournamentId } = req.params;
-  return tournamentToDto(
-    await tournamentService.generateDrafts(tournamentId as number)
-  );
-};
+    @Get('{tournamentId}/round')
+    @Security('loggedIn')
+    public async getCurrentRound(@Path() tournamentId: number): Promise<RoundDto> {
+        return roundToDto(await this.tournamentService.getCurrentRound(tournamentId));
+    }
 
-export const initiateDraft = async (req): Promise<DraftDto> => {
-  const { tournamentId, draftId } = req.params;
-  return draftToDto(
-    await tournamentService.initiateDraft(
-      tournamentId as number,
-      draftId as number
-    )
-  );
-};
+    @Get('{tournamentId}/round/recent')
+    @Security('loggedIn')
+    public async getMostRecentRound(@Path() tournamentId: number): Promise<RoundDto> {
+        return roundToDto(await this.tournamentService.getMostRecentRound(tournamentId));
+    }
 
-export const startDraft = async (req): Promise<DraftDto> => {
-  const { tournamentId, draftId } = req.params;
-  return draftToDto(
-    await tournamentService.startDraft(
-      tournamentId as number,
-      draftId as number
-    )
-  );
-};
+    @Get('{tournamentId}/standings/{roundNumber}')
+    @Security('loggedIn')
+    public async getStandings(
+        @Path() tournamentId: number,
+        @Path() roundNumber: number
+    ): Promise<StandingsRow[]> {
+        return await this.scoreService.getStandings(tournamentId, roundNumber);
+    }
 
-export const endDraft = async (req): Promise<TournamentDto> => {
-  const { tournamentId, draftId } = req.params;
-  return tournamentToDto(
-    await tournamentService.endDraft(tournamentId as number, draftId as number)
-  );
-};
+    @Get('{tournamentId}/score/{userId}')
+    @Security('loggedIn')
+    public async getPreviousScore(
+        @Path() tournamentId: number,
+        @Path() userId: number
+    ): Promise<PlayerTournamentScore> {
+        return await this.scoreService.getPreviousScore(tournamentId, userId);
+    }
 
-export const initiateRound = async (req): Promise<RoundDto> => {
-  const { tournamentId, roundId } = req.params;
-  return roundToDto(
-    await tournamentService.initiateRound(
-      tournamentId as number,
-      roundId as number
-    )
-  );
-};
+    @Get('{id}/cubes')
+    @Security('loggedIn')
+    public async getCubesForTournament(@Path() id: number): Promise<CubeDto[]> {
+        return (await this.cubeService.getCubesForTournament(id)).map(cubeToDto);
+    }
 
-export const startRound = async (req): Promise<RoundDto> => {
-  const { tournamentId, roundId } = req.params;
-  return roundToDto(
-    await tournamentService.startRound(
-      tournamentId as number,
-      roundId as number
-    )
-  );
-};
+    @Post('{tournamentId}/enroll/{userId}')
+    @Security('loggedIn')
+    public async enrollIntoTournament(
+        @Path() tournamentId: number,
+        @Path() userId: number
+    ): Promise<TournamentDto> {
+        return tournamentToDto(await this.enrollmentService.enrollIntoTournament(tournamentId, userId));
+    }
 
-export const endRound = async (req): Promise<RoundDto> => {
-  const { tournamentId, roundId } = req.params;
-  return roundToDto(
-    await tournamentService.endRound(tournamentId as number, roundId as number)
-  );
-};
+    @Post('{tournamentId}/cancel/{userId}')
+    @Security('loggedIn')
+    public async cancelEnrollment(
+        @Path() tournamentId: number,
+        @Path() userId: number
+    ): Promise<boolean> {
+        return await this.enrollmentService.cancelEnrollment(tournamentId, userId);
+    }
 
-export const enrollIntoTournament = async (req): Promise<TournamentDto> => {
-  const { tournamentId, userId } = req.params;
-  return tournamentToDto(
-    await enrollmentService.enrollIntoTournament(
-      tournamentId as number,
-      userId as number
-    )
-  );
-};
+    @Post('{tournamentId}/drop/{userId}')
+    @Security('loggedIn')
+    public async dropFromTournament(
+        @Path() tournamentId: number,
+        @Path() userId: number
+    ): Promise<TournamentDto> {
+        return tournamentToDto(await this.enrollmentService.dropFromTournament(tournamentId, userId));
+    }
 
-export const cancelEnrollment = async (req): Promise<boolean> => {
-  const { tournamentId, userId } = req.params;
-  return await enrollmentService.cancelEnrollment(
-    tournamentId as number,
-    userId as number
-  );
-};
+    // Staff-level endpoints
+    @Put('{tournamentId}/start')
+    @Security('staff')
+    public async startTournament(@Path() tournamentId: number): Promise<TournamentDto> {
+        return tournamentToDto(await this.tournamentService.startTournament(tournamentId));
+    }
 
-export const staffCancelEnrollment = async (req): Promise<TournamentDto> => {
-  const { tournamentId, userId } = req.params;
-  return tournamentToDto(
-    await enrollmentService.staffCancelEnrollment(
-      tournamentId as number,
-      userId as number
-    )
-  );
-};
+    @Put('{tournamentId}/end')
+    @Security('staff')
+    public async endTournament(@Path() tournamentId: number): Promise<TournamentDto> {
+        return tournamentToDto(await this.tournamentService.endTournament(tournamentId));
+    }
 
-export const dropFromTournament = async (req): Promise<TournamentDto> => {
-  const { tournamentId, userId } = req.params;
-  return tournamentToDto(
-    await enrollmentService.dropFromTournament(
-      tournamentId as number,
-      userId as number
-    )
-  );
-};
+    @Post('{tournamentId}/draft/generate')
+    @Security('staff')
+    public async generateDrafts(@Path() tournamentId: number): Promise<TournamentDto> {
+        return tournamentToDto(await this.tournamentService.generateDrafts(tournamentId));
+    }
 
-// todo: for testing use only
-export const getPreferences = async (req): Promise<Preference[]> => {
-  const { tournamentId } = req.params;
-  return await tournamentService.getPreferences(tournamentId as number);
-};
+    @Put('{tournamentId}/draft/{draftId}/initiate')
+    @Security('staff')
+    public async initiateDraft(
+        @Path() tournamentId: number,
+        @Path() draftId: number
+    ): Promise<DraftDto> {
+        return draftToDto(await this.tournamentService.initiateDraft(tournamentId, draftId));
+    }
 
-export const getPreferencesForUser = async (req): Promise<Preference[]> => {
-  const { tournamentId, userId } = req.params;
-  return await tournamentService.getPreferencesForUser(
-    tournamentId as number,
-    userId as number
-  );
-};
+    @Put('{tournamentId}/draft/{draftId}/start')
+    @Security('staff')
+    public async startDraft(
+        @Path() tournamentId: number,
+        @Path() draftId: number
+    ): Promise<DraftDto> {
+        return draftToDto(await this.tournamentService.startDraft(tournamentId, draftId));
+    }
 
-export const addToStaff = async (req): Promise<Tournament> => {
-  const { tournamentId, userId } = req.params;
-  return await tournamentService.addToStaff(
-    tournamentId as number,
-    userId as number
-  );
-};
+    @Put('{tournamentId}/draft/{draftId}/end')
+    @Security('staff')
+    public async endDraft(
+        @Path() tournamentId: number,
+        @Path() draftId: number
+    ): Promise<TournamentDto> {
+        return tournamentToDto(await this.tournamentService.endDraft(tournamentId, draftId));
+    }
 
-export const removeFromStaff = async (req): Promise<Tournament> => {
-  const { tournamentId, userId } = req.params;
-  return await tournamentService.removeFromStaff(
-    tournamentId as number,
-    userId as number
-  );
-};
+    @Put('{tournamentId}/round/{roundId}/start')
+    @Security('staff')
+    public async startRound(
+        @Path() tournamentId: number,
+        @Path() roundId: number
+    ): Promise<RoundDto> {
+        return roundToDto(await this.tournamentService.startRound(tournamentId, roundId));
+    }
 
-export const generateCsvFromRound = async (
-  roundId: string,
-  tournamentId: string
-): Promise<string> => {
-  const filePath = path.join(FILE_ROOT, tournamentId, roundId.toString());
-  createDirIfNotExists(filePath);
+    @Put('{tournamentId}/round/{roundId}/end')
+    @Security('staff')
+    public async endRound(
+        @Path() tournamentId: number,
+        @Path() roundId: number
+    ): Promise<RoundDto> {
+        return roundToDto(await this.tournamentService.endRound(tournamentId, roundId));
+    }
 
-  const round = await tournamentService.getMostRecentRound(
-    Number(tournamentId)
-  );
+    @Put('{tournamentId}/draft/{draftId}/round/{roundId}/pairings')
+    @Security('staff')
+    public async generatePairings(
+        @Path() tournamentId: number,
+        @Path() draftId: number,
+        @Path() roundId: number
+    ): Promise<MatchDto[]> {
+        return await this.pairingsService.generatePairings(tournamentId, draftId, roundId);
+    }
 
-  const fileName = `round${round.roundNumber}.csv`;
-  const localFileFullPath = path.join(filePath, fileName);
+    @Post('staff/{tournamentId}/cancel/{userId}')
+    @Security('staff')
+    public async staffCancelEnrollment(
+        @Path() tournamentId: number,
+        @Path() userId: number
+    ): Promise<TournamentDto> {
+        return tournamentToDto(
+            await this.enrollmentService.staffCancelEnrollment(tournamentId, userId)
+        );
+    }
 
-  const stream = format({
-    headers: [
-      "Player 1",
-      "P1 wins",
-      "P1 match points",
-      "Player 2",
-      "P2 wins",
-      "P2 match points",
-    ],
-  });
+    // Admin-level endpoints
+    @Post('create')
+    @Security('admin')
+    public async createTournament(@Body() tournamentData: any): Promise<TournamentDto> {
+        const { name, description, price, players, drafts, preferencesRequired, 
+                startDate, endDate, cubeIds, userEnrollmentEnabled } = tournamentData;
+        return tournamentToDto(await this.tournamentService.createTournament(
+            name, description, price, players, drafts, preferencesRequired,
+            startDate, endDate, cubeIds, userEnrollmentEnabled
+        ));
+    }
 
-  for (let match of round.matches.sort(
-    (a, b) => a.tableNumber - b.tableNumber
-  )) {
-    const player1points = match.player1GamesWon > match.player2GamesWon ? 3 : 0;
-    const player2points = match.player2GamesWon > match.player1GamesWon ? 3 : 0;
-    stream.write([
-      `${match.player1.firstName} ${match.player1.lastName}`,
-      match.player1GamesWon,
-      player1points,
-      `${match.player2.firstName} ${match.player2.lastName}`,
-      match.player2GamesWon,
-      player2points,
-    ]);
-  }
+    @Get('{tournamentId}/staff')
+    @Security('admin')
+    public async getTournamentStaff(@Path() tournamentId: number): Promise<TournamentDto> {
+        return tournamentToDto(await this.tournamentService.getTournamentStaff(tournamentId));
+    }
 
-  stream.end();
+    @Post('{tournamentId}/staff/{userId}/add')
+    @Security('admin')
+    public async addToStaff(
+        @Path() tournamentId: number,
+        @Path() userId: number
+    ): Promise<TournamentDto> {
+        return tournamentToDto(await this.tournamentService.addToStaff(tournamentId, userId));
+    }
 
-  const content = await text(stream);
-
-  writeFileSync(localFileFullPath, content);
-
-  return localFileFullPath;
-};
+    @Post('{tournamentId}/staff/{userId}/remove')
+    @Security('admin')
+    public async removeFromStaff(
+        @Path() tournamentId: number,
+        @Path() userId: number
+    ): Promise<TournamentDto> {
+        return tournamentToDto(await this.tournamentService.removeFromStaff(tournamentId, userId));
+    }
+}

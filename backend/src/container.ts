@@ -67,7 +67,8 @@ Container.set('DraftService', new DraftService(
 // Register controllers in TypeDI container
 Container.set(UserController, new UserController(
     Container.get('UserService'),
-    Container.get('EnrollmentService')
+    Container.get('EnrollmentService'),
+    Container.get('MatchService')
 ));
 
 // Create tsoa-compatible container

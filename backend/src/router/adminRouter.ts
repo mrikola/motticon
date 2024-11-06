@@ -1,11 +1,5 @@
 import express from "express";
 import { isValidAdminToken } from "../auth/auth";
-import {
-  addToStaff,
-  createTournament,
-  getTournamentStaff,
-  removeFromStaff,
-} from "../controller/tournament.controller";
 import { resetEloForUser, updateElo } from "../controller/rating.controller";
 import {
   addCube,
@@ -44,10 +38,6 @@ adminRouter.get("/admin", (req, res) => {
   res.send("you got da powa");
 });
 
-adminRouter.post("/tournament/create", async (req, res) => {
-  res.send(await createTournament(req));
-});
-
 adminRouter.post("/cube/add", async (req, res) => {
   res.send(await addCube(req));
 });
@@ -73,20 +63,6 @@ adminRouter.get("/resetElo/:playerId", async (req, res) => {
   res.send(await resetEloForUser(req));
 });
 
-adminRouter.post(
-  "/tournament/:tournamentId/staff/:userId/add",
-  async (req, res) => {
-    res.send(await addToStaff(req));
-  }
-);
-
-adminRouter.post(
-  "/tournament/:tournamentId/staff/:userId/remove",
-  async (req, res) => {
-    res.send(await removeFromStaff(req));
-  }
-);
-
 adminRouter.post("/setDeckPhoto", async (req, res) => {
   res.send(await setDeckPhotoForUser(req));
 });
@@ -94,10 +70,6 @@ adminRouter.post("/setDeckPhoto", async (req, res) => {
 // admin-only helper function
 adminRouter.post("/submitRandomPool", async (req, res) => {
   res.send(await submitRandomPool(req));
-});
-
-adminRouter.get("/tournament/:tournamentId/staff", async (req, res) => {
-  res.send(await getTournamentStaff(req));
 });
 
 adminRouter.get("/dryrunusers", async (req, res) => {

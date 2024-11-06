@@ -4,7 +4,6 @@ import {
   generateDryRunPods,
   generateDryRunUsers,
 } from "../controller/dry-run.controller";
-import { generateCsvFromRound } from "../controller/tournament.controller";
 
 export const notLoggedInRouter = express.Router();
 
@@ -31,17 +30,3 @@ notLoggedInRouter.get("/dry-run", async (req, res) => {
   res.sendStatus(201);
 });
 
-notLoggedInRouter.get(
-  "/tournament/:tournamentId/round/:roundId/results",
-  async (req, res, next) => {
-    try {
-      const resultsFile = await generateCsvFromRound(
-        req.params.roundId,
-        req.params.tournamentId
-      );
-      res.download(resultsFile);
-    } catch (err) {
-      next(err);
-    }
-  }
-);

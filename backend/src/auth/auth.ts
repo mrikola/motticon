@@ -63,19 +63,39 @@ export const getUserFromToken = (token: string) => {
     }
 };
 
-export const expressAuthentication = async (request: Request, securityName: string, scopes?: string[]) => {
-    if (securityName === "jwt") {
-        const token = request.headers["authorization"];
-        if (!token) {
-            throw new Error("No token provided");
-        }
+export const expressAuthentication = async (
+    request: Request, 
+    securityName: string,
+    scopes?: string[]
+): Promise<any> => {
+    const token = request.headers["authorization"];
 
-        if (!isValidToken(token)) {
-            throw new Error("Invalid token");
-        }
-
-        return getUserFromToken(token);
+    if (!token) {
+        throw new Error("No token provided");
     }
-    
-    throw new Error("Unknown security name");
+
+    switch(securityName) {
+        case 'loggedIn':
+            if (!isValidToken(token)) {
+                throw new Error("Invalid token");
+            }
+            return getUserFromToken(token);
+
+        case 'staff':
+            // For staff routes that need tournamentId
+            const tournamentId = parseInt(request.params.tournamentId);
+            if (!isValidStaffMemberToken(token, tournamentId)) {
+                throw new Error("Insufficient staff privileges");
+            }
+            return getUserFromToken(token);
+
+        case 'admin':
+            if (!isValidAdminToken(token)) {
+                throw new Error("Insufficient admin privileges");
+            }
+            return getUserFromToken(token);
+
+        default:
+            throw new Error(`Unknown security scheme: ${securityName}`);
+    }
 };

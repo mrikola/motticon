@@ -237,6 +237,23 @@ export class TournamentService {
             .getOne();
     }
 
+    async getRound(tournamentId: number, roundId: number): Promise<Round> {
+        return await this.appDataSource
+            .getRepository(Round)
+            .createQueryBuilder("round")
+            .leftJoin("round.tournament", "tournament")
+            .leftJoinAndSelect("round.matches", "match")
+            .leftJoinAndSelect("match.player1", "player1")
+            .leftJoinAndSelect("match.player2", "player2")
+            .where("round.id = :roundId", { roundId })
+            .andWhere("match.roundId = round.id")
+            .andWhere("player1.id = match.player1Id")
+            .andWhere("player2.id = match.player2Id")
+            .andWhere("tournament.id = :tournamentId", { tournamentId })
+            .orderBy('"roundNumber"', "DESC")
+            .getOne();
+    }
+
     async getMostRecentRound(tournamentId: number): Promise<Round> {
         return await this.appDataSource
             .getRepository(Round)
