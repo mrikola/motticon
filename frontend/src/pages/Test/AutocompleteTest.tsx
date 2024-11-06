@@ -23,7 +23,7 @@ const AutocompleteTest = () => {
   const navigate = useNavigate();
 
   function createAccount({ firstName, lastName, email, password }: SignupForm) {
-    post("/signup", { firstName, lastName, email, password }).then(
+    post("/user/signup", { firstName, lastName, email, password }).then(
       async (_resp) => {
         // TODO show some kind of success thing
         navigate("/login");

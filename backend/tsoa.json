@@ -28,7 +28,8 @@
   "routes": {
     "routesDir": "src/generated",
     "middleware": "express",
-    "authenticationModule": "src/auth/auth.ts"
+    "authenticationModule": "src/auth/auth.ts",
+    "iocModule": "src/container"
   },
   "compilerOptions": {
     "baseUrl": ".",
