@@ -1,6 +1,5 @@
 import express from "express";
 import { isValidStaffMemberToken } from "../auth/auth";
-import { generatePairings } from "../controller/pairings.controller";
 import { staffSubmitResult } from "../controller/match.controller";
 import { setDraftPoolReturned } from "../controller/draft.controller";
 
@@ -20,21 +19,6 @@ const staffMiddleware = (req, res, next) => {
 
 staffRouter.use("/tournament/:tournamentId/*", staffMiddleware);
 staffRouter.use("/staff/tournament/:tournamentId/*", staffMiddleware);
-
-
-staffRouter.put(
-  "/tournament/:tournamentId/draft/:draftId/round/:roundId/pairings",
-  async (req, res) => {
-    const { tournamentId, draftId, roundId } = req.params;
-    res.send(
-      await generatePairings(
-        Number(tournamentId),
-        Number(draftId),
-        Number(roundId)
-      )
-    );
-  }
-);
 
 staffRouter.post(
   "/staff/tournament/:tournamentId/submitResult",
