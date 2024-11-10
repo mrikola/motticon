@@ -1,21 +1,10 @@
 import express from "express";
-import { doLogin } from "../auth/auth";
 import {
   generateDryRunPods,
   generateDryRunUsers,
 } from "../controller/dry-run.controller";
 
 export const notLoggedInRouter = express.Router();
-
-notLoggedInRouter.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const jwt = await doLogin(email, password);
-  if (!jwt) {
-    res.sendStatus(401);
-  } else {
-    res.send(jwt);
-  }
-});
 
 // TODO nice to have: password reset
 notLoggedInRouter.post("/forgot-password", (req, res) => {});

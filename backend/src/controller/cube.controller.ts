@@ -1,59 +1,122 @@
-import { Container } from '../container';
+import { Service } from 'typedi';
+import { Route, Controller, Get, Post, Put, Path, Body, Security } from 'tsoa';
 import { CubeDiffDto, CubeDto, cubeToDto } from "../dto/cube.dto";
 import { CardList } from "../entity/CardList";
 import { Cube } from "../entity/Cube";
 import { CubeService } from "../service/cube.service";
+import { CubeCardDto } from '../dto/card.dto';
+import { CardService } from '../service/card.service';
 
-const cubeService: CubeService = Container.get('CubeService');
+@Route('cube')
+@Service()
+export class CubeController extends Controller {
+    constructor(
+        private cubeService: CubeService,
+        private cardService: CardService
+    ) {
+        super();
+    }
 
-export const getAllCubes = async (): Promise<CubeDto[]> => {
-  return (await cubeService.getAllCubes()).map(cubeToDto);
-};
+    @Get()
+    @Security('loggedIn')
+    public async getAllCubes(): Promise<CubeDto[]> {
+        return (await this.cubeService.getAllCubes()).map(cubeToDto);
+    }
 
-export const getCube = async (req): Promise<CubeDto> => {
-  const { id } = req.params;
-  return cubeToDto(await cubeService.getCube(id as number));
-};
+    @Get('{id}')
+    @Security('loggedIn')
+    public async getCube(@Path() id: number): Promise<CubeDto> {
+        return cubeToDto(await this.cubeService.getCube(id));
+    }
 
-export const getCubesForTournament = async (req): Promise<CubeDto[]> => {
-  const { id } = req.params;
-  return (await cubeService.getCubesForTournament(id as number)).map(cubeToDto);
-};
+    @Get('tournament/{tournamentId}')
+    @Security('loggedIn')
+    public async getCubesForTournament(@Path() tournamentId: number): Promise<CubeDto[]> {
+        return (await this.cubeService.getCubesForTournament(tournamentId)).map(cubeToDto);
+    }
 
-export const addCube = async (req) => {
-  const { title, description, url, owner, imageUrl, cards } = req.body;
-  return cubeToDto(
-    await cubeService.addCube(title, description, url, owner, imageUrl, cards)
-  );
-};
+    @Post("add")
+    @Security('admin')
+    public async addCube(
+        @Body() cube: {
+            title: string;
+            description: string;
+            url: string;
+            owner: string;
+            imageUrl: string;
+            cards: CubeCardDto[];
+        }
+    ): Promise<CubeDto> {
+        const { title, description, url, owner, imageUrl, cards } = cube;
+        return cubeToDto(
+            await this.cubeService.addCube(title, description, url, owner, imageUrl, cards)
+        );
+    }
 
-export const editCube = async (req) => {
-  const { cubeId, title, description, url, owner, imageUrl, cards } = req.body;
-  return cubeToDto(
-    await cubeService.editCube(
-      cubeId,
-      title,
-      description,
-      url,
-      owner,
-      imageUrl,
-      cards
-    )
-  );
-};
+    @Put("edit")
+    @Security('admin')
+    public async editCube(
+        @Body() cube: {
+            cubeId: number;
+            title: string;
+            description: string;
+            url: string;
+            owner: string;
+            imageUrl: string;
+            cards: CubeCardDto[];
+        }
+    ): Promise<CubeDto> {
+        const { cubeId, title, description, url, owner, imageUrl, cards } = cube;
+        return cubeToDto(
+            await this.cubeService.editCube(
+                cubeId,
+                title,
+                description,
+                url,
+                owner,
+                imageUrl,
+                cards
+            )
+        );
+    }
 
-export const updateCubeCardlist = async (req): Promise<Cube> => {
-  const { cubeId, cards } = req.body;
-  return await cubeService.updateCubeCards(cubeId, cards);
-};
+    @Put('cardlist')
+    @Security('admin')
+    public async updateCubeCardlist(
+        @Body() update: {
+            cubeId: number;
+            cards: CubeCardDto[];
+        }
+    ): Promise<Cube> {
+        const { cubeId, cards } = update;
+        return await this.cubeService.updateCubeCards(cubeId, cards);
+    }
 
-export const getCubeDiff = async (req): Promise<CubeDiffDto> => {
-  const { cubeId, cards } = req.body;
-  return await cubeService.getCubeDiff(cubeId, cards);
-};
+    @Post('diff')
+    @Security('admin')
+    public async getCubeDiff(
+        @Body() diff: {
+            cubeId: number;
+            cards: any[];
+        }
+    ): Promise<CubeDiffDto> {
+        const { cubeId, cards } = diff;
+        return await this.cubeService.getCubeDiff(cubeId, cards);
+    }
 
-// for testing
-export const getCardlist = async (req): Promise<CardList> => {
-  const { id } = req.params;
-  return await cubeService.getCardlist(id as number);
-};
+    @Get('cardlist/{id}')
+    @Security('admin')
+    public async getCardlist(@Path() id: number): Promise<CardList> {
+        return await this.cubeService.getCardlist(id);
+    }
+
+    @Get('{id}/picked/return/{seatId}')
+    @Security('admin')
+    public async playerReturnedCards(
+        @Path() id: number,
+        @Path() seatId: number
+    ): Promise<boolean> {
+        return await this.cardService.playerReturnedCards(seatId);
+    }
+}
+

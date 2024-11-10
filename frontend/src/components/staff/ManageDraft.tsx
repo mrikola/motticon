@@ -162,7 +162,7 @@ const ManageDraft = ({
   function markDone(seat: DraftPodSeat) {
     if (seat) {
       const seatId = seat.id;
-      post(`/setDeckPhoto`, {
+      post(`/tournament/${tournamentId}/setDeckPhoto/${seatId}`, {
         tournamentId,
         seatId,
       }).then(async (resp) => {

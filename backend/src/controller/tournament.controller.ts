@@ -4,7 +4,7 @@ import { TournamentService } from '../service/tournament.service';
 import { EnrollmentService } from '../service/enrollment.service';
 import { TournamentDto, tournamentToDto } from '../dto/tournaments.dto';
 import { DraftDto, draftToDto } from '../dto/draft.dto';
-import { MatchDto, RoundDto, roundToDto } from '../dto/round.dto';
+import { MatchDto, matchToDto, RoundDto, roundToDto } from '../dto/round.dto';
 import { CubeDto, cubeToDto } from '../dto/cube.dto';
 import { ScoreService } from '../service/score.service';
 import { CubeService } from '../service/cube.service';
@@ -16,6 +16,8 @@ import { text } from 'stream/consumers';
 import { StandingsRow } from '../dto/score.dto';
 import { PlayerTournamentScore } from '../entity/PlayerTournamentScore';
 import { PairingsService } from '../service/pairings.service';
+import { DraftService } from '../service/draft.service';
+import { MatchService } from '../service/match.service';
 
 @Route('tournament')
 @Service()
@@ -25,7 +27,9 @@ export class TournamentController extends Controller {
         private enrollmentService: EnrollmentService,
         private scoreService: ScoreService,
         private cubeService: CubeService,
-        private pairingsService: PairingsService
+        private pairingsService: PairingsService,
+        private draftService: DraftService,
+        private matchService: MatchService
     ) {
         super();
     }
@@ -276,6 +280,38 @@ export class TournamentController extends Controller {
         );
     }
 
+    @Post('{tournamentId}/setDraftPoolReturned')
+    @Security('staff')
+    public async setDraftPoolReturned(
+        @Path() tournamentId: number,
+        @Body() seatId: number
+    ): Promise<DraftDto> {
+        return draftToDto(
+            await this.draftService.setDraftPoolReturned(tournamentId, seatId)
+        );
+    }
+
+    @Post('staff/{tournamentId}/submitResult')
+    @Security('staff')
+    public async staffSubmitResult(
+        @Body() result: {
+            roundId: number;
+            matchId: number;
+            resultSubmittedBy: number;
+            player1GamesWon: number;
+            player2GamesWon: number;
+        }
+    ): Promise<MatchDto[]> {
+        const { roundId, matchId, resultSubmittedBy, player1GamesWon, player2GamesWon } = result;
+        return (await this.matchService.staffSubmitResult(
+            roundId,
+            matchId,
+            resultSubmittedBy,
+            player1GamesWon,
+            player2GamesWon
+        )).map(matchToDto);
+    }
+
     // Admin-level endpoints
     @Post('create')
     @Security('admin')
@@ -311,4 +347,17 @@ export class TournamentController extends Controller {
     ): Promise<TournamentDto> {
         return tournamentToDto(await this.tournamentService.removeFromStaff(tournamentId, userId));
     }
+
+    @Post('{tournamentId}/setDeckPhoto/{seatId}')
+    @Security('admin')
+    public async setDeckPhotoForUser(
+        @Path() tournamentId: number,
+        @Path() seatId: number
+    ): Promise<DraftDto> {
+        return draftToDto(
+            await this.draftService.setDeckPhotoForUser(tournamentId, seatId)
+        );
+    }
+
+
 }

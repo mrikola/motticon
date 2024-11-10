@@ -13,6 +13,7 @@ import { EnrollmentService } from "../service/enrollment.service";
 import { UserService } from "../service/user.service";
 import { MatchService } from "../service/match.service";
 import { MatchDto, matchToDto } from '../dto/round.dto';
+import { doLogin } from '../auth/auth';
 
 @Route('user')
 @Service()
@@ -89,5 +90,18 @@ export class UserController extends Controller {
     ): Promise<MatchDto[]> {
         return (await this.matchService.getPlayerMatchHistory(userId, tournamentId))
             .map(matchToDto);
+    }
+
+    @Post('login')
+    @Response(401, 'Unauthorized')
+    public async login(
+        @Body() credentials: { email: string; password: string }
+    ): Promise<string> {
+        const jwt = await doLogin(credentials.email, credentials.password);
+        if (!jwt) {
+            this.setStatus(401);
+            return;
+        }
+        return jwt;
     }
 }

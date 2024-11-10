@@ -32,7 +32,7 @@ const Login = () => {
   });
 
   const doLogin = ({ email, password }: LoginForm) => {
-    post("/login", { email, password }).then(async (resp) => {
+    post("/user/login", { email, password }).then(async (resp) => {
       const jwt = await resp.text();
       if (jwt === "Unauthorized") {
         toast.error("Incorrect email address or password");

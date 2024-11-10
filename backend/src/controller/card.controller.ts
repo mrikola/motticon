@@ -1,76 +1,91 @@
-import { Container } from '../container';
+import { Service } from 'typedi';
+import { Route, Controller, Get, Post, Path, Body, Security } from 'tsoa';
+import { CardService } from "../service/card.service";
 import { Card, Token } from "../entity/Card";
 import { ListedCard } from "../entity/ListedCard";
 import { PickedCard } from "../entity/PickedCard";
-import { CardService } from "../service/card.service";
 
-const cardService: CardService = Container.get('CardService');
+@Route('card')
+@Service()
+export class CardController extends Controller {
+    constructor(
+        private cardService: CardService
+    ) {
+        super();
+    }
 
-export const generateCardDb = async (req): Promise<Card[]> => {
-  return await cardService.generateCardDb();
-};
+    @Get('db/generate')
+    @Security('admin')
+    public async generateCardDb(): Promise<Card[]> {
+        return await this.cardService.generateCardDb();
+    }
 
-export const getCardDb = async (req): Promise<Card[]> => {
-  return await cardService.getCardDb();
-};
+    @Get('db')
+    @Security('admin')
+    public async getCardDb(): Promise<Card[]> {
+        return await this.cardService.getCardDb();
+    }
 
-export const updateCardDb = async (req): Promise<Card[]> => {
-  return await cardService.updateCardDb();
-};
+    @Get('db/update')
+    @Security('admin')
+    public async updateCardDb(): Promise<Card[]> {
+        return await this.cardService.updateCardDb();
+    }
 
-// export const resetCardDb = async (req): Promise<boolean> => {
-//   return await cardService.resetCardDb();
-// };
+    @Get('id/{scryfallId}')
+    @Security('loggedIn')
+    public async getCardById(@Path() scryfallId: string): Promise<Card> {
+        return await this.cardService.getCardById(scryfallId);
+    }
 
-export const getCardById = async (req): Promise<Card> => {
-  const { scryfallId } = req.params;
-  return await cardService.getCardById(scryfallId);
-};
+    @Get('name/{cardname}')
+    @Security('loggedIn')
+    public async getCardByName(@Path() cardname: string): Promise<Card> {
+        return await this.cardService.getCardByName(cardname);
+    }
 
-export const getCardByName = async (req): Promise<Card> => {
-  const { cardname } = req.params;
-  return await cardService.getCardByName(cardname);
-};
+    @Post('list')
+    @Security('loggedIn')
+    public async getCards(@Body() cards: string[]): Promise<Card[]> {
+        return await this.cardService.getCards(cards);
+    }
 
-export const getCards = async (req): Promise<Card[]> => {
-  const { cards } = req.body;
-  return await cardService.getCards(cards);
-};
+    @Get('tokens')
+    @Security('admin')
+    public async getAllTokens(): Promise<Token[]> {
+        return await this.cardService.getAllTokens();
+    }
 
-export const getAllTokens = async (req): Promise<Token[]> => {
-  return await cardService.getAllTokens();
-};
+    @Get('search/{query}')
+    @Security('loggedIn')
+    public async searchForCard(@Path() query: string): Promise<Card[]> {
+        return await this.cardService.searchForCard(query);
+    }
 
-export const searchForCard = async (req): Promise<Card[]> => {
-  const { query } = req.params;
-  return await cardService.searchForCard(query);
-};
+    @Get('picked')
+    @Security('admin')
+    public async getAllPickedCards(): Promise<PickedCard[]> {
+        return await this.cardService.getAllPickedCards();
+    }
 
-export const setPickedCards = async (req): Promise<PickedCard[]> => {
-  const { pickedCards } = req.body;
-  return await cardService.setPickedCards(pickedCards);
-};
+    @Get('listed')
+    @Security('admin')
+    public async getAllListedCards(): Promise<ListedCard[]> {
+        return await this.cardService.getAllListedCards();
+    }
 
-export const playerReturnedCards = async (req): Promise<boolean> => {
-  const { seatId } = req.params;
-  return await cardService.playerReturnedCards(seatId);
-};
+    @Get('listed/deleteOrphans')
+    @Security('admin')
+    public async deleteOrphanListedCards(): Promise<ListedCard[]> {
+        return await this.cardService.deleteOrphanListedCards();
+    }
 
-export const getAllListedCards = async (req): Promise<ListedCard[]> => {
-  return await cardService.getAllListedCards();
-};
-
-export const deleteOrphanListedCards = async (req): Promise<ListedCard[]> => {
-  return await cardService.deleteOrphanListedCards();
-};
-
-export const removeAllPickedCards = async (req): Promise<boolean> => {
-  return await cardService.removeAllPickedCards();
-};
-
-export const getAllPickedCards = async (req): Promise<PickedCard[]> => {
-  return await cardService.getAllPickedCards();
-};
+    @Get('picked/removeAll')
+    @Security('admin')
+    public async removeAllPickedCards(): Promise<boolean> {
+        return await this.cardService.removeAllPickedCards();
+    }
+}
 
 // admin-only function to generate dummy picked cards for test users
 // export const setRandomPickedCards = async (req): Promise<PickedCard[]> => {

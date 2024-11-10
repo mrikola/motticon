@@ -5,7 +5,6 @@ import { Container } from "../container";
 import { Request } from "express";
 
 const { JWT_SECRET_KEY } = process.env;
-const userService: UserService = Container.get('UserService');
 
 export const isValidToken = (token: string) => {
     try { 
@@ -38,6 +37,7 @@ export const isValidStaffMemberToken = (token: string, tournamentId: number) => 
 export const encodePassword = (password: string) => hashSync(password, 10);
 
 export const doLogin = async (email: string, password: string) => {
+    const userService: UserService = Container.get('UserService');
     const user = await userService.getUserByEmail(email);
 
     if (!user || !compareSync(password, user.password)) {
