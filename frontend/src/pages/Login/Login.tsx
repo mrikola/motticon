@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { post } from "../../services/ApiService";
+import { ApiClient, ApiException } from "../../services/ApiService";
 import { getUserInfoFromJwt } from "../../utils/auth";
 import {
   Button,
@@ -31,18 +31,31 @@ const Login = () => {
     },
   });
 
-  const doLogin = ({ email, password }: LoginForm) => {
-    post("/user/login", { email, password }).then(async (resp) => {
-      const jwt = await resp.text();
-      if (jwt === "Unauthorized") {
-        toast.error("Incorrect email address or password");
+  const doLogin = async ({ email, password }: LoginForm) => {
+    try {
+      const { token } = await ApiClient.login({ email, password });
+      localStorage.setItem("user", token);
+      localStorage.setItem("userInfo", await getUserInfoFromJwt(token));
+      navigate("/");
+    } catch (error) {
+      if (error instanceof ApiException) {
+        switch (error.type) {
+          case 'auth':
+            toast.error('Invalid email or password');
+            break;
+          case 'network':
+            toast.error('Unable to connect to server');
+            break;
+          case 'server':
+            toast.error('Server error, please try again later');
+            break;
+          default:
+            toast.error(error.message);
+        }
+      } else {
+        toast.error('An unexpected error occurred');
       }
-      if (jwt !== null) {
-        localStorage.setItem("user", jwt);
-        localStorage.setItem("userInfo", await getUserInfoFromJwt(jwt));
-        navigate("/");
-      }
-    });
+    }
   };
 
   return (

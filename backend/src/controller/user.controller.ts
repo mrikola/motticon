@@ -15,6 +15,10 @@ import { MatchService } from "../service/match.service";
 import { MatchDto, matchToDto } from '../dto/round.dto';
 import { doLogin } from '../auth/auth';
 
+interface LoginResponse {
+    token: string;
+}
+
 @Route('user')
 @Service()
 export class UserController extends Controller {
@@ -93,15 +97,16 @@ export class UserController extends Controller {
     }
 
     @Post('login')
+    @Response<LoginResponse>(200, 'Success')
     @Response(401, 'Unauthorized')
     public async login(
         @Body() credentials: { email: string; password: string }
-    ): Promise<string> {
-        const jwt = await doLogin(credentials.email, credentials.password);
-        if (!jwt) {
+    ): Promise<LoginResponse> {
+        const token = await doLogin(credentials.email, credentials.password);
+        if (!token) {
             this.setStatus(401);
             return;
         }
-        return jwt;
+        return { token };
     }
 }

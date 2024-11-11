@@ -1,23 +1,28 @@
+@use "../variables" as *;
+@use "bootstrap/scss/bootstrap" as bootstrap;
+
 .result-entry-radio-group {
   .btn {
-    background-color: $gray-200;
+    background-color: bootstrap.$gray-200;
     border: none;
+
     &:hover {
-      background-color: $gray-400;
+      background-color: bootstrap.$gray-400;
     }
   }
 
-  .btn-check:checked + .btn,
+  .btn-check:checked+.btn,
   .btn.active,
   .btn.show,
   .btn:first-child:active,
-  :not(.btn-check) + .btn:active {
+  :not(.btn-check)+.btn:active {
     &.primary {
       background-color: $primary !important;
     }
+
     &.info {
       background-color: $info !important;
-      color: $light;
+      color: bootstrap.$light;
     }
   }
 }
