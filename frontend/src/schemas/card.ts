@@ -29,29 +29,25 @@ const BaseCardSchema = z.object({
   faces: z.array(CardFaceSchema)
 });
 
-export let CardSchema: z.ZodType<Card>;
-export let TokenSchema: z.ZodType<Token>;
-export let CardListSchema: z.ZodType<CardList>;
-export let ListedCardSchema: z.ZodType<ListedCard>;
-
-CardSchema = BaseCardSchema.extend({
+export let CardSchema: z.ZodType<Card> = BaseCardSchema.extend({
   tokens: z.lazy(() => z.array(TokenSchema))
 });
 
-TokenSchema = BaseCardSchema.extend({
+export let TokenSchema: z.ZodType<Token> = BaseCardSchema.extend({
   tokens: z.lazy(() => z.array(TokenSchema)),
   tokenFor: z.lazy(() => z.array(CardSchema))
 });
 
-ListedCardSchema = z.lazy(() => z.object({
-  card: CardSchema,
-  cardlist: CardListSchema,
-  pickedCards: z.array(z.any()),
-  quantityInCube: z.number()
-}));
-
-CardListSchema = z.lazy(() => z.object({
+export let CardListSchema: z.ZodType<CardList> = z.lazy(() => z.object({
   cubeId: z.number(),
   cube: z.lazy(() => CubeSchema),
   cards: z.array(ListedCardSchema)
 })); 
+
+export let ListedCardSchema: z.ZodType<ListedCard> = z.lazy(() => z.object({
+  card: CardSchema,
+  cardlist: CardListSchema,
+  pickedCards: z.array(z.any()), // TODO improve typing
+  quantityInCube: z.number()
+}));
+
