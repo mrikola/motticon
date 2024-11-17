@@ -1,23 +1,19 @@
 import { z } from "zod";
+import { Round } from "../types/Tournament";
+import { Cube } from "../types/Cube";
+import { LoginRequest, LoginResponse, LoginResponseSchema } from "../schemas/auth";
+import { TournamentInfoResponseSchema, RoundSchema, TournamentSchema } from "../schemas/tournament";
+import { CubeSchema } from "../schemas/cube";
 
-// Zod schemas for validation
-
-const LoginResponseSchema = z.object({
-  token: z.string()
-});
-
-// Type inference from schemas
-type LoginResponse = z.infer<typeof LoginResponseSchema>;
-
-// Define error categories
+// Error handling
 export type ApiErrorType = 
-  | 'validation'   // Schema validation errors, malformed data
-  | 'auth'         // Authentication/authorization errors
-  | 'network'      // Network connectivity issues
-  | 'server'       // Internal server errors
-  | 'notFound'     // Resource not found
-  | 'conflict'     // Resource conflicts
-  | 'unknown';     // Unhandled errors
+  | 'validation'
+  | 'auth'
+  | 'network'
+  | 'server'
+  | 'notFound'
+  | 'conflict'
+  | 'unknown';
 
 export class ApiException extends Error {
   constructor(
@@ -47,12 +43,6 @@ const categorizeError = (status: number, message: string): ApiException => {
       return new ApiException(status, message, 'unknown');
   }
 };
-
-// Request types (no validation needed for outgoing requests)
-interface LoginRequest {
-  email: string;
-  password: string;
-}
 
 // Legacy methods
 const getHeaders = () => ({
@@ -92,7 +82,6 @@ export const postFormData = (path: string, formData: FormData) => {
   });
 };
 
-// New typed API client
 export class ApiClient {
   private static baseUrl = import.meta.env.VITE_API_URL;
 
@@ -113,15 +102,15 @@ export class ApiClient {
         },
       });
 
+      if (!response.ok) {
+        throw categorizeError(response.status, await response.text());
+      }
+
       const rawData = await response.json();
-      
-      // Validate response data against schema
       const result = schema.safeParse(rawData);
       
-      if (!response.ok || !result.success) {
-        if (!response.ok) {
-          throw categorizeError(response.status, await response.text());
-        }
+      if (!result.success) {
+        console.error('Response validation failed:', result.error);
         throw new ApiException(500, 'Invalid response format from server', 'validation');
       }
 
@@ -130,7 +119,6 @@ export class ApiClient {
       if (error instanceof ApiException) {
         throw error;
       }
-      // Network errors from fetch
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
         throw new ApiException(0, 'Network connection failed', 'network');
       }
@@ -140,15 +128,46 @@ export class ApiClient {
 
   // Auth endpoints
   static async login(credentials: LoginRequest): Promise<LoginResponse> {
-    return this.request<LoginResponse>(
+    return this.request(
       '/user/login',
       {
         method: 'POST',
-        body: JSON.stringify(credentials),
+        body: JSON.stringify(credentials)
       },
       LoginResponseSchema
     );
   }
 
-  // Add more typed endpoints as needed...
+  // Tournament endpoints
+  static async getTournamentInfo(userId: number, tournamentId: number) {
+    return this.request(
+      `/user/${userId}/tournament/${tournamentId}`,
+      { method: 'GET' },
+      TournamentInfoResponseSchema
+    );
+  }
+
+  static async getRecentRound(tournamentId: number) {
+    return this.request<Round>(
+      `/tournament/${tournamentId}/round/recent`,
+      { method: 'GET' },
+      RoundSchema
+    );
+  }
+
+  static async getCubes(tournamentId: number) {
+    return this.request<Cube[]>(
+      `/tournament/${tournamentId}/cubes`,
+      { method: 'GET' },
+      z.array(CubeSchema)
+    );
+  }
+
+  static async getPods(tournamentId: number) {
+    return this.request(
+      `/tournament/${tournamentId}/drafts`,
+      { method: 'GET' },
+      TournamentSchema
+    );
+  }
 }

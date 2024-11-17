@@ -5,9 +5,9 @@ export type Cube = {
   title: string;
   description: string;
   url: string;
-  owner: string;
-  imageUrl: string;
-  cardlist: CardList;
+  owner: string | null;
+  imageUrl: string | null;
+  cardlist?: CardList;
 };
 
 export type CubeSelection = {

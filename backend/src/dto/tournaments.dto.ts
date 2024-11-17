@@ -1,4 +1,3 @@
-import { describe } from "node:test";
 import { Tournament } from "../entity/Tournament";
 import { CubeDto, cubeToDto } from "./cube.dto";
 import { DraftDto, draftToDto } from "./draft.dto";
@@ -89,10 +88,10 @@ export const tournamentToDto = (tournament: Tournament): TournamentDto =>
         totalSeats: tournament.totalSeats,
         preferencesRequired: tournament.preferencesRequired,
         status: tournament.status,
-        drafts: tournament.drafts?.map(draftToDto),
+        drafts: tournament.drafts?.map(draftToDto) ?? [],
         userEnrollmentEnabled: tournament.userEnrollmentEnabled,
-        enrollments: tournament.enrollments?.map(enrollmentToDto),
-        cubes: tournament.cubes?.map(cubeToDto),
-        staffMembers: tournament.staffMembers?.map(playerToDto),
+        enrollments: tournament.enrollments?.map(enrollmentToDto) ?? [],
+        cubes: tournament.cubes?.map(cubeToDto) ?? [],
+        staffMembers: tournament.staffMembers?.map(playerToDto) ?? [],
       }
     : undefined;

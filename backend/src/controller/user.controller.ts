@@ -58,7 +58,6 @@ export class UserController extends Controller {
     @Get('{id}/tournaments')
     @Security('loggedIn')
     public async getUsersTournaments(@Path() id: number): Promise<TournamentDto[]> {
-        console.log('getUsersTournaments', id);
         return (await this.userService.getUsersTournaments(id)).map(tournamentToDto);
     }
 
@@ -68,7 +67,7 @@ export class UserController extends Controller {
         return (await this.userService.getTournamentsStaffed(id)).map(tournamentToDto);
     }
 
-    @Get('{id}/{tournamentId}')
+    @Get('{id}/tournament/{tournamentId}')
     @Security('loggedIn')
     public async getUserTournamentInfo(@Path() id: number, @Path() tournamentId: number): Promise<PlayerTournamentInfo> {
         return await this.enrollmentService.getUserTournamentInfo(id, tournamentId);

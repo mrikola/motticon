@@ -54,7 +54,7 @@ function Tournaments() {
     };
 
     fetchData();
-  }, [user, tournamentsStaffed]);
+  }, [user, tournamentsEnrolled]);
 
   useEffect(() => {
     const fetchData = async () => {
