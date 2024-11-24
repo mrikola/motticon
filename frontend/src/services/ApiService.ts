@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { Round } from "../types/Tournament";
+import { Draft, DraftPod, Match, PlayerTournamentScore, Round, Tournament } from "../types/Tournament";
 import { Cube } from "../types/Cube";
 import { LoginRequest, LoginResponse, LoginResponseSchema } from "../schemas/auth";
-import { TournamentInfoResponseSchema, RoundSchema, TournamentSchema } from "../schemas/tournament";
+import { TournamentInfoResponseSchema, RoundSchema, TournamentSchema, DraftSchema, MatchSchema, DraftPodSchema, PlayerTournamentScoreSchema } from "../schemas/tournament";
 import { CubeSchema } from "../schemas/cube";
 
 // Error handling
@@ -82,6 +82,14 @@ export const postFormData = (path: string, formData: FormData) => {
   });
 };
 
+interface SubmitResultRequest {
+  matchId: number;
+  roundId: number;
+  resultSubmittedBy: number;
+  player1GamesWon: string;
+  player2GamesWon: string;
+}
+
 export class ApiClient {
   private static baseUrl = import.meta.env.VITE_API_URL;
 
@@ -147,14 +155,6 @@ export class ApiClient {
     );
   }
 
-  static async getRecentRound(tournamentId: number) {
-    return this.request<Round>(
-      `/tournament/${tournamentId}/round/recent`,
-      { method: 'GET' },
-      RoundSchema
-    );
-  }
-
   static async getCubes(tournamentId: number) {
     return this.request<Cube[]>(
       `/tournament/${tournamentId}/cubes`,
@@ -168,6 +168,97 @@ export class ApiClient {
       `/tournament/${tournamentId}/drafts`,
       { method: 'GET' },
       TournamentSchema
+    );
+  }
+
+  static async getTournament(tournamentId: number): Promise<Tournament> {
+    return this.request(
+      `/tournament/${tournamentId}`,
+      { method: 'GET' },
+      TournamentSchema
+    );
+  }
+
+  static async getCurrentRound(tournamentId: number): Promise<Round | undefined> {
+    return this.request(
+      `/tournament/${tournamentId}/round`,
+      { method: 'GET' },
+      RoundSchema
+    ).catch(() => undefined);  // Return undefined if no current round
+  }
+
+  static async getCurrentDraft(tournamentId: number): Promise<Draft | undefined> {
+    return this.request(
+      `/tournament/${tournamentId}/draft`,
+      { method: 'GET' },
+      DraftSchema
+    ).catch(() => undefined);  // Return undefined if no current draft
+  }
+
+  static async getPlayerMatch(tournamentId: number, roundId: number, playerId: number): Promise<Match | undefined> {
+    return this.request(
+      `/tournament/${tournamentId}/round/${roundId}/match/${playerId}`,
+      { method: 'GET' },
+      MatchSchema
+    ).catch(() => undefined); 
+  }
+
+  static async getTournamentEnrollments(tournamentId: number): Promise<Tournament> {
+    return this.request(
+      `/tournament/${tournamentId}/enrollment`,
+      { method: 'GET' },
+      TournamentSchema
+    );
+  }
+
+  static async getRecentRound(tournamentId: number): Promise<Round | undefined> {
+    return this.request(
+      `/tournament/${tournamentId}/round/recent`,
+      { method: 'GET' },
+      RoundSchema
+    ).catch(() => undefined);
+  }
+
+  static async getDraftPodForUser(draftId: number, userId: number): Promise<DraftPod> {
+    return this.request(
+      `/draft/${draftId}/user/${userId}`,
+      { method: 'GET' },
+      DraftPodSchema
+    );
+  }
+
+  static async getCubeById(cubeId: number): Promise<Cube> {
+    return this.request(
+      `/cube/${cubeId}`,
+      { method: 'GET' },
+      CubeSchema
+    );
+  }
+
+  static async getMatchesByRound(roundId: number): Promise<Match[]> {
+    return this.request(
+      `/match/round/${roundId}`,
+      { method: 'GET' },
+      z.array(MatchSchema)
+    );
+  }
+
+  static async getPlayerTournamentScore(tournamentId: number, playerId: number): Promise<PlayerTournamentScore> {
+    return this.request(
+      `/tournament/${tournamentId}/score/${playerId}`,
+      { method: 'GET' },
+      PlayerTournamentScoreSchema
+    );
+  }
+
+  static async submitMatchResult(data: SubmitResultRequest): Promise<Match> {
+    return this.request(
+      '/submitResult',
+      {
+        method: 'POST',
+        body: JSON.stringify(data)
+      },
+      MatchSchema
     );
   }
 }

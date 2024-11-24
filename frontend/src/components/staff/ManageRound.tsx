@@ -16,6 +16,7 @@ import VerticallyCenteredModal, {
 import HorizontalCard from "../general/HorizontalCard";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { startPolling } from "../../utils/polling";
 
 type Props = {
   currentRound: Round;
@@ -107,19 +108,10 @@ const ManageRound = ({
       // console.log(mtchs);
     };
 
-    const doFetch = () => {
-      if (currentRound) {
-        fetchData();
-      }
-    };
+    if (currentRound) {
+      return startPolling(() => fetchData());
+    }
 
-    doFetch();
-    const roundInterval = setInterval(doFetch, 10000);
-
-    // return destructor function from useEffect to clear the interval pinging
-    return () => {
-      clearInterval(roundInterval);
-    };
   }, [currentRound]);
 
   useEffect(() => {

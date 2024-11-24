@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { get } from "../../services/ApiService";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row } from "react-bootstrap";
 import RoundOngoing from "../../components/tournament/RoundOngoing";
@@ -12,165 +11,123 @@ import BackButton from "../../components/general/BackButton";
 import BetweenRounds from "../../components/tournament/BetweenRounds";
 import LoadingOngoing from "../../components/general/LoadingOngoing";
 import { Enrollment } from "../../types/User";
+import { ApiClient, ApiException } from "../../services/ApiService";
+import { startPolling } from "../../utils/polling";
 
 const Ongoing = () => {
   const { tournamentId } = useParams();
-  const [tournament, setTournament] = useState<Tournament>();
   const user = useContext(UserInfoContext);
+  const [tournament, setTournament] = useState<Tournament>();
   const [currentRound, setCurrentRound] = useState<Round>();
   const [currentDraft, setCurrentDraft] = useState<Draft>();
   const [currentMatch, setCurrentMatch] = useState<Match>();
   const [latestRound, setLatestRound] = useState<Round>();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
 
+  if (!user) {
+    return <LoadingOngoing />;
+  }
+
   useEffect(() => {
     const fetchData = async () => {
-      const [roundResponse, draftResponse] = await Promise.all([
-        get(`/tournament/${tournamentId}/round`),
-        get(`/tournament/${tournamentId}/draft`),
-      ]);
       try {
-        const round = (await roundResponse.json()) as Round;
-        const roundParsed: Round = {
-          ...round,
-          startTime: new Date(round.startTime),
-        };
-        setCurrentRound(roundParsed);
-      } catch {
-        // TODO handle invalid response
-        // set current round as null when inbetween rounds
-        setCurrentRound(undefined);
-      }
-
-      try {
-        const draft = (await draftResponse.json()) as Draft;
+        const [round, draft] = await Promise.all([
+          ApiClient.getCurrentRound(Number(tournamentId)),
+          ApiClient.getCurrentDraft(Number(tournamentId))
+        ]);
+        
+        setCurrentRound(round);
         setCurrentDraft(draft);
-      } catch {
-        // TODO handle invalid response
-        if (
-          latestRound?.status === "completed" &&
-          latestRound.roundNumber === currentDraft?.lastRound
-        ) {
+
+        // Handle draft completion
+        if (!draft && latestRound?.status === "completed" && 
+            latestRound.roundNumber === currentDraft?.lastRound) {
           setCurrentDraft(undefined);
+        }
+      } catch (error) {
+        if (error instanceof ApiException) {
+          console.error('Failed to fetch round/draft:', error.message);
         }
       }
     };
-    const doFetch = () => {
-      if (user && tournament?.status !== "completed") {
-        fetchData();
-      }
-    };
 
-    doFetch();
-    const roundInterval = setInterval(doFetch, 10000);
-
-    // return destructor function from useEffect to clear the interval pinging
-    return () => {
-      clearInterval(roundInterval);
-    };
-  }, [tournamentId, user, tournament]);
+    if (tournament?.status !== "completed") {
+      return startPolling(() => fetchData());
+    }
+  }, [tournamentId, tournament, latestRound, currentDraft]);
 
   useEffect(() => {
     const fetchData = async () => {
-      // NOTE: change back to just :tournamentId
-      const response = await get(`/tournament/${tournamentId}`);
-      const tourny = (await response.json()) as Tournament;
-      setTournament(tourny);
-    };
-
-    const doFetch = () => {
-      if (user) {
-        fetchData();
+      try {
+        const tourny = await ApiClient.getTournament(Number(tournamentId));
+        setTournament(tourny);
+      } catch (error) {
+        if (error instanceof ApiException) {
+          // TODO: Handle error properly
+          console.error('Failed to fetch tournament:', error.message);
+        }
       }
     };
 
-    doFetch();
-    const roundInterval = setInterval(doFetch, 10000);
-
-    // return destructor function from useEffect to clear the interval pinging
-    return () => {
-      clearInterval(roundInterval);
-    };
-  }, [tournamentId, user]);
+    return startPolling(() => fetchData());
+  }, [tournamentId]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await get(`/tournament/${tournamentId}/enrollment`);
-      const tourny = (await response.json()) as Tournament;
-      setEnrollments(tourny.enrollments);
-    };
-
-    const doFetch = () => {
-      if (user) {
-        fetchData();
+      try {
+        const tourny = await ApiClient.getTournamentEnrollments(Number(tournamentId));
+        setEnrollments(tourny.enrollments);
+      } catch (error) {
+        if (error instanceof ApiException) {
+          console.error('Failed to fetch enrollments:', error.message);
+        }
       }
     };
 
-    doFetch();
-    const roundInterval = setInterval(doFetch, 10000);
-
-    // return destructor function from useEffect to clear the interval pinging
-    return () => {
-      clearInterval(roundInterval);
-    };
-  }, [tournamentId, user]);
+    return startPolling(() => fetchData());
+  }, [tournamentId]);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (currentRound) {
-        const response = await get(
-          `/tournament/${tournamentId}/round/${currentRound?.id}/match/${user?.id}`
-        );
-        const match = (await response.json()) as Match;
-        setCurrentMatch(match);
+      if (currentRound && user?.id) {
+        try {
+          const match = await ApiClient.getPlayerMatch(
+            Number(tournamentId),
+            currentRound.id,
+            user.id
+          );
+          setCurrentMatch(match);
+        } catch (error) {
+          if (error instanceof ApiException) {
+            console.error('Failed to fetch match:', error.message);
+          }
+        }
       }
     };
 
-    const doFetch = () => {
-      if (user && currentRound) {
-        fetchData();
-      }
-    };
-
-    doFetch();
-    const roundInterval = setInterval(doFetch, 10000);
-
-    // return destructor function from useEffect to clear the interval pinging
-    return () => {
-      clearInterval(roundInterval);
-    };
+    if (currentRound) {
+      return startPolling(() => fetchData());
+    }
   }, [currentRound, tournamentId, user]);
 
   // latestRoundNumber used for showing standings table
   useEffect(() => {
-    // if (currentRound) {
-    //   setLatestRound(currentRound);
-    // } else {
     const fetchData = async () => {
-      const response = await get(`/tournament/${tournamentId}/round/recent`);
       try {
-        const round = (await response.json()) as Round;
+        const round = await ApiClient.getRecentRound(Number(tournamentId));
         setLatestRound(round);
-      } catch {
-        // TODO handle invalid response
-      }
-    };
-    const doFetch = () => {
-      if (user) {
-        fetchData();
+      } catch (error) {
+        if (error instanceof ApiException) {
+          // TODO handle invalid response
+          console.error('Failed to fetch recent round:', error.message);
+        }
       }
     };
 
-    doFetch();
-    const roundInterval = setInterval(doFetch, 10000);
-
-    // return destructor function from useEffect to clear the interval pinging
-    return () => {
-      clearInterval(roundInterval);
-    };
+    return startPolling(() => fetchData());
   }, [currentRound, tournament, tournamentId]);
 
-  if (user && tournament && enrollments) {
+  if (tournament && enrollments) {
     return (
       <Container className="mt-3 my-md-4">
         <BackButton
@@ -211,20 +168,6 @@ const Ongoing = () => {
                     setDraft={setCurrentDraft}
                   />
                 )}
-                {/* {latestRound ? (
-                  <BetweenRounds
-                    latestRoundNumber={latestRound.roundNumber}
-                    lastRoundNumber={currentDraft.lastRound}
-                    draft={currentDraft}
-                    user={user}
-                  />
-                ) : (
-                  <DraftOngoing
-                    draft={currentDraft}
-                    tournament={tournament}
-                    setDraft={setCurrentDraft}
-                  />
-                )} */}
               </>
             )}
             {!currentRound && !currentDraft && (

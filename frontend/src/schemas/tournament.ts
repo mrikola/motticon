@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Tournament, Round, Status, Draft, DraftPod, DraftPodSeat, Match } from "../types/Tournament";
+import { Tournament, Round, Status, Draft, DraftPod, DraftPodSeat, Match, PlayerTournamentScore } from "../types/Tournament";
 import { UserSchema, PlayerSchema, EnrollmentSchema } from "./user";
 import { CubeSchema } from "./cube";
 
@@ -75,4 +75,14 @@ export const RoundSchema: z.ZodType<Round> = z.object({
   startTime: z.coerce.date(),
   status: StatusSchema,
   matches: z.array(MatchSchema)
+});
+
+export const PlayerTournamentScoreSchema: z.ZodType<PlayerTournamentScore> = z.object({
+  playerId: z.number(),
+  tournamentId: z.number(),
+  player: UserSchema,
+  tournament: TournamentSchema,
+  points: z.number(),
+  draftsWon: z.number(),
+  opponentMatchWinPercentage: z.number()
 });

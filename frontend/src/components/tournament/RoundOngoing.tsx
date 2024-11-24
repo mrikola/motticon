@@ -1,7 +1,5 @@
 import { useState, useContext, useEffect } from "react";
 import { UserInfoContext } from "../provider/UserInfoProvider";
-import { post } from "../../services/ApiService";
-import { get } from "../../services/ApiService";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import dayjs, { Dayjs } from "dayjs";
 import duration from "dayjs/plugin/duration";
@@ -25,6 +23,8 @@ import HelmetTitle from "../general/HelmetTitle";
 import { toast } from "react-toastify";
 import DraftPoolButton from "../general/DraftPoolButton";
 import { isPlayerDropped } from "../../utils/user";
+import { ApiClient, ApiException } from "../../services/ApiService";
+import { startPolling } from "../../utils/polling";
 
 type Props = {
   tournament: Tournament;
@@ -59,6 +59,7 @@ function RoundOngoing({
     actionFunction: () => {},
     variant: "primary",
   });
+  const [onThePlay, setOnThePlay] = useState<number>();
   const [player, setPlayer] = useState<Player>();
   const [opponent, setOpponent] = useState<Player>();
   const [roundTimerStarted, setRoundTimerStarted] = useState<boolean>(false);
@@ -69,67 +70,49 @@ function RoundOngoing({
   const [opponentDropped, setOpponentDropped] = useState<boolean>(false);
 
   useEffect(() => {
-    // check player id's from match and set correct player & opponent objects
-    if (match && user) {
-      if (match.player1.id === user?.id) {
-        if (opponent?.id !== match.player2.id) {
-          setPlayerRadioValue("0");
-          setOpponentRadioValue("0");
-        }
-        if (isPlayerDropped(enrollments, match.player2.id)) {
-          setOpponentDropped(true);
-        }
-        setPlayer(match.player1);
-        setOpponent(match.player2);
-        if (match.resultSubmittedBy) {
-          setPlayerRadioValue(match.player1GamesWon.toString());
-          setOpponentRadioValue(match.player2GamesWon.toString());
-        }
-      } else {
-        if (opponent?.id !== match.player1.id) {
-          setPlayerRadioValue("0");
-          setOpponentRadioValue("0");
-        }
-        if (isPlayerDropped(enrollments, match.player2.id)) {
-          setOpponentDropped(true);
-        }
-        setPlayer(match.player2);
-        setOpponent(match.player1);
-        if (match.resultSubmittedBy) {
-          setPlayerRadioValue(match.player2GamesWon.toString());
-          setOpponentRadioValue(match.player1GamesWon.toString());
-        }
-      }
+    if (!match || !user) return;
+
+    const isPlayer1 = match.player1.id === user?.id;   
+    const currentPlayer = isPlayer1 ? match.player1 : match.player2;
+    const currentOpponent = isPlayer1 ? match.player2 : match.player1;
+    
+    setOnThePlay(match.playerGoingFirst.id);
+    setPlayer(currentPlayer);
+    setOpponent(currentOpponent);
+    setOpponentDropped(isPlayerDropped(enrollments, currentOpponent.id));
+
+    if (match.resultSubmittedBy) {
+      setPlayerRadioValue(isPlayer1 ? match.player1GamesWon.toString() : match.player2GamesWon.toString());
+      setOpponentRadioValue(isPlayer1 ? match.player2GamesWon.toString() : match.player1GamesWon.toString());
+    } else if (opponent?.id !== currentOpponent.id) {
+      // Reset radio values when opponent changes
+      setPlayerRadioValue("0");
+      setOpponentRadioValue("0");
     }
-  }, [match, user]);
+  }, [match, user, enrollments, opponent]);
 
   // handle result submission
-  const submitResult = () => {
-    const matchId = match.id;
-    const roundId = round.id;
-    const resultSubmittedBy = user?.id;
-    const player1GamesWon =
-      match.player1.id === user?.id ? playerRadioValue : opponentRadioValue;
-    const player2GamesWon =
-      match.player1.id === user?.id ? opponentRadioValue : playerRadioValue;
-    post(`/submitResult`, {
-      matchId,
-      roundId,
-      resultSubmittedBy,
-      player1GamesWon,
-      player2GamesWon,
-    }).then(async (resp) => {
-      // TODO receive match status, send it back to Ongoing component
-      const updatedMatch = (await resp.json()) as Match;
-      if (updatedMatch !== null) {
-        setModal({
-          ...modal,
-          show: false,
-        });
-        setCurrentMatch({ ...match, ...updatedMatch });
-        toast.success("Result submitted successfully");
+  const submitResult = async () => {
+    try {
+      const updatedMatch = await ApiClient.submitMatchResult({
+        matchId: match.id,
+        roundId: round.id,
+        resultSubmittedBy: user?.id ?? 0,
+        player1GamesWon: match.player1.id === user?.id ? playerRadioValue! : opponentRadioValue!,
+        player2GamesWon: match.player1.id === user?.id ? opponentRadioValue! : playerRadioValue!
+      });
+
+      setModal({
+        ...modal,
+        show: false,
+      });
+      setCurrentMatch({ ...match, ...updatedMatch });
+      toast.success("Result submitted successfully");
+    } catch (error) {
+      if (error instanceof ApiException) {
+        toast.error('Failed to submit result: ' + error.message);
       }
-    });
+    }
   };
 
   // set modal information when user clicks "submit"
@@ -182,22 +165,19 @@ function RoundOngoing({
   // get all matches for round (for progress bar)
   useEffect(() => {
     const fetchData = async () => {
-      const response = await get(`/match/round/${round.id}`);
-      const mtchs = await response.json();
-      setMatches(mtchs);
-    };
-    const doFetch = () => {
-      if (round) {
-        fetchData();
+      try {
+        const mtchs = await ApiClient.getMatchesByRound(round.id);
+        setMatches(mtchs);
+      } catch (error) {
+        if (error instanceof ApiException) {
+          console.error('Failed to fetch matches:', error.message);
+        }
       }
     };
-    doFetch();
-    const roundInterval = setInterval(doFetch, 10000);
 
-    // return destructor function from useEffect to clear the interval pinging
-    return () => {
-      clearInterval(roundInterval);
-    };
+    if (round) {
+      return startPolling(() => fetchData());
+    }
   }, [round]);
 
   // set total matches for progress bar
@@ -220,15 +200,18 @@ function RoundOngoing({
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await get(
-        `/tournament/${tournament.id}/score/${user?.id}`
-      );
-      const score = await response.json();
-      setPlayerTournamentScore(score);
+      try {
+        const score = await ApiClient.getPlayerTournamentScore(tournament.id, user?.id ?? 0);
+        setPlayerTournamentScore(score);
+      } catch (error) {
+        if (error instanceof ApiException) {
+          console.error('Failed to fetch score:', error.message);
+        }
+      }
     };
 
     fetchData();
-  }, [user]);
+  }, [tournament.id, user?.id]);
 
   useEffect(() => {
     if (match.resultSubmittedBy && playerRadioValue && opponentRadioValue) {
@@ -313,7 +296,7 @@ function RoundOngoing({
           <Col xs={12} className="text-center">
             <h2>
               {player.firstName} {player.lastName}
-              {/* {player.id === onThePlay && <> (plays first)</>} */}
+              {player.id === onThePlay && <> (plays first)</>} 
             </h2>
           </Col>
           <Col xs={12} className="text-center">
@@ -323,7 +306,7 @@ function RoundOngoing({
             <h2>
               {opponent.firstName} {opponent.lastName}{" "}
               {opponentDropped ? "(DROPPED)" : ""}
-              {/* {opponent.id === onThePlay && <> (plays first)</>} */}
+              {opponent.id === onThePlay && <> (plays first)</>} 
             </h2>
           </Col>
           <MatchResultRadioButtons
