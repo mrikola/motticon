@@ -6,7 +6,9 @@ import {
   tournamentToDto,
 } from "../dto/tournaments.dto";
 import {
+    PlayerDto,
   PlayerWithRatingDto,
+  playerToDto,
   playerToRatedDto,
 } from "../dto/user.dto";
 import { EnrollmentService } from "../service/enrollment.service";
@@ -42,6 +44,12 @@ export class UserController extends Controller {
         } else {
             this.setStatus(401); // Unauthorized
         }
+    }
+
+    @Get('all')
+    @Security('loggedIn')
+    public async getAllUsers(): Promise<PlayerDto[]> {
+        return (await this.userService.getAllUsers()).map(playerToDto);
     }
 
     @Get('exists/{email}')

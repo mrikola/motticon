@@ -1,4 +1,3 @@
-import { Container } from '../container';
 import { Service } from 'typedi';
 import { Route, Controller, Get, Post, Path, Security, UploadedFile, Request, Header } from 'tsoa';
 import { DraftService } from '../service/draft.service';
@@ -9,6 +8,8 @@ import { FILE_ROOT, createDirIfNotExists, removeScandinavianLetters } from '../u
 import { writeFileSync } from 'fs';
 import mime from 'mime-types';
 import { getUserFromToken } from '../auth/auth';
+import { ClientRequest } from 'http';
+import express from 'express';
 
 @Route('draft')
 @Service()
@@ -51,6 +52,7 @@ export class DraftController extends Controller {
     @Post('tournament/{tournamentId}/submitDeck/{seatId}')
     @Security('loggedIn')
     public async submitDeck(
+        @Request() request: express.Request,
         @Path() tournamentId: number,
         @Path() seatId: number,
         @UploadedFile() file: Express.Multer.File,
@@ -69,7 +71,8 @@ export class DraftController extends Controller {
         const localFileFullPath = path.join(filePath, fileName);
         writeFileSync(localFileFullPath, file.buffer);
 
-        const url = `/public/${tournamentId}/${seatId}/${fileName}`;
+        const url = `${request.protocol}://${request.headers.host}${filePath.replace(FILE_ROOT, "/file")}/${fileName}`;
+
         return draftToDto(
             await this.draftService.setDeckPhotoForUser(tournamentId, seatId, url)
         );

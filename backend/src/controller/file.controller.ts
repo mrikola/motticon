@@ -1,33 +1,46 @@
-import { Container } from '../container';
-import { Request, Response } from 'express';
 import path from 'path';
 import { FileService } from '../service/file.service';
+import { Get, Route, Response, Res, TsoaResponse, Controller, Request } from 'tsoa';
+import { Service } from 'typedi';
+import express from 'express';
+import mime from 'mime-types';
+import { createReadStream } from 'fs';
 
-export class FileController {
-  private fileService: FileService;
-
-  constructor() {
-    this.fileService = Container.get('FileService');
+@Route("file")
+@Service()
+export class FileController extends Controller {
+  constructor(
+    private fileService: FileService
+  ) {
+    super();
   }
 
-  public serveFile = async (req: Request, res: Response): Promise<void> => {
+  private streamFile(res: express.Response, filePath: string, mimeType: string): Promise<void> {
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader('Content-Disposition', 'inline');
+    
+    return new Promise((resolve, reject) => {
+      createReadStream(filePath)
+        .pipe(res)
+        .on('finish', resolve)
+        .on('error', reject);
+    });
+  }
+
+  @Get("*")
+  public async serveFile(
+    @Request() request: express.Request,
+  ): Promise<void> {
+    const requestPath = request.path.replace("/file/", "");
     try {
-      const filePath = await this.fileService.getFilePath(req.path);
-      res.sendFile(filePath, {
-        headers: {
-          'Content-Disposition': 'inline',
-        },
-      });
+      const filePath = await this.fileService.getFilePath(requestPath);
+      const mimeType = mime.contentType(path.extname(filePath)) || 'application/octet-stream';
+      return this.streamFile(request.res, filePath, mimeType);
     } catch (error) {
-      if (error.statusCode === 404) {
-        res.sendFile(path.join(__dirname, '..', '..', 'README.md'), {
-          headers: {
-            'Content-Disposition': 'inline',
-          },
-        });
-      } else {
-        res.status(500).json({ message: 'Internal server error' });
-      }
+      console.log(error);
+      const fallbackFile = "README.md";
+      const fallbackPath = path.join(__dirname, '..', '..', fallbackFile);
+      return this.streamFile(request.res, fallbackPath, 'text/plain');
     }
   };
 } 

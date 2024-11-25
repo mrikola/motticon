@@ -50,7 +50,6 @@ export class DraftService {
         const cachedPod = this.userDraftPodCache.get(identifier);
 
         if (cachedPod) {
-            console.log("draft pod cache hit", identifier);
             return cachedPod;
         }
         const pod = await this.appDataSource

@@ -147,7 +147,6 @@ export class TournamentService {
     async getTournament(id: number): Promise<Tournament> {
         const cachedTournament = this.tournamentCache.get(id);
         if (cachedTournament) {
-            console.log("get tournament cache hit");
             return cachedTournament;
         }
         const tournament = await this.repository.findOne({
@@ -294,7 +293,6 @@ export class TournamentService {
         const identifier = roundId + "." + userId;
         const cachedMatch = this.userMatchCache.get(identifier);
         if (cachedMatch) {
-            console.log("user match cache hit");
             return cachedMatch;
         }
         const match = await this.appDataSource

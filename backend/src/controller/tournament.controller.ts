@@ -18,6 +18,7 @@ import { PlayerTournamentScore } from '../entity/PlayerTournamentScore';
 import { PairingsService } from '../service/pairings.service';
 import { DraftService } from '../service/draft.service';
 import { MatchService } from '../service/match.service';
+import { PlayerTournamentScoreDto, scoreToDto } from '../dto/user.dto';
 
 @Route('tournament')
 @Service()
@@ -138,6 +139,12 @@ export class TournamentController extends Controller {
         return roundToDto(await this.tournamentService.getCurrentRound(tournamentId));
     }
 
+    @Get('{_tournamentId}/round/{roundId}/match/{playerId}')
+    @Security('loggedIn')
+    public async getMatch(@Path() _tournamentId: number, @Path() roundId: number, @Path() playerId: number): Promise<MatchDto> {
+        return matchToDto(await this.tournamentService.getCurrentMatch(playerId, roundId));
+    }
+
     @Get('{tournamentId}/round/recent')
     @Security('loggedIn')
     public async getMostRecentRound(@Path() tournamentId: number): Promise<RoundDto> {
@@ -158,8 +165,8 @@ export class TournamentController extends Controller {
     public async getPreviousScore(
         @Path() tournamentId: number,
         @Path() userId: number
-    ): Promise<PlayerTournamentScore> {
-        return await this.scoreService.getPreviousScore(tournamentId, userId);
+    ): Promise<PlayerTournamentScoreDto> {
+        return scoreToDto(await this.scoreService.getPreviousScore(tournamentId, userId));
     }
 
     @Get('{id}/cubes')

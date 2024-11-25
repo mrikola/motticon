@@ -21,6 +21,7 @@ import { MatchController } from './controller/match.controller';
 import { RatingController } from './controller/rating.controller';
 import { UserController } from './controller/user.controller';
 import { TournamentController } from './controller/tournament.controller';
+import { FileController } from './controller/file.controller';
 
 // Register core dependencies
 Container.set('DataSource', AppDataSource);
@@ -124,6 +125,10 @@ Container.set(TournamentController, new TournamentController(
     Container.get('PairingsService'),
     Container.get('DraftService'),
     Container.get('MatchService')
+));
+
+Container.set(FileController, new FileController(
+    Container.get('FileService')
 ));
 
 // Create tsoa-compatible container
