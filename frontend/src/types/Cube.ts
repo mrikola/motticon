@@ -7,7 +7,7 @@ export type Cube = {
   url: string;
   owner: string | null;
   imageUrl: string | null;
-  cardlist?: CardList;
+  cardlist?: CardList | null;
 };
 
 export type CubeSelection = {

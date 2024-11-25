@@ -91,19 +91,22 @@ function DeckBuildingSubmission({
       uploadStarted();
 
       const formData = new FormData();
-      formData.append("photo", file);
+      formData.append("file", file);
 
       try {
         const result = await postFormData(
-          `/tournament/${tournamentId}/submitDeck/${seat.id}`,
+          `/draft/tournament/${tournamentId}/submitDeck/${seat.id}`,
           formData
         );
         const draft = (await result.json()) as Draft;
-        if (draft !== null) {
+        if (result.ok && draft !== null) {
           console.log(draft);
           uploadSuccess();
           //setDone(true);
           setDraft(draft);
+        }
+        if (!result.ok) {
+          uploadFailed();
         }
       } catch (error) {
         console.error(error);
@@ -175,7 +178,7 @@ function DeckBuildingSubmission({
 
           {photoUrl ? (
             <CardPool
-              cubeCards={cube.cardlist.cards}
+              cubeCards={cube.cardlist?.cards ?? []}
               cubeId={cube.id}
               photoUrl={photoUrl}
               seat={seat}

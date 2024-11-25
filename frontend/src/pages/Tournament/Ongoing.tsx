@@ -24,11 +24,8 @@ const Ongoing = () => {
   const [latestRound, setLatestRound] = useState<Round>();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
 
-  if (!user) {
-    return <LoadingOngoing />;
-  }
-
   useEffect(() => {
+    if (!user) return;
     const fetchData = async () => {
       try {
         const [round, draft] = await Promise.all([
@@ -40,6 +37,7 @@ const Ongoing = () => {
         setCurrentDraft(draft);
 
         // Handle draft completion
+        
         if (!draft && latestRound?.status === "completed" && 
             latestRound.roundNumber === currentDraft?.lastRound) {
           setCurrentDraft(undefined);
@@ -54,9 +52,10 @@ const Ongoing = () => {
     if (tournament?.status !== "completed") {
       return startPolling(() => fetchData());
     }
-  }, [tournamentId, tournament, latestRound, currentDraft]);
+  }, [tournamentId, tournament, user]);
 
   useEffect(() => {
+    if (!user) return;
     const fetchData = async () => {
       try {
         const tourny = await ApiClient.getTournament(Number(tournamentId));
@@ -70,9 +69,10 @@ const Ongoing = () => {
     };
 
     return startPolling(() => fetchData());
-  }, [tournamentId]);
+  }, [tournamentId, user]);
 
   useEffect(() => {
+    if (!user) return;
     const fetchData = async () => {
       try {
         const tourny = await ApiClient.getTournamentEnrollments(Number(tournamentId));
@@ -85,9 +85,10 @@ const Ongoing = () => {
     };
 
     return startPolling(() => fetchData());
-  }, [tournamentId]);
+  }, [tournamentId, user]);
 
   useEffect(() => {
+    if (!user) return;
     const fetchData = async () => {
       if (currentRound && user?.id) {
         try {
@@ -112,6 +113,7 @@ const Ongoing = () => {
 
   // latestRoundNumber used for showing standings table
   useEffect(() => {
+    if (!user) return;
     const fetchData = async () => {
       try {
         const round = await ApiClient.getRecentRound(Number(tournamentId));
@@ -125,9 +127,9 @@ const Ongoing = () => {
     };
 
     return startPolling(() => fetchData());
-  }, [currentRound, tournament, tournamentId]);
+  }, [currentRound, tournament, tournamentId, user]);
 
-  if (tournament && enrollments) {
+  if (user && tournament && enrollments) {
     return (
       <Container className="mt-3 my-md-4">
         <BackButton
@@ -206,7 +208,7 @@ const Ongoing = () => {
       </Container>
     );
   } else {
-    <LoadingOngoing />;
+    return <LoadingOngoing />;
   }
 };
 

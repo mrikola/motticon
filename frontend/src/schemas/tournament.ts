@@ -7,22 +7,22 @@ export const StatusSchema: z.ZodType<Status> = z.enum(['pending', 'started', 'co
 
 export const DraftPodSeatSchema: z.ZodType<DraftPodSeat> = z.lazy(() => z.object({
   id: z.number(),
-  podId: z.number(),
-  pod: DraftPodSchema,
-  playerId: z.number(),
-  player: UserSchema,
+  podId: z.number().optional(),
+  pod: DraftPodSchema.optional(),
+  playerId: z.number().optional(),
+  player: UserSchema.nullable(),
   seat: z.number(),
-  deckPhotoUrl: z.string(),
+  deckPhotoUrl: z.string().nullable(),
   draftPoolReturned: z.boolean()
 }));
 
 export const DraftPodSchema: z.ZodType<DraftPod> = z.lazy(() => z.object({
   id: z.number(),
-  draftId: z.number(),
-  draft: DraftSchema,
+  draftId: z.number().optional(),
+  draft: DraftSchema.optional(),
   podNumber: z.number(),
-  cubeId: z.number(),
-  cube: CubeSchema,
+  cubeId: z.number().optional(),
+  cube: CubeSchema.optional(),
   seats: z.array(DraftPodSeatSchema)
 }));
 
@@ -55,7 +55,7 @@ export const TournamentSchema: z.ZodType<Tournament> = z.object({
 
 export const TournamentInfoResponseSchema = z.object({
   tournament: TournamentSchema,
-  enrollment: EnrollmentSchema.nullable()
+  enrollment: EnrollmentSchema.optional()
 });
 
 export const MatchSchema: z.ZodType<Match> = z.object({
@@ -65,7 +65,7 @@ export const MatchSchema: z.ZodType<Match> = z.object({
   player2GamesWon: z.number(),
   player1: PlayerSchema,
   player2: PlayerSchema,
-  resultSubmittedBy: PlayerSchema,
+  resultSubmittedBy: PlayerSchema.optional(),
   playerGoingFirst: PlayerSchema
 });
 
@@ -74,14 +74,14 @@ export const RoundSchema: z.ZodType<Round> = z.object({
   roundNumber: z.number(),
   startTime: z.coerce.date(),
   status: StatusSchema,
-  matches: z.array(MatchSchema)
+  matches: z.array(MatchSchema).optional()
 });
 
 export const PlayerTournamentScoreSchema: z.ZodType<PlayerTournamentScore> = z.object({
-  playerId: z.number(),
-  tournamentId: z.number(),
-  player: UserSchema,
-  tournament: TournamentSchema,
+  playerId: z.number().optional(),
+  tournamentId: z.number().optional(),
+  player: UserSchema.optional(),
+  tournament: TournamentSchema.optional(),
   points: z.number(),
   draftsWon: z.number(),
   opponentMatchWinPercentage: z.number()

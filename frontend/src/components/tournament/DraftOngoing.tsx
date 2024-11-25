@@ -43,38 +43,50 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
   >([]);
   const POOLSIZE = 45;
 
-  // get relevant draft info and cube data
+  // Poll draft pod data
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDraftPod = async () => {
       try {
         const draftPod = await ApiClient.getDraftPodForUser(draft.id, user?.id ?? 0);
         setPlayerPod(draftPod);
         setPlayerSeat(draftPod.seats[0]);
         setPlayerPoolPhotoUrl(draftPod.seats[0].deckPhotoUrl ?? undefined);
-
-        // Fetch cube data if we don't have it yet
-        if (!playerCube) {
-          const cube = await ApiClient.getCubeById(draftPod.cube.id);
-          setPlayerCube(cube);
-        }
       } catch (error) {
         if (error instanceof ApiException) {
-          console.error('Failed to fetch draft data:', error.message);
+          console.error('Failed to fetch draft pod:', error.message);
         }
       }
     };
 
     if (user && draft) {
-      return startPolling(() => fetchData());
+      return startPolling(() => fetchDraftPod());
     }
-  }, [user, draft, playerCube]);
+  }, [user, draft]);
+
+  // One-time cube fetch
+  useEffect(() => {
+    const fetchCube = async () => {
+      if (!playerCube && playerPod?.cube) {
+        try {
+          const cube = await ApiClient.getCubeById(playerPod.cube.id);
+          setPlayerCube(cube);
+        } catch (error) {
+          if (error instanceof ApiException) {
+            console.error('Failed to fetch cube:', error.message);
+          }
+        }
+      }
+    };
+
+    fetchCube();
+  }, [playerPod, playerCube]);
 
   // Process picked cards and update deck building status
   useEffect(() => {
     if (playerPod && playerSeat) {
       // iterate over cards in cube and check if there are picked cards assigned to user (via seat number)
       const pickedCards: PickedCard[] = [];
-      for (const card of playerPod.cube.cardlist?.cards ?? []) {
+      for (const card of playerPod.cube?.cardlist?.cards ?? []) {
         if (card.pickedCards.length > 0) {
           for (const pickedCard of card.pickedCards) {
             if (pickedCard.picker.seat === playerSeat?.seat) {
@@ -101,7 +113,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
       // Calculate deck building status for all seats
       const deckBuilding = seats.map(seat => ({
         seat: seat.seat,
-        pickedCards: playerPod.cube.cardlist?.cards
+        pickedCards: playerPod.cube?.cardlist?.cards
           .flatMap(card => card.pickedCards)
           .filter(pc => pc.picker.seat === seat.seat) ?? []
       }));
@@ -120,7 +132,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
     return (
       <>
         <HelmetTitle
-          titleText={tournament.name + " Draft " + draft.draftNumber.toString()}
+          titleText={tournament.name + " Draft " + draft.draftNumber}
         />
         <Row>
           <h2 className="display-2">Draft: {draft.draftNumber}</h2>
@@ -129,7 +141,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
           <Container>
             <HorizontalIconCard
               iconName="Box"
-              cardTitle={playerPod.cube.title}
+              cardTitle={playerPod.cube?.title ?? ""}
             />
             <HorizontalCard
               squareFillContent={playerPod.podNumber.toString()}

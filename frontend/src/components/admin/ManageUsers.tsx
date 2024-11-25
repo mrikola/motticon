@@ -45,7 +45,7 @@ function ManageUsers() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await get(`/user`);
+      const response = await get(`/user/all`);
       const users = (await response.json()) as User[];
       setAllUsers(users);
       console.log(users);

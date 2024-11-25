@@ -253,7 +253,7 @@ export class ApiClient {
 
   static async submitMatchResult(data: SubmitResultRequest): Promise<Match> {
     return this.request(
-      '/submitResult',
+      '/match/submitResult',
       {
         method: 'POST',
         body: JSON.stringify(data)

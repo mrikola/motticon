@@ -226,7 +226,7 @@ function RoundOngoing({
     if (user) {
       Object.values(draft.pods).forEach((pod) => {
         Object.values(pod.seats).forEach((seat) => {
-          if (seat.player.id === user.id) {
+          if (seat.player?.id === user.id) {
             setDraftPodSeat(seat);
           }
         });

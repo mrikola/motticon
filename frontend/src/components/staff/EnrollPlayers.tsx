@@ -32,7 +32,9 @@ const EnrollPlayers = ({
     if (allPlayers.length > 0) {
       const players: Player[] = [];
       for (let i = 0; i < enrollments.length; i++) {
-        players.push(enrollments[i].player);
+        if (enrollments[i].player) {
+          players.push(enrollments[i].player);
+        }
       }
       const playersIdOnly = players.map((x) => x.id);
       const notEnrolled = allPlayers.filter(
@@ -60,7 +62,7 @@ const EnrollPlayers = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await get(`/user`);
+      const response = await get(`/user/all`);
       const players = (await response.json()) as Player[];
       setAllPlayers(players);
       console.log(players);

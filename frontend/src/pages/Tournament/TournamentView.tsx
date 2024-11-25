@@ -78,7 +78,7 @@ const TournamentView = () => {
       setCubes(cubes);
       setFreeSeats(calculateFreeSeats(tournamentInfo.tournament));
       setNumberOfPods((pods.drafts ?? []).filter(draft => draft.pods.length > 0).length);
-      checkEnrolled(tournamentInfo.enrollment);
+      checkEnrolled(tournamentInfo.enrollment ?? null);
 
       // Store tournament ID
       sessionStorage.setItem("currentTournament", tournamentInfo.tournament.id.toString());
@@ -87,7 +87,7 @@ const TournamentView = () => {
       if (tournamentInfo.tournament.status !== "pending") {
         try {
           const round = await ApiClient.getRecentRound(parsedTournamentId);
-          setNewestRoundNumber(round.roundNumber);
+          setNewestRoundNumber(round?.roundNumber ?? 0);
         } catch (error) {
           if (error instanceof ApiException && error.type !== 'notFound') {
             toast.error('Failed to load recent round data');
