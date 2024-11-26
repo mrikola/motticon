@@ -60,7 +60,7 @@ const CVTest = () => {
         );
         if (existingCard.length > 0) {
           // check if there are more in the cube
-          const cardInCube = cube.cardlist.cards.find(
+          const cardInCube = cube.cardlist?.cards.find(
             (c) => c.card.scryfallId === card.card.scryfallId
           );
           if (
@@ -88,7 +88,7 @@ const CVTest = () => {
 
   const getCardsFromUrl = async (url: string) => {
     if (cube) {
-      const cubeCards: ListedCard[] = cube.cardlist.cards;
+      const cubeCards: ListedCard[] = cube.cardlist?.cards ?? [];
       try {
         console.log("attempting computer vision for: " + url);
         post("/computerVision/cardsFromImageUrl", { url, cubeCards }).then(

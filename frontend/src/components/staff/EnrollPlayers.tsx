@@ -33,7 +33,7 @@ const EnrollPlayers = ({
       const players: Player[] = [];
       for (let i = 0; i < enrollments.length; i++) {
         if (enrollments[i].player) {
-          players.push(enrollments[i].player);
+          players.push(enrollments[i].player!);
         }
       }
       const playersIdOnly = players.map((x) => x.id);

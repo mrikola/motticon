@@ -11,7 +11,7 @@ type Props = {
 const EnrolledPlayersTable = ({ enrollments, buttonFunction }: Props) => {
   useEffect(() => {
     enrollments.sort((a, b) =>
-      a.player.lastName.localeCompare(b.player.lastName)
+      (a.player?.lastName ?? "").localeCompare(b.player?.lastName ?? "")
     );
   }, [enrollments]);
 
@@ -25,14 +25,14 @@ const EnrolledPlayersTable = ({ enrollments, buttonFunction }: Props) => {
       </thead>
       <tbody>
         {enrollments.map((enrollment) => (
-          <tr key={enrollment.player.id}>
+          <tr key={enrollment.player?.id}>
             <td>
-              {enrollment.player.firstName} {enrollment.player.lastName}
+              {enrollment.player?.firstName} {enrollment.player?.lastName}
             </td>
             <td>
               <Button
                 variant="danger"
-                onClick={() => buttonFunction(enrollment.player)}
+                onClick={() => buttonFunction(enrollment.player!)}
               >
                 <XLg /> Cancel enrollment
               </Button>

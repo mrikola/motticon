@@ -29,7 +29,7 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
         <Accordion.Item eventKey={pod.id.toString()} key={pod.id}>
           <Accordion.Header>
             <h3>
-              Pod {pod.podNumber} ({pod.cube.title}), {completeSeats.length}/
+              Pod {pod.podNumber} ({pod.cube?.title}), {completeSeats.length}/
               {seats.length} returned
             </h3>
           </Accordion.Header>
@@ -51,11 +51,11 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
                         <td>{seat.seat}</td>
                         <td>
                           <Link
-                            to={seat.deckPhotoUrl}
+                            to={seat.deckPhotoUrl ?? "#"}
                             target="_blank"
                             className="text-dark"
                           >
-                            {seat.player.firstName} {seat.player.lastName}
+                            {seat.player?.firstName} {seat.player?.lastName}
                           </Link>
                         </td>
                         <td className="cursor-pointer text-center">
@@ -93,7 +93,7 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
                       <tr key={seat.id}>
                         <td>{seat.seat}</td>
                         <td>
-                          {seat.player.firstName} {seat.player.lastName}
+                          {seat.player?.firstName} {seat.player?.lastName}
                         </td>
                         <td className="text-center">
                           {seat.draftPoolReturned ? (

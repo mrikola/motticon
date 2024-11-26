@@ -56,7 +56,7 @@ function AllPoolsView() {
               <Accordion.Item eventKey={pod.id.toString()} key={pod.id}>
                 <Accordion.Header>
                   <h3>
-                    Pod {pod.podNumber}, {pod.cube.title}
+                    Pod {pod.podNumber}, {pod.cube?.title}
                   </h3>
                 </Accordion.Header>
                 <Accordion.Body className="px-0">
@@ -80,11 +80,11 @@ function AllPoolsView() {
                                 target="_blank"
                                 className="text-dark"
                               >
-                                {seat.player.firstName} {seat.player.lastName}
+                                {seat.player?.firstName} {seat.player?.lastName}
                               </Link>
                             ) : (
                               <>
-                                {seat.player.firstName} {seat.player.lastName}
+                                {seat.player?.firstName} {seat.player?.lastName}
                               </>
                             )}
                           </td>

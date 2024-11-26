@@ -118,7 +118,7 @@ const ViewCube = () => {
 
               {colors.map((color) => {
                 if (
-                  cube.cardlist.cards.filter(
+                  (cube.cardlist?.cards ?? []).filter(
                     (lc) =>
                       lc.card.colors.length === 1 && lc.card.colors[0] === color
                   ).length > 0
@@ -127,7 +127,7 @@ const ViewCube = () => {
                     <Col xs={6} sm={4} lg={2} key={color}>
                       <h3>{colorSymbolToHeading(color)}</h3>
                       {cardtypes.map((cardtype, index) => {
-                        const typeCards = cube.cardlist.cards.filter(
+                        const typeCards = (cube.cardlist?.cards ?? []).filter(
                           (lc) =>
                             lc.card.colors.length === 1 &&
                             lc.card.colors[0] === color &&
