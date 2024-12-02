@@ -66,7 +66,7 @@ export const MatchSchema: z.ZodType<Match> = z.object({
   player1: PlayerSchema,
   player2: PlayerSchema,
   resultSubmittedBy: PlayerSchema.optional(),
-  playerGoingFirst: PlayerSchema
+  playerGoingFirst: PlayerSchema.optional()
 });
 
 export const RoundSchema: z.ZodType<Round> = z.object({

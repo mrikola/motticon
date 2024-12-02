@@ -14,7 +14,6 @@ import { format } from '@fast-csv/format';
 import { createDirIfNotExists, FILE_ROOT } from '../util/fs';
 import { text } from 'stream/consumers';
 import { StandingsRow } from '../dto/score.dto';
-import { PlayerTournamentScore } from '../entity/PlayerTournamentScore';
 import { PairingsService } from '../service/pairings.service';
 import { DraftService } from '../service/draft.service';
 import { MatchService } from '../service/match.service';
@@ -287,12 +286,13 @@ export class TournamentController extends Controller {
         );
     }
 
-    @Post('{tournamentId}/setDraftPoolReturned')
+    @Post('{tournamentId}/setDraftPoolReturned/{seatId}')
     @Security('staff')
     public async setDraftPoolReturned(
         @Path() tournamentId: number,
-        @Body() seatId: number
+        @Path() seatId: number
     ): Promise<DraftDto> {
+        console.log("returning draft pool for seat", seatId);
         return draftToDto(
             await this.draftService.setDraftPoolReturned(tournamentId, seatId)
         );

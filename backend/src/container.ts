@@ -21,7 +21,7 @@ import { MatchController } from './controller/match.controller';
 import { RatingController } from './controller/rating.controller';
 import { UserController } from './controller/user.controller';
 import { TournamentController } from './controller/tournament.controller';
-import { FileController } from './controller/file.controller';
+import { PhotosController } from './controller/photos.controller';
 
 // Register core dependencies
 Container.set('DataSource', AppDataSource);
@@ -127,7 +127,7 @@ Container.set(TournamentController, new TournamentController(
     Container.get('MatchService')
 ));
 
-Container.set(FileController, new FileController(
+Container.set(PhotosController, new PhotosController(
     Container.get('FileService')
 ));
 

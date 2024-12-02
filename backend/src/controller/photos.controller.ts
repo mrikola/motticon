@@ -1,14 +1,15 @@
 import path from 'path';
 import { FileService } from '../service/file.service';
-import { Get, Route, Response, Res, TsoaResponse, Controller, Request } from 'tsoa';
+import { Get, Route, Controller, Request } from 'tsoa';
 import { Service } from 'typedi';
 import express from 'express';
 import mime from 'mime-types';
 import { createReadStream } from 'fs';
+import { FILE_ROOT } from '../util/fs';
 
-@Route("file")
+@Route("photos")
 @Service()
-export class FileController extends Controller {
+export class PhotosController extends Controller {
   constructor(
     private fileService: FileService
   ) {
@@ -28,10 +29,10 @@ export class FileController extends Controller {
   }
 
   @Get("*")
-  public async serveFile(
+  public async servePhoto(
     @Request() request: express.Request,
   ): Promise<void> {
-    const requestPath = request.path.replace("/file/", "");
+    const requestPath = request.path.replace(FILE_ROOT, "");
     try {
       const filePath = await this.fileService.getFilePath(requestPath);
       const mimeType = mime.contentType(path.extname(filePath)) || 'application/octet-stream';

@@ -71,7 +71,7 @@ export class DraftController extends Controller {
         const localFileFullPath = path.join(filePath, fileName);
         writeFileSync(localFileFullPath, file.buffer);
 
-        const url = `${request.protocol}://${request.headers.host}${filePath.replace(FILE_ROOT, "/file")}/${fileName}`;
+        const url = `${request.protocol}://${request.headers.host}${filePath}/${fileName}`;
 
         return draftToDto(
             await this.draftService.setDeckPhotoForUser(tournamentId, seatId, url)

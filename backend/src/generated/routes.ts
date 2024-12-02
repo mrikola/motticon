@@ -16,7 +16,7 @@ import { RatingController } from './../controller/rating.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TournamentController } from './../controller/tournament.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { FileController } from './../controller/file.controller';
+import { PhotosController } from './../controller/photos.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from './../controller/user.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -2388,7 +2388,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/tournament/:tournamentId/setDraftPoolReturned',
+        app.post('/tournament/:tournamentId/setDraftPoolReturned/:seatId',
             authenticateMiddleware([{"staff":[]}]),
             ...(fetchMiddlewares<RequestHandler>(TournamentController)),
             ...(fetchMiddlewares<RequestHandler>(TournamentController.prototype.setDraftPoolReturned)),
@@ -2396,7 +2396,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             async function TournamentController_setDraftPoolReturned(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     tournamentId: {"in":"path","name":"tournamentId","required":true,"dataType":"double"},
-                    seatId: {"in":"body","name":"seatId","required":true,"dataType":"double"},
+                    seatId: {"in":"path","name":"seatId","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -2644,11 +2644,11 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/file/*',
-            ...(fetchMiddlewares<RequestHandler>(FileController)),
-            ...(fetchMiddlewares<RequestHandler>(FileController.prototype.serveFile)),
+        app.get('/photos/*',
+            ...(fetchMiddlewares<RequestHandler>(PhotosController)),
+            ...(fetchMiddlewares<RequestHandler>(PhotosController.prototype.servePhoto)),
 
-            async function FileController_serveFile(request: ExRequest, response: ExResponse, next: any) {
+            async function PhotosController_servePhoto(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
@@ -2661,13 +2661,13 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
                 const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
 
-                const controller: any = await container.get<FileController>(FileController);
+                const controller: any = await container.get<PhotosController>(PhotosController);
                 if (typeof controller['setStatus'] === 'function') {
                 controller.setStatus(undefined);
                 }
 
               await templateService.apiHandler({
-                methodName: 'serveFile',
+                methodName: 'servePhoto',
                 controller,
                 response,
                 next,

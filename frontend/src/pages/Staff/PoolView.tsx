@@ -71,9 +71,7 @@ function PoolView() {
     console.log("trying to return for seat with id: " + seat.id);
     if (seat) {
       const seatId = seat.id;
-      post(`/tournament/${tournamentId}/setDraftPoolReturned`, {
-        tournamentId,
-        seatId,
+      post(`/tournament/${tournamentId}/setDraftPoolReturned/${seatId}`, {
       }).then(async (resp) => {
         const draft = (await resp.json()) as Draft;
         if (draft !== null) {

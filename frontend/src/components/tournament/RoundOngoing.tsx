@@ -76,7 +76,7 @@ function RoundOngoing({
     const currentPlayer = isPlayer1 ? match.player1 : match.player2;
     const currentOpponent = isPlayer1 ? match.player2 : match.player1;
     
-    setOnThePlay(match.playerGoingFirst.id);
+    setOnThePlay(match.playerGoingFirst?.id);
     setPlayer(currentPlayer);
     setOpponent(currentOpponent);
     setOpponentDropped(isPlayerDropped(enrollments, currentOpponent.id));
