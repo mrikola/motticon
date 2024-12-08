@@ -60,7 +60,7 @@ const CVTest = () => {
         );
         if (existingCard.length > 0) {
           // check if there are more in the cube
-          const cardInCube = cube.cardlist?.cards.find(
+          const cardInCube = (cube.cardlist?.cards ?? []).find(
             (c) => c.card.scryfallId === card.card.scryfallId
           );
           if (

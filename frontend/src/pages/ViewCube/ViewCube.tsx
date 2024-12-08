@@ -114,13 +114,15 @@ const ViewCube = () => {
           </Row>
           {cube.cardlist && (
             <Row>
-              <h2>Cards {cube.cardlist.cards.length}</h2>
+              <h2>Cards {(cube.cardlist.cards ?? []).length}</h2>
 
               {colors.map((color) => {
                 if (
                   (cube.cardlist?.cards ?? []).filter(
                     (lc) =>
-                      lc.card.colors.length === 1 && lc.card.colors[0] === color
+                      lc.card &&
+                      lc.card.colors.length === 1 &&
+                      lc.card.colors[0] === color
                   ).length > 0
                 ) {
                   return (
@@ -129,6 +131,7 @@ const ViewCube = () => {
                       {cardtypes.map((cardtype, index) => {
                         const typeCards = (cube.cardlist?.cards ?? []).filter(
                           (lc) =>
+                            lc.card &&
                             lc.card.colors.length === 1 &&
                             lc.card.colors[0] === color &&
                             lc.card.type.includes(cardtype)
@@ -142,11 +145,14 @@ const ViewCube = () => {
                               <Table striped borderless responsive>
                                 <tbody>
                                   {typeCards
-                                    .sort((a, b) => a.card.cmc - b.card.cmc)
+                                    .sort(
+                                      (a, b) =>
+                                        (a.card?.cmc ?? 0) - (b.card?.cmc ?? 0)
+                                    )
                                     .map((listedCard, index) => (
                                       <tr key={index}>
                                         <td className="small p-1">
-                                          {listedCard.card.name}
+                                          {listedCard.card?.name}
                                         </td>
                                       </tr>
                                     ))}

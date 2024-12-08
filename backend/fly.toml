@@ -26,7 +26,7 @@ primary_region = "arn"
   [http_service.http_options.response.headers]
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "*"
-    Access-Control-Allow-Headers = "*"
+    Access-Control-Allow-Headers = "Authorization, Content-Type"
 
 
 [[vm]]
