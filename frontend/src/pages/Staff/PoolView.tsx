@@ -71,16 +71,14 @@ function PoolView() {
     console.log("trying to return for seat with id: " + seat.id);
     if (seat) {
       const seatId = seat.id;
-      post(`/tournament/${tournamentId}/setDraftPoolReturned`, {
-        tournamentId,
-        seatId,
+      post(`/tournament/${tournamentId}/setDraftPoolReturned/${seatId}`, {
       }).then(async (resp) => {
         const draft = (await resp.json()) as Draft;
         if (draft !== null) {
           toast.success(
-            seat.player.firstName +
+            seat.player?.firstName +
               " " +
-              seat.player.lastName +
+              seat.player?.lastName +
               " draft pool returned"
           );
           setCurrentDraft(draft);
@@ -103,9 +101,9 @@ function PoolView() {
       heading: "Confirm draft pool returned",
       text:
         "Are you sure you want to confirm draft pool returned for: " +
-        clickedSeat.player.firstName +
+        clickedSeat.player?.firstName +
         " " +
-        clickedSeat.player.lastName +
+        clickedSeat.player?.lastName +
         " (Seat " +
         clickedSeat.seat +
         ")",

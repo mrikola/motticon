@@ -66,7 +66,9 @@ const ManageDraft = ({
       }
     }
     seats.sort((a, b) =>
-      a.seat === b.seat ? a.pod.podNumber - b.pod.podNumber : a.seat - b.seat
+      a.seat === b.seat
+        ? (a.pod?.podNumber ?? 0) - (b.pod?.podNumber ?? 0)
+        : a.seat - b.seat
     );
     setAllSeats(seats);
     if (totalPlayers === 0) {
@@ -162,7 +164,7 @@ const ManageDraft = ({
   function markDone(seat: DraftPodSeat) {
     if (seat) {
       const seatId = seat.id;
-      post(`/setDeckPhoto`, {
+      post(`/tournament/${tournamentId}/setDeckPhoto/${seatId}`, {
         tournamentId,
         seatId,
       }).then(async (resp) => {
@@ -171,9 +173,9 @@ const ManageDraft = ({
           // console.log(draft);
           toast.success(
             "Marked done for " +
-              seat.player.firstName +
+              seat.player?.firstName +
               " " +
-              seat.player.lastName
+              seat.player?.lastName
           );
           setCurrentDraft(draft);
           setModal({
@@ -194,9 +196,9 @@ const ManageDraft = ({
       heading: "Confirm draft pool submission",
       text:
         "Are you sure you want to confirm draft pool submitted for: " +
-        clickedSeat.player.firstName +
+        clickedSeat.player?.firstName +
         " " +
-        clickedSeat.player.lastName,
+        clickedSeat.player?.lastName,
       actionText: "Confirm submitted",
       actionFunction: markDone,
       seat: clickedSeat,
@@ -261,7 +263,7 @@ const ManageDraft = ({
           <>
             <Row>
               <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
-                {firstPendingRound.matches.length ? (
+                {(firstPendingRound.matches ?? []).length ? (
                   <>
                     <Button
                       variant="info"
@@ -302,7 +304,7 @@ const ManageDraft = ({
                 )}
               </Col>
             </Row>
-            {!firstPendingRound.matches.length &&
+            {!(firstPendingRound.matches ?? []).length &&
               (lastCompletedRound?.roundNumber ?? 0) <
                 currentDraft.firstRound && (
                 <>

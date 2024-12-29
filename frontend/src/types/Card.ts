@@ -55,8 +55,8 @@ export type PickedCard = {
 
 export type CardList = {
   cubeId: number;
-  cube: Cube;
-  cards: ListedCard[];
+  cube?: Cube;
+  cards?: ListedCard[];
 };
 
 export type CardAndQuantity = {

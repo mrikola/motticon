@@ -8,7 +8,7 @@ export type Round = {
   roundNumber: number;
   startTime: Date;
   status: Status;
-  matches: Match[];
+  matches?: Match[];
 };
 
 export type Draft = {
@@ -18,27 +18,27 @@ export type Draft = {
   pods: DraftPod[];
   firstRound: number;
   lastRound: number;
-  startTime: Date;
+  startTime?: Date;
 };
 
 export type DraftPod = {
   id: number;
-  draftId: number;
-  draft: Draft;
+  draftId?: number;
+  draft?: Draft;
   podNumber: number;
-  cubeId: number;
-  cube: Cube;
+  cubeId?: number;
+  cube?: Cube;
   seats: DraftPodSeat[];
 };
 
 export type DraftPodSeat = {
   id: number;
-  podId: number;
-  pod: DraftPod;
-  playerId: number;
-  player: User;
+  podId?: number;
+  pod?: DraftPod;
+  playerId?: number;
+  player: User | null;
   seat: number;
-  deckPhotoUrl: string;
+  deckPhotoUrl: string | null;
   draftPoolReturned: boolean;
 };
 
@@ -49,8 +49,8 @@ export type Match = {
   player2GamesWon: number;
   player1: Player;
   player2: Player;
-  resultSubmittedBy: Player;
-  playerGoingFirst: Player;
+  resultSubmittedBy?: Player;
+  playerGoingFirst?: Player;
 };
 
 export type Tournament = {
@@ -83,10 +83,10 @@ export type UsersTournaments = {
 };
 
 export type PlayerTournamentScore = {
-  playerId: number;
-  tournamentId: number;
-  player: User;
-  tournament: Tournament;
+  playerId?: number;
+  tournamentId?: number;
+  player?: User;
+  tournament?: Tournament;
   points: number;
   draftsWon: number;
   opponentMatchWinPercentage: number;

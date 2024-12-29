@@ -18,7 +18,7 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
 
   function dropPlayer(player: Player) {
     const playerId = player.id;
-    post(`/staff/tournament/${tournamentId}/cancel/${playerId}`, {}).then(
+    post(`/tournament/staff/${tournamentId}/cancel/${playerId}`, {}).then(
       async (resp) => {
         const tournament = await resp.json();
         if (tournament !== null) {

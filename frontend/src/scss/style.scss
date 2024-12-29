@@ -1,26 +1,24 @@
-$primary: #fdcb6e;
-$info: #cb6efd;
-$tertiary: #6efdcb;
+@use "./variables" as *;
+@use "bootstrap/scss/bootstrap" with ($primary: $primary,
+  $info: $info,
+  $table-bg-scale: $table-bg-scale,
+  $table-striped-order: $table-striped-order,
+  $table-striped-bg-factor: $table-striped-bg-factor,
+  $card-spacer-y: $card-spacer-y,
+  $card-spacer-x: $card-spacer-x);
 
-$table-bg-scale: -20%;
-$table-striped-order: odd;
-$table-striped-bg-factor: 0.03;
-
-// Import all of Bootstrap's CSS
-@import "bootstrap/scss/bootstrap";
-
-// import components
-@import "./components/general.scss";
-@import "./components/navigation.scss";
-@import "./components/inputs.scss";
-@import "./components/forms.scss";
-@import "./components/cube.scss";
-@import "./components/toastify.scss";
-@import "./components/bootstrap-calendar.scss";
-@import "./components/horizontal-card.scss";
-@import "./components/icon-stack.scss";
-@import "./components/table.scss";
-@import "./components/progress-bar.scss";
-@import "./components/countdown-timer.scss";
-@import "./components/imagedraw.scss";
-@import "./components/popover.scss";
+// Use components with namespaces
+@use "./components/general";
+@use "./components/navigation";
+@use "./components/inputs";
+@use "./components/forms";
+@use "./components/cube";
+@use "./components/toastify";
+@use "./components/bootstrap-calendar";
+@use "./components/horizontal-card";
+@use "./components/icon-stack";
+@use "./components/table";
+@use "./components/progress-bar";
+@use "./components/countdown-timer";
+@use "./components/imagedraw";
+@use "./components/popover";

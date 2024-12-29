@@ -1,57 +1,46 @@
-import path from "node:path";
-import { MatchDto, RoundDto, matchToDto } from "../dto/round.dto";
+import { Service } from 'typedi';
+import { Route, Controller, Get, Post, Path, Body, Security } from 'tsoa';
 import { MatchService } from "../service/match.service";
-import { FILE_ROOT, createDirIfNotExists } from "../util/fs";
-import { writeFileSync } from "node:fs";
+import { MatchDto, matchToDto } from "../dto/round.dto";
 
-const matchService = new MatchService();
+@Route('match')
+@Service()
+export class MatchController extends Controller {
+    constructor(
+        private matchService: MatchService
+    ) {
+        super();
+    }
 
-export const getPlayerMatchHistory = async (req): Promise<MatchDto[]> => {
-  const { userId, tournamentId } = req.params;
-  return (await matchService.getPlayerMatchHistory(userId, tournamentId)).map(
-    matchToDto
-  );
-};
+    @Get('round/{roundId}')
+    @Security('loggedIn')
+    public async getMatchesForRound(
+        @Path() roundId: number
+    ): Promise<MatchDto[]> {
+        return (await this.matchService.getMatchesForRound(roundId)).map(matchToDto);
+    }
 
-export const getMatchesForRound = async (req): Promise<MatchDto[]> => {
-  const { roundId } = req.params;
-  return (await matchService.getMatchesForRound(roundId)).map(matchToDto);
-};
+    @Post('submitResult')
+    @Security('loggedIn')
+    public async submitResult(
+        @Body() result: {
+            matchId: number;
+            roundId: number;
+            resultSubmittedBy: number;
+            player1GamesWon: number;
+            player2GamesWon: number;
+        }
+    ): Promise<MatchDto> {
+        const { matchId, roundId, resultSubmittedBy, player1GamesWon, player2GamesWon } = result;
+        return matchToDto(
+            await this.matchService.submitResult(
+                matchId,
+                roundId,
+                resultSubmittedBy,
+                player1GamesWon,
+                player2GamesWon
+            )
+        );
+    }
+}
 
-export const submitResult = async (req): Promise<MatchDto> => {
-  const {
-    matchId,
-    roundId,
-    resultSubmittedBy,
-    player1GamesWon,
-    player2GamesWon,
-  } = req.body;
-  return matchToDto(
-    await matchService.submitResult(
-      matchId,
-      roundId,
-      resultSubmittedBy,
-      player1GamesWon,
-      player2GamesWon
-    )
-  );
-};
-
-export const staffSubmitResult = async (req): Promise<MatchDto[]> => {
-  const {
-    roundId,
-    matchId,
-    resultSubmittedBy,
-    player1GamesWon,
-    player2GamesWon,
-  } = req.body;
-  return (
-    await matchService.staffSubmitResult(
-      roundId,
-      matchId,
-      resultSubmittedBy,
-      player1GamesWon,
-      player2GamesWon
-    )
-  ).map(matchToDto);
-};

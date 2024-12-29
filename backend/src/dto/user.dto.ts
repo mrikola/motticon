@@ -1,4 +1,5 @@
 import { Enrollment } from "../entity/Enrollment";
+import { PlayerTournamentScore } from "../entity/PlayerTournamentScore";
 import { Preference } from "../entity/Preference";
 import { User } from "../entity/User";
 import { CubeDto, cubeToDto } from "./cube.dto";
@@ -88,3 +89,15 @@ export const preferenceToDto = (preference: Preference): PreferenceDto =>
         points: preference.points,
       }
     : undefined;
+
+export const scoreToDto = (score: PlayerTournamentScore): PlayerTournamentScoreDto =>
+  score
+    ? {
+        player: playerToDto(score.player),
+        tournament: tournamentToDto(score.tournament),
+        points: score.points,
+        draftsWon: score.draftsWon,
+        opponentMatchWinPercentage: Number(score.opponentMatchWinPercentage),
+      }
+    : undefined;
+

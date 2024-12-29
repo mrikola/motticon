@@ -16,6 +16,7 @@ import StaffStandingsTable from "../../components/staff/StaffStandingsTable";
 import BackButton from "../../components/general/BackButton";
 import { toast } from "react-toastify";
 import { Enrollment } from "../../types/User";
+import { startPolling } from "../../utils/polling";
 
 function StaffView() {
   const { tournamentId } = useParams();
@@ -51,19 +52,10 @@ function StaffView() {
       }
     };
 
-    const doFetch = () => {
-      if (user) {
-        fetchData();
-      }
-    };
+    if (user) {
+      return startPolling(() => fetchData());
+    }
 
-    doFetch();
-    const roundInterval = setInterval(doFetch, 10000);
-
-    // return destructor function from useEffect to clear the interval pinging
-    return () => {
-      clearInterval(roundInterval);
-    };
   }, [tournamentId, user]);
 
   useEffect(() => {
@@ -86,19 +78,9 @@ function StaffView() {
       setEnrollments(tourny.enrollments);
     };
 
-    const doFetch = () => {
-      if (user) {
-        fetchData();
-      }
-    };
-
-    doFetch();
-    const roundInterval = setInterval(doFetch, 10000);
-
-    // return destructor function from useEffect to clear the interval pinging
-    return () => {
-      clearInterval(roundInterval);
-    };
+    if (user) {
+      return startPolling(() => fetchData());
+    }
   }, [tournamentId, user]);
 
   const startTournament = async () => {

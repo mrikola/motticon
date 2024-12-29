@@ -27,7 +27,7 @@ function DraftPods() {
         )) {
           for (const pod of draft.pods) {
             for (const seat of pod.seats) {
-              if (seat.player.id === user?.id) {
+              if (seat.player?.id === user?.id) {
                 userPods.push(pod);
               }
             }
@@ -58,13 +58,13 @@ function DraftPods() {
               <Row key={index}>
                 <h2>Draft {index + 1}</h2>
                 <h3>
-                  Pod {pod.podNumber}, {pod.cube.title}
+                  Pod {pod.podNumber}, {pod.cube?.title}
                 </h3>
                 {pod.seats
                   .sort((a, b) => a.seat - b.seat)
                   .map((seat) => (
                     <div key={seat.id}>
-                      {user.id === seat.player.id && seat.deckPhotoUrl ? (
+                      {user.id === seat.player?.id && seat.deckPhotoUrl ? (
                         <Col
                           xs={10}
                           sm={8}
@@ -92,12 +92,12 @@ function DraftPods() {
                         <tr
                           key={seat.id}
                           className={
-                            user.id === seat.player.id ? "table-primary" : ""
+                            user.id === seat.player?.id ? "table-primary" : ""
                           }
                         >
                           <td>{seat.seat}</td>
                           <td className="td-no-wrap">
-                            {seat.player.firstName} {seat.player.lastName}
+                            {seat.player?.firstName} {seat.player?.lastName}
                           </td>
                         </tr>
                       ))}

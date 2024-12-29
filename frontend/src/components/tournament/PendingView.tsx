@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Draft, Tournament } from "../../types/Tournament";
 import { get } from "../../services/ApiService";
 import { Col, Row } from "react-bootstrap";
+import { startPolling } from "../../utils/polling";
 
 type Props = {
   tournamentId: number;
@@ -32,19 +33,9 @@ const PendingView = ({ tournamentId }: Props) => {
       );
     };
 
-    const doFetch = () => {
-      if (tournamentId) {
-        fetchData();
-      }
-    };
-
-    doFetch();
-    const roundInterval = setInterval(doFetch, 10000);
-
-    // return destructor function from useEffect to clear the interval pinging
-    return () => {
-      clearInterval(roundInterval);
-    };
+    if (tournamentId) {
+      return startPolling(() => fetchData());
+    }
   }, [tournamentId]);
 
   // if latest draft completed == tournament draft count, tournament is over (minus top 8)

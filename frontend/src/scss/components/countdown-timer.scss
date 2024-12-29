@@ -1,7 +1,10 @@
+@use "bootstrap/scss/bootstrap" as bootstrap;
+
 // countdown timer element
 .countdown-timer {
   font-family: "Roboto Mono", monospace;
+
   .over-time {
-    color: $red-400;
+    color: bootstrap.$red-400;
   }
 }

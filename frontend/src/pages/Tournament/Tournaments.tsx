@@ -30,7 +30,7 @@ function Tournaments() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await get("/tournaments");
+      const response = await get("/tournament");
       const tournys = (await response.json()) as Tournament[];
       tournys.sort((a, b) => (a.startDate > b.startDate ? -1 : 1));
       setTournaments({
@@ -54,7 +54,7 @@ function Tournaments() {
     };
 
     fetchData();
-  }, [user, tournamentsStaffed]);
+  }, [user, tournamentsEnrolled]);
 
   useEffect(() => {
     const fetchData = async () => {

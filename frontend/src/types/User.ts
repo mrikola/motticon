@@ -5,16 +5,16 @@ export type User = {
   id: number;
   firstName: string;
   lastName: string;
-  isAdmin: boolean;
-  rating: number;
+  isAdmin?: boolean;
+  rating?: number;
   email: string;
 };
 
 export type Player = User;
 
 export type Enrollment = {
-  player: Player;
-  tournamentId: number;
+  player?: Player;
+  tournament?: Tournament;
   dropped: boolean;
   paid: boolean;
 };

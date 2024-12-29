@@ -24,7 +24,7 @@ function SignUp() {
   const navigate = useNavigate();
 
   function createAccount({ firstName, lastName, email, password }: SignupForm) {
-    post("/signup", { firstName, lastName, email, password }).then(
+    post("/user/signup", { firstName, lastName, email, password }).then(
       async (_resp) => {
         // TODO show some kind of success thing
         navigate("/login");
@@ -115,7 +115,7 @@ function SignUp() {
                   },
                   validate: {
                     check: async (fieldValue) => {
-                      const resp = await get(`/user/${fieldValue}`);
+                      const resp = await get(`/user/exists/${fieldValue}`);
                       const exists = (await resp.json()) as boolean;
                       return exists == false || "Email already registered";
                     },

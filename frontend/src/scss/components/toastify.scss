@@ -1,8 +1,11 @@
+@use "../variables" as *;
+@use "bootstrap/scss/bootstrap" as bootstrap;
+
 :root {
-  --toastify-color-success: #{$success};
+  --toastify-color-success: #{bootstrap.$success};
   --toastify-color-info: #{$info};
   --toastify-color-warning: #{$primary};
-  --toastify-color-error: #{$danger};
+  --toastify-color-error: #{bootstrap.$danger};
 
   --toastify-color-light: #fff;
   --toastify-color-dark: #121212;

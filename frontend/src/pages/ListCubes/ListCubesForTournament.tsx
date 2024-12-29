@@ -47,8 +47,8 @@ const ListCubesForTournament = () => {
         for (const draft of tourny.drafts) {
           for (const pod of draft.pods) {
             for (const seat of pod.seats) {
-              if (seat.player.id === user?.id) {
-                draftCubes.push(pod.cube.id);
+              if (seat.player?.id === user?.id) {
+                draftCubes.push(pod.cube!.id);
               }
             }
           }

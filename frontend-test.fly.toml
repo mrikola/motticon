@@ -10,6 +10,7 @@ primary_region = "ams"
   VITE_API_URL="https://motticon-backend.fly.dev/"
 
 [build]
+  dockerfile = "frontend/Dockerfile"
 
 [http_service]
   internal_port = 80
@@ -21,7 +22,7 @@ primary_region = "ams"
   [http_service.http_options.response.headers]
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "*"
-    Access-Control-Allow-Headers = "*"
+    Access-Control-Allow-Headers = "Authorization"
 
 [[vm]]
   cpu_kind = "shared"
