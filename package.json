@@ -10,10 +10,10 @@
     "db:fixtures": "yarn workspace motticon-backend run fixtures",
     "deploy": "fly deploy",
     "deploy:test-backend": "yarn deploy -c backend-test.fly.toml",
-    "deploy:test-frontend": "yarn workspace motticon-frontend deploy",
+    "deploy:test-frontend": "yarn deploy -c frontend-test.fly.toml",
     "deploy:test": "yarn deploy:test-backend && yarn deploy:test-frontend",
     "deploy:prod-backend": "yarn deploy -c backend-prod.fly.toml",
-    "deploy:prod-frontend": "yarn workspace motticon-frontend deploy -c fly.prod.toml --dockerfile Dockerfile.prod",
+    "deploy:prod-frontend": "yarn deploy -c frontend-prod.fly.toml",
     "deploy:prod": "yarn deploy:prod-backend && yarn deploy:prod-frontend"
   }
 }

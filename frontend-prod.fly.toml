@@ -7,6 +7,7 @@ app = 'motticon-prod'
 primary_region = 'arn'
 
 [build]
+  dockerfile = "frontend/Dockerfile.prod"
 
 [env]
   VITE_API_URL = 'https://motticon-backend-prod.fly.dev/'
