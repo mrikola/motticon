@@ -235,7 +235,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CubeDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"cardlist":{"ref":"CardList","required":true},"imageUrl":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"owner":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true},"id":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"cardlist":{"dataType":"union","subSchemas":[{"ref":"CardList"},{"dataType":"enum","enums":[null]}],"required":true},"imageUrl":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"owner":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true},"id":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TokenDto": {

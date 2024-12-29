@@ -11,6 +11,7 @@ primary_region = "arn"
   PORT=3000
 
 [build]
+  dockerfile = "backend/Dockerfile"
 
 [mounts]
   source="motticon_photos"

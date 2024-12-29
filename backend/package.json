@@ -20,11 +20,12 @@
    "dependencies": {
       "@azure-rest/ai-vision-image-analysis": "^1.0.0-beta.2",
       "@fast-csv/format": "^5.0.0",
-      "@tsoa/runtime": "^6.5.1",
+      "@tsoa/runtime": "^6.6.0",
       "bcrypt": "^5.1.1",
       "cors": "^2.8.5",
       "elo-rank": "^1.0.4",
       "express": "4.21.1",
+      "joi": "^17.13.3",
       "js-levenshtein": "^1.1.6",
       "jsonwebtoken": "^9.0.2",
       "lodash": "^4.17.21",
@@ -40,14 +41,13 @@
    },
    "scripts": {
       "dev": "nodemon -L --watch 'src/**/*.ts' --exec ts-node src/index.ts",
-      "start": "ts-node src/index.ts",
+      "start": "npx ts-node src/index.ts",
       "typeorm": "typeorm-ts-node-commonjs -d ./src/data-source.ts",
       "fixtures": "docker compose exec db psql -U postgres -d motticon -f /home/fixtures.sql",
-      "deploy": "fly deploy",
       "routes": "tsoa routes",
       "swagger": "tsoa spec",
       "tsoa": "tsoa routes && tsoa spec",
-      "build": "npm run tsoa && tsc"
+      "build": "yarn tsoa && tsc"
    },
    "main": "index.js",
    "license": "MIT"
