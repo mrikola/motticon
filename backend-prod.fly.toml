@@ -7,9 +7,11 @@ app = 'motticon-backend-prod'
 primary_region = 'arn'
 
 [build]
+  dockerfile = "backend/Dockerfile"
 
 [env]
   FRONTEND_URL = 'https://motticon-prod.fly.dev'
+  PORT=3000
 
 [[mounts]]
   source = 'motticon_photos'
@@ -26,9 +28,9 @@ primary_region = 'arn'
   [http_service.http_options]
     [http_service.http_options.response]
       [http_service.http_options.response.headers]
-        Access-Control-Allow-Headers = '*'
-        Access-Control-Allow-Methods = '*'
-        Access-Control-Allow-Origin = '*'
+        Access-Control-Allow-Origin = "*"
+        Access-Control-Allow-Methods = "*"
+        Access-Control-Allow-Headers = "Authorization, Content-Type"
 
 [[vm]]
   memory = '2gb'

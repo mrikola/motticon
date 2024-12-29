@@ -46,9 +46,6 @@ WORKDIR /app
 # Copy built application to Nginx serving directory
 COPY --from=build /app/frontend/dist /usr/share/nginx/html
 
-# Set the API URL as an environment variable
-ENV VITE_API_URL="https://motticon-backend-prod.fly.dev/"
-
 # Copy the default.conf to Nginx configuration
 COPY --from=build /app/frontend/default.conf /etc/nginx/conf.d/default.conf
 
