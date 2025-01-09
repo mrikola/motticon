@@ -1,0 +1,10 @@
+{
+  "name": "motticon-web",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "deploy": "fly deploy",
+    "deploy:test": "yarn deploy",
+    "deploy:prod": "yarn deploy -c fly.prod.toml"
+  }
+}
