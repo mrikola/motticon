@@ -1,13 +1,7 @@
-// import * as logging from 'winston';
-// import { Counter } from 'collections';
-// import { dataclass, field } from 'dataclass-transformer';
-// import { Path } from 'path';
-// import { Iterable } from 'typescript';
-
-// import { Card } from "../types/Cube";
+import { Card } from "../types/Card";
 
 export type CardInDeck = {
-  cardname: string;
+  card: Card;
   quantity: number;
 };
 
@@ -18,36 +12,34 @@ class Pile {
     this.cards = [];
   }
 
-  addCard(cardname: string): void {
+  addCard(card: Card): void {
     let foundMatch = false;
-    const updatedCards = this.cards.map((card) => {
+    const updatedCards = this.cards.map((cardInDeck) => {
       // if card is already in list, add to quantity
-      if (card.cardname === cardname) {
-        card.quantity++;
-        // console.log(card.cardname + " qty: " + card.quantity++);
+      if (cardInDeck.card.id === card.id) {
+        cardInDeck.quantity++;
         foundMatch = true;
-        return { ...card };
+        return { ...cardInDeck };
       } else {
-        return card;
+        return cardInDeck;
       }
     });
     // if no match found when iterating, add as new card
     if (!foundMatch) {
-      updatedCards.push({ cardname, quantity: 1 });
+      updatedCards.push({ card, quantity: 1 });
     }
     // update the cards
     this.cards = updatedCards;
-    // if (this.cards.some((c) => c.cardname === cardname)) {
-    //   this.cards.set(card, this.cards.get(card)! + 1);
-    // } else {
-    //   this.cards.push({cardname, 1})
-    // }
   }
 
-  addCards(cards: string[]): void {
+  addCards(cards: Card[]): void {
     for (const c of cards) {
       this.addCard(c);
     }
+  }
+
+  getCards(): CardInDeck[] {
+    return this.cards;
   }
 
   // diff(other: Pile): number {
@@ -85,13 +77,12 @@ class Pile {
 
   toString(): string {
     return this.cards
-      .map((card) => `${card.quantity} ${card.cardname}`)
+      .map((cardInDeck) => `${cardInDeck.quantity} ${cardInDeck.card.name}`)
       .join("\n");
   }
 
   get length(): number {
     return this.cards.reduce((n, { quantity }) => n + quantity, 0);
-    // return [...this.cards].reduce((sum, [_, count]) => sum + count, 0);
   }
 }
 
@@ -119,7 +110,7 @@ export class Deck {
   //   return [...this.maindeck, ...this.sideboard][Symbol.iterator]();
   // }
 
-  addCard(card: string, inSideboard: boolean): void {
+  addCard(card: Card, inSideboard: boolean): void {
     if (inSideboard) {
       this.sideboard.addCard(card);
     } else {
@@ -127,10 +118,18 @@ export class Deck {
     }
   }
 
-  addCards(cards: Iterable<string>, inSideboard: boolean): void {
+  addCards(cards: Card[], inSideboard: boolean): void {
     for (const card of cards) {
       this.addCard(card, inSideboard);
     }
+  }
+
+  getMaindeck(): CardInDeck[] {
+    return this.maindeck.cards;
+  }
+
+  getSideboard(): CardInDeck[] {
+    return this.sideboard.cards;
   }
 
   // save(file: string): void {

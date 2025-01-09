@@ -30,6 +30,7 @@ import AllPoolsView from "./pages/Staff/AllPoolsView";
 import ManagePlayers from "./pages/Staff/ManagePlayers";
 import CVTest from "./pages/Test/CVTest";
 import AdminFunctions from "./components/admin/AdminFunctions";
+import DeckCheckTest from "./pages/Test/DeckCheckTest";
 
 function App() {
   const routes: RouteObject[] = [
@@ -47,6 +48,10 @@ function App() {
             {
               path: "test",
               Component: CVTest,
+            },
+            {
+              path: "test2",
+              Component: DeckCheckTest,
             },
             {
               path: "login",

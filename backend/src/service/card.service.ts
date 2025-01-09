@@ -1,12 +1,10 @@
-import { DataSource, IsNull, Like, Not, Repository } from "typeorm";
+import { DataSource, Like, Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
-//import cards from "../cards_no_duplicates.json";
 import { Color } from "../dto/card.dto";
 import { Card, Token } from "../entity/Card";
 import { ListedCard } from "../entity/ListedCard";
 import { PickedCard } from "../entity/PickedCard";
 import { DraftPodSeat } from "../entity/DraftPodSeat";
-//const cardsArray = cards as Card[];
 
 type PickedCardDto = {
   listedCard: ListedCard;
