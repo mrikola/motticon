@@ -22,7 +22,9 @@ const DraftTable = ({
   const [incompleteSeats, setIncompleteSeats] = useState<DraftPodSeat[]>([]);
 
   useEffect(() => {
-    const sortedSeats = seats.sort((a, b) => a.pod.podNumber - b.pod.podNumber);
+    const sortedSeats = seats.sort(
+      (a, b) => (a.pod?.podNumber ?? 0) - (b.pod?.podNumber ?? 0)
+    );
     setIncompleteSeats(sortedSeats.filter((seat) => !seat.deckPhotoUrl));
     setCompleteSeats(sortedSeats.filter((seat) => !!seat.deckPhotoUrl));
   }, [seats]);
@@ -47,12 +49,12 @@ const DraftTable = ({
                   <tr key={seat.id}>
                     <td>
                       {Math.round(
-                        ((seat.pod.podNumber - 1) * 8 + seat.seat) / 2
+                        (((seat.pod?.podNumber ?? 1) - 1) * 8 + seat.seat) / 2
                       )}
                     </td>
                     <td>
-                      {seat.player.firstName} {seat.player.lastName}{" "}
-                      {isPlayerDropped(enrollments, seat.player.id)
+                      {seat.player?.firstName} {seat.player?.lastName}{" "}
+                      {isPlayerDropped(enrollments, seat.player?.id ?? 0)
                         ? " DROPPED"
                         : ""}
                     </td>
@@ -102,11 +104,11 @@ const DraftTable = ({
                   <tr key={seat.id}>
                     <td>
                       {Math.round(
-                        ((seat.pod.podNumber - 1) * 8 + seat.seat) / 2
+                        (((seat.pod?.podNumber ?? 1) - 1) * 8 + seat.seat) / 2
                       )}
                     </td>
                     <td>
-                      {seat.player.firstName} {seat.player.lastName}
+                      {seat.player?.firstName} {seat.player?.lastName}
                     </td>
                     <td className="text-center">
                       {seat.deckPhotoUrl ? (

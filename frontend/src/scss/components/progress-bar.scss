@@ -1,7 +1,9 @@
-// progress bar element
+@use "bootstrap/scss/bootstrap" as bootstrap;
+
 .progress {
-  height: $font-size-base * 1.5;
+  height: bootstrap.$font-size-base * 1.5;
+
   .progress-bar {
-    color: $dark;
+    color: bootstrap.$dark;
   }
 }

@@ -1,0 +1,42 @@
+{
+  "entryFile": "src/index.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": [
+    "src/**/*controller.ts"
+  ],
+  "spec": {
+    "outputDirectory": "public",
+    "specVersion": 3,
+    "securityDefinitions": {
+      "loggedIn": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      },
+      "staff": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      },
+      "admin": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "routes": {
+    "routesDir": "src/generated",
+    "middleware": "express",
+    "authenticationModule": "src/auth/auth.ts",
+    "iocModule": "src/container"
+  },
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "node_modules/*"
+      ]
+    }
+  }
+}

@@ -9,7 +9,7 @@ type Props = {
 function DraftPoolButton({ seat }: Props) {
   return (
     <Link
-      to={seat.deckPhotoUrl}
+      to={seat.deckPhotoUrl ?? "#"}
       target="_blank"
       className="btn btn-primary btn-lg"
     >

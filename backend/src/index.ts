@@ -1,64 +1,24 @@
-import { AppDataSource } from "./data-source";
-import express from "express";
-import cors from "cors";
-import { adminRouter } from "./router/adminRouter";
-import { userRouter } from "./router/userRouter";
-import { notLoggedInRouter } from "./router/notLoggedInRouter";
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import path = require("node:path/posix");
-import { staffRouter } from "./router/staffRouter";
-import { FILE_ROOT } from "./util/fs";
-import errorMiddleware from "./middleware/errorMiddleware";
+import { AppDataSource } from './data-source';
+import { Server } from './server';
+import { loadConfig } from './config/config';
+import { setupDatabase } from './data-source';
 
-const port = process.env.PORT || 3000;
-const app = express();
+async function bootstrap() {
+  try {
+    const config = loadConfig();
+    
+    // Initialize database
+    await AppDataSource.initialize();
+    await setupDatabase(AppDataSource);
 
-AppDataSource.initialize()
-  .then(async () => {
-    AppDataSource.query(
-      readFileSync(path.join(__dirname, "..", "db", "markku.sql"), "utf8")
-    );
+    // Create and start server
+    const server = new Server(config);
+    await server.init();
+    server.start();
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
 
-    if (existsSync(FILE_ROOT)) {
-      console.log("writing to volume");
-      writeFileSync(`${FILE_ROOT}/foo.txt`, "this is a test");
-    }
-
-    app.use(
-      cors({
-        origin: process.env.FRONTEND_URL,
-      })
-    );
-    app.use(express.json({ limit: "500kb" }));
-
-    app.get("/", (req, res) => {
-      res.send("Hello world, how are you doing");
-    });
-
-    app.get(`${FILE_ROOT}/*`, (req, res) => {
-      if (existsSync(FILE_ROOT)) {
-        res.sendFile(path.join("/", req.path), {
-          headers: {
-            "Content-Disposition": "inline",
-          },
-        });
-      } else {
-        res.sendFile(path.join(__dirname, "..", "README.md"), {
-          headers: {
-            "Content-Disposition": "inline",
-          },
-        });
-      }
-    });
-
-    app.use(notLoggedInRouter);
-    app.use(userRouter);
-    app.use(staffRouter);
-    app.use(adminRouter);
-    app.use(errorMiddleware);
-
-    app.listen(port, () => {
-      console.log("Listening on port", port);
-    });
-  })
-  .catch((error) => console.log(error));
+bootstrap();

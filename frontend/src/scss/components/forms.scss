@@ -1,3 +1,5 @@
+@use "bootstrap/scss/bootstrap" as bootstrap;
+
 // copy bootstrap form-control styling over to the autocomplete input element
 .react-datalist-input__textbox {
   @extend .form-control;

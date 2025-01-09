@@ -31,7 +31,6 @@ type PickedCardDto = {
 
 const CardPool = ({
   cubeCards,
-  cubeId,
   photoUrl,
   seat,
   setPlayerPickedCards,
@@ -183,7 +182,7 @@ const CardPool = ({
       pickedCards.push(pc);
     }
     try {
-      post(`/cube/${cubeId}/pickedCards/set`, { pickedCards }).then(
+      post(`/card/pickedCards/set`, { pickedCards }).then(
         async (resp) => {
           const cards = (await resp.json()) as PickedCard[];
           if (cards) {

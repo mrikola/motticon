@@ -46,13 +46,13 @@ const ManagePlayers = () => {
     () =>
       activePlayers.map((enrollment) => ({
         // required: id and value
-        id: enrollment.player.id,
+        id: enrollment.player?.id,
         value:
-          enrollment.player.firstName +
+          enrollment.player?.firstName +
           " " +
-          enrollment.player.lastName +
+          enrollment.player?.lastName +
           " (" +
-          enrollment.player.email +
+          enrollment.player?.email +
           ")",
         ...enrollment, // pass along any other properties to access in your onSelect callback
       })),
@@ -163,13 +163,15 @@ const ManagePlayers = () => {
               <tbody>
                 {droppedPlayers
                   .sort((a, b) =>
-                    a.player.lastName.localeCompare(b.player.lastName)
+                    (a.player?.lastName ?? "").localeCompare(
+                      b.player?.lastName ?? ""
+                    )
                   )
                   .map((enrollment) => (
-                    <tr key={enrollment.player.id}>
+                    <tr key={enrollment.player?.id}>
                       <td>
-                        {enrollment.player.firstName}{" "}
-                        {enrollment.player.lastName}
+                        {enrollment.player?.firstName}{" "}
+                        {enrollment.player?.lastName}
                       </td>
                     </tr>
                   ))}

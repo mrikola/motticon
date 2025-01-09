@@ -63,10 +63,10 @@ function EditCube() {
       setValue("title", cube.title);
       setValue("description", cube.description);
       setValue("url", cube.url);
-      setValue("owner", cube.owner);
-      setValue("imageUrl", cube.imageUrl);
+      setValue("owner", cube.owner ?? "");
+      setValue("imageUrl", cube.imageUrl ?? "");
       const cubeCards: CubeCard[] = [];
-      for (const card of cube.cardlist.cards) {
+      for (const card of cube.cardlist?.cards ?? []) {
         cubeCards.push({
           scryfallId: card.card.scryfallId,
           quantity: card.quantityInCube,
@@ -74,7 +74,7 @@ function EditCube() {
       }
       setValue("cards", cubeCards);
 
-      setCardImageUrl(cube.imageUrl);
+      setCardImageUrl(cube.imageUrl ?? "");
     };
 
     fetchData();

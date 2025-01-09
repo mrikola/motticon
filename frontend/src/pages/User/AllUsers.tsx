@@ -15,7 +15,7 @@ const AllUsers = () => {
     const fetchData = async () => {
       const response = await get(`/user`);
       const players = (await response.json()) as Player[];
-      players.sort((a, b) => (a.rating > b.rating ? -1 : 1));
+      players.sort((a, b) => (a.rating! > b.rating! ? -1 : 1));
       setAllPlayers(players);
     };
     fetchData();

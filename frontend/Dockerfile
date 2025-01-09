@@ -2,48 +2,56 @@
 
 # Adjust NODE_VERSION as desired
 ARG NODE_VERSION=20.10.0
-FROM node:${NODE_VERSION}-slim as base
+FROM node:${NODE_VERSION}-slim AS base
 
 LABEL fly_launch_runtime="Vite"
 
 # Vite app lives here
 WORKDIR /app
 
-
 # Throw-away build stage to reduce size of final image
-FROM base as build
+FROM base AS build
 
-# Install packages needed to build node modules
+# Install packages needed to build node modules (needed for native modules like bcrypt)
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
+    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install node modules
-COPY --link package.json ./
-COPY --link yarn.lock ./
-RUN yarn 
+# Copy root package.json and yarn.lock to resolve dependencies from the root
+COPY --link package.json yarn.lock ./
 
-# Copy application code
-COPY --link . .
+# Copy frontend package.json and install all dependencies (including devDependencies)
+COPY --link frontend/package.json frontend/
+RUN yarn install --frozen-lockfile --non-interactive
 
-# Build application
-RUN npm run build -- --mode staging
+# Copy frontend application code
+COPY --link frontend /app/frontend
+
+# Build frontend application
+WORKDIR /app/frontend
+RUN yarn build --mode staging
+
+# Then remove dev deps
+RUN yarn install --production --frozen-lockfile --non-interactive
 
 # Set production environment
 ENV NODE_ENV="production"
 
-# Remove development dependencies
-RUN npm install --omit=dev
-
 # Final stage for app image
 FROM nginx
 
-# Copy built application
-COPY --from=build /app/dist /usr/share/nginx/html
+# Install only production dependencies (devDependencies are omitted)
+WORKDIR /app
 
-# RUN mkdir /etc/nginx/templates
-# COPY --from=build /app/default.conf.template /etc/nginx/templates/
-COPY --from=build /app/default.conf /etc/nginx/conf.d/default.conf
+# Copy built application to Nginx serving directory
+COPY --from=build /app/frontend/dist /usr/share/nginx/html
 
-# Start the server by default, this can be overwritten at runtime
+# Set the API URL as an environment variable
+# ENV VITE_API_URL="https://motticon-backend-prod.fly.dev/"
+
+# Copy the default.conf to Nginx configuration
+COPY --from=build /app/frontend/default.conf /etc/nginx/conf.d/default.conf
+
+# Start the server by default
 EXPOSE 80
-CMD [ "/usr/sbin/nginx", "-g", "daemon off;" ]
+CMD ["/usr/sbin/nginx", "-g", "daemon off;"]

@@ -98,18 +98,18 @@ const TestPreferencesTable = () => {
         const cubes: Cube[] = [];
         cubes.push(
           tourny.drafts[0].pods.filter((pod) =>
-            pod.seats.some((seat) => seat.player.id === player.playerId)
-          )[0].cube
+            pod.seats.some((seat) => seat.player?.id === player.playerId)
+          )[0].cube!
         );
         cubes.push(
           tourny.drafts[1].pods.filter((pod) =>
-            pod.seats.some((seat) => seat.player.id === player.playerId)
-          )[0].cube
+            pod.seats.some((seat) => seat.player?.id === player.playerId)
+          )[0].cube!
         );
         cubes.push(
           tourny.drafts[2].pods.filter((pod) =>
-            pod.seats.some((seat) => seat.player.id === player.playerId)
-          )[0].cube
+            pod.seats.some((seat) => seat.player?.id === player.playerId)
+          )[0].cube!
         );
         newDrys.push({
           playerId: player.player.id,
@@ -122,17 +122,17 @@ const TestPreferencesTable = () => {
 
       console.log(
         tourny.drafts[0].pods.filter((pod) =>
-          pod.seats.some((seat) => seat.player.id === 71)
+          pod.seats.some((seat) => seat.player?.id === 71)
         )
       );
       console.log(
         tourny.drafts[1].pods.filter((pod) =>
-          pod.seats.some((seat) => seat.player.id === 71)
+          pod.seats.some((seat) => seat.player?.id === 71)
         )
       );
       console.log(
         tourny.drafts[2].pods.filter((pod) =>
-          pod.seats.some((seat) => seat.player.id === 71)
+          pod.seats.some((seat) => seat.player?.id === 71)
         )
       );
     };
@@ -148,8 +148,8 @@ const TestPreferencesTable = () => {
       const players: DryPlayer[] = [];
       for (const enrollment of enrollments) {
         players.push({
-          playerId: enrollment.player.id,
-          player: enrollment.player,
+          playerId: enrollment.player!.id,
+          player: enrollment.player!,
           preferences: [],
           cubes: [],
         });
@@ -260,12 +260,12 @@ const TestPreferencesTable = () => {
                       <td>{draft.draftNumber}</td>
                       <td>{pod.podNumber}</td>
                       <td>
-                        {pod.cube.title} (id: {pod.cube.id})
+                        {pod.cube?.title} (id: {pod.cube?.id})
                       </td>
                       <td>
-                        {seat.player.firstName} {seat.player.lastName}
+                        {seat.player?.firstName} {seat.player?.lastName}
                       </td>
-                      <td>{seat.player.id}</td>
+                      <td>{seat.player?.id}</td>
                     </tr>
                   ))}
                 </tbody>

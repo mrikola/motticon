@@ -1,5 +1,6 @@
-import { DataSource, Like, Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
+import { Service, Inject } from "typedi";
+import { DataSource, IsNull, Like, Not, Repository } from "typeorm";
 import { Color } from "../dto/card.dto";
 import { Card, Token } from "../entity/Card";
 import { ListedCard } from "../entity/ListedCard";
@@ -12,15 +13,14 @@ type PickedCardDto = {
   picker: DraftPodSeat;
 };
 
+@Service()
 export class CardService {
-  private appDataSource: DataSource;
   private cardRepository: Repository<Card>;
   private tokenRepository: Repository<Token>;
   private listedCardRepository: Repository<ListedCard>;
   private pickedCardRepository: Repository<PickedCard>;
 
-  constructor() {
-    this.appDataSource = AppDataSource;
+  constructor(@Inject("DataSource") private appDataSource: DataSource) {
     this.cardRepository = this.appDataSource.getRepository(Card);
     this.tokenRepository = this.appDataSource.getRepository(Token);
     this.listedCardRepository = this.appDataSource.getRepository(ListedCard);

@@ -1,4 +1,3 @@
-import { Card } from "../entity/Card";
 import { CardList } from "../entity/CardList";
 import { Cube } from "../entity/Cube";
 import { ListedCard } from "../entity/ListedCard";
@@ -11,7 +10,7 @@ export type CubeDto = {
   owner: string;
   url: string;
   imageUrl: string;
-  cardlist: CardList;
+  cardlist: CardList | null;
 };
 
 export type CubeDiffDto = {
@@ -28,6 +27,6 @@ export const cubeToDto = (cube: Cube): CubeDto =>
         owner: cube.owner,
         url: cube.url,
         imageUrl: cube.imageUrl,
-        cardlist: cube.cardlist,
+        cardlist: null, // TODO return cube.cardlist
       }
     : undefined;

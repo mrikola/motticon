@@ -1,95 +1,80 @@
-import path = require("path");
-import { getUserFromToken } from "../auth/auth";
-import { DraftService } from "../service/draft.service";
-import { FILE_ROOT, createDirIfNotExists } from "../util/fs";
-import { writeFileSync } from "fs";
-import mime from "mime-types";
-import {
-  DraftDto,
-  DraftPodDto,
-  DraftPodSeatDto,
-  draftToDto,
-  podToDto,
-  seatToDto,
-} from "../dto/draft.dto";
-import { RoundDto, roundToDto } from "../dto/round.dto";
-import { DraftPodSeat } from "../entity/DraftPodSeat";
+import { Service } from 'typedi';
+import { Route, Controller, Get, Post, Path, Security, UploadedFile, Request, Header } from 'tsoa';
+import { DraftService } from '../service/draft.service';
+import { DraftDto, DraftPodDto, DraftPodSeatDto, draftToDto, podToDto, seatToDto } from '../dto/draft.dto';
+import { RoundDto, roundToDto } from '../dto/round.dto';
+import path from 'path';
+import { FILE_ROOT, createDirIfNotExists, removeScandinavianLetters } from '../util/fs';
+import { writeFileSync } from 'fs';
+import mime from 'mime-types';
+import { getUserFromToken } from '../auth/auth';
+import { ClientRequest } from 'http';
+import express from 'express';
 
-const draftService = new DraftService();
+@Route('draft')
+@Service()
+export class DraftController extends Controller {
+    constructor(
+        private draftService: DraftService
+    ) {
+        super();
+    }
 
-export const getPodsForDraft = async (req): Promise<DraftPodDto[]> => {
-  const { draftId } = req.params;
-  return (await draftService.getPodsForDraft(draftId as number)).map(podToDto);
-};
+    @Get('pods/{draftId}')
+    @Security('loggedIn')
+    public async getPodsForDraft(@Path() draftId: number): Promise<DraftPodDto[]> {
+        return (await this.draftService.getPodsForDraft(draftId)).map(podToDto);
+    }
 
-export const getSeatsForPod = async (req): Promise<DraftPodSeatDto[]> => {
-  const { draftPodId } = req.params;
-  return (await draftService.getSeatsForPod(draftPodId as number)).map(
-    seatToDto
-  );
-};
+    @Get('seats/{draftPodId}')
+    @Security('loggedIn')
+    public async getSeatsForPod(@Path() draftPodId: number): Promise<DraftPodSeatDto[]> {
+        return (await this.draftService.getSeatsForPod(draftPodId)).map(seatToDto);
+    }
 
-export const getRoundsForDraft = async (req): Promise<RoundDto[]> => {
-  const { draftId } = req.params;
-  return (await draftService.getRoundsForDraft(draftId as number)).map(
-    roundToDto
-  );
-};
+    @Get('{draftId}/user/{userId}')
+    @Security('loggedIn')
+    public async getDraftInfoForUser(
+        @Path() draftId: number,
+        @Path() userId: number
+    ): Promise<DraftPodDto> {
+        return podToDto(
+            await this.draftService.getDraftInfoForUser(draftId, userId)
+        );
+    }
 
-export const getDraftInfoForUser = async (req): Promise<DraftPodDto> => {
-  const { draftId, userId } = req.params;
-  return podToDto(
-    await draftService.getDraftInfoForUser(draftId as number, userId as number)
-  );
-};
+    @Get('{draftId}/rounds')
+    @Security('loggedIn')
+    public async getRoundsForDraft(@Path() draftId: number): Promise<RoundDto[]> {
+        return (await this.draftService.getRoundsForDraft(draftId)).map(roundToDto);
+    }
 
-export const setDraftPoolReturned = async (req): Promise<DraftDto> => {
-  const { tournamentId, seatId } = req.body;
-  return draftToDto(
-    await draftService.setDraftPoolReturned(
-      tournamentId as number,
-      seatId as number
-    )
-  );
-};
+    @Post('tournament/{tournamentId}/submitDeck/{seatId}')
+    @Security('loggedIn')
+    public async submitDeck(
+        @Request() request: express.Request,
+        @Path() tournamentId: number,
+        @Path() seatId: number,
+        @UploadedFile() file: Express.Multer.File,
+        @Header("authorization") token: string
+    ): Promise<DraftDto> {
+        const user = getUserFromToken(token);
+        if (!user) {
+            throw new Error('User not found');
+        }
 
-export const setDeckPhotoForUser = async (req): Promise<DraftDto> => {
-  const { tournamentId, seatId } = req.body;
-  return draftToDto(
-    await draftService.setDeckPhotoForUser(
-      tournamentId as number,
-      seatId as number
-    )
-  );
-};
+        const filePath = path.join(FILE_ROOT, tournamentId.toString(), seatId.toString());
+        createDirIfNotExists(filePath);
 
-export const submitRandomPool = async (req) => {
-  const { tournamentId, seat } = req.body;
+        const extension = mime.extension(file.mimetype);
+        const fileName = removeScandinavianLetters(`deck_${user.firstName}_${user.lastName}.${extension}`);
+        const localFileFullPath = path.join(filePath, fileName);
+        writeFileSync(localFileFullPath, file.buffer);
 
-  await draftService.submitRandomPool(
-    tournamentId as number,
-    seat as DraftPodSeat
-  );
-};
+        const url = `${request.protocol}://${request.headers.host}${filePath}/${fileName}`;
 
-export const uploadDeckPhoto = async (req): Promise<DraftDto> => {
-  const { tournamentId, seatId } = req.params;
-  const user = getUserFromToken(req.headers.authorization);
-  const file = req.file;
-
-  const filePath = path.join(FILE_ROOT, tournamentId, seatId);
-  const fileName = `${user.firstName}_${user.lastName}.${mime.extension(
-    file.mimetype
-  )}`;
-
-  const fileUrl =
-    `${req.protocol}://${req.headers.host}` + filePath + `/${fileName}`;
-
-  createDirIfNotExists(filePath);
-  const localFileFullPath = path.join(filePath, fileName);
-
-  writeFileSync(localFileFullPath, file.buffer);
-  return draftToDto(
-    await draftService.setDeckPhotoForUser(tournamentId, seatId, fileUrl)
-  );
-};
+        return draftToDto(
+            await this.draftService.setDeckPhotoForUser(tournamentId, seatId, url)
+        );
+    }
+}
