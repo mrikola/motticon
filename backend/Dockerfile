@@ -30,7 +30,7 @@ COPY --link package.json yarn.lock ./
 COPY --link backend/package.json backend/
 
 # Install dependencies for the specific workspace
-RUN yarn install --production --frozen-lockfile --non-interactive
+RUN yarn install --frozen-lockfile --non-interactive
 
 # Copy application code
 COPY --link backend /app/backend
