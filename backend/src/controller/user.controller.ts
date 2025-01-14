@@ -1,12 +1,22 @@
-import { Service } from 'typedi';
-import { Route, Controller, Get, Post, Delete, Path, Body, Response, Security } from 'tsoa';
+import { Service } from "typedi";
+import {
+  Route,
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Path,
+  Body,
+  Response,
+  Security,
+} from "tsoa";
 import {
   PlayerTournamentInfo,
   TournamentDto,
   tournamentToDto,
 } from "../dto/tournaments.dto";
 import {
-    PlayerDto,
+  PlayerDto,
   PlayerWithRatingDto,
   playerToDto,
   playerToRatedDto,
@@ -14,106 +24,125 @@ import {
 import { EnrollmentService } from "../service/enrollment.service";
 import { UserService } from "../service/user.service";
 import { MatchService } from "../service/match.service";
-import { MatchDto, matchToDto } from '../dto/round.dto';
-import { doLogin } from '../auth/auth';
+import { MatchDto, matchToDto } from "../dto/round.dto";
+import { doLogin } from "../auth/auth";
 
 interface LoginResponse {
-    token: string;
+  token: string;
 }
 
-@Route('user')
+@Route("user")
 @Service()
 export class UserController extends Controller {
-    constructor(
-        private userService: UserService,
-        private enrollmentService: EnrollmentService,
-        private matchService: MatchService
-    ) {
-        super();
-    }
+  constructor(
+    private userService: UserService,
+    private enrollmentService: EnrollmentService,
+    private matchService: MatchService
+  ) {
+    super();
+  }
 
-    @Post('signup')
-    @Response(201, 'Created')
-    @Response(401, 'Unauthorized')
-    public async signup(@Body() user: any): Promise<void> {
-        const { firstName, lastName, email, password } = user;
-        const success = await this.userService.createUser(firstName, lastName, email, password);
-        
-        if (success) {
-            this.setStatus(201); // Created
-        } else {
-            this.setStatus(401); // Unauthorized
-        }
-    }
+  @Post("signup")
+  @Response(201, "Created")
+  @Response(401, "Unauthorized")
+  public async signup(@Body() user: any): Promise<void> {
+    const { firstName, lastName, email, password } = user;
+    const success = await this.userService.createUser(
+      firstName,
+      lastName,
+      email,
+      password
+    );
 
-    @Get('all')
-    @Security('loggedIn')
-    public async getAllUsers(): Promise<PlayerDto[]> {
-        return (await this.userService.getAllUsers()).map(playerToDto);
+    if (success) {
+      this.setStatus(201); // Created
+    } else {
+      this.setStatus(401); // Unauthorized
     }
+  }
 
-    @Get('exists/{email}')
-    public async userExists(@Path() email: string): Promise<boolean> {
-        return await this.userService.userExists(email);
-    }
+  @Get("all")
+  @Security("loggedIn")
+  public async getAllUsers(): Promise<PlayerWithRatingDto[]> {
+    return (await this.userService.getAllUsers()).map(playerToRatedDto);
+  }
 
-    @Get('{id}')
-    @Security('loggedIn')
-    public async getUser(@Path() id: number): Promise<PlayerWithRatingDto> {
-        return playerToRatedDto(await this.userService.getUser(id));
-    }
+  @Get("exists/{email}")
+  public async userExists(@Path() email: string): Promise<boolean> {
+    return await this.userService.userExists(email);
+  }
 
-    @Get('{id}/tournaments')
-    @Security('loggedIn')
-    public async getUsersTournaments(@Path() id: number): Promise<TournamentDto[]> {
-        return (await this.userService.getUsersTournaments(id)).map(tournamentToDto);
-    }
+  @Get("{id}")
+  @Security("loggedIn")
+  public async getUser(@Path() id: number): Promise<PlayerWithRatingDto> {
+    return playerToRatedDto(await this.userService.getUser(id));
+  }
 
-    @Get('{id}/staff')
-    @Security('loggedIn')
-    public async getTournamentsStaffed(@Path() id: number): Promise<TournamentDto[]> {
-        return (await this.userService.getTournamentsStaffed(id)).map(tournamentToDto);
-    }
+  @Get("{id}/tournaments")
+  @Security("loggedIn")
+  public async getUsersTournaments(
+    @Path() id: number
+  ): Promise<TournamentDto[]> {
+    return (await this.userService.getUsersTournaments(id)).map(
+      tournamentToDto
+    );
+  }
 
-    @Get('{id}/tournament/{tournamentId}')
-    @Security('loggedIn')
-    public async getUserTournamentInfo(@Path() id: number, @Path() tournamentId: number): Promise<PlayerTournamentInfo> {
-        return await this.enrollmentService.getUserTournamentInfo(id, tournamentId);
-    }
+  @Get("{id}/staff")
+  @Security("loggedIn")
+  public async getTournamentsStaffed(
+    @Path() id: number
+  ): Promise<TournamentDto[]> {
+    return (await this.userService.getTournamentsStaffed(id)).map(
+      tournamentToDto
+    );
+  }
 
-    @Post('preferences')
-    @Security('loggedIn')
-    public async setCubePreferences(@Body() preferences: any): Promise<boolean> {
-        return await this.userService.setCubePreferences(preferences);
-    }
+  @Get("{id}/tournament/{tournamentId}")
+  @Security("loggedIn")
+  public async getUserTournamentInfo(
+    @Path() id: number,
+    @Path() tournamentId: number
+  ): Promise<PlayerTournamentInfo> {
+    return await this.enrollmentService.getUserTournamentInfo(id, tournamentId);
+  }
 
-    @Delete('preferences')
-    @Security('loggedIn')
-    public async deleteCubePreferences(@Body() preferences: any): Promise<boolean> {
-        return await this.userService.deleteCubePreferences(preferences);
-    }
+  @Post("preferences")
+  @Security("loggedIn")
+  public async setCubePreferences(@Body() preferences: any): Promise<boolean> {
+    return await this.userService.setCubePreferences(preferences);
+  }
 
-    @Get('{userId}/tournament/{tournamentId}/matches')
-    @Security('loggedIn')
-    public async getPlayerMatchHistory(
-        @Path() userId: number,
-        @Path() tournamentId: number
-    ): Promise<MatchDto[]> {
-        return (await this.matchService.getPlayerMatchHistory(userId, tournamentId))
-            .map(matchToDto);
-    }
+  @Delete("preferences")
+  @Security("loggedIn")
+  public async deleteCubePreferences(
+    @Body() preferences: any
+  ): Promise<boolean> {
+    return await this.userService.deleteCubePreferences(preferences);
+  }
 
-    @Post('login')
-    @Response<LoginResponse>(200, 'Success')
-    @Response(401, 'Unauthorized')
-    public async login(
-        @Body() credentials: { email: string; password: string }
-    ): Promise<LoginResponse> {
-        const token = await doLogin(credentials.email, credentials.password);
-        if (!token) {
-            this.setStatus(401);
-            return;
-        }
-        return { token };
+  @Get("{userId}/tournament/{tournamentId}/matches")
+  @Security("loggedIn")
+  public async getPlayerMatchHistory(
+    @Path() userId: number,
+    @Path() tournamentId: number
+  ): Promise<MatchDto[]> {
+    return (
+      await this.matchService.getPlayerMatchHistory(userId, tournamentId)
+    ).map(matchToDto);
+  }
+
+  @Post("login")
+  @Response<LoginResponse>(200, "Success")
+  @Response(401, "Unauthorized")
+  public async login(
+    @Body() credentials: { email: string; password: string }
+  ): Promise<LoginResponse> {
+    const token = await doLogin(credentials.email, credentials.password);
+    if (!token) {
+      this.setStatus(401);
+      return;
     }
+    return { token };
+  }
 }

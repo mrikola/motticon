@@ -13,7 +13,7 @@ const AllUsers = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await get(`/user`);
+      const response = await get(`/user/all`);
       const players = (await response.json()) as Player[];
       players.sort((a, b) => (a.rating! > b.rating! ? -1 : 1));
       setAllPlayers(players);

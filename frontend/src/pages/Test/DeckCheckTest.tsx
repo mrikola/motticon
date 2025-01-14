@@ -1,7 +1,6 @@
 import { get, post } from "../../services/ApiService";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
-// import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Cube } from "../../types/Cube";
 import {
   Card,
@@ -11,14 +10,9 @@ import {
 } from "../../types/Card";
 import { Deck } from "../../cv/Deck";
 
-type CardNameAndQuantity = {
-  name: string;
-  quantity: number;
-};
-
 const DeckCheckTest = () => {
   // const [cubeCards, setCubeCards] = useState<ListedCard[]>([]);
-  const [cube, setCube] = useState<Cube>();
+  const [cube, _setCube] = useState<Cube>();
   const [identifiedCards, setIdentifiedCards] = useState<CardAndQuantity[]>([]);
   const [poolImageUrl, setPoolImageUrl] = useState<string>("");
   const [playerDeck, setPlayerDeck] = useState<Deck>();
@@ -67,7 +61,7 @@ const DeckCheckTest = () => {
         );
         if (existingCard.length > 0) {
           // check if there are more in the cube
-          const cardInCube = cube.cardlist.cards.find(
+          const cardInCube = cube.cardlist?.cards?.find(
             (c) => c.card.scryfallId === card.card.scryfallId
           );
           if (
@@ -95,7 +89,7 @@ const DeckCheckTest = () => {
 
   const getCardsFromUrl = async (url: string) => {
     if (cube) {
-      const cubeCards: ListedCard[] = cube.cardlist.cards;
+      const cubeCards: ListedCard[] = cube.cardlist?.cards ?? [];
       try {
         console.log("attempting computer vision for: " + url);
         post("/computerVision/cardsFromImageUrl", { url, cubeCards }).then(
@@ -139,12 +133,11 @@ const DeckCheckTest = () => {
           <Button className="btn btn-info btn-lg" onClick={getDeck}>
             <div className="icon-link text-light">Get decklist</div>
           </Button>
-          {playerDeck &&
-            playerDeck.getMaindeck().map((cardInDeck) => {
-              <p>
-                {cardInDeck.quantity}x {cardInDeck.card.name}
-              </p>;
-            })}
+          {playerDeck?.getMaindeck().map((cardInDeck) => (
+            <p>
+              {cardInDeck.quantity}x {cardInDeck.card.name}
+            </p>
+          ))}
         </Col>
         <Col xs={12}>
           <div className="pool-wrapper">
