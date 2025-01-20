@@ -23,7 +23,7 @@ const DraftTable = ({
 
   useEffect(() => {
     const sortedSeats = seats.sort(
-      (a, b) => (a.pod?.podNumber ?? 0) - (b.pod?.podNumber ?? 0)
+      (a, b) => (a.pod?.podNumber ?? 0) - (b.pod?.podNumber ?? 0),
     );
     setIncompleteSeats(sortedSeats.filter((seat) => !seat.deckPhotoUrl));
     setCompleteSeats(sortedSeats.filter((seat) => !!seat.deckPhotoUrl));
@@ -49,7 +49,7 @@ const DraftTable = ({
                   <tr key={seat.id}>
                     <td>
                       {Math.round(
-                        (((seat.pod?.podNumber ?? 1) - 1) * 8 + seat.seat) / 2
+                        (((seat.pod?.podNumber ?? 1) - 1) * 8 + seat.seat) / 2,
                       )}
                     </td>
                     <td>
@@ -104,7 +104,7 @@ const DraftTable = ({
                   <tr key={seat.id}>
                     <td>
                       {Math.round(
-                        (((seat.pod?.podNumber ?? 1) - 1) * 8 + seat.seat) / 2
+                        (((seat.pod?.podNumber ?? 1) - 1) * 8 + seat.seat) / 2,
                       )}
                     </td>
                     <td>

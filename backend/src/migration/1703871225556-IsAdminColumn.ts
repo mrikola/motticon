@@ -5,7 +5,7 @@ export class IsAdminColumn1703871225556 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "user" ADD "isAdmin" boolean NOT NULL`
+      `ALTER TABLE "user" ADD "isAdmin" boolean NOT NULL`,
     );
   }
 

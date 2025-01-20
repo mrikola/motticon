@@ -139,14 +139,14 @@ function EditCube() {
         {
           method: "GET",
           mode: "cors",
-        }
+        },
       );
       const data = await response.json();
       const cards: CubeCard[] = [];
       let totalcards: number = 0;
       for (const card of data.cards.mainboard) {
         const match = cards.find(
-          (c) => c.scryfallId === card.details.scryfall_id
+          (c) => c.scryfallId === card.details.scryfall_id,
         );
         if (match) {
           match.quantity++;
@@ -168,7 +168,7 @@ function EditCube() {
             " unique cards (" +
             totalcards +
             " total cards) from " +
-            data.name
+            data.name,
         );
         setValue("cards", cards);
       }

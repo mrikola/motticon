@@ -375,7 +375,7 @@ export class CardService {
   async createPickedCard(
     card: ListedCard,
     quantity: number,
-    picker: DraftPodSeat
+    picker: DraftPodSeat,
   ): Promise<PickedCard> {
     const picked: PickedCard = await this.pickedCardRepository.save({
       listedCard: card,
@@ -391,7 +391,7 @@ export class CardService {
       const pc = await this.createPickedCard(
         picked.listedCard,
         picked.quantityPicked,
-        picked.picker
+        picked.picker,
       );
       picker = picked.picker;
     }

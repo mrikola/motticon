@@ -35,7 +35,7 @@ const CubeAutocompleteInput = ({
         // label: option.name, // use a custom label instead of the value
         // node: option.name, // use a custom ReactNode to display the option
       })),
-    [availableCards]
+    [availableCards],
   );
 
   // set data list options based on used cards
@@ -47,7 +47,7 @@ const CubeAutocompleteInput = ({
       }
       const cardsIdOnly = cards.map((c) => c.card.id);
       const notUsed: ListedCard[] = cubeCards.filter(
-        (c) => !cardsIdOnly.includes(c.card.id)
+        (c) => !cardsIdOnly.includes(c.card.id),
       );
       notUsed.sort((a, b) => a.card.name.localeCompare(b.card.name));
       setAvailableCards(notUsed);

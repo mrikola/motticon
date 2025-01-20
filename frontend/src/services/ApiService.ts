@@ -38,7 +38,7 @@ export class ApiException extends Error {
   constructor(
     public status: number,
     message: string,
-    public type: ApiErrorType
+    public type: ApiErrorType,
   ) {
     super(message);
     this.name = "ApiException";
@@ -115,7 +115,7 @@ export class ApiClient {
   private static async request<T>(
     endpoint: string,
     options: RequestInit,
-    schema: z.ZodType<T>
+    schema: z.ZodType<T>,
   ): Promise<T> {
     try {
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
@@ -164,7 +164,7 @@ export class ApiClient {
         method: "POST",
         body: JSON.stringify(credentials),
       },
-      LoginResponseSchema
+      LoginResponseSchema,
     );
   }
 
@@ -173,7 +173,7 @@ export class ApiClient {
     return this.request(
       `/user/${userId}/tournament/${tournamentId}`,
       { method: "GET" },
-      TournamentInfoResponseSchema
+      TournamentInfoResponseSchema,
     );
   }
 
@@ -181,7 +181,7 @@ export class ApiClient {
     return this.request<Cube[]>(
       `/tournament/${tournamentId}/cubes`,
       { method: "GET" },
-      z.array(CubeSchema)
+      z.array(CubeSchema),
     );
   }
 
@@ -189,7 +189,7 @@ export class ApiClient {
     return this.request(
       `/tournament/${tournamentId}/drafts`,
       { method: "GET" },
-      TournamentSchema
+      TournamentSchema,
     );
   }
 
@@ -197,70 +197,70 @@ export class ApiClient {
     return this.request(
       `/tournament/${tournamentId}`,
       { method: "GET" },
-      TournamentSchema
+      TournamentSchema,
     );
   }
 
   static async getCurrentRound(
-    tournamentId: number
+    tournamentId: number,
   ): Promise<Round | undefined> {
     return this.request(
       `/tournament/${tournamentId}/round`,
       { method: "GET" },
-      RoundSchema
+      RoundSchema,
     ).catch(() => undefined); // Return undefined if no current round
   }
 
   static async getCurrentDraft(
-    tournamentId: number
+    tournamentId: number,
   ): Promise<Draft | undefined> {
     return this.request(
       `/tournament/${tournamentId}/draft`,
       { method: "GET" },
-      DraftSchema
+      DraftSchema,
     ).catch(() => undefined); // Return undefined if no current draft
   }
 
   static async getPlayerMatch(
     tournamentId: number,
     roundId: number,
-    playerId: number
+    playerId: number,
   ): Promise<Match | undefined> {
     return this.request(
       `/tournament/${tournamentId}/round/${roundId}/match/${playerId}`,
       { method: "GET" },
-      MatchSchema
+      MatchSchema,
     ).catch(() => undefined);
   }
 
   static async getTournamentEnrollments(
-    tournamentId: number
+    tournamentId: number,
   ): Promise<Tournament> {
     return this.request(
       `/tournament/${tournamentId}/enrollment`,
       { method: "GET" },
-      TournamentSchema
+      TournamentSchema,
     );
   }
 
   static async getRecentRound(
-    tournamentId: number
+    tournamentId: number,
   ): Promise<Round | undefined> {
     return this.request(
       `/tournament/${tournamentId}/round/recent`,
       { method: "GET" },
-      RoundSchema
+      RoundSchema,
     ).catch(() => undefined);
   }
 
   static async getDraftPodForUser(
     draftId: number,
-    userId: number
+    userId: number,
   ): Promise<DraftPod> {
     return this.request(
       `/draft/${draftId}/user/${userId}`,
       { method: "GET" },
-      DraftPodSchema
+      DraftPodSchema,
     );
   }
 
@@ -272,18 +272,18 @@ export class ApiClient {
     return this.request(
       `/match/round/${roundId}`,
       { method: "GET" },
-      z.array(MatchSchema)
+      z.array(MatchSchema),
     );
   }
 
   static async getPlayerTournamentScore(
     tournamentId: number,
-    playerId: number
+    playerId: number,
   ): Promise<PlayerTournamentScore> {
     return this.request(
       `/tournament/${tournamentId}/score/${playerId}`,
       { method: "GET" },
-      PlayerTournamentScoreSchema
+      PlayerTournamentScoreSchema,
     );
   }
 
@@ -294,7 +294,7 @@ export class ApiClient {
         method: "POST",
         body: JSON.stringify(data),
       },
-      MatchSchema
+      MatchSchema,
     );
   }
 }

@@ -1,9 +1,9 @@
-import express, { Application } from 'express';
-import { setupMiddleware } from './middleware/setup';
-import { setupRoutes } from './router';
-import errorMiddleware from './middleware/errorMiddleware';
-import { Config } from './config/config';
-import { RegisterRoutes } from './generated/routes';
+import express, { Application } from "express";
+import { setupMiddleware } from "./middleware/setup";
+import { setupRoutes } from "./router";
+import errorMiddleware from "./middleware/errorMiddleware";
+import { Config } from "./config/config";
+import { RegisterRoutes } from "./generated/routes";
 
 export class Server {
   private app: Application;
@@ -37,4 +37,4 @@ export class Server {
   public getApp(): Application {
     return this.app;
   }
-} 
+}

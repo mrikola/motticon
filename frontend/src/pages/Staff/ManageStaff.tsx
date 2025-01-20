@@ -30,7 +30,7 @@ const ManageStaff = () => {
       }
       const usersIdOnly = users.map((x) => x.id);
       const notStaff = allUsers.filter(
-        (item) => !usersIdOnly.includes(item.id)
+        (item) => !usersIdOnly.includes(item.id),
       );
       notStaff.sort((a, b) => a.lastName.localeCompare(b.lastName));
       setAvailableUsers(notStaff);
@@ -48,7 +48,7 @@ const ManageStaff = () => {
         // node: option.name, // use a custom ReactNode to display the option
         ...user, // pass along any other properties to access in your onSelect callback
       })),
-    [availableUsers]
+    [availableUsers],
   );
 
   useEffect(() => {
@@ -73,13 +73,13 @@ const ManageStaff = () => {
             setItem(undefined);
             setSelectedUser("No user selected");
             const stf = tourny.staffMembers.sort((a, b) =>
-              a.firstName.localeCompare(b.firstName)
+              a.firstName.localeCompare(b.firstName),
             );
             setStaff(stf);
           } else {
             console.log("add to staff failed");
           }
-        }
+        },
       );
     } else {
       console.log("no user selected");
@@ -94,7 +94,7 @@ const ManageStaff = () => {
         " " +
         staffer.lastName +
         ", id: " +
-        userId
+        userId,
     );
     post(`/tournament/${tournamentId}/staff/${userId}/remove`, {}).then(
       async (resp) => {
@@ -106,16 +106,16 @@ const ManageStaff = () => {
               staffer.firstName +
               " " +
               staffer.lastName +
-              " from staff"
+              " from staff",
           );
           const stf = tourny.staffMembers.sort((a, b) =>
-            a.firstName.localeCompare(b.firstName)
+            a.firstName.localeCompare(b.firstName),
           );
           setStaff(stf);
         } else {
           console.log("remove from staff failed");
         }
-      }
+      },
     );
   }
 

@@ -40,7 +40,7 @@ function ManageUsers() {
         // node: option.name, // use a custom ReactNode to display the option
         ...user, // pass along any other properties to access in your onSelect callback
       })),
-    [allUsers]
+    [allUsers],
   );
 
   useEffect(() => {

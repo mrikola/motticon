@@ -79,7 +79,7 @@ const ManageRound = ({
     if (currentRound) {
       const response = await put(
         `/tournament/${tournamentId}/round/${currentRound.id}/start`,
-        {}
+        {},
       );
       const round = (await response.json()) as Round;
       if (round !== null) {
@@ -111,7 +111,6 @@ const ManageRound = ({
     if (currentRound) {
       return startPolling(() => fetchData());
     }
-
   }, [currentRound]);
 
   useEffect(() => {
@@ -125,7 +124,7 @@ const ManageRound = ({
   useEffect(() => {
     if (matches) {
       setResultsMissing(
-        matches.filter((match) => !match.resultSubmittedBy).length
+        matches.filter((match) => !match.resultSubmittedBy).length,
       );
     }
   }, [matches]);
@@ -133,7 +132,7 @@ const ManageRound = ({
   function submitResult(
     match: Match,
     player1GamesWon: string,
-    player2GamesWon: string
+    player2GamesWon: string,
   ) {
     const matchId = match.id;
     const resultSubmittedBy = user?.id;
@@ -149,7 +148,7 @@ const ManageRound = ({
       if (jwt !== null) {
         toast.success("Result for table " + match.tableNumber + " submitted");
         setMatches(
-          jwt.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1))
+          jwt.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1)),
         );
         setModal({
           ...modal,
@@ -182,7 +181,7 @@ const ManageRound = ({
   const endRound = async () => {
     const response = await put(
       `/tournament/${tournamentId}/round/${currentRound.id}/end`,
-      {}
+      {},
     );
 
     if (response.status === 200 || response.status === 204) {
@@ -190,7 +189,7 @@ const ManageRound = ({
       toast.success("Round ended");
       window.open(
         getURL(`/tournament/${tournamentId}/round/${currentRound.id}/results`),
-        "_blank"
+        "_blank",
       );
       setCurrentRound(undefined);
     }

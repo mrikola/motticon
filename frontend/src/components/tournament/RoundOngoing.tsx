@@ -72,18 +72,26 @@ function RoundOngoing({
   useEffect(() => {
     if (!match || !user) return;
 
-    const isPlayer1 = match.player1.id === user?.id;   
+    const isPlayer1 = match.player1.id === user?.id;
     const currentPlayer = isPlayer1 ? match.player1 : match.player2;
     const currentOpponent = isPlayer1 ? match.player2 : match.player1;
-    
+
     setOnThePlay(match.playerGoingFirst?.id);
     setPlayer(currentPlayer);
     setOpponent(currentOpponent);
     setOpponentDropped(isPlayerDropped(enrollments, currentOpponent.id));
 
     if (match.resultSubmittedBy) {
-      setPlayerRadioValue(isPlayer1 ? match.player1GamesWon.toString() : match.player2GamesWon.toString());
-      setOpponentRadioValue(isPlayer1 ? match.player2GamesWon.toString() : match.player1GamesWon.toString());
+      setPlayerRadioValue(
+        isPlayer1
+          ? match.player1GamesWon.toString()
+          : match.player2GamesWon.toString(),
+      );
+      setOpponentRadioValue(
+        isPlayer1
+          ? match.player2GamesWon.toString()
+          : match.player1GamesWon.toString(),
+      );
     } else if (opponent?.id !== currentOpponent.id) {
       // Reset radio values when opponent changes
       setPlayerRadioValue("0");
@@ -98,8 +106,14 @@ function RoundOngoing({
         matchId: match.id,
         roundId: round.id,
         resultSubmittedBy: user?.id ?? 0,
-        player1GamesWon: match.player1.id === user?.id ? playerRadioValue! : opponentRadioValue!,
-        player2GamesWon: match.player1.id === user?.id ? opponentRadioValue! : playerRadioValue!
+        player1GamesWon:
+          match.player1.id === user?.id
+            ? playerRadioValue!
+            : opponentRadioValue!,
+        player2GamesWon:
+          match.player1.id === user?.id
+            ? opponentRadioValue!
+            : playerRadioValue!,
       });
 
       setModal({
@@ -110,7 +124,7 @@ function RoundOngoing({
       toast.success("Result submitted successfully");
     } catch (error) {
       if (error instanceof ApiException) {
-        toast.error('Failed to submit result: ' + error.message);
+        toast.error("Failed to submit result: " + error.message);
       }
     }
   };
@@ -170,7 +184,7 @@ function RoundOngoing({
         setMatches(mtchs);
       } catch (error) {
         if (error instanceof ApiException) {
-          console.error('Failed to fetch matches:', error.message);
+          console.error("Failed to fetch matches:", error.message);
         }
       }
     };
@@ -193,7 +207,7 @@ function RoundOngoing({
   useEffect(() => {
     if (matches) {
       setResultsMissing(
-        matches.filter((match) => !match.resultSubmittedBy).length
+        matches.filter((match) => !match.resultSubmittedBy).length,
       );
     }
   }, [matches]);
@@ -201,11 +215,14 @@ function RoundOngoing({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const score = await ApiClient.getPlayerTournamentScore(tournament.id, user?.id ?? 0);
+        const score = await ApiClient.getPlayerTournamentScore(
+          tournament.id,
+          user?.id ?? 0,
+        );
         setPlayerTournamentScore(score);
       } catch (error) {
         if (error instanceof ApiException) {
-          console.error('Failed to fetch score:', error.message);
+          console.error("Failed to fetch score:", error.message);
         }
       }
     };
@@ -296,7 +313,7 @@ function RoundOngoing({
           <Col xs={12} className="text-center">
             <h2>
               {player.firstName} {player.lastName}
-              {player.id === onThePlay && <> (plays first)</>} 
+              {player.id === onThePlay && <> (plays first)</>}
             </h2>
           </Col>
           <Col xs={12} className="text-center">
@@ -306,7 +323,7 @@ function RoundOngoing({
             <h2>
               {opponent.firstName} {opponent.lastName}{" "}
               {opponentDropped ? "(DROPPED)" : ""}
-              {opponent.id === onThePlay && <> (plays first)</>} 
+              {opponent.id === onThePlay && <> (plays first)</>}
             </h2>
           </Col>
           <MatchResultRadioButtons

@@ -18,4 +18,3 @@ notLoggedInRouter.get("/dry-run", async (req, res) => {
   await generateDryRunPods(req.query.live !== undefined);
   res.sendStatus(201);
 });
-

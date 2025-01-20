@@ -17,7 +17,7 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
 
   useEffect(() => {
     setIncompleteSeats(
-      seats.filter((seat) => seat.draftPoolReturned === false)
+      seats.filter((seat) => seat.draftPoolReturned === false),
     );
     setCompleteSeats(seats.filter((seat) => seat.draftPoolReturned === true));
   }, [seats]);

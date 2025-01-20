@@ -28,7 +28,7 @@ function SignUp() {
       async (_resp) => {
         // TODO show some kind of success thing
         navigate("/login");
-      }
+      },
     );
     toast.success("Account succesfully created");
   }

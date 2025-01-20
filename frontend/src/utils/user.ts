@@ -8,11 +8,11 @@ export const getPlayerName = (enrollment: Enrollment): string => {
 
 export const isPlayerDropped = (
   enrollments: Enrollment[],
-  userId: number
+  userId: number,
 ): boolean => {
   if (
     enrollments.filter(
-      (enrollment) => enrollment.player?.id === userId && enrollment.dropped
+      (enrollment) => enrollment.player?.id === userId && enrollment.dropped,
     ).length > 0
   ) {
     return true;

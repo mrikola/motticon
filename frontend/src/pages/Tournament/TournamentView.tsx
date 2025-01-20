@@ -7,7 +7,11 @@ import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row } from "react-bootstrap";
 import { CalendarEvent } from "react-bootstrap-icons";
 import { formatTournamentDate } from "../../utils/dateUtils";
-import { isUserTournamentStaff, calculateFreeSeats, hasPreferencesRequired } from "../../utils/tournamentUtils";
+import {
+  isUserTournamentStaff,
+  calculateFreeSeats,
+  hasPreferencesRequired,
+} from "../../utils/tournamentUtils";
 import Loading from "../../components/general/Loading";
 import Standings from "./TournamentView/GoToStandings";
 import Enroll from "./TournamentView/Enroll";
@@ -33,28 +37,38 @@ const TournamentView = () => {
   const [numberOfPods, setNumberOfPods] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
 
-  const isStaff = useMemo(() => 
-    user && tournamentId ? isUserTournamentStaff(user, Number(tournamentId)) : false,
-    [user, tournamentId]
+  const isStaff = useMemo(
+    () =>
+      user && tournamentId
+        ? isUserTournamentStaff(user, Number(tournamentId))
+        : false,
+    [user, tournamentId],
   );
 
   const isAdmin = user?.isAdmin;
 
-  const formattedDate = useMemo(() => 
-    activeTournament 
-      ? formatTournamentDate(activeTournament.startDate, activeTournament.endDate)
-      : '',
-    [activeTournament]
+  const formattedDate = useMemo(
+    () =>
+      activeTournament
+        ? formatTournamentDate(
+            activeTournament.startDate,
+            activeTournament.endDate,
+          )
+        : "",
+    [activeTournament],
   );
 
-  const checkEnrolled = useCallback((enrollment: Enrollment | null) => {
-    if (enrollment && enrollment.player?.id === user?.id) {
-      setIsEnrolled(true);
-    }
-  }, [user?.id]);
+  const checkEnrolled = useCallback(
+    (enrollment: Enrollment | null) => {
+      if (enrollment && enrollment.player?.id === user?.id) {
+        setIsEnrolled(true);
+      }
+    },
+    [user?.id],
+  );
 
   const freeSeatsUpdater = useCallback((increase: number) => {
-    setFreeSeats(prev => prev + increase);
+    setFreeSeats((prev) => prev + increase);
   }, []);
 
   const fetchAllTournamentData = useCallback(async () => {
@@ -62,7 +76,7 @@ const TournamentView = () => {
 
     const parsedTournamentId = Number(tournamentId);
     if (isNaN(parsedTournamentId)) {
-      setError('Invalid tournament ID');
+      setError("Invalid tournament ID");
       return;
     }
 
@@ -70,18 +84,23 @@ const TournamentView = () => {
       const [tournamentInfo, cubes, pods] = await Promise.all([
         ApiClient.getTournamentInfo(user.id, parsedTournamentId),
         ApiClient.getCubes(parsedTournamentId),
-        ApiClient.getPods(parsedTournamentId)
+        ApiClient.getPods(parsedTournamentId),
       ]);
 
       // Set tournament data and derived states
       setActiveTournament(tournamentInfo.tournament);
       setCubes(cubes);
       setFreeSeats(calculateFreeSeats(tournamentInfo.tournament));
-      setNumberOfPods((pods.drafts ?? []).filter(draft => draft.pods.length > 0).length);
+      setNumberOfPods(
+        (pods.drafts ?? []).filter((draft) => draft.pods.length > 0).length,
+      );
       checkEnrolled(tournamentInfo.enrollment ?? null);
 
       // Store tournament ID
-      sessionStorage.setItem("currentTournament", tournamentInfo.tournament.id.toString());
+      sessionStorage.setItem(
+        "currentTournament",
+        tournamentInfo.tournament.id.toString(),
+      );
 
       // Fetch round data if tournament is not pending
       if (tournamentInfo.tournament.status !== "pending") {
@@ -89,8 +108,8 @@ const TournamentView = () => {
           const round = await ApiClient.getRecentRound(parsedTournamentId);
           setNewestRoundNumber(round?.roundNumber ?? 0);
         } catch (error) {
-          if (error instanceof ApiException && error.type !== 'notFound') {
-            toast.error('Failed to load recent round data');
+          if (error instanceof ApiException && error.type !== "notFound") {
+            toast.error("Failed to load recent round data");
           }
           setNewestRoundNumber(0);
         }
@@ -98,14 +117,14 @@ const TournamentView = () => {
     } catch (error) {
       if (error instanceof ApiException) {
         switch (error.type) {
-          case 'notFound':
-            setError('Tournament not found');
+          case "notFound":
+            setError("Tournament not found");
             break;
-          case 'auth':
-            setError('You do not have permission to view this tournament');
+          case "auth":
+            setError("You do not have permission to view this tournament");
             break;
           default:
-            setError('Failed to load tournament data');
+            setError("Failed to load tournament data");
         }
         toast.error(error.message);
       }

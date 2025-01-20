@@ -17,7 +17,7 @@ const DraftTokens = ({ tokens }: Props) => {
                 key={index}
                 className="cube-token-img"
                 src={`https://cards.scryfall.io/normal/front/${token.scryfallId.charAt(
-                  0
+                  0,
                 )}/${token.scryfallId.charAt(1)}/${token.scryfallId}.jpg`}
               />
               <p className="mb-0">

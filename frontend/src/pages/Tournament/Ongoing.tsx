@@ -30,21 +30,24 @@ const Ongoing = () => {
       try {
         const [round, draft] = await Promise.all([
           ApiClient.getCurrentRound(Number(tournamentId)),
-          ApiClient.getCurrentDraft(Number(tournamentId))
+          ApiClient.getCurrentDraft(Number(tournamentId)),
         ]);
-        
+
         setCurrentRound(round);
         setCurrentDraft(draft);
 
         // Handle draft completion
-        
-        if (!draft && latestRound?.status === "completed" && 
-            latestRound.roundNumber === currentDraft?.lastRound) {
+
+        if (
+          !draft &&
+          latestRound?.status === "completed" &&
+          latestRound.roundNumber === currentDraft?.lastRound
+        ) {
           setCurrentDraft(undefined);
         }
       } catch (error) {
         if (error instanceof ApiException) {
-          console.error('Failed to fetch round/draft:', error.message);
+          console.error("Failed to fetch round/draft:", error.message);
         }
       }
     };
@@ -63,7 +66,7 @@ const Ongoing = () => {
       } catch (error) {
         if (error instanceof ApiException) {
           // TODO: Handle error properly
-          console.error('Failed to fetch tournament:', error.message);
+          console.error("Failed to fetch tournament:", error.message);
         }
       }
     };
@@ -75,11 +78,13 @@ const Ongoing = () => {
     if (!user) return;
     const fetchData = async () => {
       try {
-        const tourny = await ApiClient.getTournamentEnrollments(Number(tournamentId));
+        const tourny = await ApiClient.getTournamentEnrollments(
+          Number(tournamentId),
+        );
         setEnrollments(tourny.enrollments);
       } catch (error) {
         if (error instanceof ApiException) {
-          console.error('Failed to fetch enrollments:', error.message);
+          console.error("Failed to fetch enrollments:", error.message);
         }
       }
     };
@@ -95,12 +100,12 @@ const Ongoing = () => {
           const match = await ApiClient.getPlayerMatch(
             Number(tournamentId),
             currentRound.id,
-            user.id
+            user.id,
           );
           setCurrentMatch(match);
         } catch (error) {
           if (error instanceof ApiException) {
-            console.error('Failed to fetch match:', error.message);
+            console.error("Failed to fetch match:", error.message);
           }
         }
       }
@@ -121,7 +126,7 @@ const Ongoing = () => {
       } catch (error) {
         if (error instanceof ApiException) {
           // TODO handle invalid response
-          console.error('Failed to fetch recent round:', error.message);
+          console.error("Failed to fetch recent round:", error.message);
         }
       }
     };

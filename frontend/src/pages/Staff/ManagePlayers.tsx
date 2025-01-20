@@ -56,7 +56,7 @@ const ManagePlayers = () => {
           ")",
         ...enrollment, // pass along any other properties to access in your onSelect callback
       })),
-    [activePlayers]
+    [activePlayers],
   );
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const ManagePlayers = () => {
           } else {
             console.log("drop failed");
           }
-        }
+        },
       );
     } else {
       console.log("no user selected");
@@ -164,8 +164,8 @@ const ManagePlayers = () => {
                 {droppedPlayers
                   .sort((a, b) =>
                     (a.player?.lastName ?? "").localeCompare(
-                      b.player?.lastName ?? ""
-                    )
+                      b.player?.lastName ?? "",
+                    ),
                   )
                   .map((enrollment) => (
                     <tr key={enrollment.player?.id}>

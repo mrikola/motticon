@@ -29,5 +29,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       theme="colored"
       pauseOnHover={false}
     />
-  </HelmetProvider>
+  </HelmetProvider>,
 );

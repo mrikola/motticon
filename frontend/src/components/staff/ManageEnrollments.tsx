@@ -27,11 +27,11 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
             "Cancelled enrollment for " +
               player.firstName +
               " " +
-              player.lastName
+              player.lastName,
           );
           setEnrollments(tournament.enrollments);
         }
-      }
+      },
     );
   }
 

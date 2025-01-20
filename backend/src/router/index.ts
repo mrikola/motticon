@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { notLoggedInRouter } from './notLoggedInRouter';
+import { Router } from "express";
+import { notLoggedInRouter } from "./notLoggedInRouter";
 
 export async function setupRoutes(): Promise<Router> {
   const router = Router();
@@ -8,4 +8,4 @@ export async function setupRoutes(): Promise<Router> {
   router.use(notLoggedInRouter); // TODO remove when dry run is converted
 
   return router;
-} 
+}

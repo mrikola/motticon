@@ -34,7 +34,7 @@ const TestPreferencesTable = () => {
       const newDrys: DryPlayer[] = [];
       for (const player of dryPlayers1) {
         const pref: Preference[] = preferences.filter(
-          (preference) => preference.player.id === player.playerId
+          (preference) => preference.player.id === player.playerId,
         );
         newDrys.push({
           playerId: player.player.id,
@@ -98,18 +98,18 @@ const TestPreferencesTable = () => {
         const cubes: Cube[] = [];
         cubes.push(
           tourny.drafts[0].pods.filter((pod) =>
-            pod.seats.some((seat) => seat.player?.id === player.playerId)
-          )[0].cube!
+            pod.seats.some((seat) => seat.player?.id === player.playerId),
+          )[0].cube!,
         );
         cubes.push(
           tourny.drafts[1].pods.filter((pod) =>
-            pod.seats.some((seat) => seat.player?.id === player.playerId)
-          )[0].cube!
+            pod.seats.some((seat) => seat.player?.id === player.playerId),
+          )[0].cube!,
         );
         cubes.push(
           tourny.drafts[2].pods.filter((pod) =>
-            pod.seats.some((seat) => seat.player?.id === player.playerId)
-          )[0].cube!
+            pod.seats.some((seat) => seat.player?.id === player.playerId),
+          )[0].cube!,
         );
         newDrys.push({
           playerId: player.player.id,
@@ -122,18 +122,18 @@ const TestPreferencesTable = () => {
 
       console.log(
         tourny.drafts[0].pods.filter((pod) =>
-          pod.seats.some((seat) => seat.player?.id === 71)
-        )
+          pod.seats.some((seat) => seat.player?.id === 71),
+        ),
       );
       console.log(
         tourny.drafts[1].pods.filter((pod) =>
-          pod.seats.some((seat) => seat.player?.id === 71)
-        )
+          pod.seats.some((seat) => seat.player?.id === 71),
+        ),
       );
       console.log(
         tourny.drafts[2].pods.filter((pod) =>
-          pod.seats.some((seat) => seat.player?.id === 71)
-        )
+          pod.seats.some((seat) => seat.player?.id === 71),
+        ),
       );
     };
     fetchData();
@@ -219,7 +219,7 @@ const TestPreferencesTable = () => {
                     <td key={`c-${cube.id}-p-${player.playerId}`}>
                       {cube.title} c-${cube.id}-p-${player.playerId} (
                       {player.preferences.some(
-                        (pref) => pref.cube.id === cube.id
+                        (pref) => pref.cube.id === cube.id,
                       )
                         ? "yes"
                         : "no"}

@@ -12,7 +12,7 @@ import { CardService } from "../service/card.service";
 export class CubeController extends Controller {
   constructor(
     private cubeService: CubeService,
-    private cardService: CardService
+    private cardService: CardService,
   ) {
     super();
   }
@@ -32,10 +32,10 @@ export class CubeController extends Controller {
   @Get("tournament/{tournamentId}")
   @Security("loggedIn")
   public async getCubesForTournament(
-    @Path() tournamentId: number
+    @Path() tournamentId: number,
   ): Promise<CubeDto[]> {
     return (await this.cubeService.getCubesForTournament(tournamentId)).map(
-      cubeToDto
+      cubeToDto,
     );
   }
 
@@ -51,7 +51,7 @@ export class CubeController extends Controller {
       owner: string;
       imageUrl: string;
       cards: CubeCardDto[];
-    }
+    },
   ): Promise<CubeDto> {
     const { title, description, url, owner, imageUrl, cards } = cube;
     return cubeToDto(
@@ -61,8 +61,8 @@ export class CubeController extends Controller {
         url,
         owner,
         imageUrl,
-        cards
-      )
+        cards,
+      ),
     );
   }
 
@@ -78,7 +78,7 @@ export class CubeController extends Controller {
       owner: string;
       imageUrl: string;
       cards: CubeCardDto[];
-    }
+    },
   ): Promise<CubeDto> {
     const { cubeId, title, description, url, owner, imageUrl, cards } = cube;
     return cubeToDto(
@@ -89,15 +89,15 @@ export class CubeController extends Controller {
         url,
         owner,
         imageUrl,
-        cards
-      )
+        cards,
+      ),
     );
   }
 
   @Put("cardlist")
   @Security("admin")
   public async updateCubeCardlist(
-    @Body() update: { cubeId: number; cards: CubeCardDto[] }
+    @Body() update: { cubeId: number; cards: CubeCardDto[] },
   ): Promise<Cube> {
     const { cubeId, cards } = update;
     return await this.cubeService.updateCubeCards(cubeId, cards);
@@ -106,7 +106,7 @@ export class CubeController extends Controller {
   @Post("diff")
   @Security("admin")
   public async getCubeDiff(
-    @Body() diff: { cubeId: number; cards: any[] }
+    @Body() diff: { cubeId: number; cards: any[] },
   ): Promise<CubeDiffDto> {
     const { cubeId, cards } = diff;
     return await this.cubeService.getCubeDiff(cubeId, cards);
@@ -122,7 +122,7 @@ export class CubeController extends Controller {
   @Security("admin")
   public async playerReturnedCards(
     @Path() id: number,
-    @Path() seatId: number
+    @Path() seatId: number,
   ): Promise<boolean> {
     return await this.cardService.playerReturnedCards(seatId);
   }

@@ -68,7 +68,7 @@ const ManageDraft = ({
     seats.sort((a, b) =>
       a.seat === b.seat
         ? (a.pod?.podNumber ?? 0) - (b.pod?.podNumber ?? 0)
-        : a.seat - b.seat
+        : a.seat - b.seat,
     );
     setAllSeats(seats);
     if (totalPlayers === 0) {
@@ -86,13 +86,13 @@ const ManageDraft = ({
       setFirstPendingRound(
         rounds
           .sort((a, b) => a.roundNumber - b.roundNumber)
-          .find((round) => round.status === "pending")
+          .find((round) => round.status === "pending"),
       );
 
       setLastCompletedRound(
         rounds
           .sort((a, b) => b.roundNumber - a.roundNumber)
-          .find((round) => round.status === "completed")
+          .find((round) => round.status === "completed"),
       );
     };
 
@@ -101,12 +101,12 @@ const ManageDraft = ({
 
   const generatePairings = async () => {
     const resp = await put(
-      `/tournament/${tournamentId}/draft/${currentDraft.id}/round/${firstPendingRound?.id}/pairings`
+      `/tournament/${tournamentId}/draft/${currentDraft.id}/round/${firstPendingRound?.id}/pairings`,
     );
     const matches = (await resp.json()) as Match[];
     if (matches !== null) {
       toast.success(
-        "Pairings for round " + firstPendingRound?.roundNumber + " generated"
+        "Pairings for round " + firstPendingRound?.roundNumber + " generated",
       );
       setFirstPendingRound({ ...firstPendingRound!, matches });
     }
@@ -120,7 +120,7 @@ const ManageDraft = ({
     if (firstPendingRound) {
       const response = await put(
         `/tournament/${tournamentId}/round/${firstPendingRound?.id}/start`,
-        {}
+        {},
       );
       const round = (await response.json()) as Round;
       setCurrentRound(round);
@@ -131,7 +131,7 @@ const ManageDraft = ({
     if (currentDraft) {
       const response = await put(
         `/tournament/${tournamentId}/draft/${currentDraft.id}/start`,
-        {}
+        {},
       );
       const draft = (await response.json()) as Draft;
       if (draft !== null) {
@@ -144,7 +144,7 @@ const ManageDraft = ({
   const completeDraft = async () => {
     const response = await put(
       `/tournament/${tournamentId}/draft/${currentDraft.id}/end`,
-      {}
+      {},
     );
     const updatedTournament = (await response.json()) as Tournament;
     console.log(updatedTournament);
@@ -156,7 +156,7 @@ const ManageDraft = ({
   useEffect(() => {
     if (allSeats) {
       setBuildingRemaining(
-        allSeats.filter((seat) => seat.deckPhotoUrl == null).length
+        allSeats.filter((seat) => seat.deckPhotoUrl == null).length,
       );
     }
   }, [allSeats]);
@@ -175,7 +175,7 @@ const ManageDraft = ({
             "Marked done for " +
               seat.player?.firstName +
               " " +
-              seat.player?.lastName
+              seat.player?.lastName,
           );
           setCurrentDraft(draft);
           setModal({
@@ -208,7 +208,7 @@ const ManageDraft = ({
   useEffect(() => {
     if (allSeats) {
       setPoolsReturned(
-        allSeats.filter((seat) => seat.draftPoolReturned === true).length
+        allSeats.filter((seat) => seat.draftPoolReturned === true).length,
       );
     }
   }, [allSeats]);

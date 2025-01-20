@@ -23,7 +23,7 @@ function DraftPods() {
         setTournament(tourny);
         const userPods = [];
         for (const draft of tourny.drafts.sort(
-          (a, b) => a.draftNumber - b.draftNumber
+          (a, b) => a.draftNumber - b.draftNumber,
         )) {
           for (const pod of draft.pods) {
             for (const seat of pod.seats) {

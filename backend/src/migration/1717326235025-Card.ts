@@ -5,10 +5,10 @@ export class Card1717326235025 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "card" ADD "manaCost" character varying`
+      `ALTER TABLE "card" ADD "manaCost" character varying`,
     );
     await queryRunner.query(
-      `ALTER TABLE "card" ADD "oracleText" character varying`
+      `ALTER TABLE "card" ADD "oracleText" character varying`,
     );
     await queryRunner.query(`ALTER TABLE "card" ADD "power" integer`);
     await queryRunner.query(`ALTER TABLE "card" ADD "toughness" integer`);
