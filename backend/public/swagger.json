@@ -1,0 +1,4310 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"Color": {
+				"type": "string",
+				"enum": [
+					"W",
+					"U",
+					"B",
+					"R",
+					"G"
+				]
+			},
+			"CardFace": {
+				"properties": {
+					"imageUri": {
+						"type": "string"
+					},
+					"toughness": {
+						"type": "number",
+						"format": "double"
+					},
+					"power": {
+						"type": "number",
+						"format": "double"
+					},
+					"colors": {
+						"items": {
+							"$ref": "#/components/schemas/Color"
+						},
+						"type": "array"
+					},
+					"oracleText": {
+						"type": "string"
+					},
+					"manaCost": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"imageUri",
+					"toughness",
+					"power",
+					"colors",
+					"oracleText",
+					"manaCost",
+					"name"
+				],
+				"type": "object"
+			},
+			"Card": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"scryfallId": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"manaCost": {
+						"type": "string"
+					},
+					"oracleText": {
+						"type": "string"
+					},
+					"power": {
+						"type": "number",
+						"format": "double"
+					},
+					"toughness": {
+						"type": "number",
+						"format": "double"
+					},
+					"set": {
+						"type": "string"
+					},
+					"cmc": {
+						"type": "number",
+						"format": "double"
+					},
+					"colors": {
+						"items": {
+							"$ref": "#/components/schemas/Color"
+						},
+						"type": "array"
+					},
+					"type": {
+						"type": "string"
+					},
+					"faces": {
+						"items": {
+							"$ref": "#/components/schemas/CardFace"
+						},
+						"type": "array"
+					},
+					"tokens": {
+						"items": {
+							"$ref": "#/components/schemas/Token"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"scryfallId",
+					"name",
+					"manaCost",
+					"oracleText",
+					"power",
+					"toughness",
+					"set",
+					"cmc",
+					"colors",
+					"type",
+					"faces",
+					"tokens"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Token": {
+				"properties": {
+					"tokenFor": {
+						"items": {
+							"$ref": "#/components/schemas/Card"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"tokenFor"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CardList": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"cubeId": {
+						"type": "number",
+						"format": "double"
+					},
+					"cube": {
+						"$ref": "#/components/schemas/Cube"
+					},
+					"cards": {
+						"items": {
+							"$ref": "#/components/schemas/ListedCard"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"cubeId",
+					"cube",
+					"cards"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Status": {
+				"type": "string",
+				"enum": [
+					"pending",
+					"started",
+					"completed"
+				]
+			},
+			"TournamentStatus": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/Status"
+					},
+					{
+						"type": "string",
+						"enum": [
+							"cancelled",
+							"completed"
+						]
+					}
+				]
+			},
+			"Tournament": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"startDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"endDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"entryFee": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalSeats": {
+						"type": "number",
+						"format": "double"
+					},
+					"preferencesRequired": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"$ref": "#/components/schemas/TournamentStatus"
+					},
+					"drafts": {
+						"items": {
+							"$ref": "#/components/schemas/Draft"
+						},
+						"type": "array"
+					},
+					"userEnrollmentEnabled": {
+						"type": "boolean"
+					},
+					"enrollments": {
+						"items": {
+							"$ref": "#/components/schemas/Enrollment"
+						},
+						"type": "array"
+					},
+					"cubes": {
+						"items": {
+							"$ref": "#/components/schemas/Cube"
+						},
+						"type": "array"
+					},
+					"staffMembers": {
+						"items": {
+							"$ref": "#/components/schemas/User"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"description",
+					"startDate",
+					"endDate",
+					"entryFee",
+					"totalSeats",
+					"preferencesRequired",
+					"status",
+					"drafts",
+					"userEnrollmentEnabled",
+					"enrollments",
+					"cubes",
+					"staffMembers"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DraftStatus": {
+				"$ref": "#/components/schemas/Status"
+			},
+			"Draft": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"tournament": {
+						"$ref": "#/components/schemas/Tournament"
+					},
+					"draftNumber": {
+						"type": "number",
+						"format": "double"
+					},
+					"firstRound": {
+						"type": "number",
+						"format": "double"
+					},
+					"lastRound": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"$ref": "#/components/schemas/DraftStatus"
+					},
+					"pods": {
+						"items": {
+							"$ref": "#/components/schemas/DraftPod"
+						},
+						"type": "array"
+					},
+					"startTime": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"tournament",
+					"draftNumber",
+					"firstRound",
+					"lastRound",
+					"status",
+					"pods",
+					"startTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Cube": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"owner": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"imageUrl": {
+						"type": "string"
+					},
+					"cardlist": {
+						"$ref": "#/components/schemas/CardList"
+					},
+					"tournaments": {
+						"items": {
+							"$ref": "#/components/schemas/Tournament"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"description",
+					"owner",
+					"url",
+					"imageUrl",
+					"cardlist",
+					"tournaments"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DraftPod": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"draftId": {
+						"type": "number",
+						"format": "double"
+					},
+					"draft": {
+						"$ref": "#/components/schemas/Draft"
+					},
+					"podNumber": {
+						"type": "number",
+						"format": "double"
+					},
+					"cubeId": {
+						"type": "number",
+						"format": "double"
+					},
+					"cube": {
+						"$ref": "#/components/schemas/Cube"
+					},
+					"seats": {
+						"items": {
+							"$ref": "#/components/schemas/DraftPodSeat"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"draftId",
+					"draft",
+					"podNumber",
+					"cubeId",
+					"cube",
+					"seats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"User": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"isAdmin": {
+						"type": "boolean"
+					},
+					"isDummy": {
+						"type": "boolean"
+					},
+					"rating": {
+						"type": "number",
+						"format": "double"
+					},
+					"enrollments": {
+						"items": {
+							"$ref": "#/components/schemas/Enrollment"
+						},
+						"type": "array"
+					},
+					"tournamentsStaffed": {
+						"items": {
+							"$ref": "#/components/schemas/Tournament"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"firstName",
+					"lastName",
+					"email",
+					"password",
+					"isAdmin",
+					"isDummy",
+					"rating",
+					"enrollments",
+					"tournamentsStaffed"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Enrollment": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"tournamentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"tournament": {
+						"$ref": "#/components/schemas/Tournament"
+					},
+					"playerId": {
+						"type": "number",
+						"format": "double"
+					},
+					"player": {
+						"$ref": "#/components/schemas/User"
+					},
+					"paid": {
+						"type": "boolean"
+					},
+					"dropped": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"id",
+					"tournamentId",
+					"tournament",
+					"playerId",
+					"player",
+					"paid",
+					"dropped"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DraftPodSeat": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"podId": {
+						"type": "number",
+						"format": "double"
+					},
+					"pod": {
+						"$ref": "#/components/schemas/DraftPod"
+					},
+					"playerId": {
+						"type": "number",
+						"format": "double"
+					},
+					"player": {
+						"$ref": "#/components/schemas/User"
+					},
+					"seat": {
+						"type": "number",
+						"format": "double"
+					},
+					"deckPhotoUrl": {
+						"type": "string"
+					},
+					"draftPoolReturned": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"id",
+					"podId",
+					"pod",
+					"playerId",
+					"player",
+					"seat",
+					"deckPhotoUrl",
+					"draftPoolReturned"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ListedCard": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"card": {
+						"$ref": "#/components/schemas/Card"
+					},
+					"cardlist": {
+						"$ref": "#/components/schemas/CardList"
+					},
+					"pickedCards": {
+						"items": {
+							"$ref": "#/components/schemas/PickedCard"
+						},
+						"type": "array"
+					},
+					"quantityInCube": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"card",
+					"cardlist",
+					"pickedCards",
+					"quantityInCube"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PickedCard": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"listedCard": {
+						"$ref": "#/components/schemas/ListedCard"
+					},
+					"quantityPicked": {
+						"type": "number",
+						"format": "double"
+					},
+					"picker": {
+						"$ref": "#/components/schemas/DraftPodSeat"
+					}
+				},
+				"required": [
+					"id",
+					"listedCard",
+					"quantityPicked",
+					"picker"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CubeDto": {
+				"properties": {
+					"cardlist": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/CardList"
+							}
+						],
+						"nullable": true
+					},
+					"imageUrl": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"owner": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"cardlist",
+					"imageUrl",
+					"url",
+					"owner",
+					"description",
+					"title",
+					"id"
+				],
+				"type": "object"
+			},
+			"TokenDto": {
+				"properties": {
+					"scryfallId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"scryfallId"
+				],
+				"type": "object"
+			},
+			"CubeCardDto": {
+				"properties": {
+					"tokens": {
+						"items": {
+							"$ref": "#/components/schemas/TokenDto"
+						},
+						"type": "array"
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"scryfallId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"tokens",
+					"quantity",
+					"scryfallId"
+				],
+				"type": "object"
+			},
+			"CubeDiffDto": {
+				"properties": {
+					"newCards": {
+						"items": {
+							"$ref": "#/components/schemas/CubeCardDto"
+						},
+						"type": "array"
+					},
+					"orphanedCards": {
+						"items": {
+							"$ref": "#/components/schemas/ListedCard"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"newCards",
+					"orphanedCards"
+				],
+				"type": "object"
+			},
+			"Point": {
+				"properties": {
+					"y": {
+						"type": "number",
+						"format": "double"
+					},
+					"x": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"y",
+					"x"
+				],
+				"type": "object"
+			},
+			"ComputerVisionCard": {
+				"properties": {
+					"nearPolygons": {
+						"type": "number",
+						"format": "double"
+					},
+					"matchFound": {
+						"type": "boolean"
+					},
+					"text": {
+						"type": "string"
+					},
+					"polygon": {
+						"items": {
+							"$ref": "#/components/schemas/Point"
+						},
+						"type": "array"
+					},
+					"listedCard": {
+						"$ref": "#/components/schemas/ListedCard"
+					}
+				},
+				"required": [
+					"nearPolygons",
+					"matchFound",
+					"text",
+					"polygon"
+				],
+				"type": "object"
+			},
+			"ComputerVisionDto": {
+				"properties": {
+					"cvCards": {
+						"items": {
+							"$ref": "#/components/schemas/ComputerVisionCard"
+						},
+						"type": "array"
+					},
+					"imageHeight": {
+						"type": "number",
+						"format": "double"
+					},
+					"imageWidth": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"cvCards",
+					"imageHeight",
+					"imageWidth"
+				],
+				"type": "object"
+			},
+			"PlayerDto": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"email",
+					"lastName",
+					"firstName",
+					"id"
+				],
+				"type": "object"
+			},
+			"DraftPodSeatDto": {
+				"properties": {
+					"draftPoolReturned": {
+						"type": "boolean"
+					},
+					"deckPhotoUrl": {
+						"type": "string"
+					},
+					"player": {
+						"$ref": "#/components/schemas/PlayerDto"
+					},
+					"seat": {
+						"type": "number",
+						"format": "double"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"draftPoolReturned",
+					"deckPhotoUrl",
+					"player",
+					"seat",
+					"id"
+				],
+				"type": "object"
+			},
+			"DraftPodDto": {
+				"properties": {
+					"seats": {
+						"items": {
+							"$ref": "#/components/schemas/DraftPodSeatDto"
+						},
+						"type": "array"
+					},
+					"cube": {
+						"$ref": "#/components/schemas/CubeDto"
+					},
+					"podNumber": {
+						"type": "number",
+						"format": "double"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"podNumber",
+					"id"
+				],
+				"type": "object"
+			},
+			"DraftDto": {
+				"properties": {
+					"pods": {
+						"items": {
+							"$ref": "#/components/schemas/DraftPodDto"
+						},
+						"type": "array"
+					},
+					"startTime": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"status": {
+						"$ref": "#/components/schemas/DraftStatus"
+					},
+					"lastRound": {
+						"type": "number",
+						"format": "double"
+					},
+					"firstRound": {
+						"type": "number",
+						"format": "double"
+					},
+					"draftNumber": {
+						"type": "number",
+						"format": "double"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"startTime",
+					"status",
+					"lastRound",
+					"firstRound",
+					"draftNumber",
+					"id"
+				],
+				"type": "object"
+			},
+			"TournamentDto": {
+				"properties": {
+					"staffMembers": {
+						"items": {
+							"$ref": "#/components/schemas/PlayerDto"
+						},
+						"type": "array"
+					},
+					"cubes": {
+						"items": {
+							"$ref": "#/components/schemas/CubeDto"
+						},
+						"type": "array"
+					},
+					"enrollments": {
+						"items": {
+							"$ref": "#/components/schemas/EnrollmentDto"
+						},
+						"type": "array"
+					},
+					"userEnrollmentEnabled": {
+						"type": "boolean"
+					},
+					"drafts": {
+						"items": {
+							"$ref": "#/components/schemas/DraftDto"
+						},
+						"type": "array"
+					},
+					"status": {
+						"$ref": "#/components/schemas/TournamentStatus"
+					},
+					"preferencesRequired": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalSeats": {
+						"type": "number",
+						"format": "double"
+					},
+					"entryFee": {
+						"type": "number",
+						"format": "double"
+					},
+					"endDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"startDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"description": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"staffMembers",
+					"cubes",
+					"enrollments",
+					"userEnrollmentEnabled",
+					"drafts",
+					"status",
+					"preferencesRequired",
+					"totalSeats",
+					"entryFee",
+					"endDate",
+					"startDate",
+					"description",
+					"name",
+					"id"
+				],
+				"type": "object"
+			},
+			"EnrollmentDto": {
+				"properties": {
+					"dropped": {
+						"type": "boolean"
+					},
+					"paid": {
+						"type": "boolean"
+					},
+					"player": {
+						"$ref": "#/components/schemas/PlayerDto"
+					},
+					"tournament": {
+						"$ref": "#/components/schemas/TournamentDto"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"dropped",
+					"paid",
+					"player",
+					"tournament",
+					"id"
+				],
+				"type": "object"
+			},
+			"RoundStatus": {
+				"$ref": "#/components/schemas/Status"
+			},
+			"MatchDto": {
+				"properties": {
+					"matchType": {
+						"$ref": "#/components/schemas/PodDraftMatch"
+					},
+					"playerGoingFirst": {
+						"$ref": "#/components/schemas/PlayerDto"
+					},
+					"resultSubmittedBy": {
+						"$ref": "#/components/schemas/PlayerDto"
+					},
+					"player2GamesWon": {
+						"type": "number",
+						"format": "double"
+					},
+					"player1GamesWon": {
+						"type": "number",
+						"format": "double"
+					},
+					"player2": {
+						"$ref": "#/components/schemas/PlayerDto"
+					},
+					"player1": {
+						"$ref": "#/components/schemas/PlayerDto"
+					},
+					"tableNumber": {
+						"type": "number",
+						"format": "double"
+					},
+					"round": {
+						"$ref": "#/components/schemas/RoundDto"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"matchType",
+					"playerGoingFirst",
+					"resultSubmittedBy",
+					"player2GamesWon",
+					"player1GamesWon",
+					"player2",
+					"player1",
+					"tableNumber",
+					"round",
+					"id"
+				],
+				"type": "object"
+			},
+			"RoundDto": {
+				"properties": {
+					"matches": {
+						"items": {
+							"$ref": "#/components/schemas/MatchDto"
+						},
+						"type": "array"
+					},
+					"startTime": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"status": {
+						"$ref": "#/components/schemas/RoundStatus"
+					},
+					"roundNumber": {
+						"type": "number",
+						"format": "double"
+					},
+					"tournament": {
+						"$ref": "#/components/schemas/TournamentDto"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"matches",
+					"startTime",
+					"status",
+					"roundNumber",
+					"tournament",
+					"id"
+				],
+				"type": "object"
+			},
+			"PodDraftMatch": {
+				"type": "string",
+				"enum": [
+					"1v5",
+					"2v6",
+					"3v7",
+					"4v8",
+					"oddsWinners",
+					"oddsLosers",
+					"evensWinners",
+					"evensLosers",
+					"final",
+					"jumbofinal",
+					"mid1",
+					"mid2"
+				]
+			},
+			"StandingsRow": {
+				"properties": {
+					"opponentMatchWinPercentage": {
+						"type": "number",
+						"format": "double"
+					},
+					"draftsWon": {
+						"type": "number",
+						"format": "double"
+					},
+					"matchPoints": {
+						"type": "number",
+						"format": "double"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"playerId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"opponentMatchWinPercentage",
+					"draftsWon",
+					"matchPoints",
+					"lastName",
+					"firstName",
+					"playerId"
+				],
+				"type": "object"
+			},
+			"PlayerTournamentScoreDto": {
+				"properties": {
+					"opponentMatchWinPercentage": {
+						"type": "number",
+						"format": "double"
+					},
+					"draftsWon": {
+						"type": "number",
+						"format": "double"
+					},
+					"points": {
+						"type": "number",
+						"format": "double"
+					},
+					"tournament": {
+						"$ref": "#/components/schemas/TournamentDto"
+					},
+					"player": {
+						"$ref": "#/components/schemas/PlayerDto"
+					}
+				},
+				"required": [
+					"opponentMatchWinPercentage",
+					"draftsWon",
+					"points",
+					"tournament",
+					"player"
+				],
+				"type": "object"
+			},
+			"PlayerWithRatingDto": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/PlayerDto"
+					},
+					{
+						"properties": {
+							"rating": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"rating"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"PreferenceDto": {
+				"properties": {
+					"points": {
+						"type": "number",
+						"format": "double"
+					},
+					"cube": {
+						"$ref": "#/components/schemas/CubeDto"
+					},
+					"player": {
+						"$ref": "#/components/schemas/PlayerDto"
+					},
+					"tournament": {
+						"$ref": "#/components/schemas/TournamentDto"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"points",
+					"cube",
+					"player",
+					"tournament",
+					"id"
+				],
+				"type": "object"
+			},
+			"PlayerTournamentInfo": {
+				"properties": {
+					"preferences": {
+						"items": {
+							"$ref": "#/components/schemas/PreferenceDto"
+						},
+						"type": "array"
+					},
+					"enrollment": {
+						"$ref": "#/components/schemas/EnrollmentDto"
+					},
+					"tournament": {
+						"$ref": "#/components/schemas/TournamentDto"
+					}
+				},
+				"required": [
+					"preferences",
+					"enrollment",
+					"tournament"
+				],
+				"type": "object"
+			},
+			"LoginResponse": {
+				"properties": {
+					"token": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"token"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"loggedIn": {
+				"type": "apiKey",
+				"name": "Authorization",
+				"in": "header"
+			},
+			"staff": {
+				"type": "apiKey",
+				"name": "Authorization",
+				"in": "header"
+			},
+			"admin": {
+				"type": "apiKey",
+				"name": "Authorization",
+				"in": "header"
+			}
+		}
+	},
+	"info": {
+		"title": "motticon-backend",
+		"version": "0.0.1",
+		"description": "MottiCon backend",
+		"license": {
+			"name": "MIT"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/card/db/generate": {
+			"get": {
+				"operationId": "GenerateCardDb",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Card"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/card/db": {
+			"get": {
+				"operationId": "GetCardDb",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Card"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/card/db/update": {
+			"get": {
+				"operationId": "UpdateCardDb",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Card"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/card/id/{scryfallId}": {
+			"get": {
+				"operationId": "GetCardById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Card"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "scryfallId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/card/name/{cardname}": {
+			"get": {
+				"operationId": "GetCardByName",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Card"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "cardname",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/card/list": {
+			"post": {
+				"operationId": "GetCards",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Card"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"type": "string"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/card/tokens": {
+			"get": {
+				"operationId": "GetAllTokens",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Token"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/card/search/{query}": {
+			"get": {
+				"operationId": "SearchForCard",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Card"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/card/picked": {
+			"get": {
+				"operationId": "GetAllPickedCards",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/PickedCard"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/card/listed": {
+			"get": {
+				"operationId": "GetAllListedCards",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/ListedCard"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/card/listed/deleteOrphans": {
+			"get": {
+				"operationId": "DeleteOrphanListedCards",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/ListedCard"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/card/picked/removeAll": {
+			"get": {
+				"operationId": "RemoveAllPickedCards",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/cube": {
+			"get": {
+				"operationId": "GetAllCubes",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/CubeDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/cube/{id}": {
+			"get": {
+				"operationId": "GetCube",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CubeDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/cube/tournament/{tournamentId}": {
+			"get": {
+				"operationId": "GetCubesForTournament",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/CubeDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/cube/add": {
+			"post": {
+				"operationId": "AddCube",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CubeDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"cards": {
+										"items": {
+											"$ref": "#/components/schemas/CubeCardDto"
+										},
+										"type": "array"
+									},
+									"imageUrl": {
+										"type": "string"
+									},
+									"owner": {
+										"type": "string"
+									},
+									"url": {
+										"type": "string"
+									},
+									"description": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									},
+									"cubecobraId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"cards",
+									"imageUrl",
+									"owner",
+									"url",
+									"description",
+									"title",
+									"cubecobraId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/cube/edit": {
+			"put": {
+				"operationId": "EditCube",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CubeDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"cards": {
+										"items": {
+											"$ref": "#/components/schemas/CubeCardDto"
+										},
+										"type": "array"
+									},
+									"imageUrl": {
+										"type": "string"
+									},
+									"owner": {
+										"type": "string"
+									},
+									"url": {
+										"type": "string"
+									},
+									"description": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									},
+									"cubeId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"cards",
+									"imageUrl",
+									"owner",
+									"url",
+									"description",
+									"title",
+									"cubeId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/cube/cardlist": {
+			"put": {
+				"operationId": "UpdateCubeCardlist",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Cube"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"cards": {
+										"items": {
+											"$ref": "#/components/schemas/CubeCardDto"
+										},
+										"type": "array"
+									},
+									"cubeId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"cards",
+									"cubeId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/cube/diff": {
+			"post": {
+				"operationId": "GetCubeDiff",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CubeDiffDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"cards": {
+										"items": {},
+										"type": "array"
+									},
+									"cubeId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"cards",
+									"cubeId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/cube/cardlist/{id}": {
+			"get": {
+				"operationId": "GetCardlist",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CardList"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/cube/{id}/picked/return/{seatId}": {
+			"get": {
+				"operationId": "PlayerReturnedCards",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "seatId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/computerVision/cardsFromImageUrl": {
+			"post": {
+				"operationId": "GetListedCardsFromImageUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ComputerVisionDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"cubeCards": {
+										"items": {
+											"$ref": "#/components/schemas/ListedCard"
+										},
+										"type": "array"
+									},
+									"url": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"cubeCards",
+									"url"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/computerVision/textFromUrl": {
+			"post": {
+				"operationId": "GetTextFromUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ComputerVisionDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"url": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"url"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/computerVision/textsToCards": {
+			"post": {
+				"operationId": "TextsToListedCards",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ComputerVisionDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"dictionary": {
+										"items": {
+											"$ref": "#/components/schemas/ListedCard"
+										},
+										"type": "array"
+									},
+									"rawTexts": {
+										"$ref": "#/components/schemas/ComputerVisionDto"
+									}
+								},
+								"required": [
+									"dictionary",
+									"rawTexts"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/match/round/{roundId}": {
+			"get": {
+				"operationId": "GetMatchesForRound",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MatchDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "roundId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/match/submitResult": {
+			"post": {
+				"operationId": "SubmitResult",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"player2GamesWon": {
+										"type": "number",
+										"format": "double"
+									},
+									"player1GamesWon": {
+										"type": "number",
+										"format": "double"
+									},
+									"resultSubmittedBy": {
+										"type": "number",
+										"format": "double"
+									},
+									"roundId": {
+										"type": "number",
+										"format": "double"
+									},
+									"matchId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"player2GamesWon",
+									"player1GamesWon",
+									"resultSubmittedBy",
+									"roundId",
+									"matchId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/rating/updateElo": {
+			"post": {
+				"operationId": "UpdateElo",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"winnerNumber": {
+										"type": "number",
+										"format": "double"
+									},
+									"player2Id": {
+										"type": "number",
+										"format": "double"
+									},
+									"player1Id": {
+										"type": "number",
+										"format": "double"
+									},
+									"kValue": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"winnerNumber",
+									"player2Id",
+									"player1Id",
+									"kValue"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/rating/resetElo/{playerId}": {
+			"get": {
+				"operationId": "ResetEloForUser",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "playerId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/round/{roundId}/results": {
+			"get": {
+				"operationId": "GenerateCsvFromRound",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "roundId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament": {
+			"get": {
+				"operationId": "GetAllTournaments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/TournamentDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/tournament/future": {
+			"get": {
+				"operationId": "GetFutureTournaments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/TournamentDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/tournament/past": {
+			"get": {
+				"operationId": "GetPastTournaments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/TournamentDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/tournament/ongoing": {
+			"get": {
+				"operationId": "GetOngoingTournaments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/TournamentDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/tournament/{tournamentId}": {
+			"get": {
+				"operationId": "GetTournament",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/enrollment": {
+			"get": {
+				"operationId": "GetTournamentEnrollments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/drafts": {
+			"get": {
+				"operationId": "GetTournamentAndDrafts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/draft": {
+			"get": {
+				"operationId": "GetCurrentDraft",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DraftDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/round": {
+			"get": {
+				"operationId": "GetCurrentRound",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RoundDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{_tournamentId}/round/{roundId}/match/{playerId}": {
+			"get": {
+				"operationId": "GetMatch",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "_tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "roundId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "playerId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/round/recent": {
+			"get": {
+				"operationId": "GetMostRecentRound",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RoundDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/standings/{roundNumber}": {
+			"get": {
+				"operationId": "GetStandings",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/StandingsRow"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "roundNumber",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/score/{userId}": {
+			"get": {
+				"operationId": "GetPreviousScore",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PlayerTournamentScoreDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{id}/cubes": {
+			"get": {
+				"operationId": "GetCubesForTournament",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/CubeDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/enroll/{userId}": {
+			"post": {
+				"operationId": "EnrollIntoTournament",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/cancel/{userId}": {
+			"post": {
+				"operationId": "CancelEnrollment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/drop/{userId}": {
+			"post": {
+				"operationId": "DropFromTournament",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/start": {
+			"put": {
+				"operationId": "StartTournament",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/end": {
+			"put": {
+				"operationId": "EndTournament",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/draft/generate": {
+			"post": {
+				"operationId": "GenerateDrafts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/draft/{draftId}/initiate": {
+			"put": {
+				"operationId": "InitiateDraft",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DraftDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "draftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/draft/{draftId}/start": {
+			"put": {
+				"operationId": "StartDraft",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DraftDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "draftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/draft/{draftId}/end": {
+			"put": {
+				"operationId": "EndDraft",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "draftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/round/{roundId}/start": {
+			"put": {
+				"operationId": "StartRound",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RoundDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "roundId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/round/{roundId}/end": {
+			"put": {
+				"operationId": "EndRound",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RoundDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "roundId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/draft/{draftId}/round/{roundId}/pairings": {
+			"put": {
+				"operationId": "GeneratePairings",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MatchDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "draftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "roundId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/staff/{tournamentId}/cancel/{userId}": {
+			"post": {
+				"operationId": "StaffCancelEnrollment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/setDraftPoolReturned/{seatId}": {
+			"post": {
+				"operationId": "SetDraftPoolReturned",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DraftDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "seatId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/staff/{tournamentId}/submitResult": {
+			"post": {
+				"operationId": "StaffSubmitResult",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MatchDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"staff": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"player2GamesWon": {
+										"type": "number",
+										"format": "double"
+									},
+									"player1GamesWon": {
+										"type": "number",
+										"format": "double"
+									},
+									"resultSubmittedBy": {
+										"type": "number",
+										"format": "double"
+									},
+									"matchId": {
+										"type": "number",
+										"format": "double"
+									},
+									"roundId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"player2GamesWon",
+									"player1GamesWon",
+									"resultSubmittedBy",
+									"matchId",
+									"roundId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/tournament/create": {
+			"post": {
+				"operationId": "CreateTournament",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			}
+		},
+		"/tournament/{tournamentId}/staff": {
+			"get": {
+				"operationId": "GetTournamentStaff",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/staff/{userId}/add": {
+			"post": {
+				"operationId": "AddToStaff",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/staff/{userId}/remove": {
+			"post": {
+				"operationId": "RemoveFromStaff",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TournamentDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tournament/{tournamentId}/setDeckPhoto/{seatId}": {
+			"post": {
+				"operationId": "SetDeckPhotoForUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DraftDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "seatId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/photos/*": {
+			"get": {
+				"operationId": "ServePhoto",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/user/signup": {
+			"post": {
+				"operationId": "Signup",
+				"responses": {
+					"201": {
+						"description": "Created"
+					},
+					"204": {
+						"description": "No content"
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			}
+		},
+		"/user/all": {
+			"get": {
+				"operationId": "GetAllUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/PlayerWithRatingDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/user/exists/{email}": {
+			"get": {
+				"operationId": "UserExists",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user/{id}": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PlayerWithRatingDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user/{id}/tournaments": {
+			"get": {
+				"operationId": "GetUsersTournaments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/TournamentDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user/{id}/staff": {
+			"get": {
+				"operationId": "GetTournamentsStaffed",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/TournamentDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user/{id}/tournament/{tournamentId}": {
+			"get": {
+				"operationId": "GetUserTournamentInfo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PlayerTournamentInfo"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user/preferences": {
+			"post": {
+				"operationId": "SetCubePreferences",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteCubePreferences",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			}
+		},
+		"/user/{userId}/tournament/{tournamentId}/matches": {
+			"get": {
+				"operationId": "GetPlayerMatchHistory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MatchDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/LoginResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"password": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"password",
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/draft/pods/{draftId}": {
+			"get": {
+				"operationId": "GetPodsForDraft",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/DraftPodDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "draftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/draft/seats/{draftPodId}": {
+			"get": {
+				"operationId": "GetSeatsForPod",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/DraftPodSeatDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "draftPodId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/draft/{draftId}/user/{userId}": {
+			"get": {
+				"operationId": "GetDraftInfoForUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DraftPodDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "draftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/draft/{draftId}/rounds": {
+			"get": {
+				"operationId": "GetRoundsForDraft",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/RoundDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "draftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/draft/tournament/{tournamentId}/submitDeck/{seatId}": {
+			"post": {
+				"operationId": "SubmitDeck",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DraftDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "seatId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"file"
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

@@ -41,8 +41,8 @@ function AddCube() {
 
   function addCube(form: AddCubeForm) {
     console.log(form);
-    post("/cube/add", form).then(async (_resp) => {
-      const cube = (await _resp.json()) as Cube;
+    post("/cube/add", form).then(async (resp) => {
+      const cube = (await resp.json()) as Cube;
       toast.success("Cube added");
       navigate("/cubes/" + cube.id);
     });

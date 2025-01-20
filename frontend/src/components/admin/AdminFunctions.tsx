@@ -11,7 +11,7 @@ const AdminFunctions = () => {
 
   const generateCardDb = async () => {
     if (user) {
-      const response = await get(`/generateCardDb`);
+      const response = await get(`/card/db/generate`);
       const cards = (await response.json()) as Card[];
       console.log(cards);
     }
