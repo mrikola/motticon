@@ -49,7 +49,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
       try {
         const draftPod = await ApiClient.getDraftPodForUser(
           draft.id,
-          user?.id ?? 0
+          user?.id ?? 0,
         );
         setPlayerPod(draftPod);
         setPlayerSeat(draftPod.seats[0]);
@@ -126,7 +126,8 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
 
       // update progress bar based on number of players done building
       setBuildingRemaining(
-        deckBuilding.filter((seat) => seat.pickedCards.length < POOLSIZE).length
+        deckBuilding.filter((seat) => seat.pickedCards.length < POOLSIZE)
+          .length,
       );
     }
   }, [playerPod, playerSeat, draft.pods, POOLSIZE, totalPlayers]);

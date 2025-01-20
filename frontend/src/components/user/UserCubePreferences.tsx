@@ -25,7 +25,7 @@ const UserCubePreferences = () => {
   const [priorityArray, setPriorityArray] = useState<number[]>([]);
 
   const [previousSelections, setPreviousSelections] = useState<CubeSelection[]>(
-    []
+    [],
   );
 
   function addPreferences() {
@@ -102,7 +102,7 @@ const UserCubePreferences = () => {
       const fetchData = async () => {
         // get existing preferences
         const resp = await get(
-          `/tournament/${tournamentId}/preferences/${user?.id}`
+          `/tournament/${tournamentId}/preferences/${user?.id}`,
         );
         const prefs = (await resp.json()) as Preference[];
         // sort existing preferences by point value for correct rendering of CubeSelects
@@ -134,7 +134,7 @@ const UserCubePreferences = () => {
         value: String(cube.id),
         displayText: cube.title,
         disabled: false,
-      }))
+      })),
     );
   }, [cubes]);
 

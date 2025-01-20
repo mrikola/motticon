@@ -35,28 +35,28 @@ Container.set("FileService", new FileService());
 // Register UserService before services that depend on it
 Container.set(
   "UserService",
-  new UserService(AppDataSource, Container.get("PreferenceService"))
+  new UserService(AppDataSource, Container.get("PreferenceService")),
 );
 
 // Register services that depend on UserService
 Container.set(
   "RatingService",
-  new RatingService(AppDataSource, Container.get("UserService"))
+  new RatingService(AppDataSource, Container.get("UserService")),
 );
 Container.set(
   "ScoreService",
-  new ScoreService(AppDataSource, Container.get("UserService"))
+  new ScoreService(AppDataSource, Container.get("UserService")),
 );
 
 // Register other services
 Container.set(
   "CubeService",
-  new CubeService(AppDataSource, Container.get("CardService"))
+  new CubeService(AppDataSource, Container.get("CardService")),
 );
 
 Container.set(
   "ComputerVisionService",
-  new ComputerVisionService(AppDataSource, Container.get("CardService"))
+  new ComputerVisionService(AppDataSource, Container.get("CardService")),
 );
 
 // Register TournamentService last as it has many dependencies
@@ -69,8 +69,8 @@ Container.set(
     Container.get("CubeService"),
     Container.get("RatingService"),
     Container.get("ScoreService"),
-    Container.get("UserService")
-  )
+    Container.get("UserService"),
+  ),
 );
 
 // Register services that depend on TournamentService
@@ -79,8 +79,8 @@ Container.set(
   new PairingsService(
     AppDataSource,
     Container.get("TournamentService"),
-    Container.get("MatchService")
-  )
+    Container.get("MatchService"),
+  ),
 );
 
 Container.set(
@@ -88,14 +88,14 @@ Container.set(
   new DraftService(
     AppDataSource,
     Container.get("TournamentService"),
-    Container.get("CardService")
-  )
+    Container.get("CardService"),
+  ),
 );
 
 // Register EnrollmentService before controllers that need it
 Container.set(
   "EnrollmentService",
-  new EnrollmentService(AppDataSource, Container.get("TournamentService"))
+  new EnrollmentService(AppDataSource, Container.get("TournamentService")),
 );
 
 // Register controllers
@@ -103,22 +103,25 @@ Container.set(CardController, new CardController(Container.get("CardService")));
 
 Container.set(
   CubeController,
-  new CubeController(Container.get("CubeService"), Container.get("CardService"))
+  new CubeController(
+    Container.get("CubeService"),
+    Container.get("CardService"),
+  ),
 );
 
 Container.set(
   ComputerVisionController,
-  new ComputerVisionController(Container.get("ComputerVisionService"))
+  new ComputerVisionController(Container.get("ComputerVisionService")),
 );
 
 Container.set(
   MatchController,
-  new MatchController(Container.get("MatchService"))
+  new MatchController(Container.get("MatchService")),
 );
 
 Container.set(
   RatingController,
-  new RatingController(Container.get("RatingService"))
+  new RatingController(Container.get("RatingService")),
 );
 
 Container.set(
@@ -126,8 +129,8 @@ Container.set(
   new UserController(
     Container.get("UserService"),
     Container.get("EnrollmentService"),
-    Container.get("MatchService")
-  )
+    Container.get("MatchService"),
+  ),
 );
 
 Container.set(
@@ -139,13 +142,13 @@ Container.set(
     Container.get("CubeService"),
     Container.get("PairingsService"),
     Container.get("DraftService"),
-    Container.get("MatchService")
-  )
+    Container.get("MatchService"),
+  ),
 );
 
 Container.set(
   PhotosController,
-  new PhotosController(Container.get("FileService"))
+  new PhotosController(Container.get("FileService")),
 );
 
 // Create tsoa-compatible container

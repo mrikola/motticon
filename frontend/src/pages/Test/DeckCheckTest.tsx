@@ -57,12 +57,12 @@ const DeckCheckTest = () => {
       for (const card of cards) {
         // check if card already exists in list
         const existingCard = newCards.filter(
-          (c) => c.listedCard.card.scryfallId === card.card.scryfallId
+          (c) => c.listedCard.card.scryfallId === card.card.scryfallId,
         );
         if (existingCard.length > 0) {
           // check if there are more in the cube
           const cardInCube = cube.cardlist?.cards?.find(
-            (c) => c.card.scryfallId === card.card.scryfallId
+            (c) => c.card.scryfallId === card.card.scryfallId,
           );
           if (
             cardInCube &&
@@ -79,7 +79,7 @@ const DeckCheckTest = () => {
         }
       }
       newCards.sort((a, b) =>
-        a.listedCard.card.name.localeCompare(b.listedCard.card.name)
+        a.listedCard.card.name.localeCompare(b.listedCard.card.name),
       );
       setIdentifiedCards((identifiedCards) => [
         ...new Set([...identifiedCards, ...newCards]),
@@ -105,7 +105,7 @@ const DeckCheckTest = () => {
             }
             addToIdentifiedCards(cards);
             setPoolImageUrl(url);
-          }
+          },
         );
       } catch (error) {
         console.error(error);
@@ -122,7 +122,7 @@ const DeckCheckTest = () => {
             className="btn btn-info btn-lg"
             onClick={() =>
               getCardsFromUrl(
-                "https://lh3.googleusercontent.com/pw/AP1GczPwSng08-pn1sNIHtf5B_VuyZkUk2xdiUUbqv4i163Z2Ggx1kuxpyxR0kzY5EM_40mmrcZEzHvXAFnJUKjA1p4tYW9ArqrY2ACt7yUmxBFGxEfNlKs-Xztp0oZnwyB6rsYMDQ0vdSsAq-iJlwoBNnvZjoMFtnMp3QqB1uAs93uUS_oI3rMWH86498vUbKgUcvmOAr8ekirsLusQHRhT3cLW_xR4mRrRzPjHzBhgVFSLe3wU5J3MiJ8464fQ2eDXi4fb53VxZwPfT0YmECgHzl3g6QKgwr0IiSGzT-tAJmQ7Hc_qbRscm-cXS4JCakTHWsooL9i9Lbm0iRESgVrq_utYgy8ANGpV8FQs5p6sSr332mNjH3kGdMn4TATtU0-FvN2iphFPa1MUQRCeBEnIreMxosk0m_QFja4_PtxJogXOuPZNsY7fKDV00QfwbEfSPWt35rHuZD2TKe3Y_KiOn_G7Z5jIx7Uds_It7mu6sVgEnxrl_ya-9vhdA1CJWUBm4uhErGf71Wt7f8AAJHzpVDyA4hSP2TO9tsqgFA8snTZk8WhXwtQ5IExccvw9OikycoVPiKu41BOMiyVTjvZqnHeduCKTEAYg5tXDnO9bWfVoFxvzdYech7UiM8M557tPabt0tMf4GedC0IEuRb9sy8nviRCx0tD3sF4sse_rEkfn8eldrT_vbPmggKZ3KjiCnpPpDwdnwUTLI7pK6mMSaxH3FEA_yAW_TIVha3MHFqw3XafJ_unlxTvw6MOrcVJoUFcEHYVvAWM-fDnsdopz70eaf9kmvCfVeNvrd-djrualCxQdmMnpvX3jlVDzfLK-4tfAG4vvi_MQQGV3zVsuC2c9DF_gRHGRJfENZs6iOgc1-tvR17gfVC5zdXIdGKMS4L46McW_xCe-8Uyq-Xz_pLre7A=w2182-h1636-s-no-gm?authuser=0"
+                "https://lh3.googleusercontent.com/pw/AP1GczPwSng08-pn1sNIHtf5B_VuyZkUk2xdiUUbqv4i163Z2Ggx1kuxpyxR0kzY5EM_40mmrcZEzHvXAFnJUKjA1p4tYW9ArqrY2ACt7yUmxBFGxEfNlKs-Xztp0oZnwyB6rsYMDQ0vdSsAq-iJlwoBNnvZjoMFtnMp3QqB1uAs93uUS_oI3rMWH86498vUbKgUcvmOAr8ekirsLusQHRhT3cLW_xR4mRrRzPjHzBhgVFSLe3wU5J3MiJ8464fQ2eDXi4fb53VxZwPfT0YmECgHzl3g6QKgwr0IiSGzT-tAJmQ7Hc_qbRscm-cXS4JCakTHWsooL9i9Lbm0iRESgVrq_utYgy8ANGpV8FQs5p6sSr332mNjH3kGdMn4TATtU0-FvN2iphFPa1MUQRCeBEnIreMxosk0m_QFja4_PtxJogXOuPZNsY7fKDV00QfwbEfSPWt35rHuZD2TKe3Y_KiOn_G7Z5jIx7Uds_It7mu6sVgEnxrl_ya-9vhdA1CJWUBm4uhErGf71Wt7f8AAJHzpVDyA4hSP2TO9tsqgFA8snTZk8WhXwtQ5IExccvw9OikycoVPiKu41BOMiyVTjvZqnHeduCKTEAYg5tXDnO9bWfVoFxvzdYech7UiM8M557tPabt0tMf4GedC0IEuRb9sy8nviRCx0tD3sF4sse_rEkfn8eldrT_vbPmggKZ3KjiCnpPpDwdnwUTLI7pK6mMSaxH3FEA_yAW_TIVha3MHFqw3XafJ_unlxTvw6MOrcVJoUFcEHYVvAWM-fDnsdopz70eaf9kmvCfVeNvrd-djrualCxQdmMnpvX3jlVDzfLK-4tfAG4vvi_MQQGV3zVsuC2c9DF_gRHGRJfENZs6iOgc1-tvR17gfVC5zdXIdGKMS4L46McW_xCe-8Uyq-Xz_pLre7A=w2182-h1636-s-no-gm?authuser=0",
               )
             }
           >

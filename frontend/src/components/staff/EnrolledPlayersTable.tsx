@@ -11,7 +11,7 @@ type Props = {
 const EnrolledPlayersTable = ({ enrollments, buttonFunction }: Props) => {
   useEffect(() => {
     enrollments.sort((a, b) =>
-      (a.player?.lastName ?? "").localeCompare(b.player?.lastName ?? "")
+      (a.player?.lastName ?? "").localeCompare(b.player?.lastName ?? ""),
     );
   }, [enrollments]);
 

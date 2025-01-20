@@ -13,9 +13,11 @@ export const UserSchema: z.ZodType<User> = z.object({
 
 export const PlayerSchema: z.ZodType<Player> = UserSchema;
 
-export const EnrollmentSchema: z.ZodType<Enrollment> = z.lazy(() => z.object({
-  player: PlayerSchema.optional(),
-  tournament: TournamentSchema.optional(),
-  dropped: z.boolean(),
-  paid: z.boolean()
-})); 
+export const EnrollmentSchema: z.ZodType<Enrollment> = z.lazy(() =>
+  z.object({
+    player: PlayerSchema.optional(),
+    tournament: TournamentSchema.optional(),
+    dropped: z.boolean(),
+    paid: z.boolean(),
+  }),
+);

@@ -56,12 +56,12 @@ const CVTest = () => {
       for (const card of cards) {
         // check if card already exists in list
         const existingCard = newCards.filter(
-          (c) => c.listedCard.card.scryfallId === card.card.scryfallId
+          (c) => c.listedCard.card.scryfallId === card.card.scryfallId,
         );
         if (existingCard.length > 0) {
           // check if there are more in the cube
           const cardInCube = (cube.cardlist?.cards ?? []).find(
-            (c) => c.card.scryfallId === card.card.scryfallId
+            (c) => c.card.scryfallId === card.card.scryfallId,
           );
           if (
             cardInCube &&
@@ -78,7 +78,7 @@ const CVTest = () => {
         }
       }
       newCards.sort((a, b) =>
-        a.listedCard.card.name.localeCompare(b.listedCard.card.name)
+        a.listedCard.card.name.localeCompare(b.listedCard.card.name),
       );
       setIdentifiedCards((identifiedCards) => [
         ...new Set([...identifiedCards, ...newCards]),
@@ -106,7 +106,7 @@ const CVTest = () => {
             await generateBoxes(data);
             // todo: iterate through polygons and calculate near neighbours for each, use that number to color the boxes
             setPoolImageUrl(url);
-          }
+          },
         );
       } catch (error) {
         console.error(error);
@@ -125,7 +125,7 @@ const CVTest = () => {
               t.name === token.name &&
               t.oracleText === token.oracleText &&
               t.power === token.power &&
-              t.toughness === token.toughness
+              t.toughness === token.toughness,
           );
           if (existingTokens.length > 0) {
             existingTokens[0].tokenFor.push(cq.listedCard.card);
@@ -224,7 +224,7 @@ const CVTest = () => {
             className="btn btn-info btn-lg"
             onClick={() =>
               getCardsFromUrl(
-                "http://motticon-backend.fly.dev/photos/14/471/Kim_Valori.jpeg"
+                "http://motticon-backend.fly.dev/photos/14/471/Kim_Valori.jpeg",
               )
             }
           >
@@ -236,7 +236,7 @@ const CVTest = () => {
             className="btn btn-info btn-lg"
             onClick={() =>
               getCardsFromUrl(
-                "http://motticon-backend.fly.dev/photos/14/472/Roope_Metsa.jpeg"
+                "http://motticon-backend.fly.dev/photos/14/472/Roope_Metsa.jpeg",
               )
             }
           >
@@ -248,7 +248,7 @@ const CVTest = () => {
             className="btn btn-info btn-lg"
             onClick={() =>
               getCardsFromUrl(
-                "http://motticon-backend.fly.dev/photos/14/474/Markku_Rikola.jpeg"
+                "http://motticon-backend.fly.dev/photos/14/474/Markku_Rikola.jpeg",
               )
             }
           >
@@ -260,7 +260,7 @@ const CVTest = () => {
             className="btn btn-info btn-lg"
             onClick={() =>
               getCardsFromUrl(
-                "http://motticon-backend.fly.dev/photos/14/473/Andrei_Hayrynen.jpeg"
+                "http://motticon-backend.fly.dev/photos/14/473/Andrei_Hayrynen.jpeg",
               )
             }
           >
@@ -272,7 +272,7 @@ const CVTest = () => {
             className="btn btn-info btn-lg"
             onClick={() =>
               getCardsFromUrl(
-                "http://motticon-backend.fly.dev/photos/14/475/Donald_Smith.jpeg"
+                "http://motticon-backend.fly.dev/photos/14/475/Donald_Smith.jpeg",
               )
             }
           >
@@ -284,7 +284,7 @@ const CVTest = () => {
             className="btn btn-info btn-lg"
             onClick={() =>
               getCardsFromUrl(
-                "http://motticon-backend.fly.dev/photos/14/476/Juha_Ihonen.jpeg"
+                "http://motticon-backend.fly.dev/photos/14/476/Juha_Ihonen.jpeg",
               )
             }
           >
@@ -296,7 +296,7 @@ const CVTest = () => {
             className="btn btn-info btn-lg"
             onClick={() =>
               getCardsFromUrl(
-                "http://motticon-backend.fly.dev/photos/14/477/Max_Sjoblom.jpeg"
+                "http://motticon-backend.fly.dev/photos/14/477/Max_Sjoblom.jpeg",
               )
             }
           >
@@ -308,7 +308,7 @@ const CVTest = () => {
             className="btn btn-info btn-lg"
             onClick={() =>
               getCardsFromUrl(
-                "http://motticon-backend.fly.dev/photos/14/478/Sakari_Castren.jpeg"
+                "http://motticon-backend.fly.dev/photos/14/478/Sakari_Castren.jpeg",
               )
             }
           >
@@ -321,7 +321,7 @@ const CVTest = () => {
             className="btn btn-info btn-lg"
             onClick={() =>
               getCardsFromUrl(
-                "https://uc63a653a4c7c5eafc91a31ca9e8.previews.dropboxusercontent.com/p/thumb/ACTRUqMrYZo7gqSlw66GRwQnZSwUApCq8BXN1QSM2VZ2W1Kx0gpZBl8hH1z3ICWk8KyC94pO3Q2ETMJCxpuGkyHhuilKnjyGA--NqjYqhOQI73nmYuJ0NHDdRu6YS1prWcU9TCl6-wWn_QRnfo2nWYbP4-KWHi8f-aW8tDGMoZBFVOTmtXSSKFFs9N6tCsf3d8mRRx5SFPYIEqJH7VdtHX_-GBcSg2os__zbTgQl7aUhddFAoeVlHxdxiaZaXseSUxeQ55Tie6N1h4e0dUnQ_4i7lYAnYz7e0vN9-cg8wjsYLr1G1qYIT6sVEQ6kx63hFhpfmJnzACeaP7gV7Z11KQUZm_seVEtLS_XMB2ZuMF7I6peXOOFBYrZmkamku8zyzWuPYlj2PSQSdm_DvF1DO1BVptHvR3aPQVSJd8LDwPfvtUAKiXAPLn84ybRPVXqMeeVl5wXqzEI1zDfn-tTzQQE1/p.jpeg?is_prewarmed=true"
+                "https://uc63a653a4c7c5eafc91a31ca9e8.previews.dropboxusercontent.com/p/thumb/ACTRUqMrYZo7gqSlw66GRwQnZSwUApCq8BXN1QSM2VZ2W1Kx0gpZBl8hH1z3ICWk8KyC94pO3Q2ETMJCxpuGkyHhuilKnjyGA--NqjYqhOQI73nmYuJ0NHDdRu6YS1prWcU9TCl6-wWn_QRnfo2nWYbP4-KWHi8f-aW8tDGMoZBFVOTmtXSSKFFs9N6tCsf3d8mRRx5SFPYIEqJH7VdtHX_-GBcSg2os__zbTgQl7aUhddFAoeVlHxdxiaZaXseSUxeQ55Tie6N1h4e0dUnQ_4i7lYAnYz7e0vN9-cg8wjsYLr1G1qYIT6sVEQ6kx63hFhpfmJnzACeaP7gV7Z11KQUZm_seVEtLS_XMB2ZuMF7I6peXOOFBYrZmkamku8zyzWuPYlj2PSQSdm_DvF1DO1BVptHvR3aPQVSJd8LDwPfvtUAKiXAPLn84ybRPVXqMeeVl5wXqzEI1zDfn-tTzQQE1/p.jpeg?is_prewarmed=true",
               )
             }
           >
@@ -390,7 +390,7 @@ const CVTest = () => {
                     key={index}
                     className="cube-token"
                     src={`https://cards.scryfall.io/normal/front/${token.scryfallId.charAt(
-                      0
+                      0,
                     )}/${token.scryfallId.charAt(1)}/${token.scryfallId}.jpg`}
                   />
                   {token.tokenFor.map((tokenGenerator) => (

@@ -10,7 +10,7 @@ type Props = {
 
 function CardCountupTimer({ started, startTime }: Props) {
   const [seconds, setSeconds] = useState<number>(
-    startTime ? startTime.diff(dayjs(), "second") : 0
+    startTime ? startTime.diff(dayjs(), "second") : 0,
   );
 
   useEffect(() => {

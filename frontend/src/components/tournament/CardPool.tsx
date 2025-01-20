@@ -77,7 +77,7 @@ const CardPool = ({
             if (url) {
               setPoolImageUrl(url);
             }
-          }
+          },
         );
       } catch (error) {
         console.error(error);
@@ -111,8 +111,8 @@ const CardPool = ({
   const removeFromManuallyAddedCards = (listedCard: ListedCard) => {
     setManuallyAddedCards((manuallyAddedCards) =>
       manuallyAddedCards.filter(
-        (c) => c.listedCard.card.id != listedCard.card.id
-      )
+        (c) => c.listedCard.card.id != listedCard.card.id,
+      ),
     );
     toast.warning(listedCard.card.name + " removed");
   };
@@ -123,12 +123,12 @@ const CardPool = ({
       for (const card of cards) {
         // check if card already exists in list
         const existingCard = newCards.filter(
-          (c) => c.listedCard.card.scryfallId === card.card.scryfallId
+          (c) => c.listedCard.card.scryfallId === card.card.scryfallId,
         );
         if (existingCard.length > 0) {
           // check if there are more in the cube
           const cardInCube = cubeCards.find(
-            (c) => c.card.scryfallId === card.card.scryfallId
+            (c) => c.card.scryfallId === card.card.scryfallId,
           );
           if (
             cardInCube &&
@@ -145,7 +145,7 @@ const CardPool = ({
         }
       }
       newCards.sort((a, b) =>
-        a.listedCard.card.name.localeCompare(b.listedCard.card.name)
+        a.listedCard.card.name.localeCompare(b.listedCard.card.name),
       );
       setAutomaticallyAddedCards((automaticallyAddedCards) => [
         ...new Set([...automaticallyAddedCards, ...newCards]),
@@ -155,7 +155,7 @@ const CardPool = ({
 
   const removeFromAutomaticallyAddedCards = (card: ListedCard) => {
     const existingCard = automaticallyAddedCards.filter(
-      (c) => c.listedCard.card.id === card.card.id
+      (c) => c.listedCard.card.id === card.card.id,
     );
     // if more than one has been picked, remove only one
     if (existingCard[0].quantityPicked > 1) {
@@ -163,8 +163,8 @@ const CardPool = ({
     } else {
       setAutomaticallyAddedCards((automaticallyAddedCards) =>
         automaticallyAddedCards.filter(
-          (c) => c.listedCard.card.id != card.card.id
-        )
+          (c) => c.listedCard.card.id != card.card.id,
+        ),
       );
     }
     toast.warning(card.card.name + " removed");
@@ -182,15 +182,13 @@ const CardPool = ({
       pickedCards.push(pc);
     }
     try {
-      post(`/card/pickedCards/set`, { pickedCards }).then(
-        async (resp) => {
-          const cards = (await resp.json()) as PickedCard[];
-          if (cards) {
-            setPlayerPickedCards(cards);
-            toast.success(cards.length + " cards submitted succesfully");
-          }
+      post(`/card/pickedCards/set`, { pickedCards }).then(async (resp) => {
+        const cards = (await resp.json()) as PickedCard[];
+        if (cards) {
+          setPlayerPickedCards(cards);
+          toast.success(cards.length + " cards submitted succesfully");
         }
-      );
+      });
     } catch (error) {
       console.error(error);
     }

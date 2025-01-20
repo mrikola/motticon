@@ -10,7 +10,7 @@ export type ModalProps = {
   actionFunction: (
     match: Match,
     player1GamesWon: string,
-    player2GamesWon: string
+    player2GamesWon: string,
   ) => void;
   match: Match;
 };
@@ -23,10 +23,10 @@ function ResultsInputModal({
   match,
 }: ModalProps) {
   const [playerRadioValue, setPlayerRadioValue] = useState<string>(
-    match.player1GamesWon.toString()
+    match.player1GamesWon.toString(),
   );
   const [opponentRadioValue, setOpponentRadioValue] = useState<string>(
-    match.player2GamesWon.toString()
+    match.player2GamesWon.toString(),
   );
 
   useEffect(() => {

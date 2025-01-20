@@ -25,13 +25,13 @@ const Landing = () => {
         tournys.sort((a, b) => (a.startDate > b.startDate ? -1 : 1));
         setTournaments({
           ongoing: tournys.filter(
-            (tournament) => tournament.status === "started"
+            (tournament) => tournament.status === "started",
           ),
           future: tournys.filter(
-            (tournament) => tournament.status === "pending"
+            (tournament) => tournament.status === "pending",
           ),
           past: tournys.filter(
-            (tournament) => tournament.status === "completed"
+            (tournament) => tournament.status === "completed",
           ),
         });
         const ids = [];
@@ -98,7 +98,7 @@ const Landing = () => {
                     if (
                       dayjs(tournament.startDate).isSame(
                         dayjs(tournament.endDate),
-                        "day"
+                        "day",
                       )
                     ) {
                       date = dayjs(tournament.startDate).format("DD/MM/YYYY");

@@ -89,7 +89,7 @@ function Enroll({
           freeSeatsUpdater(-1);
           toast.success("Enrolled succesfully");
         }
-      }
+      },
     );
   };
 
@@ -107,7 +107,7 @@ function Enroll({
           freeSeatsUpdater(1);
           toast.success("Cancelled enrollment succesfully");
         }
-      }
+      },
     );
   };
 

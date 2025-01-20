@@ -23,13 +23,13 @@ const PendingView = ({ tournamentId }: Props) => {
       setFirstPendingDraft(
         drafts
           .sort((a, b) => a.draftNumber - b.draftNumber)
-          .find((draft) => draft.status === "pending")
+          .find((draft) => draft.status === "pending"),
       );
 
       setLastCompletedDraft(
         drafts
           .sort((a, b) => b.draftNumber - a.draftNumber)
-          .find((draft) => draft.status === "completed")
+          .find((draft) => draft.status === "completed"),
       );
     };
 

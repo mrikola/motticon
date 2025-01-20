@@ -35,7 +35,7 @@ function Tournaments() {
       tournys.sort((a, b) => (a.startDate > b.startDate ? -1 : 1));
       setTournaments({
         ongoing: tournys.filter(
-          (tournament) => tournament.status === "started"
+          (tournament) => tournament.status === "started",
         ),
         future: tournys.filter((tournament) => tournament.status === "pending"),
         past: tournys.filter((tournament) => tournament.status === "completed"),
@@ -111,7 +111,7 @@ function Tournaments() {
                   if (
                     dayjs(tournament.startDate).isSame(
                       dayjs(tournament.endDate),
-                      "day"
+                      "day",
                     )
                   ) {
                     date = dayjs(tournament.startDate).format("DD/MM/YYYY");

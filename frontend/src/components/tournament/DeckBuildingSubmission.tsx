@@ -96,7 +96,7 @@ function DeckBuildingSubmission({
       try {
         const result = await postFormData(
           `/draft/tournament/${tournamentId}/submitDeck/${seat.id}`,
-          formData
+          formData,
         );
         const draft = (await result.json()) as Draft;
         if (result.ok && draft !== null) {
@@ -137,7 +137,7 @@ function DeckBuildingSubmission({
                 t.name === token.name &&
                 t.oracleText === token.oracleText &&
                 t.power === token.power &&
-                t.toughness === token.toughness
+                t.toughness === token.toughness,
             );
             if (existingTokens.length > 0) {
               existingTokens[0].tokenFor.push(pc.listedCard.card);

@@ -55,7 +55,6 @@ function StaffView() {
     if (user) {
       return startPolling(() => fetchData());
     }
-
   }, [tournamentId, user]);
 
   useEffect(() => {

@@ -56,7 +56,7 @@ export let CardListSchema: z.ZodType<CardList> = z.lazy(() =>
     cubeId: z.number(),
     cube: z.lazy(() => CubeSchema.optional()),
     cards: z.array(ListedCardSchema).optional(),
-  })
+  }),
 );
 
 export let ListedCardSchema: z.ZodType<ListedCard> = z.lazy(() =>
@@ -65,5 +65,5 @@ export let ListedCardSchema: z.ZodType<ListedCard> = z.lazy(() =>
     cardlist: z.lazy(() => CardListSchema),
     pickedCards: z.array(z.any()), // TODO improve typing
     quantityInCube: z.number(),
-  })
+  }),
 );

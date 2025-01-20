@@ -90,7 +90,9 @@ export const preferenceToDto = (preference: Preference): PreferenceDto =>
       }
     : undefined;
 
-export const scoreToDto = (score: PlayerTournamentScore): PlayerTournamentScoreDto =>
+export const scoreToDto = (
+  score: PlayerTournamentScore,
+): PlayerTournamentScoreDto =>
   score
     ? {
         player: playerToDto(score.player),
@@ -100,4 +102,3 @@ export const scoreToDto = (score: PlayerTournamentScore): PlayerTournamentScoreD
         opponentMatchWinPercentage: Number(score.opponentMatchWinPercentage),
       }
     : undefined;
-

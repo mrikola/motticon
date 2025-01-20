@@ -5,19 +5,19 @@ export class RatingDefault1705758483083 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "user" ALTER COLUMN "rating" SET DEFAULT '1600'`
+      `ALTER TABLE "user" ALTER COLUMN "rating" SET DEFAULT '1600'`,
     );
     await queryRunner.query(
-      `ALTER TABLE "user" ALTER COLUMN "rating" SET NOT NULL`
+      `ALTER TABLE "user" ALTER COLUMN "rating" SET NOT NULL`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "user" ALTER COLUMN "rating" DROP DEFAULT`
+      `ALTER TABLE "user" ALTER COLUMN "rating" DROP DEFAULT`,
     );
     await queryRunner.query(
-      `ALTER TABLE "user" ALTER COLUMN "rating" DROP NOT NULL`
+      `ALTER TABLE "user" ALTER COLUMN "rating" DROP NOT NULL`,
     );
   }
 }

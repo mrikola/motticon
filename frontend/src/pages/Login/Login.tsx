@@ -40,20 +40,20 @@ const Login = () => {
     } catch (error) {
       if (error instanceof ApiException) {
         switch (error.type) {
-          case 'auth':
-            toast.error('Invalid email or password');
+          case "auth":
+            toast.error("Invalid email or password");
             break;
-          case 'network':
-            toast.error('Unable to connect to server');
+          case "network":
+            toast.error("Unable to connect to server");
             break;
-          case 'server':
-            toast.error('Server error, please try again later');
+          case "server":
+            toast.error("Server error, please try again later");
             break;
           default:
             toast.error(error.message);
         }
       } else {
-        toast.error('An unexpected error occurred');
+        toast.error("An unexpected error occurred");
       }
     }
   };

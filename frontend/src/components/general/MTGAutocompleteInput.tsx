@@ -25,7 +25,7 @@ const MTGAutocompleteInput = ({ labelText, setSelectedCard }: Props) => {
         // label: option.name, // use a custom label instead of the value
         // node: option.name, // use a custom ReactNode to display the option
       })),
-    [cards]
+    [cards],
   );
 
   function handleSelection(item: Item) {

@@ -16,7 +16,7 @@ const StandingsTable = ({ roundNumber, tournamentId, user }: Props) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await get(
-        `/tournament/${tournamentId}/standings/${roundNumber}`
+        `/tournament/${tournamentId}/standings/${roundNumber}`,
       );
       const roundStandings = (await response.json()) as StandingsRow[];
       setStandings(roundStandings);
