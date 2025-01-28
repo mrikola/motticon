@@ -14,7 +14,7 @@ export class CubeService {
 
   constructor(
     @Inject("DataSource") private appDataSource: DataSource,
-    @Inject("CardService") private cardService: CardService,
+    @Inject("CardService") private cardService: CardService
   ) {
     this.repository = this.appDataSource.getRepository(Cube);
   }
@@ -47,8 +47,7 @@ export class CubeService {
     description: string,
     url: string,
     owner: string,
-    imageUrl: string,
-    cards: CubeCardDto[],
+    imageUrl: string
   ): Promise<Cube> {
     try {
       const cube: Cube = await this.repository.save({
@@ -58,25 +57,7 @@ export class CubeService {
         owner,
         imageUrl,
       });
-      // transform list of cards to ListedCard-objects
-      const listedCards: ListedCard[] = await this.cardsToListedCards(cards);
-      // create CardList object from ListedCard[]
-      const cardlist: CardList = await this.createCardList(
-        cube.id,
-        cube,
-        listedCards,
-      );
 
-      await this.appDataSource
-        .getRepository(ListedCard)
-        .save(listedCards.map((lc) => ({ ...lc, cardlist })));
-      // update the created cube with the cardlist
-      await this.repository
-        .createQueryBuilder()
-        .update(Cube)
-        .set({ cardlist: cardlist })
-        .where({ id: cube.id })
-        .execute();
       return await this.getCube(cube.id);
     } catch {
       return null;
@@ -89,8 +70,7 @@ export class CubeService {
     description: string,
     url: string,
     owner: string,
-    imageUrl: string,
-    cards: CubeCardDto[],
+    imageUrl: string
   ): Promise<Cube> {
     await this.repository
       .createQueryBuilder("cube")
@@ -104,8 +84,6 @@ export class CubeService {
       })
       .where("id = :cubeId", { cubeId })
       .execute();
-    // run update function to make sure cardlist is up-to-date
-    await this.updateCubeCards(cubeId, cards);
     return await this.getCube(cubeId);
   }
 
@@ -120,7 +98,7 @@ export class CubeService {
 
   async updateCubeCards(
     cubeId: number,
-    cardsToAdd: CubeCardDto[],
+    cardsToAdd: CubeCardDto[]
   ): Promise<Cube> {
     const cube = await this.getCube(cubeId);
     const diff: CubeDiffDto = await this.getCubeDiff(cubeId, cardsToAdd);
@@ -128,7 +106,7 @@ export class CubeService {
     await this.cardService.removeListedCards(diff.orphanedCards);
     // create ListedCard objects for the new cards
     const newListedCards: ListedCard[] = await this.cardsToListedCards(
-      diff.newCards,
+      diff.newCards
     );
     // update the generated ListedCard-objects with the CardList-object
     const cardList = cube.cardlist;
@@ -140,7 +118,7 @@ export class CubeService {
   // returns a dto with new and orphaned cards as separate objects
   async getCubeDiff(
     cubeId: number,
-    cardsToAdd: CubeCardDto[],
+    cardsToAdd: CubeCardDto[]
   ): Promise<CubeDiffDto> {
     const cube = await this.getCube(cubeId);
     const existingCards: ListedCard[] = cube.cardlist.cards;
@@ -154,11 +132,11 @@ export class CubeService {
     }
     // cards that were part of the cube before, but now no longer are
     const orphanCards: ListedCard[] = existingCards.filter(
-      (c) => !newCardIds.includes(c.card.scryfallId),
+      (c) => !newCardIds.includes(c.card.scryfallId)
     );
     // new cards that were not in the cube previously
     const newCards = cardsToAdd.filter(
-      (c) => !existingCardIds.includes(c.scryfallId),
+      (c) => !existingCardIds.includes(c.scryfallId)
     );
     const diff: CubeDiffDto = {
       orphanedCards: orphanCards,
@@ -172,7 +150,7 @@ export class CubeService {
     await Promise.all(
       cards.map(async (card) => {
         const cardObj: Card = await this.cardService.getCardById(
-          card.scryfallId,
+          card.scryfallId
         );
         const listedCard = await this.appDataSource
           .getRepository(ListedCard)
@@ -181,14 +159,14 @@ export class CubeService {
             quantityInCube: card.quantity,
           });
         listedCards.push(listedCard);
-      }),
+      })
     );
     return listedCards;
   }
 
   async assignCardListToListedCards(
     cards: ListedCard[],
-    cardlist: CardList,
+    cardlist: CardList
   ): Promise<ListedCard[]> {
     const listedCards: ListedCard[] = [];
     for (const lc of cards) {
@@ -201,7 +179,7 @@ export class CubeService {
         .where({ id: id })
         .execute();
       const listedCard: ListedCard = await this.cardService.getListedCardById(
-        lc.id,
+        lc.id
       );
       listedCards.push(listedCard);
     }
@@ -211,7 +189,7 @@ export class CubeService {
   async createCardList(
     cubeId: number,
     cube: Cube,
-    listedCards: ListedCard[],
+    listedCards: ListedCard[]
   ): Promise<CardList> {
     const cardlist: CardList = await this.appDataSource
       .getRepository(CardList)

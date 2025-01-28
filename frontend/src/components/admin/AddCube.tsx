@@ -16,7 +16,6 @@ import HelmetTitle from "../general/HelmetTitle";
 import BackButton from "../general/BackButton";
 import MTGAutocompleteInput from "../general/MTGAutocompleteInput";
 import { Cube } from "../../types/Cube";
-import { CubeCard } from "../../types/Card";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
@@ -26,8 +25,6 @@ type AddCubeForm = {
   url: string;
   owner: string;
   imageUrl: string;
-  cubecobraId: string;
-  cards: CubeCard[];
 };
 
 function AddCube() {
@@ -35,12 +32,8 @@ function AddCube() {
   const navigate = useNavigate();
   const [cardImageUrl, setCardImageUrl] = useState<string>("");
   const [selectedCard, setSelectedCard] = useState<Item>();
-  const [getCubecobraDataDisabled, setGetCubecobraDataDisabled] =
-    useState<boolean>(false);
-  const [cubeDataText, setCubeDataText] = useState<string>("");
 
   function addCube(form: AddCubeForm) {
-    console.log(form);
     post("/cube/add", form).then(async (resp) => {
       const cube = (await resp.json()) as Cube;
       toast.success("Cube added");
@@ -54,7 +47,6 @@ function AddCube() {
     handleSubmit,
     getFieldState,
     setValue,
-    getValues,
     trigger,
     formState: { errors },
   } = useForm<AddCubeForm>({
@@ -66,8 +58,6 @@ function AddCube() {
       url: "",
       owner: "",
       imageUrl: "",
-      cubecobraId: "",
-      cards: undefined,
     },
   });
 
@@ -77,88 +67,12 @@ function AddCube() {
     return baseUrl + uniqueUrl;
   }
 
-  const queryStarted = () =>
-    toast("Getting data, please wait...", {
-      type: "warning",
-      autoClose: false,
-      toastId: "uploadToast",
-    });
-
-  const querySuccess = () =>
-    toast.update("uploadToast", {
-      render: "Got data successfully",
-      type: "success",
-      autoClose: 2000,
-    });
-
-  const queryFailed = () =>
-    toast.update("uploadToast", {
-      render: "Getting data failed",
-      type: "error",
-      autoClose: 2000,
-    });
-
-  async function getCubecobraData(id: string) {
-    queryStarted();
-    setGetCubecobraDataDisabled(true);
-    try {
-      const response = await fetch(
-        "https://cubecobra.com/cube/api/cubeJSON/" + id,
-        {
-          method: "GET",
-          mode: "cors",
-        },
-      );
-      const data = await response.json();
-      const cards: CubeCard[] = [];
-      // const tokens: Token[] = [];
-      let totalcards: number = 0;
-      for (const card of data.cards.mainboard) {
-        const match = cards.find(
-          (c) => c.scryfallId === card.details.scryfall_id,
-        );
-        if (match) {
-          match.quantity++;
-          totalcards++;
-        } else {
-          totalcards++;
-          cards.push({
-            scryfallId: card.details.scryfall_id,
-            quantity: 1,
-          });
-        }
-      }
-      if (cards.length > 0) {
-        querySuccess();
-        console.log(cards);
-        setCubeDataText(
-          "Loaded " +
-            cards.length +
-            " unique cards (" +
-            totalcards +
-            " total cards) from " +
-            data.name,
-        );
-        setValue("cards", cards);
-      }
-    } catch (error) {
-      console.error(error);
-      setCubeDataText("Error getting cube data");
-      queryFailed();
-    }
-  }
-
   async function setImage() {
     const url = getScryfallUrl(selectedCard.id);
     setValue("imageUrl", url);
     await trigger("imageUrl");
     setCardImageUrl(url);
   }
-
-  const cubecobraIdChanged = (value: string) => {
-    const url = "https://cubecobra.com/cube/overview/" + value;
-    setValue("url", url);
-  };
 
   useEffect(() => {
     if (selectedCard) {
@@ -256,41 +170,18 @@ function AddCube() {
             </Col>
             <Col xs={6}>
               <Form.Control hidden {...register("url")}></Form.Control>
-              <FloatingLabel
-                controlId="cubecobraId"
-                label="Cubecobra ID"
-                className="mb-3"
-              >
+              <FloatingLabel controlId="url" label="Cube URL" className="mb-3">
                 <Form.Control
-                  {...register("cubecobraId", {
-                    required: "Please enter the Cubecobra ID",
+                  {...register("url", {
+                    required: "Please enter the card list URL",
                   })}
                   type="text"
                   placeholder="abc123"
-                  className={
-                    getFieldState("cubecobraId").isDirty
-                      ? getFieldState("cubecobraId").invalid
-                        ? "is-invalid"
-                        : "is-valid"
-                      : ""
-                  }
-                  onChange={(e) => cubecobraIdChanged(e.target.value)}
                 />
                 <p className="text-danger">
-                  {errors.owner && errors.owner.message}
+                  {errors.url && errors.url.message}
                 </p>
               </FloatingLabel>
-            </Col>
-            <Col xs={6}>
-              <Button
-                variant="primary"
-                className="btn-lg"
-                disabled={getCubecobraDataDisabled}
-                onClick={() => getCubecobraData(getValues("cubecobraId"))}
-              >
-                Get cube data
-              </Button>
-              <p>{cubeDataText}</p>
             </Col>
           </Row>
           <Row>
