@@ -8,7 +8,6 @@ import {
 } from "../../types/Tournament";
 import { UserInfoContext } from "../provider/UserInfoProvider";
 import DeckBuildingSubmission from "./DeckBuildingSubmission";
-import DecksSubmittedProgressBar from "../staff/DecksSubmittedProgressBar";
 import HorizontalCard from "../general/HorizontalCard";
 import HorizontalIconCard from "../general/HorizontalIconCard";
 import HelmetTitle from "../general/HelmetTitle";
@@ -35,9 +34,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
   const [playerSeat, setPlayerSeat] = useState<DraftPodSeat>();
   const [playerPoolPhotoUrl, setPlayerPoolPhotoUrl] = useState<string>();
   const [deckBuildingDone, setDeckBuildingDone] = useState<boolean>(false);
-  const [buildingRemaining, setBuildingRemaining] = useState<number>(0);
   const [totalPlayers, setTotalPlayers] = useState<number>(0);
-  const [playerPickedCards, setPlayerPickedCards] = useState<PickedCard[]>([]);
   const [_deckBuildingStatus, setDeckBuildingStatus] = useState<
     DeckBuildingDto[]
   >([]);
@@ -49,7 +46,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
       try {
         const draftPod = await ApiClient.getDraftPodForUser(
           draft.id,
-          user?.id ?? 0,
+          user?.id ?? 0
         );
         setPlayerPod(draftPod);
         setPlayerSeat(draftPod.seats[0]);
@@ -87,21 +84,8 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
   // Process picked cards and update deck building status
   useEffect(() => {
     if (playerPod && playerSeat) {
-      // iterate over cards in cube and check if there are picked cards assigned to user (via seat number)
-      const pickedCards: PickedCard[] = [];
-      for (const card of playerPod.cube?.cardlist?.cards ?? []) {
-        if (card.pickedCards && card.pickedCards.length > 0) {
-          for (const pickedCard of card.pickedCards) {
-            if (pickedCard.picker.seat === playerSeat?.seat) {
-              pickedCards.push(pickedCard);
-            }
-          }
-        }
-      }
-      setPlayerPickedCards(pickedCards);
-
-      // mark deck building done when user has POOLSIZE or more cards registered to them
-      setDeckBuildingDone(pickedCards.length >= POOLSIZE);
+      // mark deck building done when user has submitted a deck photo
+      setDeckBuildingDone(!!playerSeat.deckPhotoUrl);
 
       // get other seats for progress bar
       const seats: DraftPodSeat[] = [];
@@ -123,14 +107,8 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
       }));
 
       setDeckBuildingStatus(deckBuilding);
-
-      // update progress bar based on number of players done building
-      setBuildingRemaining(
-        deckBuilding.filter((seat) => seat.pickedCards.length < POOLSIZE)
-          .length,
-      );
     }
-  }, [playerPod, playerSeat, draft.pods, POOLSIZE, totalPlayers]);
+  }, [playerPod, playerSeat, draft.pods, totalPlayers]);
 
   if (user && draft && playerPod && playerSeat && playerCube) {
     return (
@@ -157,10 +135,6 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
             />
           </Container>
         </Row>
-        <DecksSubmittedProgressBar
-          remainingSubmissions={buildingRemaining}
-          totalPlayers={totalPlayers}
-        />
         <DeckBuildingSubmission
           seat={playerSeat}
           cube={playerCube}
@@ -168,8 +142,6 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
           tournamentId={tournament.id}
           done={deckBuildingDone}
           setDraft={setDraft}
-          setPlayerPickedCards={setPlayerPickedCards}
-          playerPickedCards={playerPickedCards}
           POOLSIZE={POOLSIZE}
         />
       </>
