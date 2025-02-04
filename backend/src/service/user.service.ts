@@ -13,7 +13,7 @@ export class UserService {
 
   constructor(
     @Inject("DataSource") private appDataSource: DataSource,
-    @Inject("PreferenceService") private preferenceService: PreferenceService,
+    @Inject("PreferenceService") private preferenceService: PreferenceService
   ) {
     this.repository = this.appDataSource.getRepository(User);
   }
@@ -23,7 +23,7 @@ export class UserService {
     lastName: string,
     email: string,
     password: string,
-    isDummy: boolean = false,
+    isDummy: boolean = false
   ): Promise<boolean> {
     // TODO improve return values
     try {
@@ -48,6 +48,20 @@ export class UserService {
         .createQueryBuilder()
         .delete()
         .from(User)
+        .where("id = :userId", { userId })
+        .execute();
+      return true;
+    } catch (err: unknown) {
+      return false;
+    }
+  }
+
+  async setPassword(userId: number, password: string): Promise<boolean> {
+    try {
+      this.appDataSource
+        .createQueryBuilder()
+        .update(User)
+        .set({ password: encodePassword(password) })
         .where("id = :userId", { userId })
         .execute();
       return true;
@@ -103,7 +117,7 @@ export class UserService {
 
     const allTournaments = uniqBy(
       [...enrolled, ...staffed],
-      (tournament) => tournament.id,
+      (tournament) => tournament.id
     );
     return allTournaments;
   }
@@ -118,7 +132,7 @@ export class UserService {
   }
 
   public async setCubePreferences(
-    preferences: UserCubePreferenceDto[],
+    preferences: UserCubePreferenceDto[]
   ): Promise<boolean> {
     let success = false;
     // delete all old preferences
@@ -126,7 +140,7 @@ export class UserService {
     await Promise.all(
       preferences.map(async (preference) => {
         success = await this.deleteCubePreferences(preference);
-      }),
+      })
     );
     // add new preferences
     await Promise.all(
@@ -135,21 +149,21 @@ export class UserService {
           preference.tournamentId,
           preference.playerId,
           preference.cubeId,
-          preference.points,
+          preference.points
         );
-      }),
+      })
     );
     return success;
   }
 
   public async deleteCubePreferences(
-    preferences: UserCubePreferenceDto,
+    preferences: UserCubePreferenceDto
   ): Promise<boolean> {
     let success = false;
     // deletes all preferences assigned to tournamentId & playerId
     success = await this.preferenceService.deletePreference(
       preferences.tournamentId,
-      preferences.playerId,
+      preferences.playerId
     );
     return success;
   }

@@ -1,5 +1,5 @@
-import { Col, Container, Row, Button } from "react-bootstrap";
-import { get, post } from "../../services/ApiService";
+import { Col, Container, Row, Button, FloatingLabel } from "react-bootstrap";
+import { get, post, put } from "../../services/ApiService";
 import { useIsAdmin } from "../../utils/auth";
 import Loading from "../general/Loading";
 import { useEffect, useMemo, useState } from "react";
@@ -8,6 +8,7 @@ import HelmetTitle from "../general/HelmetTitle";
 import BackButton from "../general/BackButton";
 import { toast } from "react-toastify";
 import { User } from "../../types/User";
+import { Form } from "react-bootstrap";
 import { XOctagonFill } from "react-bootstrap-icons";
 import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
@@ -19,6 +20,9 @@ function ManageUsers() {
   const [item, setItem] = useState<Item>(); // The selected item will be stored in this state.
   const [value, setValue] = useState<string>();
   const [selectedUser, setSelectedUser] = useState("No user selected");
+  const [password1, setPassword1] = useState<string>();
+  const [password2, setPassword2] = useState<string>();
+
   const [modal, setModal] = useState<VerticallyCenteredModalProps>({
     show: false,
     onHide: () => null,
@@ -40,7 +44,7 @@ function ManageUsers() {
         // node: option.name, // use a custom ReactNode to display the option
         ...user, // pass along any other properties to access in your onSelect callback
       })),
-    [allUsers],
+    [allUsers]
   );
 
   useEffect(() => {
@@ -55,16 +59,47 @@ function ManageUsers() {
 
   function handleSelection(item: Item) {
     setItem(item);
-    console.log(item);
-    setSelectedUser("Delete: " + item.value);
+    setSelectedUser(item.value);
     setValue(undefined); // Custom behavior: Clear input field once a value has been selected
+  }
+
+  function setPasswordForUser() {
+    if (item) {
+      const userId = item.id;
+      put(`/user/password/${userId}`, { password: password1 }).then(
+        async (resp) => {
+          const success = (await resp.json()) as boolean;
+          if (success) {
+            toast.success("Set password for user " + item.value);
+            setItem(undefined);
+            setSelectedUser("No player selected");
+          } else {
+            console.log("password change failed");
+          }
+        }
+      );
+    } else {
+      console.log("no player selected");
+    }
+  }
+
+  function handleSetPasswordClick() {
+    setModal({
+      show: true,
+      onHide: () => null,
+      heading: "Confirm password change",
+      text: "Are you sure you want to set password for: " + item.value + "?",
+      actionText: "Confirm password change",
+      actionFunction: setPasswordForUser,
+      variant: "info",
+    });
   }
 
   function deleteUser() {
     if (item) {
       const userId = item.id;
       console.log("deleting user " + item.value + ", id: " + userId);
-      post(`/deleteUser/${userId}`, {}).then(async (resp) => {
+      post(`/user/delete/${userId}`, {}).then(async (resp) => {
         const success = (await resp.json()) as boolean;
         if (success) {
           toast.success("Deleted " + item.value);
@@ -102,10 +137,8 @@ function ManageUsers() {
       </Row>
       <Row>
         <Col xs={12}>
-          <h2>Delete User</h2>
-          <p className="lead">Be careful! Deletion is final.</p>
           <DatalistInput
-            label="Delete user"
+            label="Search user"
             placeholder="Type to search..."
             items={items}
             selectedItem={item}
@@ -116,10 +149,37 @@ function ManageUsers() {
             }}
           />
         </Col>
-        <Col xs={12} className="my-3 d-grid">
-          <Button variant="primary" onClick={handleDeleteClick}>
+        <Col xs={6} className="my-6 d-grid">
+          <FloatingLabel label="Password">
+            <Form.Control
+              type="password"
+              value={password1}
+              placeholder="Password"
+              onChange={(event) => setPassword1(event.target.value)}
+            />
+          </FloatingLabel>
+          <FloatingLabel label="Repeat password">
+            <Form.Control
+              type="password"
+              value={password2}
+              placeholder="Repeat password"
+              onChange={(event) => setPassword2(event.target.value)}
+            />
+          </FloatingLabel>
+          <Button
+            variant="primary"
+            disabled={password1 !== password2}
+            onClick={handleSetPasswordClick}
+          >
+            Set password for {selectedUser}
+          </Button>
+        </Col>
+        <Col xs={3}></Col>
+        <Col xs={3} className="my-3 d-grid">
+          <Button variant="danger" onClick={handleDeleteClick}>
             <div className="icon-link">
-              <XOctagonFill className="fs-4" /> {selectedUser}
+              <XOctagonFill className="fs-4" />{" "}
+              {item ? "Delete: " + selectedUser : "No user selected"}
             </div>
           </Button>
         </Col>

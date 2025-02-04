@@ -683,7 +683,6 @@
 					}
 				},
 				"required": [
-					"tokens",
 					"quantity",
 					"scryfallId"
 				],
@@ -1760,12 +1759,6 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"cards": {
-										"items": {
-											"$ref": "#/components/schemas/CubeCardDto"
-										},
-										"type": "array"
-									},
 									"imageUrl": {
 										"type": "string"
 									},
@@ -1780,19 +1773,14 @@
 									},
 									"title": {
 										"type": "string"
-									},
-									"cubecobraId": {
-										"type": "string"
 									}
 								},
 								"required": [
-									"cards",
 									"imageUrl",
 									"owner",
 									"url",
 									"description",
-									"title",
-									"cubecobraId"
+									"title"
 								],
 								"type": "object"
 							}
@@ -1828,12 +1816,6 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"cards": {
-										"items": {
-											"$ref": "#/components/schemas/CubeCardDto"
-										},
-										"type": "array"
-									},
 									"imageUrl": {
 										"type": "string"
 									},
@@ -1855,7 +1837,6 @@
 									}
 								},
 								"required": [
-									"cards",
 									"imageUrl",
 									"owner",
 									"url",
@@ -4074,6 +4055,90 @@
 								"required": [
 									"password",
 									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/delete/{userId}": {
+			"post": {
+				"operationId": "DeleteUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user/password/{userId}": {
+			"put": {
+				"operationId": "SetPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"admin": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"password": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"password"
 								],
 								"type": "object"
 							}

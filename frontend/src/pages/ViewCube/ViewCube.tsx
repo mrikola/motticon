@@ -122,7 +122,7 @@ const ViewCube = () => {
                     (lc) =>
                       lc.card &&
                       lc.card.colors.length === 1 &&
-                      lc.card.colors[0] === color,
+                      lc.card.colors[0] === color
                   ).length > 0
                 ) {
                   return (
@@ -134,7 +134,7 @@ const ViewCube = () => {
                             lc.card &&
                             lc.card.colors.length === 1 &&
                             lc.card.colors[0] === color &&
-                            lc.card.type.includes(cardtype),
+                            lc.card.type.includes(cardtype)
                         );
                         if (typeCards.length > 0) {
                           return (
@@ -147,7 +147,7 @@ const ViewCube = () => {
                                   {typeCards
                                     .sort(
                                       (a, b) =>
-                                        (a.card?.cmc ?? 0) - (b.card?.cmc ?? 0),
+                                        (a.card?.cmc ?? 0) - (b.card?.cmc ?? 0)
                                     )
                                     .map((listedCard, index) => (
                                       <tr key={index}>

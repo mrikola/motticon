@@ -9,6 +9,7 @@ import {
   Body,
   Response,
   Security,
+  Put,
 } from "tsoa";
 import {
   PlayerTournamentInfo,
@@ -37,7 +38,7 @@ export class UserController extends Controller {
   constructor(
     private userService: UserService,
     private enrollmentService: EnrollmentService,
-    private matchService: MatchService,
+    private matchService: MatchService
   ) {
     super();
   }
@@ -51,7 +52,7 @@ export class UserController extends Controller {
       firstName,
       lastName,
       email,
-      password,
+      password
     );
 
     if (success) {
@@ -81,20 +82,20 @@ export class UserController extends Controller {
   @Get("{id}/tournaments")
   @Security("loggedIn")
   public async getUsersTournaments(
-    @Path() id: number,
+    @Path() id: number
   ): Promise<TournamentDto[]> {
     return (await this.userService.getUsersTournaments(id)).map(
-      tournamentToDto,
+      tournamentToDto
     );
   }
 
   @Get("{id}/staff")
   @Security("loggedIn")
   public async getTournamentsStaffed(
-    @Path() id: number,
+    @Path() id: number
   ): Promise<TournamentDto[]> {
     return (await this.userService.getTournamentsStaffed(id)).map(
-      tournamentToDto,
+      tournamentToDto
     );
   }
 
@@ -102,7 +103,7 @@ export class UserController extends Controller {
   @Security("loggedIn")
   public async getUserTournamentInfo(
     @Path() id: number,
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<PlayerTournamentInfo> {
     return await this.enrollmentService.getUserTournamentInfo(id, tournamentId);
   }
@@ -116,7 +117,7 @@ export class UserController extends Controller {
   @Delete("preferences")
   @Security("loggedIn")
   public async deleteCubePreferences(
-    @Body() preferences: any,
+    @Body() preferences: any
   ): Promise<boolean> {
     return await this.userService.deleteCubePreferences(preferences);
   }
@@ -125,7 +126,7 @@ export class UserController extends Controller {
   @Security("loggedIn")
   public async getPlayerMatchHistory(
     @Path() userId: number,
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<MatchDto[]> {
     return (
       await this.matchService.getPlayerMatchHistory(userId, tournamentId)
@@ -136,7 +137,7 @@ export class UserController extends Controller {
   @Response<LoginResponse>(200, "Success")
   @Response(401, "Unauthorized")
   public async login(
-    @Body() credentials: { email: string; password: string },
+    @Body() credentials: { email: string; password: string }
   ): Promise<LoginResponse> {
     const token = await doLogin(credentials.email, credentials.password);
     if (!token) {
@@ -144,5 +145,20 @@ export class UserController extends Controller {
       return;
     }
     return { token };
+  }
+
+  @Post("/delete/:userId")
+  @Security("admin")
+  public async deleteUser(@Path() userId: number) {
+    return await this.userService.deleteUser(userId);
+  }
+
+  @Put("/password/:userId")
+  @Security("admin")
+  public async setPassword(
+    @Path() userId: number,
+    @Body() body: { password: string }
+  ) {
+    return await this.userService.setPassword(userId, body.password);
   }
 }

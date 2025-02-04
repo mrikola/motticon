@@ -232,7 +232,7 @@ const CreateTournament = () => {
             <Col xs={6}>
               <Form.Label>Player count</Form.Label>
               <Form.Select {...register("players")} className="mb-3">
-                {[8, 16, 24, 32, 48, 64].map((count) => (
+                {[8, 16, 24, 32, 48, 64, 96].map((count) => (
                   <option key={count} value={count}>
                     {count}
                   </option>

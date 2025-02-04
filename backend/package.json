@@ -22,6 +22,7 @@
       "@fast-csv/format": "^5.0.0",
       "@tsoa/runtime": "^6.6.0",
       "bcrypt": "^5.1.1",
+      "concurrently": "^9.1.2",
       "cors": "^2.8.5",
       "elo-rank": "^1.0.4",
       "express": "4.21.2",
@@ -40,7 +41,7 @@
       "typeorm": "0.3.20"
    },
    "scripts": {
-      "dev": "nodemon -L --watch 'src/**/*.ts' --exec ts-node src/index.ts",
+      "dev": "npx concurrently \"nodemon -L --watch 'src/**/*.ts' --exec ts-node src/index.ts\" \"nodemon -L --watch 'src/**/*.controller.ts' --exec tsoa spec-and-routes\"",
       "start": "npx ts-node src/index.ts",
       "typeorm": "typeorm-ts-node-commonjs -d ./src/data-source.ts",
       "fixtures": "docker compose exec db psql -U postgres -d motticon -f /home/fixtures.sql",
