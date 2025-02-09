@@ -71,7 +71,7 @@ const ViewCube = () => {
                     path={`/tournament/${tournamentId}/cubes/`}
                   />
                 ) : (
-                  <Row className="mt-3 my-md-4">
+                  <Row className="mt-3">
                     <BackButton buttonText="Back to cubes" path={`/cubes/`} />
                   </Row>
                 )}
