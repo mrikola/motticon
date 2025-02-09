@@ -12,7 +12,7 @@ const Footer = () => {
           All card images, mana symbols, expansions and art related to Magic the
           Gathering is a property of Wizards of the Coast/Hasbro.
         </p>
-        <p className="text-center text-body-secondary">© 2024 MottiCon</p>
+        <p className="text-center text-body-secondary">© 2025 MottiCon</p>
       </Container>
     </footer>
   );
