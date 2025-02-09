@@ -13,6 +13,7 @@ import Standings from "./pages/Standings/Standings";
 import Ongoing from "./pages/Tournament/Ongoing";
 import Landing from "./pages/Landing/Landing";
 import StaffView from "./pages/Staff/StaffView";
+import StaffMatchHistory from "./pages/Staff/StaffMatchHistory";
 import Tournaments from "./pages/Tournament/Tournaments";
 import TournamentView from "./pages/Tournament/TournamentView";
 import AdminPage from "./pages/Admin/AdminPage";
@@ -97,6 +98,10 @@ function App() {
             {
               path: "tournament/:tournamentId/pods",
               Component: DraftPods,
+            },
+            {
+              path: "tournament/:tournamentId/matches/all",
+              Component: StaffMatchHistory,
             },
             {
               path: "tournament/:tournamentId/matches/:userId",

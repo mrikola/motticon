@@ -1,5 +1,10 @@
 import { Col, Row } from "react-bootstrap";
-import { CardImage, ListOl, PeopleFill } from "react-bootstrap-icons";
+import {
+  CardImage,
+  InfoCircleFill,
+  ListOl,
+  PeopleFill,
+} from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
 type Props = {
@@ -41,6 +46,18 @@ function Staff({ tournamentId }: Props) {
           >
             <div className="icon-link text-light">
               <PeopleFill className="fs-3" /> Manage players
+            </div>
+          </Link>
+        </Col>
+      </Row>
+      <Row className="my-3">
+        <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
+          <Link
+            to={`/tournament/${tournamentId}/matches/all`}
+            className="btn-info btn btn-lg"
+          >
+            <div className="icon-link text-light">
+              <InfoCircleFill className="fs-3" /> View match history
             </div>
           </Link>
         </Col>
