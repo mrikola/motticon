@@ -31,6 +31,7 @@ import ManagePlayers from "./pages/Staff/ManagePlayers";
 import CVTest from "./pages/Test/CVTest";
 import AdminFunctions from "./components/admin/AdminFunctions";
 import DeckCheckTest from "./pages/Test/DeckCheckTest";
+import MatchHistory from "./pages/Tournament/MatchHistory";
 
 function App() {
   const routes: RouteObject[] = [
@@ -96,6 +97,10 @@ function App() {
             {
               path: "tournament/:tournamentId/pods",
               Component: DraftPods,
+            },
+            {
+              path: "tournament/:tournamentId/matches/:userId",
+              Component: MatchHistory,
             },
             {
               path: "tournament/:tournamentId/testPreferencesTable",

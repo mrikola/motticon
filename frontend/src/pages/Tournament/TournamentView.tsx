@@ -25,6 +25,7 @@ import GoToPods from "./TournamentView/GoToPods";
 import GoToManageStaff from "./TournamentView/GoToManageStaff";
 import { toast } from "react-toastify";
 import { Enrollment } from "../../types/User";
+import GoToMatchHistory from "./TournamentView/GoToMatchHistory";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
@@ -42,7 +43,7 @@ const TournamentView = () => {
       user && tournamentId
         ? isUserTournamentStaff(user, Number(tournamentId))
         : false,
-    [user, tournamentId],
+    [user, tournamentId]
   );
 
   const isAdmin = user?.isAdmin;
@@ -52,10 +53,10 @@ const TournamentView = () => {
       activeTournament
         ? formatTournamentDate(
             activeTournament.startDate,
-            activeTournament.endDate,
+            activeTournament.endDate
           )
         : "",
-    [activeTournament],
+    [activeTournament]
   );
 
   const checkEnrolled = useCallback(
@@ -64,7 +65,7 @@ const TournamentView = () => {
         setIsEnrolled(true);
       }
     },
-    [user?.id],
+    [user?.id]
   );
 
   const freeSeatsUpdater = useCallback((increase: number) => {
@@ -92,14 +93,14 @@ const TournamentView = () => {
       setCubes(cubes);
       setFreeSeats(calculateFreeSeats(tournamentInfo.tournament));
       setNumberOfPods(
-        (pods.drafts ?? []).filter((draft) => draft.pods.length > 0).length,
+        (pods.drafts ?? []).filter((draft) => draft.pods.length > 0).length
       );
       checkEnrolled(tournamentInfo.enrollment ?? null);
 
       // Store tournament ID
       sessionStorage.setItem(
         "currentTournament",
-        tournamentInfo.tournament.id.toString(),
+        tournamentInfo.tournament.id.toString()
       );
 
       // Fetch round data if tournament is not pending
@@ -194,6 +195,14 @@ const TournamentView = () => {
       {isEnrolled && numberOfPods > 0 && (
         <GoToPods tournamentId={activeTournament.id} />
       )}
+      {isEnrolled &&
+        activeTournament.status !== "pending" &&
+        newestRoundNumber > 0 && (
+          <GoToMatchHistory
+            tournamentId={activeTournament.id}
+            userId={user?.id}
+          />
+        )}
 
       {activeTournament.status === "pending" && (
         <Enroll

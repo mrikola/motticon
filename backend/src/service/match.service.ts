@@ -47,7 +47,7 @@ export class MatchService {
 
   async getMatchesForRoundByPlayers(
     roundId: number,
-    playerIds: number[],
+    playerIds: number[]
   ): Promise<Match[]> {
     const matches = await this.repository
       .createQueryBuilder("match")
@@ -59,8 +59,8 @@ export class MatchService {
         new Brackets((qb) =>
           qb
             .where('match."player1Id" in (:...playerIds)', { playerIds })
-            .orWhere('match."player2Id" in (:...playerIds)', { playerIds }),
-        ),
+            .orWhere('match."player2Id" in (:...playerIds)', { playerIds })
+        )
       )
       .getMany();
     return matches;
@@ -71,7 +71,7 @@ export class MatchService {
     roundId: number,
     resultSubmittedBy: number,
     player1GamesWon: number,
-    player2GamesWon: number,
+    player2GamesWon: number
   ): Promise<Match> {
     await this.repository
       .createQueryBuilder("match")
@@ -92,7 +92,7 @@ export class MatchService {
     matchId: number,
     resultSubmittedBy: number,
     player1GamesWon: number,
-    player2GamesWon: number,
+    player2GamesWon: number
   ): Promise<Match[]> {
     await this.repository
       .createQueryBuilder("match")
@@ -113,8 +113,9 @@ export class MatchService {
     return await this.repository
       .createQueryBuilder("match")
       .leftJoinAndSelect("match.round", "round")
-      .leftJoinAndSelect("round.tournament", "tournament")
-      .where("tournament.id = :tournamentId", { tournamentId })
+      .leftJoinAndSelect("match.player1", "player1")
+      .leftJoinAndSelect("match.player2", "player2")
+      .where("round.tournamentId = :tournamentId", { tournamentId })
       .andWhere("(match.player1Id = :userId OR match.player2Id = :userId)", {
         userId,
       })
