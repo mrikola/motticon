@@ -27,11 +27,11 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
             "Cancelled enrollment for " +
               player.firstName +
               " " +
-              player.lastName,
+              player.lastName
           );
           setEnrollments(tournament.enrollments);
         }
-      },
+      }
     );
   }
 
@@ -56,7 +56,7 @@ const ManageEnrollments = ({ tournamentId }: Props) => {
     return (
       <>
         <Row className="mt-3">
-          <h2>Manage tournament enrollment</h2>
+          <h2>Manage tournament enrollment 2</h2>
         </Row>
         <Row>
           <Col xs={12}>

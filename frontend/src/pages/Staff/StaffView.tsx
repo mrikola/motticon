@@ -10,7 +10,6 @@ import { useIsTournamentStaff } from "../../utils/auth";
 import Loading from "../../components/general/Loading";
 import ManageRound from "../../components/staff/ManageRound";
 import ManageDraft from "../../components/staff/ManageDraft";
-import ManageEnrollments from "../../components/staff/ManageEnrollments";
 import NextDraft from "../../components/staff/NextDraft";
 import StaffStandingsTable from "../../components/staff/StaffStandingsTable";
 import BackButton from "../../components/general/BackButton";
@@ -158,7 +157,6 @@ function StaffView() {
               </Button>
             </Col>
           </Row>
-          <ManageEnrollments tournamentId={Number(tournamentId)} />
         </>
       )}
       {tournament.status === "completed" && (
