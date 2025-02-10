@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { get, post } from "../../services/ApiService";
+import { get, post, put } from "../../services/ApiService";
 import { Cube, CubeSelection } from "../../types/Cube";
 import { Container, Row, Form, Button, Col } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
@@ -25,7 +25,7 @@ const UserCubePreferences = () => {
   const [priorityArray, setPriorityArray] = useState<number[]>([]);
 
   const [previousSelections, setPreviousSelections] = useState<CubeSelection[]>(
-    [],
+    []
   );
 
   function addPreferences() {
@@ -48,7 +48,7 @@ const UserCubePreferences = () => {
     if (preferences.length === 0) {
       resetPreferences();
     } else {
-      post(`/cubePreferences`, preferences).then(async (_resp) => {
+      post(`/tournament/preferences`, preferences).then(async (_resp) => {
         const success = (await _resp.json()) as boolean;
         if (success) {
           toast.success("Preferences saved");
@@ -67,7 +67,7 @@ const UserCubePreferences = () => {
       points: "",
     };
     // endpoint deletes all cube preferences for tournamentId & userId
-    post(`/cubePreferences/delete`, send).then(async (_resp) => {
+    put(`/tournament/preferences/delete`, send).then(async (_resp) => {
       const success = (await _resp.json()) as boolean;
       if (success) {
         toast.success("Preferences saved");
@@ -102,7 +102,7 @@ const UserCubePreferences = () => {
       const fetchData = async () => {
         // get existing preferences
         const resp = await get(
-          `/tournament/${tournamentId}/preferences/${user?.id}`,
+          `/tournament/${tournamentId}/preferences/${user?.id}`
         );
         const prefs = (await resp.json()) as Preference[];
         // sort existing preferences by point value for correct rendering of CubeSelects
@@ -134,7 +134,7 @@ const UserCubePreferences = () => {
         value: String(cube.id),
         displayText: cube.title,
         disabled: false,
-      })),
+      }))
     );
   }, [cubes]);
 
@@ -150,8 +150,6 @@ const UserCubePreferences = () => {
     ...opt,
     disabled: Boolean(selectedOptions.find((so) => so?.key === opt.key)),
   }));
-
-  console.log("previous", previousSelections);
 
   return user &&
     cubes &&

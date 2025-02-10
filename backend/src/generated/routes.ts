@@ -328,6 +328,20 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"opponentMatchWinPercentage":{"dataType":"double","required":true},"draftsWon":{"dataType":"double","required":true},"points":{"dataType":"double","required":true},"tournament":{"ref":"TournamentDto","required":true},"player":{"ref":"PlayerDto","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Preference": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "tournamentId": {"dataType":"double","required":true},
+            "tournament": {"ref":"Tournament","required":true},
+            "playerId": {"dataType":"double","required":true},
+            "player": {"ref":"User","required":true},
+            "cube": {"ref":"Cube","required":true},
+            "points": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "PlayerWithRatingDto": {
         "dataType": "refAlias",
         "type": {"dataType":"intersection","subSchemas":[{"ref":"PlayerDto"},{"dataType":"nestedObjectLiteral","nestedProperties":{"rating":{"dataType":"double","required":true}}}],"validators":{}},
@@ -2020,6 +2034,115 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTournamentController_setCubePreferences: Record<string, TsoaRoute.ParameterSchema> = {
+                preferences: {"in":"body","name":"preferences","required":true,"dataType":"any"},
+        };
+        app.post('/tournament/preferences',
+            authenticateMiddleware([{"loggedIn":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(TournamentController)),
+            ...(fetchMiddlewares<RequestHandler>(TournamentController.prototype.setCubePreferences)),
+
+            async function TournamentController_setCubePreferences(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsTournamentController_setCubePreferences, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<TournamentController>(TournamentController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'setCubePreferences',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTournamentController_deleteCubePreferences: Record<string, TsoaRoute.ParameterSchema> = {
+                preferences: {"in":"body","name":"preferences","required":true,"dataType":"any"},
+        };
+        app.put('/tournament/preferences/delete',
+            authenticateMiddleware([{"loggedIn":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(TournamentController)),
+            ...(fetchMiddlewares<RequestHandler>(TournamentController.prototype.deleteCubePreferences)),
+
+            async function TournamentController_deleteCubePreferences(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsTournamentController_deleteCubePreferences, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<TournamentController>(TournamentController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'deleteCubePreferences',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTournamentController_getPreferencesForUser: Record<string, TsoaRoute.ParameterSchema> = {
+                tournamentId: {"in":"path","name":"tournamentId","required":true,"dataType":"double"},
+                userId: {"in":"path","name":"userId","required":true,"dataType":"double"},
+        };
+        app.get('/tournament/:tournamentId/preferences/:userId',
+            authenticateMiddleware([{"loggedIn":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(TournamentController)),
+            ...(fetchMiddlewares<RequestHandler>(TournamentController.prototype.getPreferencesForUser)),
+
+            async function TournamentController_getPreferencesForUser(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsTournamentController_getPreferencesForUser, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<TournamentController>(TournamentController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getPreferencesForUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsTournamentController_startTournament: Record<string, TsoaRoute.ParameterSchema> = {
                 tournamentId: {"in":"path","name":"tournamentId","required":true,"dataType":"double"},
         };
@@ -2918,78 +3041,6 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'getUserTournamentInfo',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUserController_setCubePreferences: Record<string, TsoaRoute.ParameterSchema> = {
-                preferences: {"in":"body","name":"preferences","required":true,"dataType":"any"},
-        };
-        app.post('/user/preferences',
-            authenticateMiddleware([{"loggedIn":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(UserController)),
-            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.setCubePreferences)),
-
-            async function UserController_setCubePreferences(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_setCubePreferences, request, response });
-
-                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
-
-                const controller: any = await container.get<UserController>(UserController);
-                if (typeof controller['setStatus'] === 'function') {
-                controller.setStatus(undefined);
-                }
-
-              await templateService.apiHandler({
-                methodName: 'setCubePreferences',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUserController_deleteCubePreferences: Record<string, TsoaRoute.ParameterSchema> = {
-                preferences: {"in":"body","name":"preferences","required":true,"dataType":"any"},
-        };
-        app.delete('/user/preferences',
-            authenticateMiddleware([{"loggedIn":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(UserController)),
-            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.deleteCubePreferences)),
-
-            async function UserController_deleteCubePreferences(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_deleteCubePreferences, request, response });
-
-                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
-
-                const controller: any = await container.get<UserController>(UserController);
-                if (typeof controller['setStatus'] === 'function') {
-                controller.setStatus(undefined);
-                }
-
-              await templateService.apiHandler({
-                methodName: 'deleteCubePreferences',
                 controller,
                 response,
                 next,

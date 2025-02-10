@@ -19,6 +19,7 @@ import { MatchDto, matchToDto, RoundDto, roundToDto } from "../dto/round.dto";
 import { CubeDto, cubeToDto } from "../dto/cube.dto";
 import { ScoreService } from "../service/score.service";
 import { CubeService } from "../service/cube.service";
+import { UserService } from "../service/user.service";
 import { writeFileSync } from "fs";
 import path from "path";
 import { format } from "@fast-csv/format";
@@ -29,6 +30,7 @@ import { PairingsService } from "../service/pairings.service";
 import { DraftService } from "../service/draft.service";
 import { MatchService } from "../service/match.service";
 import { PlayerTournamentScoreDto, scoreToDto } from "../dto/user.dto";
+import { Preference } from "../entity/Preference";
 
 @Route("tournament")
 @Service()
@@ -41,6 +43,7 @@ export class TournamentController extends Controller {
     private pairingsService: PairingsService,
     private draftService: DraftService,
     private matchService: MatchService,
+    private userService: UserService
   ) {
     super();
   }
@@ -50,13 +53,13 @@ export class TournamentController extends Controller {
   @Response("200", "Success", { contentType: "text/csv" })
   public async generateCsvFromRound(
     @Path() tournamentId: number,
-    @Path() roundId: number,
+    @Path() roundId: number
   ): Promise<string> {
     const round = await this.tournamentService.getRound(tournamentId, roundId);
     const filePath = path.join(
       FILE_ROOT,
       tournamentId.toString(),
-      roundId.toString(),
+      roundId.toString()
     );
     createDirIfNotExists(filePath);
 
@@ -75,7 +78,7 @@ export class TournamentController extends Controller {
     });
 
     for (let match of round.matches.sort(
-      (a, b) => a.tableNumber - b.tableNumber,
+      (a, b) => a.tableNumber - b.tableNumber
     )) {
       const player1points =
         match.player1GamesWon > match.player2GamesWon ? 3 : 0;
@@ -107,7 +110,7 @@ export class TournamentController extends Controller {
   @Security("loggedIn")
   public async getAllTournaments(): Promise<TournamentDto[]> {
     return (await this.tournamentService.getAllTournaments()).map(
-      tournamentToDto,
+      tournamentToDto
     );
   }
 
@@ -115,7 +118,7 @@ export class TournamentController extends Controller {
   @Security("loggedIn")
   public async getFutureTournaments(): Promise<TournamentDto[]> {
     return (await this.tournamentService.getFutureTournaments()).map(
-      tournamentToDto,
+      tournamentToDto
     );
   }
 
@@ -123,7 +126,7 @@ export class TournamentController extends Controller {
   @Security("loggedIn")
   public async getPastTournaments(): Promise<TournamentDto[]> {
     return (await this.tournamentService.getPastTournaments()).map(
-      tournamentToDto,
+      tournamentToDto
     );
   }
 
@@ -131,57 +134,57 @@ export class TournamentController extends Controller {
   @Security("loggedIn")
   public async getOngoingTournaments(): Promise<TournamentDto[]> {
     return (await this.tournamentService.getOngoingTournaments()).map(
-      tournamentToDto,
+      tournamentToDto
     );
   }
 
   @Get("{tournamentId}")
   @Security("loggedIn")
   public async getTournament(
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.tournamentService.getTournament(tournamentId),
+      await this.tournamentService.getTournament(tournamentId)
     );
   }
 
   @Get("{tournamentId}/enrollment")
   @Security("loggedIn")
   public async getTournamentEnrollments(
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.tournamentService.getTournamentEnrollments(tournamentId),
+      await this.tournamentService.getTournamentEnrollments(tournamentId)
     );
   }
 
   @Get("{tournamentId}/drafts")
   @Security("loggedIn")
   public async getTournamentAndDrafts(
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.tournamentService.getTournamentAndDrafts(tournamentId),
+      await this.tournamentService.getTournamentAndDrafts(tournamentId)
     );
   }
 
   @Get("{tournamentId}/draft")
   @Security("loggedIn")
   public async getCurrentDraft(
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<DraftDto> {
     return draftToDto(
-      await this.tournamentService.getCurrentDraft(tournamentId),
+      await this.tournamentService.getCurrentDraft(tournamentId)
     );
   }
 
   @Get("{tournamentId}/round")
   @Security("loggedIn")
   public async getCurrentRound(
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<RoundDto> {
     return roundToDto(
-      await this.tournamentService.getCurrentRound(tournamentId),
+      await this.tournamentService.getCurrentRound(tournamentId)
     );
   }
 
@@ -190,20 +193,20 @@ export class TournamentController extends Controller {
   public async getMatch(
     @Path() _tournamentId: number,
     @Path() roundId: number,
-    @Path() playerId: number,
+    @Path() playerId: number
   ): Promise<MatchDto> {
     return matchToDto(
-      await this.tournamentService.getCurrentMatch(playerId, roundId),
+      await this.tournamentService.getCurrentMatch(playerId, roundId)
     );
   }
 
   @Get("{tournamentId}/round/recent")
   @Security("loggedIn")
   public async getMostRecentRound(
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<RoundDto> {
     return roundToDto(
-      await this.tournamentService.getMostRecentRound(tournamentId),
+      await this.tournamentService.getMostRecentRound(tournamentId)
     );
   }
 
@@ -211,7 +214,7 @@ export class TournamentController extends Controller {
   @Security("loggedIn")
   public async getStandings(
     @Path() tournamentId: number,
-    @Path() roundNumber: number,
+    @Path() roundNumber: number
   ): Promise<StandingsRow[]> {
     return await this.scoreService.getStandings(tournamentId, roundNumber);
   }
@@ -220,10 +223,10 @@ export class TournamentController extends Controller {
   @Security("loggedIn")
   public async getPreviousScore(
     @Path() tournamentId: number,
-    @Path() userId: number,
+    @Path() userId: number
   ): Promise<PlayerTournamentScoreDto> {
     return scoreToDto(
-      await this.scoreService.getPreviousScore(tournamentId, userId),
+      await this.scoreService.getPreviousScore(tournamentId, userId)
     );
   }
 
@@ -237,10 +240,10 @@ export class TournamentController extends Controller {
   @Security("loggedIn")
   public async enrollIntoTournament(
     @Path() tournamentId: number,
-    @Path() userId: number,
+    @Path() userId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.enrollmentService.enrollIntoTournament(tournamentId, userId),
+      await this.enrollmentService.enrollIntoTournament(tournamentId, userId)
     );
   }
 
@@ -248,7 +251,7 @@ export class TournamentController extends Controller {
   @Security("loggedIn")
   public async cancelEnrollment(
     @Path() tournamentId: number,
-    @Path() userId: number,
+    @Path() userId: number
   ): Promise<boolean> {
     return await this.enrollmentService.cancelEnrollment(tournamentId, userId);
   }
@@ -257,10 +260,36 @@ export class TournamentController extends Controller {
   @Security("loggedIn")
   public async dropFromTournament(
     @Path() tournamentId: number,
-    @Path() userId: number,
+    @Path() userId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.enrollmentService.dropFromTournament(tournamentId, userId),
+      await this.enrollmentService.dropFromTournament(tournamentId, userId)
+    );
+  }
+
+  @Post("preferences")
+  @Security("loggedIn")
+  public async setCubePreferences(@Body() preferences: any): Promise<boolean> {
+    return await this.userService.setCubePreferences(preferences);
+  }
+
+  @Put("preferences/delete")
+  @Security("loggedIn")
+  public async deleteCubePreferences(
+    @Body() preferences: any
+  ): Promise<boolean> {
+    return await this.userService.deleteCubePreferences(preferences);
+  }
+
+  @Get("{tournamentId}/preferences/{userId}")
+  @Security("loggedIn")
+  public async getPreferencesForUser(
+    @Path() tournamentId: number,
+    @Path() userId: number
+  ): Promise<Preference[]> {
+    return await this.tournamentService.getPreferencesForUser(
+      tournamentId,
+      userId
     );
   }
 
@@ -268,30 +297,30 @@ export class TournamentController extends Controller {
   @Put("{tournamentId}/start")
   @Security("staff")
   public async startTournament(
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.tournamentService.startTournament(tournamentId),
+      await this.tournamentService.startTournament(tournamentId)
     );
   }
 
   @Put("{tournamentId}/end")
   @Security("staff")
   public async endTournament(
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.tournamentService.endTournament(tournamentId),
+      await this.tournamentService.endTournament(tournamentId)
     );
   }
 
   @Post("{tournamentId}/draft/generate")
   @Security("staff")
   public async generateDrafts(
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.tournamentService.generateDrafts(tournamentId),
+      await this.tournamentService.generateDrafts(tournamentId)
     );
   }
 
@@ -299,10 +328,10 @@ export class TournamentController extends Controller {
   @Security("staff")
   public async initiateDraft(
     @Path() tournamentId: number,
-    @Path() draftId: number,
+    @Path() draftId: number
   ): Promise<DraftDto> {
     return draftToDto(
-      await this.tournamentService.initiateDraft(tournamentId, draftId),
+      await this.tournamentService.initiateDraft(tournamentId, draftId)
     );
   }
 
@@ -310,10 +339,10 @@ export class TournamentController extends Controller {
   @Security("staff")
   public async startDraft(
     @Path() tournamentId: number,
-    @Path() draftId: number,
+    @Path() draftId: number
   ): Promise<DraftDto> {
     return draftToDto(
-      await this.tournamentService.startDraft(tournamentId, draftId),
+      await this.tournamentService.startDraft(tournamentId, draftId)
     );
   }
 
@@ -321,10 +350,10 @@ export class TournamentController extends Controller {
   @Security("staff")
   public async endDraft(
     @Path() tournamentId: number,
-    @Path() draftId: number,
+    @Path() draftId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.tournamentService.endDraft(tournamentId, draftId),
+      await this.tournamentService.endDraft(tournamentId, draftId)
     );
   }
 
@@ -332,10 +361,10 @@ export class TournamentController extends Controller {
   @Security("staff")
   public async startRound(
     @Path() tournamentId: number,
-    @Path() roundId: number,
+    @Path() roundId: number
   ): Promise<RoundDto> {
     return roundToDto(
-      await this.tournamentService.startRound(tournamentId, roundId),
+      await this.tournamentService.startRound(tournamentId, roundId)
     );
   }
 
@@ -343,10 +372,10 @@ export class TournamentController extends Controller {
   @Security("staff")
   public async endRound(
     @Path() tournamentId: number,
-    @Path() roundId: number,
+    @Path() roundId: number
   ): Promise<RoundDto> {
     return roundToDto(
-      await this.tournamentService.endRound(tournamentId, roundId),
+      await this.tournamentService.endRound(tournamentId, roundId)
     );
   }
 
@@ -355,12 +384,12 @@ export class TournamentController extends Controller {
   public async generatePairings(
     @Path() tournamentId: number,
     @Path() draftId: number,
-    @Path() roundId: number,
+    @Path() roundId: number
   ): Promise<MatchDto[]> {
     return await this.pairingsService.generatePairings(
       tournamentId,
       draftId,
-      roundId,
+      roundId
     );
   }
 
@@ -368,10 +397,10 @@ export class TournamentController extends Controller {
   @Security("staff")
   public async staffCancelEnrollment(
     @Path() tournamentId: number,
-    @Path() userId: number,
+    @Path() userId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.enrollmentService.staffCancelEnrollment(tournamentId, userId),
+      await this.enrollmentService.staffCancelEnrollment(tournamentId, userId)
     );
   }
 
@@ -379,11 +408,11 @@ export class TournamentController extends Controller {
   @Security("staff")
   public async setDraftPoolReturned(
     @Path() tournamentId: number,
-    @Path() seatId: number,
+    @Path() seatId: number
   ): Promise<DraftDto> {
     console.log("returning draft pool for seat", seatId);
     return draftToDto(
-      await this.draftService.setDraftPoolReturned(tournamentId, seatId),
+      await this.draftService.setDraftPoolReturned(tournamentId, seatId)
     );
   }
 
@@ -397,7 +426,7 @@ export class TournamentController extends Controller {
       resultSubmittedBy: number;
       player1GamesWon: number;
       player2GamesWon: number;
-    },
+    }
   ): Promise<MatchDto[]> {
     const {
       roundId,
@@ -412,7 +441,7 @@ export class TournamentController extends Controller {
         matchId,
         resultSubmittedBy,
         player1GamesWon,
-        player2GamesWon,
+        player2GamesWon
       )
     ).map(matchToDto);
   }
@@ -421,7 +450,7 @@ export class TournamentController extends Controller {
   @Post("create")
   @Security("admin")
   public async createTournament(
-    @Body() tournamentData: any,
+    @Body() tournamentData: any
   ): Promise<TournamentDto> {
     const {
       name,
@@ -446,18 +475,18 @@ export class TournamentController extends Controller {
         startDate,
         endDate,
         cubeIds,
-        userEnrollmentEnabled,
-      ),
+        userEnrollmentEnabled
+      )
     );
   }
 
   @Get("{tournamentId}/staff")
   @Security("admin")
   public async getTournamentStaff(
-    @Path() tournamentId: number,
+    @Path() tournamentId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.tournamentService.getTournamentStaff(tournamentId),
+      await this.tournamentService.getTournamentStaff(tournamentId)
     );
   }
 
@@ -465,10 +494,10 @@ export class TournamentController extends Controller {
   @Security("admin")
   public async addToStaff(
     @Path() tournamentId: number,
-    @Path() userId: number,
+    @Path() userId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.tournamentService.addToStaff(tournamentId, userId),
+      await this.tournamentService.addToStaff(tournamentId, userId)
     );
   }
 
@@ -476,10 +505,10 @@ export class TournamentController extends Controller {
   @Security("admin")
   public async removeFromStaff(
     @Path() tournamentId: number,
-    @Path() userId: number,
+    @Path() userId: number
   ): Promise<TournamentDto> {
     return tournamentToDto(
-      await this.tournamentService.removeFromStaff(tournamentId, userId),
+      await this.tournamentService.removeFromStaff(tournamentId, userId)
     );
   }
 
@@ -487,10 +516,10 @@ export class TournamentController extends Controller {
   @Security("admin")
   public async setDeckPhotoForUser(
     @Path() tournamentId: number,
-    @Path() seatId: number,
+    @Path() seatId: number
   ): Promise<DraftDto> {
     return draftToDto(
-      await this.draftService.setDeckPhotoForUser(tournamentId, seatId),
+      await this.draftService.setDeckPhotoForUser(tournamentId, seatId)
     );
   }
 }

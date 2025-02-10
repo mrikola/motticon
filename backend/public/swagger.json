@@ -1183,6 +1183,46 @@
 				],
 				"type": "object"
 			},
+			"Preference": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"tournamentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"tournament": {
+						"$ref": "#/components/schemas/Tournament"
+					},
+					"playerId": {
+						"type": "number",
+						"format": "double"
+					},
+					"player": {
+						"$ref": "#/components/schemas/User"
+					},
+					"cube": {
+						"$ref": "#/components/schemas/Cube"
+					},
+					"points": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"tournamentId",
+					"tournament",
+					"playerId",
+					"player",
+					"cube",
+					"points"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"PlayerWithRatingDto": {
 				"allOf": [
 					{
@@ -2973,6 +3013,113 @@
 				]
 			}
 		},
+		"/tournament/preferences": {
+			"post": {
+				"operationId": "SetCubePreferences",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			}
+		},
+		"/tournament/preferences/delete": {
+			"put": {
+				"operationId": "DeleteCubePreferences",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			}
+		},
+		"/tournament/{tournamentId}/preferences/{userId}": {
+			"get": {
+				"operationId": "GetPreferencesForUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Preference"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/tournament/{tournamentId}/start": {
 			"put": {
 				"operationId": "StartTournament",
@@ -3912,66 +4059,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/user/preferences": {
-			"post": {
-				"operationId": "SetCubePreferences",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "boolean"
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"loggedIn": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {}
-						}
-					}
-				}
-			},
-			"delete": {
-				"operationId": "DeleteCubePreferences",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "boolean"
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"loggedIn": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {}
-						}
-					}
-				}
 			}
 		},
 		"/user/{userId}/tournament/{tournamentId}/matches": {

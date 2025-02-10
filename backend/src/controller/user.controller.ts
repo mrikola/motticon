@@ -4,7 +4,6 @@ import {
   Controller,
   Get,
   Post,
-  Delete,
   Path,
   Body,
   Response,
@@ -106,20 +105,6 @@ export class UserController extends Controller {
     @Path() tournamentId: number
   ): Promise<PlayerTournamentInfo> {
     return await this.enrollmentService.getUserTournamentInfo(id, tournamentId);
-  }
-
-  @Post("preferences")
-  @Security("loggedIn")
-  public async setCubePreferences(@Body() preferences: any): Promise<boolean> {
-    return await this.userService.setCubePreferences(preferences);
-  }
-
-  @Delete("preferences")
-  @Security("loggedIn")
-  public async deleteCubePreferences(
-    @Body() preferences: any
-  ): Promise<boolean> {
-    return await this.userService.deleteCubePreferences(preferences);
   }
 
   @Get("{userId}/tournament/{tournamentId}/matches")
