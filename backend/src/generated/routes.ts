@@ -109,7 +109,7 @@ const models: TsoaRoute.Models = {
             "drafts": {"dataType":"array","array":{"dataType":"refObject","ref":"Draft"},"required":true},
             "userEnrollmentEnabled": {"dataType":"boolean","required":true},
             "enrollments": {"dataType":"array","array":{"dataType":"refObject","ref":"Enrollment"},"required":true},
-            "cubes": {"dataType":"array","array":{"dataType":"refObject","ref":"Cube"},"required":true},
+            "cubeAllocations": {"dataType":"array","array":{"dataType":"refObject","ref":"TournamentCube"},"required":true},
             "staffMembers": {"dataType":"array","array":{"dataType":"refObject","ref":"User"},"required":true},
         },
         "additionalProperties": false,
@@ -145,7 +145,7 @@ const models: TsoaRoute.Models = {
             "url": {"dataType":"string","required":true},
             "imageUrl": {"dataType":"string","required":true},
             "cardlist": {"ref":"CardList","required":true},
-            "tournaments": {"dataType":"array","array":{"dataType":"refObject","ref":"Tournament"},"required":true},
+            "tournamentAllocations": {"dataType":"array","array":{"dataType":"refObject","ref":"TournamentCube"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -206,6 +206,18 @@ const models: TsoaRoute.Models = {
             "seat": {"dataType":"double","required":true},
             "deckPhotoUrl": {"dataType":"string","required":true},
             "draftPoolReturned": {"dataType":"boolean","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TournamentCube": {
+        "dataType": "refObject",
+        "properties": {
+            "tournament": {"ref":"Tournament","required":true},
+            "tournamentId": {"dataType":"double","required":true},
+            "cube": {"ref":"Cube","required":true},
+            "cubeId": {"dataType":"double","required":true},
+            "count": {"dataType":"double","required":true},
         },
         "additionalProperties": false,
     },
@@ -290,12 +302,17 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TournamentDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"staffMembers":{"dataType":"array","array":{"dataType":"refAlias","ref":"PlayerDto"},"required":true},"cubes":{"dataType":"array","array":{"dataType":"refAlias","ref":"CubeDto"},"required":true},"enrollments":{"dataType":"array","array":{"dataType":"refAlias","ref":"EnrollmentDto"},"required":true},"userEnrollmentEnabled":{"dataType":"boolean","required":true},"drafts":{"dataType":"array","array":{"dataType":"refAlias","ref":"DraftDto"},"required":true},"status":{"ref":"TournamentStatus","required":true},"preferencesRequired":{"dataType":"double","required":true},"totalSeats":{"dataType":"double","required":true},"entryFee":{"dataType":"double","required":true},"endDate":{"dataType":"datetime","required":true},"startDate":{"dataType":"datetime","required":true},"description":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"id":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"staffMembers":{"dataType":"array","array":{"dataType":"refAlias","ref":"PlayerDto"},"required":true},"cubeAllocations":{"dataType":"array","array":{"dataType":"refAlias","ref":"TournamentCubeDto"},"required":true},"enrollments":{"dataType":"array","array":{"dataType":"refAlias","ref":"EnrollmentDto"},"required":true},"userEnrollmentEnabled":{"dataType":"boolean","required":true},"drafts":{"dataType":"array","array":{"dataType":"refAlias","ref":"DraftDto"},"required":true},"status":{"ref":"TournamentStatus","required":true},"preferencesRequired":{"dataType":"double","required":true},"totalSeats":{"dataType":"double","required":true},"entryFee":{"dataType":"double","required":true},"endDate":{"dataType":"datetime","required":true},"startDate":{"dataType":"datetime","required":true},"description":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"id":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EnrollmentDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"dropped":{"dataType":"boolean","required":true},"paid":{"dataType":"boolean","required":true},"player":{"ref":"PlayerDto","required":true},"tournament":{"ref":"TournamentDto","required":true},"id":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TournamentCubeDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"count":{"dataType":"double","required":true},"cube":{"ref":"CubeDto","required":true},"tournament":{"ref":"TournamentDto","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RoundStatus": {

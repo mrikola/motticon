@@ -16,7 +16,7 @@ export const AppDataSource = new DataSource({
 });
 
 export const setupDatabase = async (
-  dataSource: DataSource = AppDataSource,
+  dataSource: DataSource = AppDataSource
 ): Promise<void> => {
   try {
     console.log("Setting up database...");

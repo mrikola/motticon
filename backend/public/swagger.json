@@ -246,9 +246,9 @@
 						},
 						"type": "array"
 					},
-					"cubes": {
+					"cubeAllocations": {
 						"items": {
-							"$ref": "#/components/schemas/Cube"
+							"$ref": "#/components/schemas/TournamentCube"
 						},
 						"type": "array"
 					},
@@ -272,7 +272,7 @@
 					"drafts",
 					"userEnrollmentEnabled",
 					"enrollments",
-					"cubes",
+					"cubeAllocations",
 					"staffMembers"
 				],
 				"type": "object",
@@ -353,9 +353,9 @@
 					"cardlist": {
 						"$ref": "#/components/schemas/CardList"
 					},
-					"tournaments": {
+					"tournamentAllocations": {
 						"items": {
-							"$ref": "#/components/schemas/Tournament"
+							"$ref": "#/components/schemas/TournamentCube"
 						},
 						"type": "array"
 					}
@@ -368,7 +368,7 @@
 					"url",
 					"imageUrl",
 					"cardlist",
-					"tournaments"
+					"tournamentAllocations"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -551,6 +551,37 @@
 					"seat",
 					"deckPhotoUrl",
 					"draftPoolReturned"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TournamentCube": {
+				"properties": {
+					"tournament": {
+						"$ref": "#/components/schemas/Tournament"
+					},
+					"tournamentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"cube": {
+						"$ref": "#/components/schemas/Cube"
+					},
+					"cubeId": {
+						"type": "number",
+						"format": "double"
+					},
+					"count": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"tournament",
+					"tournamentId",
+					"cube",
+					"cubeId",
+					"count"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -909,9 +940,9 @@
 						},
 						"type": "array"
 					},
-					"cubes": {
+					"cubeAllocations": {
 						"items": {
-							"$ref": "#/components/schemas/CubeDto"
+							"$ref": "#/components/schemas/TournamentCubeDto"
 						},
 						"type": "array"
 					},
@@ -966,7 +997,7 @@
 				},
 				"required": [
 					"staffMembers",
-					"cubes",
+					"cubeAllocations",
 					"enrollments",
 					"userEnrollmentEnabled",
 					"drafts",
@@ -1007,6 +1038,26 @@
 					"player",
 					"tournament",
 					"id"
+				],
+				"type": "object"
+			},
+			"TournamentCubeDto": {
+				"properties": {
+					"count": {
+						"type": "number",
+						"format": "double"
+					},
+					"cube": {
+						"$ref": "#/components/schemas/CubeDto"
+					},
+					"tournament": {
+						"$ref": "#/components/schemas/TournamentDto"
+					}
+				},
+				"required": [
+					"count",
+					"cube",
+					"tournament"
 				],
 				"type": "object"
 			},

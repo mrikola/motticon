@@ -362,7 +362,7 @@ const cubeConsIntoPreferentialPodAssignments = (
           owner: "baz",
           url: "boz",
           imageUrl: "fuu",
-          tournaments: [],
+          tournamentAllocations: [],
           cardlist: null,
         },
         players: pod.players.map(

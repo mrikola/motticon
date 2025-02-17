@@ -1,4 +1,11 @@
 import { CardList } from "./Card";
+import { Tournament } from "./Tournament";
+
+export type CubeAllocation = {
+  cube: Cube;
+  tournament: Tournament;
+  count: number;
+};
 
 export type Cube = {
   id: number;
