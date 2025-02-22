@@ -637,6 +637,12 @@
 			},
 			"CubeDto": {
 				"properties": {
+					"tournamentAllocations": {
+						"items": {
+							"$ref": "#/components/schemas/TournamentCubeDto"
+						},
+						"type": "array"
+					},
 					"cardlist": {
 						"allOf": [
 							{
@@ -666,6 +672,7 @@
 					}
 				},
 				"required": [
+					"tournamentAllocations",
 					"cardlist",
 					"imageUrl",
 					"url",
@@ -673,131 +680,6 @@
 					"description",
 					"title",
 					"id"
-				],
-				"type": "object"
-			},
-			"TokenDto": {
-				"properties": {
-					"scryfallId": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"scryfallId"
-				],
-				"type": "object"
-			},
-			"CubeCardDto": {
-				"properties": {
-					"tokens": {
-						"items": {
-							"$ref": "#/components/schemas/TokenDto"
-						},
-						"type": "array"
-					},
-					"quantity": {
-						"type": "number",
-						"format": "double"
-					},
-					"scryfallId": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"quantity",
-					"scryfallId"
-				],
-				"type": "object"
-			},
-			"CubeDiffDto": {
-				"properties": {
-					"newCards": {
-						"items": {
-							"$ref": "#/components/schemas/CubeCardDto"
-						},
-						"type": "array"
-					},
-					"orphanedCards": {
-						"items": {
-							"$ref": "#/components/schemas/ListedCard"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"newCards",
-					"orphanedCards"
-				],
-				"type": "object"
-			},
-			"Point": {
-				"properties": {
-					"y": {
-						"type": "number",
-						"format": "double"
-					},
-					"x": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"y",
-					"x"
-				],
-				"type": "object"
-			},
-			"ComputerVisionCard": {
-				"properties": {
-					"nearPolygons": {
-						"type": "number",
-						"format": "double"
-					},
-					"matchFound": {
-						"type": "boolean"
-					},
-					"text": {
-						"type": "string"
-					},
-					"polygon": {
-						"items": {
-							"$ref": "#/components/schemas/Point"
-						},
-						"type": "array"
-					},
-					"listedCard": {
-						"$ref": "#/components/schemas/ListedCard"
-					}
-				},
-				"required": [
-					"nearPolygons",
-					"matchFound",
-					"text",
-					"polygon"
-				],
-				"type": "object"
-			},
-			"ComputerVisionDto": {
-				"properties": {
-					"cvCards": {
-						"items": {
-							"$ref": "#/components/schemas/ComputerVisionCard"
-						},
-						"type": "array"
-					},
-					"imageHeight": {
-						"type": "number",
-						"format": "double"
-					},
-					"imageWidth": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"cvCards",
-					"imageHeight",
-					"imageWidth"
 				],
 				"type": "object"
 			},
@@ -1048,6 +930,131 @@
 					"count",
 					"cube",
 					"tournament"
+				],
+				"type": "object"
+			},
+			"TokenDto": {
+				"properties": {
+					"scryfallId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"scryfallId"
+				],
+				"type": "object"
+			},
+			"CubeCardDto": {
+				"properties": {
+					"tokens": {
+						"items": {
+							"$ref": "#/components/schemas/TokenDto"
+						},
+						"type": "array"
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"scryfallId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"quantity",
+					"scryfallId"
+				],
+				"type": "object"
+			},
+			"CubeDiffDto": {
+				"properties": {
+					"newCards": {
+						"items": {
+							"$ref": "#/components/schemas/CubeCardDto"
+						},
+						"type": "array"
+					},
+					"orphanedCards": {
+						"items": {
+							"$ref": "#/components/schemas/ListedCard"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"newCards",
+					"orphanedCards"
+				],
+				"type": "object"
+			},
+			"Point": {
+				"properties": {
+					"y": {
+						"type": "number",
+						"format": "double"
+					},
+					"x": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"y",
+					"x"
+				],
+				"type": "object"
+			},
+			"ComputerVisionCard": {
+				"properties": {
+					"nearPolygons": {
+						"type": "number",
+						"format": "double"
+					},
+					"matchFound": {
+						"type": "boolean"
+					},
+					"text": {
+						"type": "string"
+					},
+					"polygon": {
+						"items": {
+							"$ref": "#/components/schemas/Point"
+						},
+						"type": "array"
+					},
+					"listedCard": {
+						"$ref": "#/components/schemas/ListedCard"
+					}
+				},
+				"required": [
+					"nearPolygons",
+					"matchFound",
+					"text",
+					"polygon"
+				],
+				"type": "object"
+			},
+			"ComputerVisionDto": {
+				"properties": {
+					"cvCards": {
+						"items": {
+							"$ref": "#/components/schemas/ComputerVisionCard"
+						},
+						"type": "array"
+					},
+					"imageHeight": {
+						"type": "number",
+						"format": "double"
+					},
+					"imageWidth": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"cvCards",
+					"imageHeight",
+					"imageWidth"
 				],
 				"type": "object"
 			},

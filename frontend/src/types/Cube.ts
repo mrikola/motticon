@@ -15,6 +15,7 @@ export type Cube = {
   owner: string | null;
   imageUrl: string | null;
   cardlist?: CardList | null;
+  count?: number;
 };
 
 export type CubeSelection = {

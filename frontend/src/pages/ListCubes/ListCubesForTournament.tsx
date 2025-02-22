@@ -111,6 +111,7 @@ const ListCubesForTournament = () => {
                       ) : (
                         <h3 className="pt-4 mt-5 mb-4 display-4 lh-1">
                           {cube.title + " "}
+                          {(cube.count ?? 0) > 1 && `x ${cube.count}`}
                         </h3>
                       )}
                       <Card.Subtitle className="icon-link mt-auto">

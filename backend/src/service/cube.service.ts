@@ -39,6 +39,7 @@ export class CubeService {
       .createQueryBuilder("cube")
       .leftJoinAndSelect("cube.tournamentAllocations", "tournament_cubes")
       .where("tournament_cubes.tournamentId = :tournamentId", { tournamentId })
+      .andWhere("tournament_cubes.count > 0")
       .getMany();
   }
 

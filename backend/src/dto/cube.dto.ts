@@ -12,7 +12,7 @@ export type CubeDto = {
   url: string;
   imageUrl: string;
   cardlist: CardList | null;
-  tournamentAllocations: TournamentCubeDto[];
+  count?: number;
 };
 
 export type CubeDiffDto = {
@@ -30,7 +30,10 @@ export const cubeToDto = (cube: Cube): CubeDto =>
         url: cube.url,
         imageUrl: cube.imageUrl,
         cardlist: null, // TODO return cube.cardlist
-        tournamentAllocations:
-          cube.tournamentAllocations?.map(cubeAllocationToDto) ?? [],
+        count:
+          cube.tournamentAllocations?.reduce(
+            (acc, cur) => acc + cur.count,
+            0
+          ) ?? undefined,
       }
     : undefined;

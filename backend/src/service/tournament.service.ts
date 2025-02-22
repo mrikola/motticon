@@ -67,13 +67,13 @@ export class TournamentService {
     preferencesRequired: number,
     startDate: Date,
     endDate: Date,
-    cubeIds: number[],
+    cubeCounts: { [cubeId: number]: number },
     userEnrollmentEnabled: boolean
   ): Promise<Tournament> {
     const cubes: Cube[] = await this.appDataSource
       .getRepository(Cube)
       .createQueryBuilder()
-      .whereInIds(cubeIds)
+      .whereInIds(Object.keys(cubeCounts))
       .getMany();
 
     const tournament: Tournament = await this.repository.create({
@@ -90,10 +90,13 @@ export class TournamentService {
     const cubeAllocations: TournamentCube[] = cubes.map((cube) => ({
       cube,
       tournament,
-      count: 1,
+      count: cubeCounts[cube.id],
     }));
 
-    await this.repository.save({ ...tournament, cubeAllocations });
+    await this.repository.save(tournament);
+    await this.appDataSource
+      .getRepository(TournamentCube)
+      .save(cubeAllocations);
 
     for (let draftIndex = 0; draftIndex < drafts; ++draftIndex) {
       await this.appDataSource
@@ -1104,7 +1107,7 @@ export class TournamentService {
     const { tournament, enrollments, cubes, podsPerDraft, preferences } =
       await this.getAssetsForAssignments(tournamentId);
 
-    const popularCubePrioirityAssignments = await popularPriorityPodAssignments(
+    const popularCubePriorityAssignments = await popularPriorityPodAssignments(
       preferences,
       tournament,
       podsPerDraft,
@@ -1121,7 +1124,7 @@ export class TournamentService {
     );
 
     const podAssignments = [
-      ...popularCubePrioirityAssignments,
+      ...popularCubePriorityAssignments,
       ...roundByRoundAssignments,
     ];
 

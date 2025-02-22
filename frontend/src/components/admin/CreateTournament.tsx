@@ -29,7 +29,9 @@ type TournamentForm = {
   preferencesRequired: number;
   startDate: Date;
   endDate: Date;
-  cubeIds: number[];
+  cubes: {
+    [cubeId: number]: number;
+  };
   userEnrollmentEnabled: boolean;
 };
 
@@ -55,6 +57,8 @@ const CreateTournament = () => {
     handleSubmit,
     getFieldState,
     formState: { errors },
+    reset,
+    getValues,
   } = useForm<TournamentForm>({
     mode: "onChange",
     reValidateMode: "onChange",
@@ -66,10 +70,19 @@ const CreateTournament = () => {
       preferencesRequired: 0,
       startDate: undefined,
       endDate: undefined,
-      cubeIds: [],
+      cubes: {},
       userEnrollmentEnabled: true,
     },
   });
+
+  useEffect(
+    () =>
+      reset({
+        ...getValues(),
+        cubes: Object.fromEntries(cubes.map((cube) => [cube.id, 0])),
+      }),
+    [cubes]
+  );
 
   function doCreateTournament(form: TournamentForm) {
     post("/tournament/create", form).then(async (resp) => {
@@ -232,7 +245,7 @@ const CreateTournament = () => {
             <Col xs={6}>
               <Form.Label>Player count</Form.Label>
               <Form.Select {...register("players")} className="mb-3">
-                {[8, 16, 24, 32, 48, 64, 96].map((count) => (
+                {[8, 16, 24, 32, 48, 64, 80, 96].map((count) => (
                   <option key={count} value={count}>
                     {count}
                   </option>
@@ -252,18 +265,48 @@ const CreateTournament = () => {
           </Row>
           <Col xs={12}>
             <Form.Label>Cubes used</Form.Label>
-            <Form.Select
-              {...register("cubeIds")}
-              size="lg"
-              multiple
-              className="mb-3"
-            >
-              {cubes.map((cube) => (
-                <option key={cube.id} value={cube.id}>
-                  {cube.title}
-                </option>
-              ))}
-            </Form.Select>
+            <Controller
+              control={control}
+              name="cubes"
+              render={({ field }) => (
+                <>
+                  {cubes.map((cube) => (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Button
+                        disabled={field.value[cube.id] === 0}
+                        onClick={() =>
+                          field.onChange({
+                            ...field.value,
+                            [cube.id]: field.value[cube.id] - 1,
+                          })
+                        }
+                      >
+                        -
+                      </Button>
+                      <span style={{ minWidth: "180px", padding: 10 }}>
+                        {field.value[cube.id]} * {cube.title}
+                      </span>
+                      <Button
+                        onClick={() =>
+                          field.onChange({
+                            ...field.value,
+                            [cube.id]: field.value[cube.id] + 1,
+                          })
+                        }
+                      >
+                        +
+                      </Button>
+                    </div>
+                  ))}
+                </>
+              )}
+            />
           </Col>
           <Col xs={6}>
             <Form.Label>Cube preferences required</Form.Label>
