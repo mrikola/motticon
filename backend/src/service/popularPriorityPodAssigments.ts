@@ -283,20 +283,25 @@ const getCubesByPreference = (
  * @param cubeCon Tournament to check
  * @returns Whether you can put in players into this cube in this tournament
  */
-const isCubeFullInCubecon = (cubeId: number, cubeCon: CubeCon): boolean => {
+const isCubeFullInCubecon = (cube: Cube, cubeCon: CubeCon): boolean => {
   let isFull = true;
+  const cubeAllocations = cube.tournamentAllocations.reduce(
+    (acc, cur) => acc + cur.count,
+    0
+  );
   cubeCon.rounds.forEach((round) => {
     // First, check if we can insert this cube into the tournament
     if (
       round.pods.every((pod) => pod.cubeId === -1) || // if the round is empty
-      (round.pods.some((pod) => pod.cubeId === -1) && // round is not empty and this cube is not there
-        !round.pods.some((pod) => pod.cubeId === cubeId))
+      (round.pods.some((pod) => pod.cubeId === -1) && // round is not empty and this cube is not fully used there
+        round.pods.filter((pod) => pod.cubeId === cube.id).length <
+          cubeAllocations)
     ) {
       isFull = false;
     } else if (
       // Else check if this round has this cube, whether players can be inserted
       round.pods.some(
-        (pod) => pod.cubeId === cubeId && pod.players.includes(-1)
+        (pod) => pod.cubeId === cube.id && pod.players.includes(-1)
       )
     ) {
       isFull = false;
@@ -307,7 +312,7 @@ const isCubeFullInCubecon = (cubeId: number, cubeCon: CubeCon): boolean => {
 
 const getAvailableCubes = (cubes: Cube[], cubeCon: CubeCon) => {
   return cubes.filter((cube) => {
-    return !isCubeFullInCubecon(cube.id, cubeCon);
+    return !isCubeFullInCubecon(cube, cubeCon);
   });
 };
 

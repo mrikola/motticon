@@ -28,7 +28,7 @@ import { randomize } from "../util/random";
 import { makeArray } from "../util/array";
 import {
   WILD_CARD_IDENTIFIER,
-  popularPriorityPodAssignemnts,
+  popularPriorityPodAssignemnts as popularPriorityPodAssignments,
 } from "./popularPriorityPodAssigments";
 import { TournamentCube } from "../entity/TournamentCube";
 
@@ -724,8 +724,17 @@ export class TournamentService {
 
         for (let podNumber = 1; podNumber <= podsPerDraft; ++podNumber) {
           const cubesByPreference = cubes
-            // filter out cubes already used in this draft
-            .filter((cube) => !draftPods.find((pod) => pod.cube.id === cube.id))
+            // filter out cubes already fully used in this draft
+            .filter((cube) => {
+              const cubeAllocations = cube.tournamentAllocations.reduce(
+                (acc, cur) => acc + cur.count,
+                0
+              );
+              return (
+                draftPods.filter((pod) => pod.cube.id === cube.id).length <
+                cubeAllocations
+              );
+            })
             .map((cube) => ({
               id: cube.id,
               points: preferences
@@ -1095,7 +1104,7 @@ export class TournamentService {
     const { tournament, enrollments, cubes, podsPerDraft, preferences } =
       await this.getAssetsForAssignments(tournamentId);
 
-    const popularCubePrioirityAssignments = await popularPriorityPodAssignemnts(
+    const popularCubePrioirityAssignments = await popularPriorityPodAssignments(
       preferences,
       tournament,
       podsPerDraft,

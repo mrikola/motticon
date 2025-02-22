@@ -2,6 +2,7 @@ import { CardList } from "../entity/CardList";
 import { Cube } from "../entity/Cube";
 import { ListedCard } from "../entity/ListedCard";
 import { CubeCardDto } from "./card.dto";
+import { cubeAllocationToDto, TournamentCubeDto } from "./tournaments.dto";
 
 export type CubeDto = {
   id: number;
@@ -11,6 +12,7 @@ export type CubeDto = {
   url: string;
   imageUrl: string;
   cardlist: CardList | null;
+  tournamentAllocations: TournamentCubeDto[];
 };
 
 export type CubeDiffDto = {
@@ -28,5 +30,7 @@ export const cubeToDto = (cube: Cube): CubeDto =>
         url: cube.url,
         imageUrl: cube.imageUrl,
         cardlist: null, // TODO return cube.cardlist
+        tournamentAllocations:
+          cube.tournamentAllocations?.map(cubeAllocationToDto) ?? [],
       }
     : undefined;

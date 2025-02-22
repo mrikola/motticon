@@ -214,9 +214,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "tournament": {"ref":"Tournament","required":true},
-            "tournamentId": {"dataType":"double","required":true},
             "cube": {"ref":"Cube","required":true},
-            "cubeId": {"dataType":"double","required":true},
             "count": {"dataType":"double","required":true},
         },
         "additionalProperties": false,

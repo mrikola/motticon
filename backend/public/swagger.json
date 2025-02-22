@@ -560,16 +560,8 @@
 					"tournament": {
 						"$ref": "#/components/schemas/Tournament"
 					},
-					"tournamentId": {
-						"type": "number",
-						"format": "double"
-					},
 					"cube": {
 						"$ref": "#/components/schemas/Cube"
-					},
-					"cubeId": {
-						"type": "number",
-						"format": "double"
 					},
 					"count": {
 						"type": "number",
@@ -578,9 +570,7 @@
 				},
 				"required": [
 					"tournament",
-					"tournamentId",
 					"cube",
-					"cubeId",
 					"count"
 				],
 				"type": "object",
