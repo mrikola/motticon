@@ -28,7 +28,7 @@ import { randomize } from "../util/random";
 import { makeArray } from "../util/array";
 import {
   WILD_CARD_IDENTIFIER,
-  popularPriorityPodAssignemnts as popularPriorityPodAssignments,
+  popularPriorityPodAssignments as popularPriorityPodAssignments,
 } from "./popularPriorityPodAssigments";
 import { TournamentCube } from "../entity/TournamentCube";
 

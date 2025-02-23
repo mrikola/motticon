@@ -8,7 +8,7 @@ const config = loadConfig();
 export const AppDataSource = new DataSource({
   type: "postgres",
   url: config.databaseUrl,
-  logging: process.env.NODE_ENV !== "production",
+  logging: false, //  process.env.NODE_ENV !== "production",
   entities: ["src/entity/**/*.ts"],
   migrations: ["src/migration/**/*.ts"],
   subscribers: ["src/subscriber/**/*.ts"],

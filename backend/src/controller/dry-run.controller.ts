@@ -28,6 +28,8 @@ const FIRST_NAMES = [
   "Per",
   "Peter",
   "Thomas",
+  "Sven",
+  "Göran",
 ];
 
 const LAST_NAMES = [
@@ -68,7 +70,7 @@ export const generateDryRunUsers = async () => {
         lastName,
         getEmail(firstName, lastName),
         "asdf",
-        isDummy,
+        isDummy
       );
       ++playersCreated;
     }
@@ -86,17 +88,17 @@ export const generateDryRunPods = async (live?: boolean) => {
           await Promise.all(
             LAST_NAMES.map(
               async (lastName) =>
-                await userService.getUserByEmail(getEmail(firstName, lastName)),
-            ),
-          ),
-      ),
+                await userService.getUserByEmail(getEmail(firstName, lastName))
+            )
+          )
+      )
     )
   ).flat();
 
   const priorityScores = generatePriorityArray(PREFERENCES_REQUIRED);
 
   const wildCards = Math.floor(
-    MINIMUM_WILDCARDS + Math.random() * (MAXIMUM_WILDCARDS - MINIMUM_WILDCARDS),
+    MINIMUM_WILDCARDS + Math.random() * (MAXIMUM_WILDCARDS - MINIMUM_WILDCARDS)
   );
 
   if (!users.length) {
@@ -114,21 +116,21 @@ export const generateDryRunPods = async (live?: boolean) => {
     "Motticon sim",
     "dry run of pod algorithm",
     0, // price
-    64, // players
+    80, // players
     DRAFTS,
     PREFERENCES_REQUIRED,
     new Date(),
     new Date(),
-    cubes.map((cube) => cube.id),
-    true,
+    Object.fromEntries(cubes.map((cube) => [cube.id, 2])),
+    true
   );
 
   // 2. enroll test users into the tournament
   await Promise.all(
     users.map(
       async (user) =>
-        await enrollmentService.enrollIntoTournament(tournament.id, user.id),
-    ),
+        await enrollmentService.enrollIntoTournament(tournament.id, user.id)
+    )
   );
 
   // 3. generate preferences
@@ -143,7 +145,7 @@ export const generateDryRunPods = async (live?: boolean) => {
             tournament.id,
             user.id,
             Number(key),
-            value,
+            value
           );
         });
       }
@@ -160,7 +162,7 @@ export const generateDryRunPods = async (live?: boolean) => {
           tournament.id,
           user.id,
           cubes[0].id,
-          priorityScores[0],
+          priorityScores[0]
         );
 
         for (let i = 1; i < PREFERENCES_REQUIRED; ++i) {
@@ -168,7 +170,7 @@ export const generateDryRunPods = async (live?: boolean) => {
             tournament.id,
             user.id,
             shuffledCubes[i].id,
-            priorityScores[i],
+            priorityScores[i]
           );
         }
       } else {
@@ -177,7 +179,7 @@ export const generateDryRunPods = async (live?: boolean) => {
             tournament.id,
             user.id,
             shuffledCubes[i].id,
-            priorityScores[i],
+            priorityScores[i]
           );
         }
       }
@@ -188,6 +190,6 @@ export const generateDryRunPods = async (live?: boolean) => {
 
   console.log(
     "Theoretical maximum score: ",
-    15 * (live ? LIVE_DATA.length : realUsers.length),
+    15 * (live ? LIVE_DATA.length : realUsers.length)
   );
 };
