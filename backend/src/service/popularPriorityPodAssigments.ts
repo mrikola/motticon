@@ -67,6 +67,7 @@ const placeCubeIntoCubeCon = (
 ) => {
   // Cube is already in and you can fit players
   if (isCubeAvailableInCubeCon(cube.id, playerId, cubeCon)) {
+    console.log("placing cube into cubecon");
     return true;
   }
   for (let i = 0; i < cubeCon.rounds.length; ++i) {
@@ -86,6 +87,7 @@ const placeCubeIntoCubeCon = (
       }
     }
   }
+  console.log("unable to place player");
   return false;
 };
 
@@ -113,6 +115,14 @@ const placePlayerIntoCube = (
           for (let k = 0; k < pod.players.length; ++k) {
             if (pod.players[k] === -1) {
               pod.players[k] = playerId;
+              console.log(
+                "inserted player " +
+                  playerId +
+                  " into pod " +
+                  j +
+                  " of round " +
+                  i
+              );
               return true;
             }
           }
@@ -235,16 +245,16 @@ const hasPlayerUsedAllPreferences = (
 /**
  * Find the players who want to play the cube most.
  *
- * @param prefernces Preferences for players
+ * @param preferences Preferences for players
  * @param cubeId Target cube
  * @returns List of players sorted from highest preference to lowest
  */
 const findHighestPlayersForCube = (
-  prefernces: PreferencesByPlayer,
+  preferences: PreferencesByPlayer,
   cubeId: number
 ) => {
-  const allPReferences = Object.values(prefernces).flatMap((x) => x);
-  const preferencesForCube = allPReferences.filter(
+  const allPreferences = Object.values(preferences).flatMap((x) => x);
+  const preferencesForCube = allPreferences.filter(
     (pref) => pref.cube === cubeId && !pref.used
   );
   const highestPlayers = preferencesForCube
@@ -264,7 +274,7 @@ const markCubeAsUsed = (
     preferences[playerId].find((x) => x.cube === cubeId).used = true;
 };
 
-const getCubeAllocations = (cube: Cube) =>
+export const getCubeAllocations = (cube: Cube) =>
   cube.tournamentAllocations.reduce((acc, cur) => acc + cur.count, 0);
 
 const getCubesByPreference = (
@@ -279,8 +289,10 @@ const getCubesByPreference = (
         .filter(
           (pref) =>
             pref.cube.id === cube.id &&
-            !preferencesByPlayer[pref.player.id].find((x) => x.cube === cube.id)
-              ?.used
+            preferencesByPlayer[pref.player.id].filter(
+              (x) => x.cube === cube.id && x.used
+            ).length <
+              getCubeAllocations(cube) * 8
         )
         .reduce((acc, cur) => acc + cur.points, 0),
       copies: getCubeAllocations(cube),
@@ -299,12 +311,11 @@ const getCubesByPreference = (
  */
 const isCubeFullInCubecon = (cube: Cube, cubeCon: CubeCon): boolean => {
   let isFull = true;
-  cubeCon.rounds.forEach((round, index) => {
+  cubeCon.rounds.forEach((round) => {
     // First, check if we can insert this cube into the tournament
     if (
-      round.pods.every((pod) => pod.cubeId === -1) || // if the round is empty
-      (round.pods.some((pod) => pod.cubeId === -1) && // round is not empty and this cube is used there
-        round.pods.some((pod) => pod.cubeId === cube.id))
+      round.pods.filter((pod) => pod.cubeId == cube.id).length <
+      getCubeAllocations(cube)
     ) {
       isFull = false;
     } else if (
@@ -534,6 +545,9 @@ const generateCubeCon = (
       preferencesByPlayer
     );
 
+    console.log("available cubes", availableCubes.length);
+    console.log("cubes found", cubesByPreference.length);
+
     let targetCubeIndex = 0;
     let targetCubeFound = false;
     // Find a cube we can put players in - usually it's the most popular one,
@@ -551,6 +565,10 @@ const generateCubeCon = (
         preferencesByPlayer,
         targetCubeId
       );
+      console.log(
+        "target cube " + targetCubeId + ", target players " + targetPlayers
+      );
+
       targetPlayer = targetPlayers.find(
         (player) =>
           player === WILD_CARD_IDENTIFIER ||
@@ -641,6 +659,17 @@ const isCubeConValid = (
       return dummies.length <= 1;
     });
   });
+
+  if (!noInvalidPlayers) {
+    console.log("Invalid players found");
+  }
+  if (!everyoneAssignedThreeTimes) {
+    console.log("Not all players were assigned into three draft pods");
+  }
+  if (!noTwoDummiesInAnyPod) {
+    console.log("More than two dummies were placed into the same pod");
+  }
+
   return noInvalidPlayers && everyoneAssignedThreeTimes && noTwoDummiesInAnyPod;
 };
 
@@ -657,7 +686,7 @@ const validateCubeCons = (
   };
 };
 
-const iterationAmount = 2_000;
+const iterationAmount = 1; // 2_000;
 
 /**
  * Generate preferential pod assignments based on popular cube priority.

@@ -28,6 +28,7 @@ import { randomize } from "../util/random";
 import { makeArray } from "../util/array";
 import {
   WILD_CARD_IDENTIFIER,
+  getCubeAllocations,
   popularPriorityPodAssignments as popularPriorityPodAssignments,
 } from "./popularPriorityPodAssigments";
 import { TournamentCube } from "../entity/TournamentCube";
@@ -726,7 +727,7 @@ export class TournamentService {
         let isGreedyOverride = false;
 
         for (let podNumber = 1; podNumber <= podsPerDraft; ++podNumber) {
-          const cubesByPreference = cubes
+          const sortedCubes = cubes
             // filter out cubes already fully used in this draft
             .filter((cube) => {
               const cubeAllocations = cube.tournamentAllocations.reduce(
@@ -749,8 +750,13 @@ export class TournamentService {
                     )?.used
                 )
                 .reduce((acc, cur) => acc + cur.points, 0),
+              copies: getCubeAllocations(cube),
             }))
             .sort((a, b) => b.points - a.points);
+
+          const cubesByPreference = sortedCubes.flatMap((cube) =>
+            Array(cube.copies).fill(cube)
+          );
 
           const regularCubeIndex = this.getCubeIndexForStrategy(
             strategy,
@@ -1103,6 +1109,7 @@ export class TournamentService {
     });
     return validatedPodAssignments;
   };
+
   async getPreferentialPodAssignments(tournamentId: number) {
     const { tournament, enrollments, cubes, podsPerDraft, preferences } =
       await this.getAssetsForAssignments(tournamentId);
@@ -1115,6 +1122,7 @@ export class TournamentService {
       cubes
     );
 
+    /*
     const roundByRoundAssignments = await this.generatePodAssignments(
       preferences,
       tournament,
@@ -1122,10 +1130,10 @@ export class TournamentService {
       enrollments,
       cubes
     );
-
+      */
     const podAssignments = [
       ...popularCubePriorityAssignments,
-      ...roundByRoundAssignments,
+      // ...roundByRoundAssignments,
     ];
 
     const preferencesByPlayer: PreferencesByPlayer = {};
@@ -1145,12 +1153,14 @@ export class TournamentService {
       }
     });
 
-    const validatedPodAssigments = this.validatePodAssignments(
+    const validatedPodAssignments = this.validatePodAssignments(
       podAssignments,
       preferencesByPlayer
     );
 
-    const sortedAssignments = validatedPodAssigments.sort(
+    console.log("validated pod assignments", validatedPodAssignments.length);
+
+    const sortedAssignments = validatedPodAssignments.sort(
       (a, b) =>
         b.preferencePoints -
         b.penaltyPoints -

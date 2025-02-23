@@ -79,7 +79,7 @@ export const generateDryRunUsers = async () => {
 
 export const generateDryRunPods = async (live?: boolean) => {
   // 0. setup
-  const cubes = await cubeService.getAllCubes();
+  const cubes = (await cubeService.getAllCubes()).slice(0, 7);
 
   const users = (
     await Promise.all(
@@ -108,7 +108,7 @@ export const generateDryRunPods = async (live?: boolean) => {
 
   if (cubes.length < 8) {
     console.log("must have at least 8 cubes for 64 player dry run");
-    return;
+    // return;
   }
 
   // 1. generate dry run tournament
