@@ -19,6 +19,8 @@ const MINIMUM_WILDCARDS = 5;
 const MAXIMUM_WILDCARDS = 12;
 const DUMMY_PLAYERS = 3;
 
+const PLAYER_COUNT = 80;
+
 const FIRST_NAMES = [
   "Lars",
   "Mikael",
@@ -93,7 +95,9 @@ export const generateDryRunPods = async (live?: boolean) => {
           )
       )
     )
-  ).flat();
+  )
+    .flat()
+    .slice(0, PLAYER_COUNT);
 
   const priorityScores = generatePriorityArray(PREFERENCES_REQUIRED);
 
@@ -116,7 +120,7 @@ export const generateDryRunPods = async (live?: boolean) => {
     "Motticon sim",
     "dry run of pod algorithm",
     0, // price
-    80, // players
+    PLAYER_COUNT, // players
     DRAFTS,
     PREFERENCES_REQUIRED,
     new Date(),

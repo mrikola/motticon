@@ -1,3 +1,4 @@
+import { getHeapCodeStatistics, getHeapStatistics } from "v8";
 import {
   PreferencesByPlayer,
   PreferentialPodAssignments,
@@ -67,16 +68,16 @@ const placeCubeIntoCubeCon = (
 ) => {
   // Cube is already in and you can fit players
   if (isCubeAvailableInCubeCon(cube.id, playerId, cubeCon)) {
-    console.log("placing cube into cubecon");
     return true;
   }
+
   for (let i = 0; i < cubeCon.rounds.length; ++i) {
     const round = cubeCon.rounds[i];
 
-    if (
-      isCubeAvailableInRound(cube, round) &&
-      !isPlayerInRound(playerId, round)
-    ) {
+    const isCubeAvailable = isCubeAvailableInRound(cube, round);
+    const isPlayerAvailable = !isPlayerInRound(playerId, round);
+
+    if (isCubeAvailable && isPlayerAvailable) {
       for (let j = 0; j < round.pods.length; ++j) {
         const pod = round.pods[j];
 
@@ -87,7 +88,6 @@ const placeCubeIntoCubeCon = (
       }
     }
   }
-  console.log("unable to place player");
   return false;
 };
 
@@ -103,6 +103,8 @@ const placePlayerIntoCube = (
   for (let i = 0; i < cubeCon.rounds.length; ++i) {
     const round = cubeCon.rounds[i];
 
+    // console.log("pods", JSON.stringify(round.pods));
+
     if (isCubeInRound(cubeId, round) && !isPlayerInRound(playerId, round)) {
       for (let j = 0; j < round.pods.length; ++j) {
         const pod = round.pods[j];
@@ -115,14 +117,6 @@ const placePlayerIntoCube = (
           for (let k = 0; k < pod.players.length; ++k) {
             if (pod.players[k] === -1) {
               pod.players[k] = playerId;
-              console.log(
-                "inserted player " +
-                  playerId +
-                  " into pod " +
-                  j +
-                  " of round " +
-                  i
-              );
               return true;
             }
           }
@@ -159,22 +153,22 @@ const initializeCubeCon = (podsPerDraft: number): CubeCon => {
   return {
     rounds: [
       {
-        pods: Array(podsPerDraft).fill({
+        pods: Array.from({ length: podsPerDraft }, () => ({
           players: [-1, -1, -1, -1, -1, -1, -1, -1],
           cubeId: -1,
-        }),
+        })),
       },
       {
-        pods: Array(podsPerDraft).fill({
+        pods: Array.from({ length: podsPerDraft }, () => ({
           players: [-1, -1, -1, -1, -1, -1, -1, -1],
           cubeId: -1,
-        }),
+        })),
       },
       {
-        pods: Array(podsPerDraft).fill({
+        pods: Array.from({ length: podsPerDraft }, () => ({
           players: [-1, -1, -1, -1, -1, -1, -1, -1],
           cubeId: -1,
-        }),
+        })),
       },
     ],
   };
@@ -289,17 +283,18 @@ const getCubesByPreference = (
         .filter(
           (pref) =>
             pref.cube.id === cube.id &&
-            preferencesByPlayer[pref.player.id].filter(
-              (x) => x.cube === cube.id && x.used
-            ).length <
-              getCubeAllocations(cube) * 8
+            preferencesByPlayer[pref.player.id].find(
+              (x) => x.cube === cube.id && !x.used
+            )
         )
         .reduce((acc, cur) => acc + cur.points, 0),
       copies: getCubeAllocations(cube),
     }))
     .sort((a, b) => b.points - a.points);
 
-  return sorted.flatMap((cube) => Array(cube.copies).fill(cube));
+  return sorted.flatMap((cube) =>
+    Array.from({ length: cube.copies }, () => cube)
+  );
 };
 
 /**
@@ -311,13 +306,15 @@ const getCubesByPreference = (
  */
 const isCubeFullInCubecon = (cube: Cube, cubeCon: CubeCon): boolean => {
   let isFull = true;
-  cubeCon.rounds.forEach((round) => {
+  for (const round of cubeCon.rounds) {
     // First, check if we can insert this cube into the tournament
     if (
+      round.pods.find((pod) => pod.cubeId === -1) &&
       round.pods.filter((pod) => pod.cubeId == cube.id).length <
-      getCubeAllocations(cube)
+        getCubeAllocations(cube)
     ) {
       isFull = false;
+      break;
     } else if (
       // Else check if this round has this cube, whether players can be inserted
       round.pods.some(
@@ -325,8 +322,9 @@ const isCubeFullInCubecon = (cube: Cube, cubeCon: CubeCon): boolean => {
       )
     ) {
       isFull = false;
+      break;
     }
-  });
+  }
   return isFull;
 };
 
@@ -357,14 +355,19 @@ const findEmptiestDraft = (cubeCon: CubeCon): [number, number, number] => {
 
 const placeWildCardIntoCubeCon = (cubeCon: CubeCon, cubeId: number) => {
   let placed = false;
-  cubeCon.rounds.forEach((round) => {
-    round.pods.forEach((pod) => {
-      if (pod.cubeId === cubeId && pod.players.includes(-1) && !placed) {
-        pod.players[pod.players.indexOf(-1)] = WILD_CARD_IDENTIFIER;
-        placed = true;
+
+  for (const round of cubeCon.rounds) {
+    for (const pod of round.pods) {
+      if (pod.cubeId === cubeId) {
+        if (pod.players.includes(-1) && !placed) {
+          pod.players[pod.players.indexOf(-1)] = WILD_CARD_IDENTIFIER;
+          placed = true;
+          break;
+        }
       }
-    });
-  });
+    }
+  }
+  return placed;
 };
 
 const cubeConsIntoPreferentialPodAssignments = (
@@ -527,8 +530,13 @@ const generateCubeCon = (
   let targetPlayer: number = -1;
   let cubePlacedInCubecon = false;
   let playerPlacedInCubecon = false;
+
   const preferencesByPlayer = getPreferencesByPlayer(preferences);
-  do {
+  for (
+    let player = 0;
+    player < tournament.drafts.length * tournament.totalSeats;
+    player++
+  ) {
     // Update the player preference status so that they don't get
     // assigned again
     if (targetPlayer !== -1 && targetCubeId !== -1) {
@@ -544,9 +552,6 @@ const generateCubeCon = (
       preferences,
       preferencesByPlayer
     );
-
-    console.log("available cubes", availableCubes.length);
-    console.log("cubes found", cubesByPreference.length);
 
     let targetCubeIndex = 0;
     let targetCubeFound = false;
@@ -564,9 +569,6 @@ const generateCubeCon = (
       const targetPlayers = findHighestPlayersForCube(
         preferencesByPlayer,
         targetCubeId
-      );
-      console.log(
-        "target cube " + targetCubeId + ", target players " + targetPlayers
       );
 
       targetPlayer = targetPlayers.find(
@@ -592,8 +594,8 @@ const generateCubeCon = (
       cubePlacedInCubecon = true;
       playerPlacedInCubecon = true;
     }
-    // If we have filled all the cubes, we are done
-  } while (getAvailableCubes(cubes, cubeCon).length > 0);
+  }
+  // while (getAvailableCubes(cubes, cubeCon).length > 0);
   // Check how many preference points were used to sort later
   const spentPreferencePoints = Object.values(preferencesByPlayer).reduce(
     (acc, cur) => {
@@ -653,6 +655,7 @@ const isCubeConValid = (
       const dummies = pod.players.filter((player) => {
         return (
           player !== DUMMY_IDENTIFIER &&
+          player !== -1 &&
           enrollments.find((x) => x.player.id === player).player.isDummy
         );
       });
@@ -660,6 +663,7 @@ const isCubeConValid = (
     });
   });
 
+  /*
   if (!noInvalidPlayers) {
     console.log("Invalid players found");
   }
@@ -669,6 +673,7 @@ const isCubeConValid = (
   if (!noTwoDummiesInAnyPod) {
     console.log("More than two dummies were placed into the same pod");
   }
+  */
 
   return noInvalidPlayers && everyoneAssignedThreeTimes && noTwoDummiesInAnyPod;
 };
@@ -686,7 +691,7 @@ const validateCubeCons = (
   };
 };
 
-const iterationAmount = 1; // 2_000;
+const iterationAmount = 2000;
 
 /**
  * Generate preferential pod assignments based on popular cube priority.
@@ -719,20 +724,23 @@ export const popularPriorityPodAssignments = async (
 ): Promise<PreferentialPodAssignments[]> => {
   console.info("Start run of the popular cube priority algorithm.");
   console.info(`Generating ${iterationAmount} cube cons.`);
-  const potentialCubeCons = Array.from({ length: iterationAmount }).map(
-    (_, index) => {
-      if (index % 100 === 0) {
-        console.info(`Generating cube con ${index + 1} of ${iterationAmount}.`);
-      }
-      return generateCubeCon(
-        preferences,
-        tournament,
-        podsPerDraft,
-        enrollments,
-        cubes
-      );
+
+  const potentialCubeCons: { cubeCon: CubeCon; preferencePoints: number }[] =
+    Array.from({ length: iterationAmount });
+
+  for (let index = 0; index < potentialCubeCons.length; ++index) {
+    if (index % 100 === 0) {
+      console.info(`Generating cube con ${index + 1} of ${iterationAmount}.`);
     }
-  );
+    potentialCubeCons[index] = generateCubeCon(
+      preferences,
+      tournament,
+      podsPerDraft,
+      enrollments,
+      cubes
+    );
+  }
+
   const validationResult = validateCubeCons(potentialCubeCons, enrollments);
   validationResult.validCubeCons.sort(
     (a, b) => b.preferencePoints - a.preferencePoints

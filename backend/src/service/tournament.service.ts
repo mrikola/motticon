@@ -1122,7 +1122,6 @@ export class TournamentService {
       cubes
     );
 
-    /*
     const roundByRoundAssignments = await this.generatePodAssignments(
       preferences,
       tournament,
@@ -1130,10 +1129,10 @@ export class TournamentService {
       enrollments,
       cubes
     );
-      */
+
     const podAssignments = [
       ...popularCubePriorityAssignments,
-      // ...roundByRoundAssignments,
+      ...roundByRoundAssignments,
     ];
 
     const preferencesByPlayer: PreferencesByPlayer = {};
