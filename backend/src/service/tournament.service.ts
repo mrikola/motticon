@@ -25,7 +25,7 @@ import {
   PreferencesByPlayer,
 } from "../dto/tournaments.dto";
 import { randomize } from "../util/random";
-import { makeArray } from "../util/array";
+import { makeArray, sumArray } from "../util/array";
 import {
   WILD_CARD_IDENTIFIER,
   getCubeAllocations,
@@ -730,9 +730,8 @@ export class TournamentService {
           const sortedCubes = cubes
             // filter out cubes already fully used in this draft
             .filter((cube) => {
-              const cubeAllocations = cube.tournamentAllocations.reduce(
-                (acc, cur) => acc + cur.count,
-                0
+              const cubeAllocations = sumArray(
+                cube.tournamentAllocations.map((alloc) => alloc.count)
               );
               return (
                 draftPods.filter((pod) => pod.cube.id === cube.id).length <
@@ -741,15 +740,17 @@ export class TournamentService {
             })
             .map((cube) => ({
               id: cube.id,
-              points: preferences
-                .filter(
-                  (pref) =>
-                    pref.cube.id === cube.id &&
-                    !preferencesByPlayer[pref.player.id].find(
-                      (x) => x.cube === cube.id
-                    )?.used
-                )
-                .reduce((acc, cur) => acc + cur.points, 0),
+              points: sumArray(
+                preferences
+                  .filter(
+                    (pref) =>
+                      pref.cube.id === cube.id &&
+                      !preferencesByPlayer[pref.player.id].find(
+                        (x) => x.cube === cube.id
+                      )?.used
+                  )
+                  .map((pref) => pref.points)
+              ),
               copies: getCubeAllocations(cube),
             }))
             .sort((a, b) => b.points - a.points);

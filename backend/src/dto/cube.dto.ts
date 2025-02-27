@@ -1,6 +1,7 @@
 import { CardList } from "../entity/CardList";
 import { Cube } from "../entity/Cube";
 import { ListedCard } from "../entity/ListedCard";
+import { sumArray } from "../util/array";
 import { CubeCardDto } from "./card.dto";
 import { cubeAllocationToDto, TournamentCubeDto } from "./tournaments.dto";
 
@@ -30,10 +31,8 @@ export const cubeToDto = (cube: Cube): CubeDto =>
         url: cube.url,
         imageUrl: cube.imageUrl,
         cardlist: null, // TODO return cube.cardlist
-        count:
-          cube.tournamentAllocations?.reduce(
-            (acc, cur) => acc + cur.count,
-            0
-          ) ?? undefined,
+        count: sumArray(
+          cube.tournamentAllocations?.map((alloc) => alloc.count) ?? []
+        ),
       }
     : undefined;

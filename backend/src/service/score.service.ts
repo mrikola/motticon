@@ -5,6 +5,7 @@ import { ScoreHistory } from "../entity/ScoreHistory";
 import { OMWView } from "../entity/OMWView";
 import { RecordByPlayer, StandingsRow } from "../dto/score.dto";
 import { UserService } from "./user.service";
+import { sumArray } from "../util/array";
 
 @Service()
 export class ScoreService {
@@ -12,14 +13,14 @@ export class ScoreService {
 
   constructor(
     @Inject("DataSource") private appDataSource: DataSource,
-    @Inject("UserService") private userService: UserService,
+    @Inject("UserService") private userService: UserService
   ) {
     this.repository = this.appDataSource.getRepository(PlayerTournamentScore);
   }
 
   async getPreviousScore(
     tournamentId: number,
-    playerId: number,
+    playerId: number
   ): Promise<PlayerTournamentScore> {
     return await this.repository.findOne({
       where: {
@@ -31,7 +32,7 @@ export class ScoreService {
 
   async getStandings(
     tournamentId: number,
-    roundNumber: number,
+    roundNumber: number
   ): Promise<StandingsRow[]> {
     const matches = await this.appDataSource
       .getRepository(OMWView)
@@ -65,7 +66,7 @@ export class ScoreService {
         matchPoints: (previousRecord?.matchPoints ?? 0) + row.playerPoints,
         matchesPlayed: (previousRecord?.matchesPlayed ?? 0) + 1,
         opponentIds: (previousRecord?.opponentIds ?? []).concat(
-          opponentIsBye ? [] : row.opponentId,
+          opponentIsBye ? [] : row.opponentId
         ),
       });
 
@@ -75,7 +76,7 @@ export class ScoreService {
         matchPointPercentage: Math.max(
           1 / 3,
           currentRecord.matchPoints /
-            (Math.max(currentRecord.matchesPlayed, 1) * 3),
+            (Math.max(currentRecord.matchesPlayed, 1) * 3)
         ),
       });
     }
@@ -84,14 +85,13 @@ export class ScoreService {
 
     records.forEach((player) => {
       const scoreRow = tournamentScores.find(
-        (score) => score.playerId === player.id,
+        (score) => score.playerId === player.id
       );
 
       const omw =
-        player.opponentIds
-          .map((id) => records.get(id).matchPointPercentage)
-          .reduce((acc, curr) => acc + curr, 0) /
-        Math.max(player.opponentIds.length, 1);
+        sumArray(
+          player.opponentIds.map((id) => records.get(id).matchPointPercentage)
+        ) / Math.max(player.opponentIds.length, 1);
 
       standings.push({
         playerId: scoreRow.player.id,
@@ -123,14 +123,14 @@ export class ScoreService {
         playerId,
         points: (previousScore?.points ?? 0) + 3,
       },
-      ["tournamentId", "playerId"],
+      ["tournamentId", "playerId"]
     );
   }
 
   async awardDraw(
     tournamentId: number,
     player1Id: number,
-    player2Id: number,
+    player2Id: number
   ): Promise<void> {
     const previousScore1 = await this.getPreviousScore(tournamentId, player1Id);
     const previousScore2 = await this.getPreviousScore(tournamentId, player2Id);
@@ -141,7 +141,7 @@ export class ScoreService {
         playerId: player1Id,
         points: (previousScore1?.points ?? 0) + 1,
       },
-      ["tournamentId", "playerId"],
+      ["tournamentId", "playerId"]
     );
 
     await this.repository.upsert(
@@ -150,7 +150,7 @@ export class ScoreService {
         playerId: player2Id,
         points: (previousScore2?.points ?? 0) + 1,
       },
-      ["tournamentId", "playerId"],
+      ["tournamentId", "playerId"]
     );
   }
 
@@ -163,7 +163,7 @@ export class ScoreService {
         playerId,
         draftsWon: (previousScore.draftsWon ?? 0) + 1,
       },
-      ["tournamentId", "playerId"],
+      ["tournamentId", "playerId"]
     );
   }
 
@@ -172,7 +172,7 @@ export class ScoreService {
     this.appDataSource
       .getRepository(ScoreHistory)
       .insert(
-        scores.map((score) => ({ ...score, roundNumber }) as ScoreHistory),
+        scores.map((score) => ({ ...score, roundNumber } as ScoreHistory))
       );
   }
 }

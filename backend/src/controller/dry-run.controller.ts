@@ -4,6 +4,7 @@ import { EnrollmentService } from "../service/enrollment.service";
 import { PreferenceService } from "../service/preference.service";
 import { TournamentService } from "../service/tournament.service";
 import { UserService } from "../service/user.service";
+import { sumArray } from "../util/array";
 import { LIVE_DATA } from "../util/live-data";
 import { randomize } from "../util/random";
 
@@ -19,7 +20,17 @@ const MINIMUM_WILDCARDS = 5;
 const MAXIMUM_WILDCARDS = 12;
 const DUMMY_PLAYERS = 3;
 
+// how many players will pick cube with id 1 as their first pick instead of RNG
+const OVERWHELMING_FAVORITE_PICKS = 24;
+
 const PLAYER_COUNT = 80;
+const CUBE_COUNT = 19; // number of distinct cubes
+const CUBE_MULTIPLIERS = {
+  // object full of id-count pairs
+  // default is count = 1, this is just the deviations
+  1: 2,
+  4: 2,
+};
 
 const FIRST_NAMES = [
   "Lars",
@@ -32,6 +43,8 @@ const FIRST_NAMES = [
   "Thomas",
   "Sven",
   "Göran",
+  "Oliver",
+  "Emil",
 ];
 
 const LAST_NAMES = [
@@ -77,11 +90,20 @@ export const generateDryRunUsers = async () => {
       ++playersCreated;
     }
   }
+  console.info("Done generating test users");
 };
 
 export const generateDryRunPods = async (live?: boolean) => {
   // 0. setup
-  const cubes = (await cubeService.getAllCubes()).slice(0, 7);
+  const cubes = (await cubeService.getAllCubes()).slice(0, CUBE_COUNT);
+
+  if (PLAYER_COUNT > FIRST_NAMES.length * LAST_NAMES.length) {
+    console.log(
+      FIRST_NAMES.length * LAST_NAMES.length,
+      "is not enough players to fulfill player count",
+      PLAYER_COUNT
+    );
+  }
 
   const users = (
     await Promise.all(
@@ -110,9 +132,20 @@ export const generateDryRunPods = async (live?: boolean) => {
     return;
   }
 
-  if (cubes.length < 8) {
-    console.log("must have at least 8 cubes for 64 player dry run");
-    // return;
+  const cubeMultipliers = {
+    ...Object.fromEntries(cubes.map((cube) => [cube.id, 1])),
+    ...CUBE_MULTIPLIERS,
+  };
+
+  const totalCubes = sumArray(Object.values(cubeMultipliers));
+
+  if (totalCubes * 8 < PLAYER_COUNT) {
+    console.log(
+      `${totalCubes} is not enough cubes, must have at least ${Math.ceil(
+        PLAYER_COUNT / 8
+      )} cubes for ${PLAYER_COUNT} player dry run`
+    );
+    return;
   }
 
   // 1. generate dry run tournament
@@ -125,7 +158,7 @@ export const generateDryRunPods = async (live?: boolean) => {
     PREFERENCES_REQUIRED,
     new Date(),
     new Date(),
-    Object.fromEntries(cubes.map((cube) => [cube.id, 2])),
+    cubeMultipliers,
     true
   );
 
@@ -160,7 +193,7 @@ export const generateDryRunPods = async (live?: boolean) => {
         .filter((sc) => sc.id !== cubes[0].id)
         .sort(randomize);
 
-      if (index < 24) {
+      if (index < OVERWHELMING_FAVORITE_PICKS) {
         // make one cube the overwhelming favorite
         preferenceService.setPreference(
           tournament.id,
@@ -192,8 +225,10 @@ export const generateDryRunPods = async (live?: boolean) => {
   // 4. construct pods
   await tournamentService.generateDrafts(tournament.id);
 
+  const theoreticalMaximumPerPlayer = sumArray(priorityScores.slice(0, DRAFTS));
+
   console.log(
     "Theoretical maximum score: ",
-    15 * (live ? LIVE_DATA.length : realUsers.length)
+    theoreticalMaximumPerPlayer * (live ? LIVE_DATA.length : realUsers.length)
   );
 };

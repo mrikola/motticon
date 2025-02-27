@@ -8,6 +8,7 @@ import { Enrollment } from "../entity/Enrollment";
 import { Preference } from "../entity/Preference";
 import { Tournament } from "../entity/Tournament";
 import { randomize } from "../util/random";
+import { sumArray } from "../util/array";
 
 export const WILD_CARD_IDENTIFIER = 999999;
 export const DUMMY_IDENTIFIER = 999998;
@@ -269,7 +270,7 @@ const markCubeAsUsed = (
 };
 
 export const getCubeAllocations = (cube: Cube) =>
-  cube.tournamentAllocations.reduce((acc, cur) => acc + cur.count, 0);
+  sumArray(cube.tournamentAllocations.map((cube) => cube.count));
 
 const getCubesByPreference = (
   cubes: Cube[],
@@ -279,15 +280,17 @@ const getCubesByPreference = (
   const sorted = cubes
     .map((cube) => ({
       id: cube.id,
-      points: preferences
-        .filter(
-          (pref) =>
-            pref.cube.id === cube.id &&
-            preferencesByPlayer[pref.player.id].find(
-              (x) => x.cube === cube.id && !x.used
-            )
-        )
-        .reduce((acc, cur) => acc + cur.points, 0),
+      points: sumArray(
+        preferences
+          .filter(
+            (pref) =>
+              pref.cube.id === cube.id &&
+              preferencesByPlayer[pref.player.id].find(
+                (x) => x.cube === cube.id && !x.used
+              )
+          )
+          .map((pref) => pref.points)
+      ),
       copies: getCubeAllocations(cube),
     }))
     .sort((a, b) => b.points - a.points);
