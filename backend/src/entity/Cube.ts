@@ -4,9 +4,11 @@ import {
   Column,
   ManyToMany,
   ManyToOne,
+  OneToMany,
 } from "typeorm";
 import { Tournament } from "./Tournament";
 import { CardList } from "./CardList";
+import { TournamentCube } from "./TournamentCube";
 
 @Entity()
 export class Cube {
@@ -31,6 +33,6 @@ export class Cube {
   @ManyToOne(() => CardList, { nullable: true })
   cardlist: CardList;
 
-  @ManyToMany(() => Tournament, (tournament) => tournament.cubes)
-  tournaments: Tournament[];
+  @OneToMany(() => TournamentCube, (tc) => tc.cube)
+  tournamentAllocations: TournamentCube[];
 }

@@ -7,7 +7,8 @@ export interface Config {
   };
 }
 
-const DEFAULT_DATABASE_URL = "postgres://postgres:postgres@db:5432/motticon";
+const DEFAULT_DATABASE_URL =
+  "postgres://postgres:postgres@localhost:5432/motticon";
 
 export const loadConfig = (): Config => {
   return {

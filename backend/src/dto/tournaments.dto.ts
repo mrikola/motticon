@@ -11,6 +11,13 @@ import {
 } from "./user.dto";
 import { Cube } from "../entity/Cube";
 import { User } from "../entity/User";
+import { TournamentCube } from "../entity/TournamentCube";
+
+export type TournamentCubeDto = {
+  tournament: TournamentDto;
+  cube: CubeDto;
+  count: number;
+};
 
 export type TournamentDto = {
   id: number;
@@ -25,7 +32,7 @@ export type TournamentDto = {
   drafts: DraftDto[];
   userEnrollmentEnabled: boolean;
   enrollments: EnrollmentDto[];
-  cubes: CubeDto[];
+  cubeAllocations: TournamentCubeDto[];
   staffMembers: PlayerDto[];
 };
 
@@ -76,6 +83,12 @@ export type PreferentialPodAssignments = {
   }[];
 };
 
+export const cubeAllocationToDto = (tc: TournamentCube): TournamentCubeDto => ({
+  tournament: tc.tournament,
+  cube: tc.cube,
+  count: tc.count,
+});
+
 export const tournamentToDto = (tournament: Tournament): TournamentDto =>
   tournament
     ? {
@@ -91,7 +104,8 @@ export const tournamentToDto = (tournament: Tournament): TournamentDto =>
         drafts: tournament.drafts?.map(draftToDto) ?? [],
         userEnrollmentEnabled: tournament.userEnrollmentEnabled,
         enrollments: tournament.enrollments?.map(enrollmentToDto) ?? [],
-        cubes: tournament.cubes?.map(cubeToDto) ?? [],
+        cubeAllocations:
+          tournament.cubeAllocations?.map(cubeAllocationToDto) ?? [],
         staffMembers: tournament.staffMembers?.map(playerToDto) ?? [],
       }
     : undefined;

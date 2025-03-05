@@ -8,9 +8,9 @@ import {
 } from "typeorm";
 import { Enrollment } from "./Enrollment";
 import { User } from "./User";
-import { Cube } from "./Cube";
 import { TournamentStatus } from "../dto/general.dto";
 import { Draft } from "./Draft";
+import { TournamentCube } from "./TournamentCube";
 
 @Entity()
 export class Tournament {
@@ -50,9 +50,9 @@ export class Tournament {
   @OneToMany(() => Enrollment, (enrollment) => enrollment.tournament)
   enrollments: Enrollment[];
 
-  @ManyToMany(() => Cube, (cube) => cube.tournaments)
+  @OneToMany(() => TournamentCube, (tc) => tc.tournament)
   @JoinTable({ name: "tournament_cubes" })
-  cubes: Cube[];
+  cubeAllocations: TournamentCube[];
 
   @ManyToMany(() => User, (user) => user.tournamentsStaffed)
   @JoinTable({ name: "tournament_staff_members" })

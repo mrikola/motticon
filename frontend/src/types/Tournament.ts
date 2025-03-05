@@ -1,4 +1,4 @@
-import { Cube } from "./Cube";
+import { Cube, CubeAllocation } from "./Cube";
 import { Enrollment, Player, User } from "./User";
 
 export type Status = "pending" | "started" | "completed";
@@ -64,7 +64,7 @@ export type Tournament = {
   preferencesRequired: number;
   status: Status;
   drafts: Draft[];
-  cubes: Cube[];
+  cubeAllocations: CubeAllocation[];
   staffMembers: User[];
   enrollments: Enrollment[];
   userEnrollmentEnabled: boolean;

@@ -461,7 +461,7 @@ export class TournamentController extends Controller {
       preferencesRequired,
       startDate,
       endDate,
-      cubeIds,
+      cubes,
       userEnrollmentEnabled,
     } = tournamentData;
     return tournamentToDto(
@@ -474,7 +474,7 @@ export class TournamentController extends Controller {
         preferencesRequired,
         startDate,
         endDate,
-        cubeIds,
+        cubes,
         userEnrollmentEnabled
       )
     );

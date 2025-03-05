@@ -11,3 +11,6 @@ export const makeArray = (x, y, z) => {
 
   return top;
 };
+
+export const sumArray = (arr: number[]) =>
+  arr.reduce((acc, cur) => acc + cur, 0);

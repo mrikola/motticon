@@ -10,7 +10,7 @@ import {
   PlayerTournamentScore,
 } from "../types/Tournament";
 import { UserSchema, PlayerSchema, EnrollmentSchema } from "./user";
-import { CubeSchema } from "./cube";
+import { CubeAllocationSchema, CubeSchema } from "./cube";
 
 export const StatusSchema: z.ZodType<Status> = z.enum([
   "pending",
@@ -28,7 +28,7 @@ export const DraftPodSeatSchema: z.ZodType<DraftPodSeat> = z.lazy(() =>
     seat: z.number(),
     deckPhotoUrl: z.string().nullable(),
     draftPoolReturned: z.boolean(),
-  }),
+  })
 );
 
 export const DraftPodSchema: z.ZodType<DraftPod> = z.lazy(() =>
@@ -40,7 +40,7 @@ export const DraftPodSchema: z.ZodType<DraftPod> = z.lazy(() =>
     cubeId: z.number().optional(),
     cube: CubeSchema.optional(),
     seats: z.array(DraftPodSeatSchema),
-  }),
+  })
 );
 
 export const DraftSchema: z.ZodType<Draft> = z.lazy(() =>
@@ -52,7 +52,7 @@ export const DraftSchema: z.ZodType<Draft> = z.lazy(() =>
     firstRound: z.number(),
     lastRound: z.number(),
     startTime: z.coerce.date().optional(),
-  }),
+  })
 );
 
 export const TournamentSchema: z.ZodType<Tournament> = z.object({
@@ -67,7 +67,7 @@ export const TournamentSchema: z.ZodType<Tournament> = z.object({
   userEnrollmentEnabled: z.boolean(),
   entryFee: z.number(),
   drafts: z.array(DraftSchema),
-  cubes: z.array(CubeSchema),
+  cubeAllocations: z.array(CubeAllocationSchema),
   staffMembers: z.array(UserSchema),
   enrollments: z.array(EnrollmentSchema),
 });

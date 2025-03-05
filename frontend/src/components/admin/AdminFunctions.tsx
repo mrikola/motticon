@@ -70,7 +70,7 @@ const AdminFunctions = () => {
   // };
 
   const dryRunUsers = async () => {
-    const response = await get(`/dryrunusers`);
+    const response = await get(`/dry-run/users`);
     const data = await response.json();
     console.log(data);
   };

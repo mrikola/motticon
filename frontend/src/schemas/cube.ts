@@ -1,6 +1,15 @@
 import { z } from "zod";
-import { Cube } from "../types/Cube";
+import { Cube, CubeAllocation } from "../types/Cube";
 import { CardListSchema } from "./card";
+import { TournamentSchema } from "./tournament";
+
+export const CubeAllocationSchema: z.ZodType<CubeAllocation> = z.lazy(() =>
+  z.object({
+    tournament: TournamentSchema,
+    cube: CubeSchema,
+    count: z.number(),
+  })
+);
 
 export const CubeSchema: z.ZodType<Cube> = z.lazy(() =>
   z.object({
@@ -11,5 +20,6 @@ export const CubeSchema: z.ZodType<Cube> = z.lazy(() =>
     owner: z.string().nullable(),
     imageUrl: z.string().nullable(),
     cardlist: CardListSchema.optional().nullable(),
-  }),
+    count: z.number().optional(),
+  })
 );

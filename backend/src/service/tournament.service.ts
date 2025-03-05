@@ -25,11 +25,13 @@ import {
   PreferencesByPlayer,
 } from "../dto/tournaments.dto";
 import { randomize } from "../util/random";
-import { makeArray } from "../util/array";
+import { makeArray, sumArray } from "../util/array";
 import {
   WILD_CARD_IDENTIFIER,
-  popularPriorityPodAssignemnts,
+  getCubeAllocations,
+  popularPriorityPodAssignments as popularPriorityPodAssignments,
 } from "./popularPriorityPodAssigments";
+import { TournamentCube } from "../entity/TournamentCube";
 
 @Service()
 export class TournamentService {
@@ -44,7 +46,7 @@ export class TournamentService {
     @Inject("CubeService") private cubeService: CubeService,
     @Inject("RatingService") private ratingService: RatingService,
     @Inject("ScoreService") private scoreService: ScoreService,
-    @Inject("UserService") private userService: UserService,
+    @Inject("UserService") private userService: UserService
   ) {
     this.repository = this.appDataSource.getRepository(Tournament);
     this.tournamentCache = new LRUCache({
@@ -66,16 +68,16 @@ export class TournamentService {
     preferencesRequired: number,
     startDate: Date,
     endDate: Date,
-    cubeIds: number[],
-    userEnrollmentEnabled: boolean,
+    cubeCounts: { [cubeId: number]: number },
+    userEnrollmentEnabled: boolean
   ): Promise<Tournament> {
     const cubes: Cube[] = await this.appDataSource
       .getRepository(Cube)
       .createQueryBuilder()
-      .whereInIds(cubeIds)
+      .whereInIds(Object.keys(cubeCounts))
       .getMany();
 
-    const tournament: Tournament = await this.repository.save({
+    const tournament: Tournament = await this.repository.create({
       name,
       description,
       entryFee: price,
@@ -83,9 +85,19 @@ export class TournamentService {
       preferencesRequired,
       startDate,
       endDate,
-      cubes,
       userEnrollmentEnabled: userEnrollmentEnabled,
     });
+
+    const cubeAllocations: TournamentCube[] = cubes.map((cube) => ({
+      cube,
+      tournament,
+      count: cubeCounts[cube.id],
+    }));
+
+    await this.repository.save(tournament);
+    await this.appDataSource
+      .getRepository(TournamentCube)
+      .save(cubeAllocations);
 
     for (let draftIndex = 0; draftIndex < drafts; ++draftIndex) {
       await this.appDataSource
@@ -125,11 +137,11 @@ export class TournamentService {
     const today = new Date();
     const [past, notPast] = partition(
       allTournaments,
-      (tournament) => tournament.endDate < today,
+      (tournament) => tournament.endDate < today
     );
     const [future, ongoing] = partition(
       notPast,
-      (tournament) => tournament.startDate > today,
+      (tournament) => tournament.startDate > today
     );
 
     return ongoing;
@@ -212,7 +224,7 @@ export class TournamentService {
 
   async removeFromStaff(
     tournamentId: number,
-    userId: number,
+    userId: number
   ): Promise<Tournament> {
     const tourny = await this.getTournamentStaff(tournamentId);
     const id = Number(userId);
@@ -315,8 +327,8 @@ export class TournamentService {
         new Brackets((qb) =>
           qb
             .where('match."player1Id" = :userId', { userId })
-            .orWhere('match."player2Id" = :userId', { userId }),
-        ),
+            .orWhere('match."player2Id" = :userId', { userId })
+        )
       )
       .getOne();
     this.userMatchCache.set(identifier, match);
@@ -338,7 +350,7 @@ export class TournamentService {
         await this.appDataSource
           .getRepository(PlayerTournamentScore)
           .insert({ tournamentId, player: enrollment.player });
-      }),
+      })
     );
 
     return await this.getTournamentAndDrafts(tournamentId);
@@ -357,7 +369,7 @@ export class TournamentService {
 
   async generateDraftSeatings(
     pods: DraftPod[],
-    players: User[],
+    players: User[]
   ): Promise<void> {
     pods.forEach((pod, podIndex) => {
       const podPlayers = players
@@ -404,18 +416,19 @@ export class TournamentService {
                 podNumber: index + 1,
                 draft,
                 cube: sortedCubes[index],
-              }),
+              })
             );
           }
           await this.generateDraftSeatings(draftPods, players);
-        }),
+        })
       );
     } else {
-      const assignments =
-        await this.getPreferentialPodAssignments(tournamentId);
+      const assignments = await this.getPreferentialPodAssignments(
+        tournamentId
+      );
       tournament.drafts.map(async (draft) => {
         const assignment = assignments.find(
-          (ass) => ass.draftNumber === draft.draftNumber,
+          (ass) => ass.draftNumber === draft.draftNumber
         );
         const draftPods = await Promise.all(
           assignment.pods.map(
@@ -424,12 +437,12 @@ export class TournamentService {
                 podNumber: index + 1,
                 draft,
                 cube: pod.cube,
-              }),
-          ),
+              })
+          )
         );
         await this.generateDraftSeatings(
           draftPods,
-          assignment.pods.map((pod) => pod.players).flat(),
+          assignment.pods.map((pod) => pod.players).flat()
         );
       });
     }
@@ -521,8 +534,8 @@ export class TournamentService {
           match.player1GamesWon === match.player2GamesWon
             ? 0
             : match.player1GamesWon > match.player2GamesWon
-              ? player1.id
-              : player2.id;
+            ? player1.id
+            : player2.id;
 
         if (winnerId !== 0) {
           await this.scoreService.awardMatchWin(tournamentId, winnerId);
@@ -534,12 +547,12 @@ export class TournamentService {
           await this.scoreService.awardDraw(
             tournamentId,
             player1.id,
-            player2.id,
+            player2.id
           );
         }
 
         this.ratingService.updateElo(kvalue, player1.id, player2.id, winnerId);
-      }),
+      })
     );
 
     this.scoreService.saveSnapshot(tournamentId, round.roundNumber);
@@ -549,17 +562,17 @@ export class TournamentService {
   // todo: for testing use only
   async getPreferences(tournamentId: number): Promise<Preference[]> {
     return await this.preferenceService.getPreferencesForTournament(
-      tournamentId,
+      tournamentId
     );
   }
 
   async getPreferencesForUser(
     tournamentId: number,
-    userId: number,
+    userId: number
   ): Promise<Preference[]> {
     return await this.preferenceService.getPreferencesForTournamentAndUser(
       tournamentId,
-      userId,
+      userId
     );
   }
 
@@ -573,14 +586,14 @@ export class TournamentService {
     const preferences = (
       await this.preferenceService.getPreferencesForTournament(tournamentId)
     ).filter((preference) =>
-      enrollments.find((enroll) => enroll.player.id === preference.player.id),
+      enrollments.find((enroll) => enroll.player.id === preference.player.id)
     );
     return { tournament, enrollments, cubes, podsPerDraft, preferences };
   };
 
   getPlayerPreferencesForPodGeneration = (
     preferences: Preference[],
-    enrollments: Enrollment[],
+    enrollments: Enrollment[]
   ) => {
     let preferencesByPlayer = {};
     preferences.forEach((preference) => {
@@ -609,7 +622,7 @@ export class TournamentService {
     strategy: DraftPodGenerationStrategy[],
     draftIndex: number,
     podsPerDraft: number,
-    podNumber: number,
+    podNumber: number
   ) => {
     switch (strategy[draftIndex]) {
       case "greedy":
@@ -638,7 +651,7 @@ export class TournamentService {
   };
 
   getOverwhelmingFavoriteIfExists = (
-    cubes: { id: number; points: number }[],
+    cubes: { id: number; points: number }[]
   ) => {
     // use this half the time
     if (cubes[0].points > cubes[1].points + 55) {
@@ -654,7 +667,7 @@ export class TournamentService {
     tournament: Tournament,
     podsPerDraft: number,
     enrollments: Enrollment[],
-    cubes: Cube[],
+    cubes: Cube[]
   ): Promise<PreferentialPodAssignments[]> => {
     const podAssignments: PreferentialPodAssignments[] = [];
     for (let iteration = 0; iteration < iterationsPerStrategy; ++iteration) {
@@ -673,7 +686,7 @@ export class TournamentService {
       const assignments: User[][][] = makeArray(
         tournament.drafts.length,
         podsPerDraft,
-        8,
+        8
       );
 
       let currentIterationAssignments: PreferentialPodAssignments = {
@@ -687,7 +700,7 @@ export class TournamentService {
 
       let draftIndex = 0;
       for (let draft of tournament.drafts.sort(
-        (a, b) => a.draftNumber - b.draftNumber,
+        (a, b) => a.draftNumber - b.draftNumber
       )) {
         let preferencePointsUsed = 0;
         let unassignedPlayers = enrollments.map((enroll) => enroll.player);
@@ -702,7 +715,7 @@ export class TournamentService {
               !player.isDummy &&
               (!preferencesByPlayer[player.id] ||
                 preferencesByPlayer[player.id].filter((pref) => !pref.used)
-                  .length === 0),
+                  .length === 0)
           )
           .sort(randomize);
 
@@ -714,28 +727,43 @@ export class TournamentService {
         let isGreedyOverride = false;
 
         for (let podNumber = 1; podNumber <= podsPerDraft; ++podNumber) {
-          const cubesByPreference = cubes
-            // filter out cubes already used in this draft
-            .filter((cube) => !draftPods.find((pod) => pod.cube.id === cube.id))
+          const sortedCubes = cubes
+            // filter out cubes already fully used in this draft
+            .filter((cube) => {
+              const cubeAllocations = sumArray(
+                cube.tournamentAllocations.map((alloc) => alloc.count)
+              );
+              return (
+                draftPods.filter((pod) => pod.cube.id === cube.id).length <
+                cubeAllocations
+              );
+            })
             .map((cube) => ({
               id: cube.id,
-              points: preferences
-                .filter(
-                  (pref) =>
-                    pref.cube.id === cube.id &&
-                    !preferencesByPlayer[pref.player.id].find(
-                      (x) => x.cube === cube.id,
-                    )?.used,
-                )
-                .reduce((acc, cur) => acc + cur.points, 0),
+              points: sumArray(
+                preferences
+                  .filter(
+                    (pref) =>
+                      pref.cube.id === cube.id &&
+                      !preferencesByPlayer[pref.player.id].find(
+                        (x) => x.cube === cube.id
+                      )?.used
+                  )
+                  .map((pref) => pref.points)
+              ),
+              copies: getCubeAllocations(cube),
             }))
             .sort((a, b) => b.points - a.points);
+
+          const cubesByPreference = sortedCubes.flatMap((cube) =>
+            Array(cube.copies).fill(cube)
+          );
 
           const regularCubeIndex = this.getCubeIndexForStrategy(
             strategy,
             draftIndex,
             podsPerDraft,
-            podNumber,
+            podNumber
           );
 
           const cubeIndex =
@@ -763,7 +791,7 @@ export class TournamentService {
 
           const preferredPlayers = preferences // find players who..
             .filter(
-              (pref) => !pref.player.isDummy && pref.cube.id === currentCubeId, // want to play this cube
+              (pref) => !pref.player.isDummy && pref.cube.id === currentCubeId // want to play this cube
             )
             .sort(randomize)
             .sort((a, b) => b.points - a.points) // have rated it highly
@@ -771,15 +799,13 @@ export class TournamentService {
               // have not already been assigned to play it in an earlier draft
               (pref) =>
                 !preferencesByPlayer[pref.player.id].find(
-                  (x) => x.cube === currentCubeId,
-                )?.used,
+                  (x) => x.cube === currentCubeId
+                )?.used
             )
             .filter(
               // and have not been assigned to a different cube in this draft
               (pref) =>
-                unassignedPlayers.find(
-                  (player) => player.id === pref.player.id,
-                ),
+                unassignedPlayers.find((player) => player.id === pref.player.id)
             )
             .slice(0, 8 - dummyPlayersInPod)
             .map((pref) => {
@@ -806,7 +832,7 @@ export class TournamentService {
             const assigned = wildCards
               .filter(
                 (wc) =>
-                  !(wildCardAssignments[wc.id] ?? []).includes(currentCubeId),
+                  !(wildCardAssignments[wc.id] ?? []).includes(currentCubeId)
               )
               .pop();
 
@@ -833,26 +859,26 @@ export class TournamentService {
                 // filter out assigned players for this cube
                 .filter(
                   (player) =>
-                    !preferredPlayers.find((pp) => pp.id === player.id),
+                    !preferredPlayers.find((pp) => pp.id === player.id)
                 )
                 .filter(
                   // filter out users who have already played this cube
                   (user, _) =>
                     !preferencesByPlayer[user.id]?.find(
-                      (x) => x.cube === currentCubeId,
+                      (x) => x.cube === currentCubeId
                     )?.used ||
                     !(wildCardAssignments[user.id] ?? []).includes(
-                      currentCubeId,
-                    ),
+                      currentCubeId
+                    )
                 )
-                .slice(0, 8 - preferredPlayers.length),
+                .slice(0, 8 - preferredPlayers.length)
             );
           }
 
           if (preferredPlayers.length < 8) {
             console.log(
               "pod not full, could only fit: ",
-              preferredPlayers.length,
+              preferredPlayers.length
             );
             console.info(currentCubeId);
             throw new Error("pod not full");
@@ -862,14 +888,14 @@ export class TournamentService {
 
           // clear assigned players from the unassigned list for this draft
           unassignedPlayers = unassignedPlayers.filter(
-            (player) => !preferredPlayers.find((pp) => pp.id === player.id),
+            (player) => !preferredPlayers.find((pp) => pp.id === player.id)
           );
 
           // and take this cube away from their preferences
           preferredPlayers.forEach((pp) => {
             if (preferencesByPlayer[pp.id]) {
               const pref = preferencesByPlayer[pp.id].find(
-                (pref) => pref.cube === currentCubeId,
+                (pref) => pref.cube === currentCubeId
               );
               if (pref) pref.used = true;
             } else {
@@ -907,13 +933,13 @@ export class TournamentService {
   };
 
   permutatePodGenerationStrategies = (
-    strategies: DraftPodGenerationStrategy[],
+    strategies: DraftPodGenerationStrategy[]
   ) => {
     let resultSet: Set<string> = new Set();
 
     const permute = (
       current: DraftPodGenerationStrategy[],
-      accumulator: DraftPodGenerationStrategy[] = [],
+      accumulator: DraftPodGenerationStrategy[] = []
     ) => {
       if (accumulator.length === 3) {
         resultSet.add(JSON.stringify(accumulator));
@@ -939,7 +965,7 @@ export class TournamentService {
     tournament: Tournament,
     podsPerDraft: number,
     enrollments: Enrollment[],
-    cubes: Cube[],
+    cubes: Cube[]
   ) => {
     const iterationsPerStrategy = 50;
 
@@ -968,16 +994,16 @@ export class TournamentService {
             tournament,
             podsPerDraft,
             enrollments,
-            cubes,
-          ),
-      ),
+            cubes
+          )
+      )
     );
     return podAssigmments.flat();
   };
 
   validatePodAssignments = (
     podAssignments: PreferentialPodAssignments[],
-    preferencesByPlayer: PreferencesByPlayer,
+    preferencesByPlayer: PreferencesByPlayer
   ): PreferentialPodAssignments[] => {
     // console.info("Validating pod assignments");
 
@@ -992,7 +1018,7 @@ export class TournamentService {
       // the entire assigments
       const validatePlayerNotInMultipleCubes = (
         pod: { cube: Cube; players: User[] },
-        player: User,
+        player: User
       ) => {
         if (player.id === WILD_CARD_IDENTIFIER) {
           return;
@@ -1004,7 +1030,7 @@ export class TournamentService {
             playerCounts[pod.cube.id][player.id]++;
             if (playerCounts[pod.cube.id][player.id] > 1) {
               penaltyReasons.push(
-                `Player ${player.firstName} ${player.lastName} is on the same cube (${pod.cube.id}) multiple times`,
+                `Player ${player.firstName} ${player.lastName} is on the same cube (${pod.cube.id}) multiple times`
               );
               penaltyPoints += 50;
             }
@@ -1019,7 +1045,7 @@ export class TournamentService {
 
       const validatePlayerWithinPreferences = (
         pod: { cube: Cube; players: User[] },
-        player: User,
+        player: User
       ): boolean => {
         if (player.id === WILD_CARD_IDENTIFIER) {
           return true;
@@ -1039,7 +1065,7 @@ export class TournamentService {
               .map((preference) => preference.cube)
               .join(", ")}) is assigned to a cube not in their preferences (${
               pod.cube.id
-            })`,
+            })`
           );
           penaltyPoints += 5;
           return false;
@@ -1060,7 +1086,7 @@ export class TournamentService {
             validatePlayerNotInMultipleCubes(pod, player);
             unIntentionalWildcardsUsed += validatePlayerWithinPreferences(
               pod,
-              player,
+              player
             )
               ? 0
               : 1;
@@ -1069,7 +1095,7 @@ export class TournamentService {
           // Check that not too many unintentional wildcards are in use
           if (unIntentionalWildcardsUsed >= 2) {
             penaltyReasons.push(
-              `Draft ${draft.draftNumber} cube ${pod.cube.id} has ${unIntentionalWildcardsUsed} unintentional wildcards`,
+              `Draft ${draft.draftNumber} cube ${pod.cube.id} has ${unIntentionalWildcardsUsed} unintentional wildcards`
             );
             penaltyPoints += 10 * (unIntentionalWildcardsUsed - 1);
           }
@@ -1084,16 +1110,17 @@ export class TournamentService {
     });
     return validatedPodAssignments;
   };
+
   async getPreferentialPodAssignments(tournamentId: number) {
     const { tournament, enrollments, cubes, podsPerDraft, preferences } =
       await this.getAssetsForAssignments(tournamentId);
 
-    const popularCubePrioirityAssignments = await popularPriorityPodAssignemnts(
+    const popularCubePriorityAssignments = await popularPriorityPodAssignments(
       preferences,
       tournament,
       podsPerDraft,
       enrollments,
-      cubes,
+      cubes
     );
 
     const roundByRoundAssignments = await this.generatePodAssignments(
@@ -1101,11 +1128,11 @@ export class TournamentService {
       tournament,
       podsPerDraft,
       enrollments,
-      cubes,
+      cubes
     );
 
     const podAssignments = [
-      ...popularCubePrioirityAssignments,
+      ...popularCubePriorityAssignments,
       ...roundByRoundAssignments,
     ];
 
@@ -1126,16 +1153,18 @@ export class TournamentService {
       }
     });
 
-    const validatedPodAssigments = this.validatePodAssignments(
+    const validatedPodAssignments = this.validatePodAssignments(
       podAssignments,
-      preferencesByPlayer,
+      preferencesByPlayer
     );
 
-    const sortedAssignments = validatedPodAssigments.sort(
+    console.log("validated pod assignments", validatedPodAssignments.length);
+
+    const sortedAssignments = validatedPodAssignments.sort(
       (a, b) =>
         b.preferencePoints -
         b.penaltyPoints -
-        (a.preferencePoints - a.penaltyPoints),
+        (a.preferencePoints - a.penaltyPoints)
     );
 
     console.log(
@@ -1143,11 +1172,11 @@ export class TournamentService {
       sortedAssignments.map((assignment) => ({
         points: assignment.preferencePoints,
         penalties: assignment.penaltyPoints,
-      })),
+      }))
     );
 
     console.log(
-      `best assignment with ${sortedAssignments[0].preferencePoints} spent with ${sortedAssignments[0].penaltyPoints} penalty points:`,
+      `best assignment with ${sortedAssignments[0].preferencePoints} spent with ${sortedAssignments[0].penaltyPoints} penalty points:`
     );
     console.log("Strategy: ", sortedAssignments[0].strategy.join(", "));
     console.log("Algorithm: ", sortedAssignments[0].algorithmType);
@@ -1168,11 +1197,11 @@ export class TournamentService {
                 player.lastName +
                 " (" +
                 (preferencesByPlayer[player.id]?.find(
-                  (pref) => pref.cube == pod.cube.id,
+                  (pref) => pref.cube == pod.cube.id
                 )?.points ?? "W") +
-                ")",
+                ")"
             )
-            .join(", "),
+            .join(", ")
         );
       });
     });
