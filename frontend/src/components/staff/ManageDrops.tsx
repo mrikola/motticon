@@ -15,8 +15,8 @@ type Props = {
 };
 
 const ManageDrops = ({ tournamentId }: Props) => {
-  const [enrollments, setEnrollments] = useState<Enrollment[]>();
-  const [playersEnrolled, setPlayersEnrolled] = useState<number>();
+  const [enrollments, _setEnrollments] = useState<Enrollment[]>();
+  const [_playersEnrolled, setPlayersEnrolled] = useState<number>();
   const [item, setItem] = useState<Item>(); // The selected item will be stored in this state.
   const [value, setValue] = useState<string>();
   const [selectedUser, setSelectedUser] = useState("No player selected");
