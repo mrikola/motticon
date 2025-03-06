@@ -19,7 +19,7 @@ const AdminFunctions = () => {
 
   const getCardDb = async () => {
     if (user) {
-      const response = await get(`/getCardDb`);
+      const response = await get(`/card/db`);
       const cards = (await response.json()) as Card[];
       console.log(cards);
     }
@@ -27,7 +27,7 @@ const AdminFunctions = () => {
 
   const updateCardDb = async () => {
     if (user) {
-      const response = await get(`/updateCardDb`);
+      const response = await get(`/card/db/update`);
       const cards = (await response.json()) as Card[];
       console.log(cards);
     }
@@ -35,7 +35,7 @@ const AdminFunctions = () => {
 
   const getAllTokens = async () => {
     if (user) {
-      const response = await get(`/getAllTokens`);
+      const response = await get(`/card/tokens`);
       const tokens = (await response.json()) as Token[];
       console.log(tokens);
     }
@@ -43,7 +43,7 @@ const AdminFunctions = () => {
 
   const getAllPickedCards = async () => {
     if (user) {
-      const response = await get(`/getAllPickedCards`);
+      const response = await get(`/card/picked`);
       const cards = (await response.json()) as PickedCard[];
       console.log(cards);
     }
@@ -51,14 +51,14 @@ const AdminFunctions = () => {
 
   const deleteOrphans = async () => {
     console.log("trying to delete orphans");
-    const response = await get(`/listedcards/deleteOrphans`);
+    const response = await get(`/card/listed/deleteOrphans`);
     const cards = (await response.json()) as ListedCard[];
     console.log(cards);
   };
 
   const removeAllPicked = async () => {
     console.log("trying to remove all picked cards");
-    const response = await get(`/pickedcards/removeAll`);
+    const response = await get(`/card/picked/removeAll`);
     const success = (await response.json()) as boolean;
     console.log(success);
   };
