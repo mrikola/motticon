@@ -311,7 +311,7 @@ const CreateTournament = () => {
           <Col xs={6}>
             <Form.Label>Cube preferences required</Form.Label>
             <Form.Select {...register("preferencesRequired")} className="mb-3">
-              {[0, 1, 2, 3, 4, 5].map((count) => (
+              {[0, 1, 2, 3, 4, 5, 6].map((count) => (
                 <option key={count} value={count}>
                   {count}
                 </option>
