@@ -29,7 +29,11 @@ import { StandingsRow } from "../dto/score.dto";
 import { PairingsService } from "../service/pairings.service";
 import { DraftService } from "../service/draft.service";
 import { MatchService } from "../service/match.service";
-import { PlayerTournamentScoreDto, scoreToDto } from "../dto/user.dto";
+import {
+  PlayerTournamentScoreDto,
+  scoreToDto,
+  UserCubePreferenceDto,
+} from "../dto/user.dto";
 import { Preference } from "../entity/Preference";
 
 @Route("tournament")
@@ -269,14 +273,16 @@ export class TournamentController extends Controller {
 
   @Post("preferences")
   @Security("loggedIn")
-  public async setCubePreferences(@Body() preferences: any): Promise<boolean> {
+  public async setCubePreferences(
+    @Body() preferences: UserCubePreferenceDto[]
+  ): Promise<boolean> {
     return await this.userService.setCubePreferences(preferences);
   }
 
   @Put("preferences/delete")
   @Security("loggedIn")
   public async deleteCubePreferences(
-    @Body() preferences: any
+    @Body() preferences: UserCubePreferenceDto
   ): Promise<boolean> {
     return await this.userService.deleteCubePreferences(preferences);
   }

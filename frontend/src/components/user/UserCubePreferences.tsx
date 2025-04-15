@@ -70,9 +70,9 @@ const UserCubePreferences = () => {
     put(`/tournament/preferences/delete`, send).then(async (_resp) => {
       const success = (await _resp.json()) as boolean;
       if (success) {
-        toast.success("Preferences saved");
+        toast.success("Preferences reset");
       } else {
-        toast.error("Unable to save preferences");
+        toast.error("Unable to reset preferences");
       }
     });
   }

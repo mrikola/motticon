@@ -1003,7 +1003,8 @@ export class TournamentService {
 
   validatePodAssignments = (
     podAssignments: PreferentialPodAssignments[],
-    preferencesByPlayer: PreferencesByPlayer
+    preferencesByPlayer: PreferencesByPlayer,
+    preferencesRequired: number
   ): PreferentialPodAssignments[] => {
     // console.info("Validating pod assignments");
 
@@ -1053,7 +1054,7 @@ export class TournamentService {
         const playerPreferences = preferencesByPlayer[player.id];
         if (
           playerPreferences &&
-          playerPreferences.length === 5 &&
+          playerPreferences.length === preferencesRequired &&
           !playerPreferences
             .map((preference) => preference.cube)
             .includes(pod.cube.id)
@@ -1061,7 +1062,7 @@ export class TournamentService {
           penaltyReasons.push(
             `Player ${player.firstName} ${
               player.lastName
-            } with 5 preferences (${playerPreferences
+            } with ${preferencesRequired} preferences (${playerPreferences
               .map((preference) => preference.cube)
               .join(", ")}) is assigned to a cube not in their preferences (${
               pod.cube.id
@@ -1155,7 +1156,8 @@ export class TournamentService {
 
     const validatedPodAssignments = this.validatePodAssignments(
       podAssignments,
-      preferencesByPlayer
+      preferencesByPlayer,
+      tournament.preferencesRequired
     );
 
     console.log("validated pod assignments", validatedPodAssignments.length);

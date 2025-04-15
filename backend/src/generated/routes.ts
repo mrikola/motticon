@@ -343,6 +343,11 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"opponentMatchWinPercentage":{"dataType":"double","required":true},"draftsWon":{"dataType":"double","required":true},"points":{"dataType":"double","required":true},"tournament":{"ref":"TournamentDto","required":true},"player":{"ref":"PlayerDto","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UserCubePreferenceDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"points":{"dataType":"double","required":true},"cubeId":{"dataType":"double","required":true},"tournamentId":{"dataType":"double","required":true},"playerId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Preference": {
         "dataType": "refObject",
         "properties": {
@@ -2050,7 +2055,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsTournamentController_setCubePreferences: Record<string, TsoaRoute.ParameterSchema> = {
-                preferences: {"in":"body","name":"preferences","required":true,"dataType":"any"},
+                preferences: {"in":"body","name":"preferences","required":true,"dataType":"array","array":{"dataType":"refAlias","ref":"UserCubePreferenceDto"}},
         };
         app.post('/tournament/preferences',
             authenticateMiddleware([{"loggedIn":[]}]),
@@ -2086,7 +2091,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsTournamentController_deleteCubePreferences: Record<string, TsoaRoute.ParameterSchema> = {
-                preferences: {"in":"body","name":"preferences","required":true,"dataType":"any"},
+                preferences: {"in":"body","name":"preferences","required":true,"ref":"UserCubePreferenceDto"},
         };
         app.put('/tournament/preferences/delete',
             authenticateMiddleware([{"loggedIn":[]}]),

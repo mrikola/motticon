@@ -1228,6 +1228,33 @@
 				],
 				"type": "object"
 			},
+			"UserCubePreferenceDto": {
+				"properties": {
+					"points": {
+						"type": "number",
+						"format": "double"
+					},
+					"cubeId": {
+						"type": "number",
+						"format": "double"
+					},
+					"tournamentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"playerId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"points",
+					"cubeId",
+					"tournamentId",
+					"playerId"
+				],
+				"type": "object"
+			},
 			"Preference": {
 				"properties": {
 					"id": {
@@ -3083,7 +3110,12 @@
 					"required": true,
 					"content": {
 						"application/json": {
-							"schema": {}
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/UserCubePreferenceDto"
+								},
+								"type": "array"
+							}
 						}
 					}
 				}
@@ -3114,7 +3146,9 @@
 					"required": true,
 					"content": {
 						"application/json": {
-							"schema": {}
+							"schema": {
+								"$ref": "#/components/schemas/UserCubePreferenceDto"
+							}
 						}
 					}
 				}
