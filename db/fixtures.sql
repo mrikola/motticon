@@ -79,6 +79,16 @@ INSERT INTO cube(title, description, url) values('12', 'desc_12', 'https://cubec
 INSERT INTO cube(title, description, url) values('13', 'desc_13', 'https://cubecobra.com/cube/list/1o7yb');
 INSERT INTO cube(title, description, url) values('14', 'desc_14', 'https://cubecobra.com/cube/list/1o7yb');
 INSERT INTO cube(title, description, url) values('15', 'desc_15', 'https://cubecobra.com/cube/list/1o7yb');
+INSERT INTO cube(title, description, url) values('16', 'desc_16', 'https://cubecobra.com/cube/list/1o7yb');
+INSERT INTO cube(title, description, url) values('17', 'desc_17', 'https://cubecobra.com/cube/list/1o7yb');
+INSERT INTO cube(title, description, url) values('18', 'desc_18', 'https://cubecobra.com/cube/list/0de5c855-ad9a-4ce1-8a8c-d8f846e96712');
+INSERT INTO cube(title, description, url) values('19', 'desc_19', 'https://cubecobra.com/cube/list/r47');
+INSERT INTO cube(title, description, url) values('20', 'desc_20', 'https://cubecobra.com/cube/list/et9');
+INSERT INTO cube(title, description, url) values('21', 'desc_21', 'https://cubecobra.com/cube/list/thebteam');
+INSERT INTO cube(title, description, url) values('22', 'desc_22', 'https://cubecobra.com/cube/list/SoNotUniversesBeyondCube');
+INSERT INTO cube(title, description, url) values('23', 'desc_23', 'https://cubecobra.com/cube/list/1o7yb');
+INSERT INTO cube(title, description, url) values('24', 'desc_24', 'https://cubecobra.com/cube/list/1o7yb');
+INSERT INTO cube(title, description, url) values('25', 'desc_25', 'https://cubecobra.com/cube/list/1o7yb');
 
 INSERT INTO tournament(name, description, "startDate", "endDate") values('MottiCon 2023', 'Servin Mökki 4.-5.5.2024', '2024-05-04', '2024-05-05') RETURNING id INTO motticon_id;
 

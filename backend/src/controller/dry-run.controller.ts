@@ -6,6 +6,7 @@ import { TournamentService } from "../service/tournament.service";
 import { UserService } from "../service/user.service";
 import { sumArray } from "../util/array";
 import { LIVE_DATA } from "../util/live-data";
+import { LIVE_DATA_2025 } from "../util/live-data-2025";
 import { randomize } from "../util/random";
 
 const userService: UserService = Container.get("UserService");
@@ -15,21 +16,20 @@ const enrollmentService: EnrollmentService = Container.get("EnrollmentService");
 const preferenceService: PreferenceService = Container.get("PreferenceService");
 
 const DRAFTS = 3;
-const PREFERENCES_REQUIRED = 5;
-const MINIMUM_WILDCARDS = 5;
-const MAXIMUM_WILDCARDS = 12;
-const DUMMY_PLAYERS = 3;
+const PREFERENCES_REQUIRED = 6;
+const MINIMUM_WILDCARDS = 4;
+const MAXIMUM_WILDCARDS = 4;
+const DUMMY_PLAYERS = 6;
 
 // how many players will pick cube with id 1 as their first pick instead of RNG
 const OVERWHELMING_FAVORITE_PICKS = 24;
 
-const PLAYER_COUNT = 80;
-const CUBE_COUNT = 19; // number of distinct cubes
+const PLAYER_COUNT = 96;
+const CUBE_COUNT = 25; // number of distinct cubes
 const CUBE_MULTIPLIERS = {
   // object full of id-count pairs
   // default is count = 1, this is just the deviations
   1: 2,
-  4: 2,
 };
 
 const FIRST_NAMES = [
@@ -176,8 +176,8 @@ export const generateDryRunPods = async (live?: boolean) => {
   if (live) {
     console.log("LIVE DATA BAYBAY");
     users.forEach((user, index) => {
-      if (index < LIVE_DATA.length) {
-        Object.entries(LIVE_DATA[index]).forEach(([key, value]) => {
+      if (index < LIVE_DATA_2025.length) {
+        Object.entries(LIVE_DATA_2025[index]).forEach(([key, value]) => {
           preferenceService.setPreference(
             tournament.id,
             user.id,
@@ -229,6 +229,7 @@ export const generateDryRunPods = async (live?: boolean) => {
 
   console.log(
     "Theoretical maximum score: ",
-    theoreticalMaximumPerPlayer * (live ? LIVE_DATA.length : realUsers.length)
+    theoreticalMaximumPerPlayer *
+      (live ? LIVE_DATA_2025.length : realUsers.length)
   );
 };
