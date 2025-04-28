@@ -14,11 +14,17 @@ export const removeScandinavianLetters = (fileName: string): string => {
     ø: "o",
     å: "a",
     ä: "a",
+    ö: "o",
     Æ: "AE",
     Ø: "O",
     Å: "A",
     Ä: "A",
+    Ö: "O",
+    " ": "_",
   };
 
-  return fileName.replace(/[æøåäÆØÅÄ]/g, (char) => replacements[char] || char);
+  return fileName.replace(
+    /[æøåäöÆØÅÄÖ\s]/g,
+    (char) => replacements[char] || char
+  );
 };
