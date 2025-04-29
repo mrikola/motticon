@@ -5,12 +5,12 @@ import {
   Get,
   Post,
   Put,
-  Delete,
   Path,
   Body,
   Security,
-  Response,
+  Request,
 } from "tsoa";
+import { Request as ExRequest, Response as ExResponse } from "express";
 import { TournamentService } from "../service/tournament.service";
 import { EnrollmentService } from "../service/enrollment.service";
 import { TournamentDto, tournamentToDto } from "../dto/tournaments.dto";
@@ -20,7 +20,7 @@ import { CubeDto, cubeToDto } from "../dto/cube.dto";
 import { ScoreService } from "../service/score.service";
 import { CubeService } from "../service/cube.service";
 import { UserService } from "../service/user.service";
-import { writeFileSync } from "fs";
+import { createWriteStream, writeFileSync } from "fs";
 import path from "path";
 import { format } from "@fast-csv/format";
 import { createDirIfNotExists, FILE_ROOT } from "../util/fs";
@@ -35,6 +35,7 @@ import {
   UserCubePreferenceDto,
 } from "../dto/user.dto";
 import { Preference } from "../entity/Preference";
+import { PassThrough } from "stream";
 
 @Route("tournament")
 @Service()
@@ -54,11 +55,13 @@ export class TournamentController extends Controller {
 
   // Public endpoints (no auth required)
   @Get("{tournamentId}/round/{roundId}/results")
-  @Response("200", "Success", { contentType: "text/csv" })
   public async generateCsvFromRound(
     @Path() tournamentId: number,
-    @Path() roundId: number
-  ): Promise<string> {
+    @Path() roundId: number,
+    @Request() req: ExRequest
+  ): Promise<void> {
+    const response: ExResponse = req.res;
+
     const round = await this.tournamentService.getRound(tournamentId, roundId);
     const filePath = path.join(
       FILE_ROOT,
@@ -69,6 +72,14 @@ export class TournamentController extends Controller {
 
     const fileName = `round${round.roundNumber}.csv`;
     const localFileFullPath = path.join(filePath, fileName);
+    const fileStream = createWriteStream(localFileFullPath);
+
+    // Set response headers
+    response.setHeader("Content-Type", "text/csv");
+    response.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${fileName}"`
+    );
 
     const stream = format({
       headers: [
@@ -80,6 +91,13 @@ export class TournamentController extends Controller {
         "P2 match points",
       ],
     });
+
+    const teeStream = new PassThrough();
+
+    teeStream.pipe(response);
+    teeStream.pipe(fileStream);
+
+    stream.pipe(teeStream);
 
     for (let match of round.matches.sort(
       (a, b) => a.tableNumber - b.tableNumber
@@ -99,14 +117,6 @@ export class TournamentController extends Controller {
     }
 
     stream.end();
-    const content = await text(stream);
-    writeFileSync(localFileFullPath, content);
-
-    // Set response headers
-    this.setHeader("Content-Type", "text/csv");
-    this.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
-
-    return content; // Return content instead of file path
   }
 
   // User-level endpoints
