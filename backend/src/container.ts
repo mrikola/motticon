@@ -45,7 +45,11 @@ Container.set(
 );
 Container.set(
   "ScoreService",
-  new ScoreService(AppDataSource, Container.get("UserService"))
+  new ScoreService(
+    AppDataSource,
+    Container.get("UserService"),
+    Container.get("MatchService")
+  )
 );
 
 // Register other services

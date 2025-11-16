@@ -1,6 +1,6 @@
 import { Match } from "../entity/Match";
 import { Round } from "../entity/Round";
-import { PodDraftMatch } from "./draft.dto";
+import { PodDraftMatch, DraftPodDto, podToDto } from "./draft.dto";
 import { RoundStatus } from "./general.dto";
 import { TournamentDto, tournamentToDto } from "./tournaments.dto";
 import { PlayerDto, playerToDto } from "./user.dto";
@@ -16,6 +16,7 @@ export type MatchDto = {
   resultSubmittedBy: PlayerDto;
   playerGoingFirst: PlayerDto;
   matchType: PodDraftMatch;
+  pod?: DraftPodDto;
 };
 
 export type RoundDto = {
@@ -40,6 +41,7 @@ export const matchToDto = (match: Match): MatchDto =>
         resultSubmittedBy: playerToDto(match.resultSubmittedBy),
         playerGoingFirst: playerToDto(match.playerGoingFirst),
         matchType: match.matchType,
+        pod: match.pod ? podToDto(match.pod) : undefined,
       }
     : undefined;
 

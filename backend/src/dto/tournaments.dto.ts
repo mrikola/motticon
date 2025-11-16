@@ -1,7 +1,7 @@
 import { Tournament } from "../entity/Tournament";
 import { CubeDto, cubeToDto } from "./cube.dto";
 import { DraftDto, draftToDto } from "./draft.dto";
-import { TournamentStatus } from "./general.dto";
+import { TournamentStatus, PairingMode } from "./general.dto";
 import {
   EnrollmentDto,
   PlayerDto,
@@ -29,6 +29,7 @@ export type TournamentDto = {
   totalSeats: number;
   preferencesRequired: number;
   status: TournamentStatus;
+  pairingMode: PairingMode;
   drafts: DraftDto[];
   userEnrollmentEnabled: boolean;
   enrollments: EnrollmentDto[];
@@ -101,6 +102,7 @@ export const tournamentToDto = (tournament: Tournament): TournamentDto =>
         totalSeats: tournament.totalSeats,
         preferencesRequired: tournament.preferencesRequired,
         status: tournament.status,
+        pairingMode: tournament.pairingMode,
         drafts: tournament.drafts?.map(draftToDto) ?? [],
         userEnrollmentEnabled: tournament.userEnrollmentEnabled,
         enrollments: tournament.enrollments?.map(enrollmentToDto) ?? [],

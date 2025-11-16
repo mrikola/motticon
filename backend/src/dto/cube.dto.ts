@@ -12,6 +12,7 @@ export type CubeDto = {
   owner: string;
   url: string;
   imageUrl: string;
+  cardCount: number;
   cardlist: CardList | null;
   count?: number;
 };
@@ -30,6 +31,7 @@ export const cubeToDto = (cube: Cube): CubeDto =>
         owner: cube.owner,
         url: cube.url,
         imageUrl: cube.imageUrl,
+        cardCount: cube.cardCount,
         cardlist: null, // TODO return cube.cardlist
         count: sumArray(
           cube.tournamentAllocations?.map((alloc) => alloc.count) ?? []

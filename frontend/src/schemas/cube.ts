@@ -19,6 +19,7 @@ export const CubeSchema: z.ZodType<Cube> = z.lazy(() =>
     url: z.string(),
     owner: z.string().nullable(),
     imageUrl: z.string().nullable(),
+    cardCount: z.number(),
     cardlist: CardListSchema.optional().nullable(),
     count: z.number().optional(),
   })

@@ -30,6 +30,7 @@ import {
   WILD_CARD_IDENTIFIER,
   getCubeAllocations,
   popularPriorityPodAssignments as popularPriorityPodAssignments,
+  calculatePodSizes,
 } from "./popularPriorityPodAssigments";
 import { TournamentCube } from "../entity/TournamentCube";
 
@@ -69,7 +70,8 @@ export class TournamentService {
     startDate: Date,
     endDate: Date,
     cubeCounts: { [cubeId: number]: number },
-    userEnrollmentEnabled: boolean
+    userEnrollmentEnabled: boolean,
+    pairingMode: "bracket" | "swiss" = "bracket"
   ): Promise<Tournament> {
     const cubes: Cube[] = await this.appDataSource
       .getRepository(Cube)
@@ -86,6 +88,7 @@ export class TournamentService {
       startDate,
       endDate,
       userEnrollmentEnabled: userEnrollmentEnabled,
+      pairingMode: pairingMode || "bracket",
     });
 
     const cubeAllocations: TournamentCube[] = cubes.map((cube) => ({
@@ -369,16 +372,36 @@ export class TournamentService {
 
   async generateDraftSeatings(
     pods: DraftPod[],
-    players: User[]
+    players: User[],
+    podSizes?: number[]
   ): Promise<void> {
+    // Calculate pod sizes if not provided
+    let calculatedPodSizes: number[];
+    if (podSizes) {
+      calculatedPodSizes = podSizes;
+    } else {
+      // If pod sizes not provided, calculate from players array
+      // This assumes players are already grouped correctly or we need to distribute evenly
+      const totalPlayers = players.length;
+      const numPods = pods.length;
+      const baseSize = Math.floor(totalPlayers / numPods);
+      const remainder = totalPlayers % numPods;
+      calculatedPodSizes = Array(numPods)
+        .fill(baseSize)
+        .map((size, index) => (index < remainder ? size + 1 : size));
+    }
+
+    let playerIndex = 0;
     pods.forEach((pod, podIndex) => {
+      const podSize = calculatedPodSizes[podIndex];
       const podPlayers = players
-        .slice(podIndex * 8, (podIndex + 1) * 8)
+        .slice(playerIndex, playerIndex + podSize)
         .sort(randomize);
-      podPlayers.forEach(async (player, playerIndex) => {
+      playerIndex += podSize;
+      podPlayers.forEach(async (player, seatIndex) => {
         await this.appDataSource.getRepository(DraftPodSeat).insert({
           pod,
-          seat: playerIndex + 1,
+          seat: seatIndex + 1,
           player,
           draftPoolReturned: false,
         });
@@ -391,7 +414,11 @@ export class TournamentService {
     const enrollments = (await this.getTournamentEnrollments(tournamentId))
       .enrollments;
     const cubes = await this.cubeService.getCubesForTournament(tournamentId);
-    const podsPerDraft = tournament.totalSeats / 8;
+
+    // Calculate pod sizes based on real players (excluding dummies)
+    const realPlayers = enrollments.filter((e) => !e.player.isDummy);
+    const podSizes = calculatePodSizes(realPlayers.length);
+    const podsPerDraft = podSizes.length;
 
     if (tournament.preferencesRequired === 0) {
       // TODO for non-preference cases, this just randomizes players and cubes + assigns them afterwards
@@ -419,7 +446,7 @@ export class TournamentService {
               })
             );
           }
-          await this.generateDraftSeatings(draftPods, players);
+          await this.generateDraftSeatings(draftPods, players, podSizes);
         })
       );
     } else {
@@ -440,9 +467,15 @@ export class TournamentService {
               })
           )
         );
+        // Use players from assignment (already grouped per pod) and pass pod sizes
+        const allPlayers = assignment.pods.map((pod) => pod.players).flat();
+        const assignmentPodSizes = assignment.pods.map(
+          (pod) => pod.players.length
+        );
         await this.generateDraftSeatings(
           draftPods,
-          assignment.pods.map((pod) => pod.players).flat()
+          allPlayers,
+          assignmentPodSizes
         );
       });
     }
@@ -556,6 +589,33 @@ export class TournamentService {
     );
 
     this.scoreService.saveSnapshot(tournamentId, round.roundNumber);
+
+    // Update pod standings if tournament uses Swiss pairings
+    const tournament = await this.repository.findOne({
+      where: { id: tournamentId },
+    });
+
+    if (tournament?.pairingMode === "swiss") {
+      // Get all unique pod IDs from matches in this round
+      // Check both pod relation and podId field for robustness
+      const podIds = new Set<number>();
+      matches.forEach((match) => {
+        const podId = match.pod?.id ?? match.podId;
+        if (podId) {
+          podIds.add(podId);
+        }
+      });
+
+      // Update standings for each pod
+      if (podIds.size > 0) {
+        await Promise.all(
+          Array.from(podIds).map((podId) =>
+            this.scoreService.updatePodStandings(podId, roundId)
+          )
+        );
+      }
+    }
+
     return null;
   }
 
@@ -581,14 +641,26 @@ export class TournamentService {
     const enrollments = (await this.getTournamentEnrollments(tournamentId))
       .enrollments;
     const cubes = await this.cubeService.getCubesForTournament(tournamentId);
-    const podsPerDraft = tournament.totalSeats / 8;
+
+    const { calculatePodSizes } = await import(
+      "./popularPriorityPodAssigments"
+    );
+    const podSizes = calculatePodSizes(enrollments.length);
+    const podsPerDraft = podSizes.length; // Keep for backward compatibility
 
     const preferences = (
       await this.preferenceService.getPreferencesForTournament(tournamentId)
     ).filter((preference) =>
       enrollments.find((enroll) => enroll.player.id === preference.player.id)
     );
-    return { tournament, enrollments, cubes, podsPerDraft, preferences };
+    return {
+      tournament,
+      enrollments,
+      cubes,
+      podsPerDraft,
+      podSizes,
+      preferences,
+    };
   };
 
   getPlayerPreferencesForPodGeneration = (
@@ -669,6 +741,16 @@ export class TournamentService {
     enrollments: Enrollment[],
     cubes: Cube[]
   ): Promise<PreferentialPodAssignments[]> => {
+    // Calculate pod sizes based on real players (excluding dummies)
+    const realPlayers = enrollments.filter((e) => !e.player.isDummy);
+    const podSizes = calculatePodSizes(realPlayers.length);
+
+    // Helper function to check if cube has enough cards for pod size
+    const cubeHasEnoughCardsForPod = (cube: Cube, podSize: number): boolean => {
+      const requiredCards = podSize * 3 * 15; // 45 cards per player
+      return cube.cardCount >= requiredCards;
+    };
+
     const podAssignments: PreferentialPodAssignments[] = [];
     for (let iteration = 0; iteration < iterationsPerStrategy; ++iteration) {
       // SET UP FOR A PARTICULAR ITERATION
@@ -683,10 +765,9 @@ export class TournamentService {
 
       let totalPreferencePointsUsed = 0;
 
-      const assignments: User[][][] = makeArray(
-        tournament.drafts.length,
-        podsPerDraft,
-        8
+      // Create assignments array with variable pod sizes
+      const assignments: User[][][] = tournament.drafts.map(() =>
+        podSizes.map((size) => [])
       );
 
       let currentIterationAssignments: PreferentialPodAssignments = {
@@ -727,6 +808,8 @@ export class TournamentService {
         let isGreedyOverride = false;
 
         for (let podNumber = 1; podNumber <= podsPerDraft; ++podNumber) {
+          const podSize = podSizes[podNumber - 1];
+
           const sortedCubes = cubes
             // filter out cubes already fully used in this draft
             .filter((cube) => {
@@ -738,6 +821,8 @@ export class TournamentService {
                 cubeAllocations
               );
             })
+            // filter out cubes that don't have enough cards for this pod size
+            .filter((cube) => cubeHasEnoughCardsForPod(cube, podSize))
             .map((cube) => ({
               id: cube.id,
               points: sumArray(
@@ -776,18 +861,66 @@ export class TournamentService {
           // console.info(cubesByPreference, strategy);
           const currentCubeId = cubesByPreference[cubeIndex].id;
 
-          const shouldAssignExtraDummy =
-            strategy[draftIndex] === "greedy"
-              ? // with greedy strat, put dummies in last pods
-                dummyPlayerCount % podsPerDraft > podsPerDraft - podNumber
-              : // otherwise, if override is on, pods 2..n; if not, pods 1..n
-                !(isGreedyOverride && podNumber === 1) &&
-                dummyPlayerCount % podsPerDraft >=
-                  podNumber - (isGreedyOverride ? 1 : 0);
+          // Calculate total slots and dummies needed
+          const totalSlots = podSizes.reduce((sum, size) => sum + size, 0);
+          const totalRealPlayers = realPlayers.length;
+          const totalDummiesNeeded = totalSlots - totalRealPlayers;
 
-          const dummyPlayersInPod =
-            Math.floor(dummyPlayerCount / podsPerDraft) +
-            (shouldAssignExtraDummy ? 1 : 0);
+          // Calculate how many dummies have been assigned so far in this draft
+          const dummiesAssignedSoFar = draftPods.reduce(
+            (sum, pod) =>
+              sum +
+              (assignments[draftIndex][pod.podNumber - 1]?.filter(
+                (p) => p.isDummy
+              ).length ?? 0),
+            0
+          );
+
+          // Calculate remaining dummies to assign
+          const remainingDummies = totalDummiesNeeded - dummiesAssignedSoFar;
+
+          // Calculate remaining slots in pods not yet processed
+          const remainingSlots = podSizes
+            .slice(podNumber - 1)
+            .reduce((sum, size) => sum + size, 0);
+
+          // Calculate how many players have been assigned so far in this draft
+          const playersAssignedSoFar = draftPods.reduce(
+            (sum, pod) =>
+              sum + (assignments[draftIndex][pod.podNumber - 1]?.length ?? 0),
+            0
+          );
+
+          // Calculate remaining slots after accounting for already assigned players
+          const remainingSlotsForUnassigned =
+            remainingSlots - playersAssignedSoFar;
+
+          // Distribute dummies: prioritize 8-player pods, then distribute proportionally
+          let dummyPlayersInPod = 0;
+          if (remainingDummies > 0 && remainingSlotsForUnassigned > 0) {
+            // If this is an 8-player pod and there are 8-player pods remaining, prioritize them
+            const remaining8PlayerPods = podSizes
+              .slice(podNumber - 1)
+              .filter((size) => size === 8).length;
+            const remaining10PlayerPods = podSizes
+              .slice(podNumber - 1)
+              .filter((size) => size === 10).length;
+
+            if (podSize === 8 && remaining8PlayerPods > 0) {
+              // Distribute dummies to 8-player pods first
+              const dummiesPer8Pod = Math.ceil(
+                remainingDummies / remaining8PlayerPods
+              );
+              dummyPlayersInPod = Math.min(
+                dummiesPer8Pod,
+                podSize - (assignments[draftIndex][podNumber - 1]?.length ?? 0)
+              );
+            } else if (podSize === 10 && remaining10PlayerPods > 0) {
+              // Distribute remaining dummies to 10-player pods proportionally
+              const proportion = podSize / remainingSlots;
+              dummyPlayersInPod = Math.floor(remainingDummies * proportion);
+            }
+          }
 
           const preferredPlayers = preferences // find players who..
             .filter(
@@ -807,7 +940,7 @@ export class TournamentService {
               (pref) =>
                 unassignedPlayers.find((player) => player.id === pref.player.id)
             )
-            .slice(0, 8 - dummyPlayersInPod)
+            .slice(0, podSize - dummyPlayersInPod)
             .map((pref) => {
               preferencePointsUsed += pref.points;
               return pref;
@@ -827,7 +960,7 @@ export class TournamentService {
           }
 
           // if pod is not full, fill it with wildcards
-          while (preferredPlayers.length < 8 && wildCards.length > 0) {
+          while (preferredPlayers.length < podSize && wildCards.length > 0) {
             // check that the wildcard hasn't played this cube earlier
             const assigned = wildCards
               .filter(
@@ -853,7 +986,7 @@ export class TournamentService {
           }
 
           // if pod is STILL not full, fill it with randoms
-          if (preferredPlayers.length < 8) {
+          if (preferredPlayers.length < podSize) {
             preferredPlayers.push(
               ...unassignedPlayers
                 // filter out assigned players for this cube
@@ -871,14 +1004,16 @@ export class TournamentService {
                       currentCubeId
                     )
                 )
-                .slice(0, 8 - preferredPlayers.length)
+                .slice(0, podSize - preferredPlayers.length)
             );
           }
 
-          if (preferredPlayers.length < 8) {
+          if (preferredPlayers.length < podSize) {
             console.log(
               "pod not full, could only fit: ",
-              preferredPlayers.length
+              preferredPlayers.length,
+              "expected:",
+              podSize
             );
             console.info(currentCubeId);
             throw new Error("pod not full");
@@ -1113,15 +1248,22 @@ export class TournamentService {
   };
 
   async getPreferentialPodAssignments(tournamentId: number) {
-    const { tournament, enrollments, cubes, podsPerDraft, preferences } =
-      await this.getAssetsForAssignments(tournamentId);
+    const {
+      tournament,
+      enrollments,
+      cubes,
+      podsPerDraft,
+      podSizes,
+      preferences,
+    } = await this.getAssetsForAssignments(tournamentId);
 
     const popularCubePriorityAssignments = await popularPriorityPodAssignments(
       preferences,
       tournament,
       podsPerDraft,
       enrollments,
-      cubes
+      cubes,
+      podSizes
     );
 
     const roundByRoundAssignments = await this.generatePodAssignments(

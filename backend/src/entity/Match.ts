@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Round } from "./Round";
 import { User } from "./User";
+import { DraftPod } from "./DraftPod";
 import { PodDraftMatch } from "../dto/draft.dto";
 
 @Entity()
@@ -53,6 +54,12 @@ export class Match {
 
   @Column("varchar")
   matchType: PodDraftMatch;
+
+  @JoinColumn()
+  podId: number | null;
+
+  @ManyToOne(() => DraftPod, { nullable: true })
+  pod: DraftPod | null;
 
   @BeforeInsert()
   determineStartingPlayer() {

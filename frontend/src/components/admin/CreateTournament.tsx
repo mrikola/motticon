@@ -15,7 +15,7 @@ import { useNavigate } from "react-router";
 import "react-datepicker/dist/react-datepicker.css";
 import { useEffect, useState } from "react";
 import { Cube } from "../../types/Cube";
-import { Tournament } from "../../types/Tournament";
+import { Tournament, PairingMode } from "../../types/Tournament";
 import HelmetTitle from "../general/HelmetTitle";
 import BackButton from "../general/BackButton";
 import { toast } from "react-toastify";
@@ -33,6 +33,7 @@ type TournamentForm = {
     [cubeId: number]: number;
   };
   userEnrollmentEnabled: boolean;
+  pairingMode: PairingMode;
 };
 
 const CreateTournament = () => {
@@ -72,6 +73,7 @@ const CreateTournament = () => {
       endDate: undefined,
       cubes: {},
       userEnrollmentEnabled: true,
+      pairingMode: "bracket",
     },
   });
 
@@ -316,6 +318,13 @@ const CreateTournament = () => {
                   {count}
                 </option>
               ))}
+            </Form.Select>
+          </Col>
+          <Col xs={6}>
+            <Form.Label>Pairing mode</Form.Label>
+            <Form.Select {...register("pairingMode")} className="mb-3">
+              <option value="bracket">Bracket (cross pod pairings)</option>
+              <option value="swiss">Swiss</option>
             </Form.Select>
           </Col>
           <Row>

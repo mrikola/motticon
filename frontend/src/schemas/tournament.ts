@@ -3,6 +3,7 @@ import {
   Tournament,
   Round,
   Status,
+  PairingMode,
   Draft,
   DraftPod,
   DraftPodSeat,
@@ -16,6 +17,11 @@ export const StatusSchema: z.ZodType<Status> = z.enum([
   "pending",
   "started",
   "completed",
+]);
+
+export const PairingModeSchema: z.ZodType<PairingMode> = z.enum([
+  "bracket",
+  "swiss",
 ]);
 
 export const DraftPodSeatSchema: z.ZodType<DraftPodSeat> = z.lazy(() =>
@@ -62,6 +68,7 @@ export const TournamentSchema: z.ZodType<Tournament> = z.object({
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
   status: StatusSchema,
+  pairingMode: PairingModeSchema,
   totalSeats: z.number(),
   preferencesRequired: z.number(),
   userEnrollmentEnabled: z.boolean(),

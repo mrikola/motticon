@@ -25,6 +25,7 @@ type AddCubeForm = {
   url: string;
   owner: string;
   imageUrl: string;
+  cardCount: number;
 };
 
 function AddCube() {
@@ -58,6 +59,7 @@ function AddCube() {
       url: "",
       owner: "",
       imageUrl: "",
+      cardCount: 360,
     },
   });
 
@@ -180,6 +182,40 @@ function AddCube() {
                 />
                 <p className="text-danger">
                   {errors.url && errors.url.message}
+                </p>
+              </FloatingLabel>
+            </Col>
+            <Col xs={6}>
+              <FloatingLabel
+                controlId="cardCount"
+                label="Card count"
+                className="mb-3"
+              >
+                <Form.Control
+                  {...register("cardCount", {
+                    required: "Please enter the card count",
+                    valueAsNumber: true,
+                    min: {
+                      value: 1,
+                      message: "Card count must be at least 1",
+                    },
+                  })}
+                  type="number"
+                  placeholder="360"
+                  className={
+                    getFieldState("cardCount").isDirty
+                      ? getFieldState("cardCount").invalid
+                        ? "is-invalid"
+                        : "is-valid"
+                      : ""
+                  }
+                />
+                <p className="text-danger">
+                  {errors.cardCount && errors.cardCount.message}
+                </p>
+                <p className="small">
+                  Minimum cards required: 360 for 8-player pods, 450 for
+                  10-player pods
                 </p>
               </FloatingLabel>
             </Col>
