@@ -3,7 +3,7 @@ import { LoggedInUser } from "./auth";
 
 export const isUserTournamentStaff = (
   user: LoggedInUser | null,
-  tournamentId: number,
+  tournamentId: number
 ): boolean =>
   user?.isAdmin || user?.tournamentsStaffed.includes(tournamentId) || false;
 
@@ -12,3 +12,9 @@ export const calculateFreeSeats = (tournament: Tournament): number =>
 
 export const hasPreferencesRequired = (tournament: Tournament): boolean =>
   tournament.status === "pending" && tournament.preferencesRequired > 0;
+
+export const calculateDeckBuildingPod = (
+  podNumber: number,
+  seatNumber: number,
+  podCount: number
+) => ((podNumber + seatNumber - 2) % podCount) + 1;

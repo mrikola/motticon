@@ -15,6 +15,7 @@ import { Cube } from "../../types/Cube";
 import { PickedCard } from "../../types/Card";
 import { ApiClient, ApiException } from "../../services/ApiService";
 import { startPolling } from "../../utils/polling";
+import { calculateDeckBuildingPod } from "../../utils/tournamentUtils";
 
 type Props = {
   tournament: Tournament;
@@ -127,12 +128,39 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
             />
             <HorizontalCard
               squareFillContent={playerPod.podNumber.toString()}
-              cardTitle="Pod"
+              cardTitle="Draft pod"
             />
             <HorizontalCard
-              squareFillContent={playerSeat?.seat.toString()}
-              cardTitle="Seat"
+              squareFillContent={playerSeat.seat.toString()}
+              cardTitle="Draft seat"
             />
+            {tournament.totalSeats >= 64 && (
+              <>
+                <HorizontalCard
+                  cardTitle="Deck building pod"
+                  squareFillContent={`${calculateDeckBuildingPod(
+                    playerPod.podNumber,
+                    playerSeat.seat,
+                    tournament.totalSeats / 8
+                  )}`}
+                />
+                <p>
+                  After the draft:
+                  <ul>
+                    <li>
+                      Submit a photo showing all the cards you drafted
+                      <ul>
+                        <li>
+                          Make sure the names of all your cards are visible!
+                        </li>
+                      </ul>
+                    </li>
+                    <li>Move to the deck building pod indicated above</li>
+                    <li>Build your deck</li>
+                  </ul>
+                </p>
+              </>
+            )}
           </Container>
         </Row>
         <DeckBuildingSubmission

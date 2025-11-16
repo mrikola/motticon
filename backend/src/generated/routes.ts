@@ -1406,6 +1406,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsTournamentController_generateCsvFromRound: Record<string, TsoaRoute.ParameterSchema> = {
                 tournamentId: {"in":"path","name":"tournamentId","required":true,"dataType":"double"},
                 roundId: {"in":"path","name":"roundId","required":true,"dataType":"double"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.get('/tournament/:tournamentId/round/:roundId/results',
             ...(fetchMiddlewares<RequestHandler>(TournamentController)),

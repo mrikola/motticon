@@ -23,7 +23,7 @@ const DraftTable = ({
 
   useEffect(() => {
     const sortedSeats = seats.sort(
-      (a, b) => (a.pod?.podNumber ?? 0) - (b.pod?.podNumber ?? 0),
+      (a, b) => (a.pod?.podNumber ?? 0) - (b.pod?.podNumber ?? 0)
     );
     setIncompleteSeats(sortedSeats.filter((seat) => !seat.deckPhotoUrl));
     setCompleteSeats(sortedSeats.filter((seat) => !!seat.deckPhotoUrl));
@@ -38,7 +38,7 @@ const DraftTable = ({
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>Table</th>
+                  <th>Pod</th>
                   <th>Player</th>
                   <th>Done?</th>
                   <th>Staff submission</th>
@@ -47,11 +47,7 @@ const DraftTable = ({
               <tbody>
                 {incompleteSeats.map((seat) => (
                   <tr key={seat.id}>
-                    <td>
-                      {Math.round(
-                        (((seat.pod?.podNumber ?? 1) - 1) * 8 + seat.seat) / 2,
-                      )}
-                    </td>
+                    <td>{seat.pod?.podNumber}</td>
                     <td>
                       {seat.player?.firstName} {seat.player?.lastName}{" "}
                       {isPlayerDropped(enrollments, seat.player?.id ?? 0)
@@ -93,7 +89,7 @@ const DraftTable = ({
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>Table</th>
+                  <th>Pod</th>
                   <th>Player</th>
                   <th>Done?</th>
                   <th>Staff submission</th>
@@ -102,11 +98,7 @@ const DraftTable = ({
               <tbody>
                 {completeSeats.map((seat) => (
                   <tr key={seat.id}>
-                    <td>
-                      {Math.round(
-                        (((seat.pod?.podNumber ?? 1) - 1) * 8 + seat.seat) / 2,
-                      )}
-                    </td>
+                    <td>{seat.pod?.podNumber}</td>
                     <td>
                       {seat.player?.firstName} {seat.player?.lastName}
                     </td>

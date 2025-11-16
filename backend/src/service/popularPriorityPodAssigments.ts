@@ -527,6 +527,16 @@ const generateCubeCon = (
   cubes: Cube[]
 ) => {
   const cubeCon = initializeCubeCon(podsPerDraft);
+
+  // Start by inserting dummies (byes) into the bottom pods
+  const dummies = enrollments.filter((enr) => enr.player.isDummy);
+  for (const round of cubeCon.rounds) {
+    const randomizedDummies = dummies.sort(randomize);
+    randomizedDummies.forEach((dummy, index) => {
+      round.pods[round.pods.length - index - 1].players[0] = dummy.player.id;
+    });
+  }
+
   // Initialize our variables used in the iteration below
 
   let targetCubeId: number = -1;
@@ -537,7 +547,8 @@ const generateCubeCon = (
   const preferencesByPlayer = getPreferencesByPlayer(preferences);
   for (
     let player = 0;
-    player < tournament.drafts.length * tournament.totalSeats;
+    player <
+    tournament.drafts.length * (tournament.totalSeats - dummies.length);
     player++
   ) {
     // Update the player preference status so that they don't get

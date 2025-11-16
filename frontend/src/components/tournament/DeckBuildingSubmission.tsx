@@ -133,12 +133,7 @@ function DeckBuildingSubmission({
         <h3>Deck submitted successfully</h3>
       ) : (
         <Col className="d-grid gap-2">
-          <p>
-            After the draft, please submit a photo showing all the cards you
-            drafted. Make sure the names of all cards are visible.
-          </p>
           <Form.Group controlId="formFile" className="mb-3">
-            <Form.Label className="lead">Draft pool photo</Form.Label>
             <Form.Control type="file" onChange={handleFileChange} />
           </Form.Group>
           <Button
