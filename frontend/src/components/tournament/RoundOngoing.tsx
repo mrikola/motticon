@@ -25,6 +25,8 @@ import DraftPoolButton from "../general/DraftPoolButton";
 import { isPlayerDropped } from "../../utils/user";
 import { ApiClient, ApiException } from "../../services/ApiService";
 import { startPolling } from "../../utils/polling";
+import { BoxArrowUpRight } from "react-bootstrap-icons";
+import { Link } from "react-router-dom";
 
 type Props = {
   tournament: Tournament;
@@ -67,6 +69,7 @@ function RoundOngoing({
     useState<PlayerTournamentScore>();
   const [currentRoundPoints, setCurrentRoundPoints] = useState<number>(0);
   const [draftPodSeat, setDraftPodSeat] = useState<DraftPodSeat>();
+  const [opponentSeat, setOpponentSeat] = useState<DraftPodSeat>();
   const [opponentDropped, setOpponentDropped] = useState<boolean>(false);
 
   useEffect(() => {
@@ -85,12 +88,12 @@ function RoundOngoing({
       setPlayerRadioValue(
         isPlayer1
           ? match.player1GamesWon.toString()
-          : match.player2GamesWon.toString(),
+          : match.player2GamesWon.toString()
       );
       setOpponentRadioValue(
         isPlayer1
           ? match.player2GamesWon.toString()
-          : match.player1GamesWon.toString(),
+          : match.player1GamesWon.toString()
       );
     } else if (opponent?.id !== currentOpponent.id) {
       // Reset radio values when opponent changes
@@ -207,7 +210,7 @@ function RoundOngoing({
   useEffect(() => {
     if (matches) {
       setResultsMissing(
-        matches.filter((match) => !match.resultSubmittedBy).length,
+        matches.filter((match) => !match.resultSubmittedBy).length
       );
     }
   }, [matches]);
@@ -217,7 +220,7 @@ function RoundOngoing({
       try {
         const score = await ApiClient.getPlayerTournamentScore(
           tournament.id,
-          user?.id ?? 0,
+          user?.id ?? 0
         );
         setPlayerTournamentScore(score);
       } catch (error) {
@@ -250,6 +253,18 @@ function RoundOngoing({
       });
     }
   }, [draft, user]);
+
+  useEffect(() => {
+    if (opponent) {
+      Object.values(draft.pods).forEach((pod) => {
+        Object.values(pod.seats).forEach((seat) => {
+          if (seat.player?.id === opponent.id) {
+            setOpponentSeat(seat);
+          }
+        });
+      });
+    }
+  }, [draft, opponent]);
 
   const submissionDisabled = !roundTimerStarted || !!match.resultSubmittedBy;
 
@@ -356,6 +371,17 @@ function RoundOngoing({
               </p>
               <Col xs={10} sm={8} className="d-grid gap-2 my-3 mx-auto">
                 <DraftPoolButton seat={draftPodSeat} />
+                {opponentSeat &&
+                  !!match.resultSubmittedBy &&
+                  round.roundNumber % 3 === 0 && (
+                    <Link
+                      to={opponentSeat?.deckPhotoUrl ?? "#"}
+                      target="_blank"
+                      className="btn btn-primary btn-lg"
+                    >
+                      <BoxArrowUpRight /> View your opponent's draft pool
+                    </Link>
+                  )}
               </Col>
             </>
           )}
