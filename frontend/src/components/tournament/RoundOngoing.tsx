@@ -373,7 +373,7 @@ function RoundOngoing({
                 <DraftPoolButton seat={draftPodSeat} />
                 {opponentSeat &&
                   !!match.resultSubmittedBy &&
-                  round.roundNumber % 3 === 0 && (
+                  round.roundNumber === draft.lastRound && (
                     <Link
                       to={opponentSeat?.deckPhotoUrl ?? "#"}
                       target="_blank"
