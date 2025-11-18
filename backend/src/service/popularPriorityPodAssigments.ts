@@ -81,12 +81,11 @@ const isCubeInRound = (cubeId: number, round: Round) => {
 };
 
 /**
- * Check if a cube has enough cards for a pod size
- * Constraint: cube.cardCount >= pod.playerCount * 3 * 15
+ * Check if a cube supports a pod size
+ * Constraint: cube.maxPlayersSupported >= podSize
  */
-const cubeHasEnoughCardsForPod = (cube: Cube, podSize: number): boolean => {
-  const requiredCards = podSize * 3 * 15; // 45 cards per player
-  return cube.cardCount >= requiredCards;
+const cubeSupportsPodSize = (cube: Cube, podSize: number): boolean => {
+  return cube.maxPlayersSupported >= podSize;
 };
 
 const isCubeAvailableInRound = (cube: Cube, round: Round) => {
@@ -145,7 +144,7 @@ const placeCubeIntoCubeCon = (
         if (pod.cubeId === -1) {
           // Check if cube has enough cards for this pod size
           const podSize = pod.size || pod.players.length;
-          if (cubeHasEnoughCardsForPod(cube, podSize)) {
+          if (cubeSupportsPodSize(cube, podSize)) {
             pod.cubeId = cube.id;
             return true;
           }
@@ -386,7 +385,7 @@ const isCubeFullInCubecon = (cube: Cube, cubeCon: CubeCon): boolean => {
     ) {
       // Check if cube has enough cards for the empty pod
       const podSize = emptyPod.size || emptyPod.players.length;
-      if (cubeHasEnoughCardsForPod(cube, podSize)) {
+      if (cubeSupportsPodSize(cube, podSize)) {
         isFull = false;
         break;
       }
@@ -396,7 +395,7 @@ const isCubeFullInCubecon = (cube: Cube, cubeCon: CubeCon): boolean => {
         if (pod.cubeId === cube.id && pod.players.includes(-1)) {
           // Check if cube has enough cards for this pod
           const podSize = pod.size || pod.players.length;
-          return cubeHasEnoughCardsForPod(cube, podSize);
+          return cubeSupportsPodSize(cube, podSize);
         }
         return false;
       })
@@ -474,7 +473,7 @@ const cubeConsIntoPreferentialPodAssignments = (
             owner: "",
             url: "",
             imageUrl: null,
-            cardCount: 360,
+            maxPlayersSupported: 8,
             tournamentAllocations: [],
             cardlist: null,
           },

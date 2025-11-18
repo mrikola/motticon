@@ -49,10 +49,11 @@ export class CubeController extends Controller {
       url: string;
       owner: string;
       imageUrl: string;
-      cardCount?: number;
+      maxPlayersSupported?: number;
     }
   ): Promise<CubeDto> {
-    const { title, description, url, owner, imageUrl, cardCount } = cube;
+    const { title, description, url, owner, imageUrl, maxPlayersSupported } =
+      cube;
     return cubeToDto(
       await this.cubeService.addCube(
         title,
@@ -60,7 +61,7 @@ export class CubeController extends Controller {
         url,
         owner,
         imageUrl,
-        cardCount
+        maxPlayersSupported
       )
     );
   }
@@ -76,11 +77,18 @@ export class CubeController extends Controller {
       url: string;
       owner: string;
       imageUrl: string;
-      cardCount?: number;
+      maxPlayersSupported?: number;
     }
   ): Promise<CubeDto> {
-    const { cubeId, title, description, url, owner, imageUrl, cardCount } =
-      cube;
+    const {
+      cubeId,
+      title,
+      description,
+      url,
+      owner,
+      imageUrl,
+      maxPlayersSupported,
+    } = cube;
     return cubeToDto(
       await this.cubeService.editCube(
         cubeId,
@@ -89,7 +97,7 @@ export class CubeController extends Controller {
         url,
         owner,
         imageUrl,
-        cardCount
+        maxPlayersSupported
       )
     );
   }

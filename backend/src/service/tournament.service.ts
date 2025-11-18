@@ -745,10 +745,9 @@ export class TournamentService {
     const realPlayers = enrollments.filter((e) => !e.player.isDummy);
     const podSizes = calculatePodSizes(realPlayers.length);
 
-    // Helper function to check if cube has enough cards for pod size
-    const cubeHasEnoughCardsForPod = (cube: Cube, podSize: number): boolean => {
-      const requiredCards = podSize * 3 * 15; // 45 cards per player
-      return cube.cardCount >= requiredCards;
+    // Helper function to check if cube supports pod size
+    const cubeSupportsPodSize = (cube: Cube, podSize: number): boolean => {
+      return cube.maxPlayersSupported >= podSize;
     };
 
     const podAssignments: PreferentialPodAssignments[] = [];
@@ -822,7 +821,7 @@ export class TournamentService {
               );
             })
             // filter out cubes that don't have enough cards for this pod size
-            .filter((cube) => cubeHasEnoughCardsForPod(cube, podSize))
+            .filter((cube) => cubeSupportsPodSize(cube, podSize))
             .map((cube) => ({
               id: cube.id,
               points: sumArray(

@@ -150,7 +150,7 @@ const models: TsoaRoute.Models = {
             "owner": {"dataType":"string","required":true},
             "url": {"dataType":"string","required":true},
             "imageUrl": {"dataType":"string","required":true},
-            "cardCount": {"dataType":"double","required":true},
+            "maxPlayersSupported": {"dataType":"double","required":true},
             "cardlist": {"ref":"CardList","required":true},
             "tournamentAllocations": {"dataType":"array","array":{"dataType":"refObject","ref":"TournamentCube"},"required":true},
         },
@@ -252,7 +252,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CubeDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"count":{"dataType":"double"},"cardlist":{"dataType":"union","subSchemas":[{"ref":"CardList"},{"dataType":"enum","enums":[null]}],"required":true},"cardCount":{"dataType":"double","required":true},"imageUrl":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"owner":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true},"id":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"count":{"dataType":"double"},"cardlist":{"dataType":"union","subSchemas":[{"ref":"CardList"},{"dataType":"enum","enums":[null]}],"required":true},"maxPlayersSupported":{"dataType":"double","required":true},"imageUrl":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"owner":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true},"id":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TokenDto": {
@@ -942,7 +942,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsCubeController_addCube: Record<string, TsoaRoute.ParameterSchema> = {
-                cube: {"in":"body","name":"cube","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"cardCount":{"dataType":"double"},"imageUrl":{"dataType":"string","required":true},"owner":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
+                cube: {"in":"body","name":"cube","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"maxPlayersSupported":{"dataType":"double"},"imageUrl":{"dataType":"string","required":true},"owner":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
         };
         app.post('/cube/add',
             authenticateMiddleware([{"admin":[]}]),
@@ -978,7 +978,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsCubeController_editCube: Record<string, TsoaRoute.ParameterSchema> = {
-                cube: {"in":"body","name":"cube","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"cardCount":{"dataType":"double"},"imageUrl":{"dataType":"string","required":true},"owner":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true},"cubeId":{"dataType":"double","required":true}}},
+                cube: {"in":"body","name":"cube","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"maxPlayersSupported":{"dataType":"double"},"imageUrl":{"dataType":"string","required":true},"owner":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true},"cubeId":{"dataType":"double","required":true}}},
         };
         app.put('/cube/edit',
             authenticateMiddleware([{"admin":[]}]),

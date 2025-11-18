@@ -14,7 +14,7 @@ export type Cube = {
   url: string;
   owner: string | null;
   imageUrl: string | null;
-  cardCount: number;
+  maxPlayersSupported: number;
   cardlist?: CardList | null;
   count?: number;
 };

@@ -361,7 +361,7 @@
 					"imageUrl": {
 						"type": "string"
 					},
-					"cardCount": {
+					"maxPlayersSupported": {
 						"type": "number",
 						"format": "double"
 					},
@@ -382,7 +382,7 @@
 					"owner",
 					"url",
 					"imageUrl",
-					"cardCount",
+					"maxPlayersSupported",
 					"cardlist",
 					"tournamentAllocations"
 				],
@@ -665,7 +665,7 @@
 						],
 						"nullable": true
 					},
-					"cardCount": {
+					"maxPlayersSupported": {
 						"type": "number",
 						"format": "double"
 					},
@@ -691,7 +691,7 @@
 				},
 				"required": [
 					"cardlist",
-					"cardCount",
+					"maxPlayersSupported",
 					"imageUrl",
 					"url",
 					"owner",
@@ -1900,7 +1900,7 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"cardCount": {
+									"maxPlayersSupported": {
 										"type": "number",
 										"format": "double"
 									},
@@ -1961,7 +1961,7 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"cardCount": {
+									"maxPlayersSupported": {
 										"type": "number",
 										"format": "double"
 									},

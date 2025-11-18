@@ -25,7 +25,7 @@ type AddCubeForm = {
   url: string;
   owner: string;
   imageUrl: string;
-  cardCount: number;
+  maxPlayersSupported: number;
 };
 
 function AddCube() {
@@ -59,7 +59,7 @@ function AddCube() {
       url: "",
       owner: "",
       imageUrl: "",
-      cardCount: 360,
+      maxPlayersSupported: 8,
     },
   });
 
@@ -187,35 +187,36 @@ function AddCube() {
             </Col>
             <Col xs={6}>
               <FloatingLabel
-                controlId="cardCount"
-                label="Card count"
+                controlId="maxPlayersSupported"
+                label="Max players supported"
                 className="mb-3"
               >
                 <Form.Control
-                  {...register("cardCount", {
-                    required: "Please enter the card count",
+                  {...register("maxPlayersSupported", {
+                    required: "Please enter the maximum players supported",
                     valueAsNumber: true,
                     min: {
                       value: 1,
-                      message: "Card count must be at least 1",
+                      message: "Max players supported must be at least 1",
                     },
                   })}
                   type="number"
-                  placeholder="360"
+                  placeholder="8"
                   className={
-                    getFieldState("cardCount").isDirty
-                      ? getFieldState("cardCount").invalid
+                    getFieldState("maxPlayersSupported").isDirty
+                      ? getFieldState("maxPlayersSupported").invalid
                         ? "is-invalid"
                         : "is-valid"
                       : ""
                   }
                 />
                 <p className="text-danger">
-                  {errors.cardCount && errors.cardCount.message}
+                  {errors.maxPlayersSupported &&
+                    errors.maxPlayersSupported.message}
                 </p>
                 <p className="small">
-                  Minimum cards required: 360 for 8-player pods, 450 for
-                  10-player pods
+                  Maximum number of players this cube can support in a draft pod
+                  (typically 8 or 10)
                 </p>
               </FloatingLabel>
             </Col>
