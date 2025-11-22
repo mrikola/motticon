@@ -405,5 +405,24 @@ export class ScoreService {
         gamesPlayed: standing.gamesPlayed,
       });
     }
+
+    // Award draft wins to players who won all their matches in the draft pod
+    // This only happens on the last round of the draft
+    if (round.roundNumber === pod.draft.lastRound) {
+      for (const [playerId, standing] of standingsMap.entries()) {
+        // A player has won all matches if they have 3 points per match played
+        // (3 points per win, 0 for loss, 1 for draw)
+        // So matchPoints === 3 * opponents.length means all wins
+        if (
+          standing.opponents.length > 0 &&
+          standing.matchPoints === 3 * standing.opponents.length
+        ) {
+          console.log(
+            `[updatePodStandings] Player ${playerId} won all ${standing.opponents.length} matches in pod ${podId}, awarding draft win`
+          );
+          await this.awardDraftWin(round.tournamentId, playerId);
+        }
+      }
+    }
   }
 }
