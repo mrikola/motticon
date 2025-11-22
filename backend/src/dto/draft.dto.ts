@@ -17,7 +17,8 @@ export type PodDraftMatch =
   | "final"
   | "jumbofinal"
   | "mid1"
-  | "mid2";
+  | "mid2"
+  | "swiss";
 
 export type DraftPodSeatDto = {
   id: number;

@@ -2,6 +2,7 @@ import { Cube, CubeAllocation } from "./Cube";
 import { Enrollment, Player, User } from "./User";
 
 export type Status = "pending" | "started" | "completed";
+export type PairingMode = "bracket" | "swiss";
 
 export type Round = {
   id: number;
@@ -63,6 +64,7 @@ export type Tournament = {
   totalSeats: number;
   preferencesRequired: number;
   status: Status;
+  pairingMode: PairingMode;
   drafts: Draft[];
   cubeAllocations: CubeAllocation[];
   staffMembers: User[];

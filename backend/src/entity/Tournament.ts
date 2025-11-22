@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { Enrollment } from "./Enrollment";
 import { User } from "./User";
-import { TournamentStatus } from "../dto/general.dto";
+import { TournamentStatus, PairingMode } from "../dto/general.dto";
 import { Draft } from "./Draft";
 import { TournamentCube } from "./TournamentCube";
 
@@ -40,6 +40,9 @@ export class Tournament {
 
   @Column({ default: "pending" })
   status: TournamentStatus;
+
+  @Column({ default: "bracket" })
+  pairingMode: PairingMode;
 
   @OneToMany(() => Draft, (draft) => draft.tournament)
   drafts: Draft[];

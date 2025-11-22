@@ -196,6 +196,13 @@
 					}
 				]
 			},
+			"PairingMode": {
+				"type": "string",
+				"enum": [
+					"bracket",
+					"swiss"
+				]
+			},
 			"Tournament": {
 				"properties": {
 					"id": {
@@ -230,6 +237,9 @@
 					},
 					"status": {
 						"$ref": "#/components/schemas/TournamentStatus"
+					},
+					"pairingMode": {
+						"$ref": "#/components/schemas/PairingMode"
 					},
 					"drafts": {
 						"items": {
@@ -269,6 +279,7 @@
 					"totalSeats",
 					"preferencesRequired",
 					"status",
+					"pairingMode",
 					"drafts",
 					"userEnrollmentEnabled",
 					"enrollments",
@@ -350,6 +361,10 @@
 					"imageUrl": {
 						"type": "string"
 					},
+					"maxPlayersSupported": {
+						"type": "number",
+						"format": "double"
+					},
 					"cardlist": {
 						"$ref": "#/components/schemas/CardList"
 					},
@@ -367,6 +382,7 @@
 					"owner",
 					"url",
 					"imageUrl",
+					"maxPlayersSupported",
 					"cardlist",
 					"tournamentAllocations"
 				],
@@ -649,6 +665,10 @@
 						],
 						"nullable": true
 					},
+					"maxPlayersSupported": {
+						"type": "number",
+						"format": "double"
+					},
 					"imageUrl": {
 						"type": "string"
 					},
@@ -671,6 +691,7 @@
 				},
 				"required": [
 					"cardlist",
+					"maxPlayersSupported",
 					"imageUrl",
 					"url",
 					"owner",
@@ -955,6 +976,9 @@
 						},
 						"type": "array"
 					},
+					"pairingMode": {
+						"$ref": "#/components/schemas/PairingMode"
+					},
 					"status": {
 						"$ref": "#/components/schemas/TournamentStatus"
 					},
@@ -995,6 +1019,7 @@
 					"enrollments",
 					"userEnrollmentEnabled",
 					"drafts",
+					"pairingMode",
 					"status",
 					"preferencesRequired",
 					"totalSeats",
@@ -1060,6 +1085,9 @@
 			},
 			"MatchDto": {
 				"properties": {
+					"pod": {
+						"$ref": "#/components/schemas/DraftPodDto"
+					},
 					"matchType": {
 						"$ref": "#/components/schemas/PodDraftMatch"
 					},
@@ -1160,7 +1188,8 @@
 					"final",
 					"jumbofinal",
 					"mid1",
-					"mid2"
+					"mid2",
+					"swiss"
 				]
 			},
 			"StandingsRow": {
@@ -1871,6 +1900,10 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"maxPlayersSupported": {
+										"type": "number",
+										"format": "double"
+									},
 									"imageUrl": {
 										"type": "string"
 									},
@@ -1928,6 +1961,10 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"maxPlayersSupported": {
+										"type": "number",
+										"format": "double"
+									},
 									"imageUrl": {
 										"type": "string"
 									},

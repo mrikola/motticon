@@ -48,7 +48,8 @@ export class CubeService {
     description: string,
     url: string,
     owner: string,
-    imageUrl: string
+    imageUrl: string,
+    maxPlayersSupported: number = 8
   ): Promise<Cube> {
     try {
       const cube: Cube = await this.repository.save({
@@ -57,6 +58,7 @@ export class CubeService {
         url,
         owner,
         imageUrl,
+        maxPlayersSupported,
       });
 
       return await this.getCube(cube.id);
@@ -71,18 +73,23 @@ export class CubeService {
     description: string,
     url: string,
     owner: string,
-    imageUrl: string
+    imageUrl: string,
+    maxPlayersSupported?: number
   ): Promise<Cube> {
+    const updateData: Partial<Cube> = {
+      title,
+      description,
+      url,
+      owner,
+      imageUrl,
+    };
+    if (maxPlayersSupported !== undefined) {
+      updateData.maxPlayersSupported = maxPlayersSupported;
+    }
     await this.repository
       .createQueryBuilder("cube")
       .update(Cube)
-      .set({
-        title,
-        description,
-        url,
-        owner,
-        imageUrl,
-      })
+      .set(updateData)
       .where("id = :cubeId", { cubeId })
       .execute();
     return await this.getCube(cubeId);

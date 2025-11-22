@@ -2,10 +2,16 @@ import { Service, Inject } from "typedi";
 import { DataSource, Repository } from "typeorm";
 import { PlayerTournamentScore } from "../entity/PlayerTournamentScore";
 import { ScoreHistory } from "../entity/ScoreHistory";
+import { PlayerPodScore } from "../entity/PlayerPodScore";
+import { PlayerPodScoreHistory } from "../entity/PlayerPodScoreHistory";
 import { OMWView } from "../entity/OMWView";
 import { RecordByPlayer, StandingsRow } from "../dto/score.dto";
 import { UserService } from "./user.service";
+import { MatchService } from "./match.service";
 import { sumArray } from "../util/array";
+import { DraftPod } from "../entity/DraftPod";
+import { Round } from "../entity/Round";
+import { Match } from "../entity/Match";
 
 @Service()
 export class ScoreService {
@@ -13,7 +19,8 @@ export class ScoreService {
 
   constructor(
     @Inject("DataSource") private appDataSource: DataSource,
-    @Inject("UserService") private userService: UserService
+    @Inject("UserService") private userService: UserService,
+    @Inject("MatchService") private matchService: MatchService
   ) {
     this.repository = this.appDataSource.getRepository(PlayerTournamentScore);
   }
@@ -174,5 +181,229 @@ export class ScoreService {
       .insert(
         scores.map((score) => ({ ...score, roundNumber } as ScoreHistory))
       );
+  }
+
+  /**
+   * Calculate and update pod standings for a specific pod after a round completes
+   */
+  async updatePodStandings(podId: number, roundId: number): Promise<void> {
+    // Get the pod with seats
+    const pod = await this.appDataSource.getRepository(DraftPod).findOne({
+      where: { id: podId },
+      relations: ["seats", "seats.player", "draft"],
+    });
+
+    if (!pod || !pod.draft) {
+      console.warn(`Pod ${podId} not found or missing draft relation`);
+      return;
+    }
+
+    const round = await this.appDataSource.getRepository(Round).findOne({
+      where: { id: roundId },
+      select: ["id", "roundNumber", "status", "tournamentId", "startTime"],
+    });
+
+    if (!round) {
+      console.warn(`Round ${roundId} not found`);
+      return;
+    }
+
+    console.log(
+      `[updatePodStandings] Round details: id=${round.id}, roundNumber=${round.roundNumber}, status=${round.status}, tournamentId=${round.tournamentId}`
+    );
+    console.log(
+      `[updatePodStandings] Pod draft: firstRound=${pod.draft.firstRound}, lastRound=${pod.draft.lastRound}`
+    );
+
+    const playerIds = pod.seats.map((seat) => seat.player.id);
+
+    // Get all completed rounds in this draft up to and including current round
+    // We explicitly include the current round by ID to ensure it's included
+    // even if there's a timing issue with the status update
+    const previousRounds = await this.appDataSource
+      .getRepository(Round)
+      .createQueryBuilder("round")
+      .where('round."tournamentId" = :tournamentId', {
+        tournamentId: round.tournamentId,
+      })
+      .andWhere('round."roundNumber" >= :firstRound', {
+        firstRound: pod.draft.firstRound,
+      })
+      .andWhere('round."roundNumber" <= :currentRound', {
+        currentRound: round.roundNumber,
+      })
+      .andWhere("(round.status = :status OR round.id = :currentRoundId)", {
+        status: "completed",
+        currentRoundId: round.id,
+      })
+      .orderBy('round."roundNumber"', "ASC")
+      .getMany();
+
+    console.log(
+      `[updatePodStandings] Query params: tournamentId=${round.tournamentId}, firstRound=${pod.draft.firstRound}, currentRound=${round.roundNumber}, currentRoundId=${round.id}`
+    );
+
+    // Ensure the current round is included even if status hasn't updated yet
+    let previousRoundsList = previousRounds;
+    const currentRoundInList = previousRoundsList.some(
+      (r) => r.id === round.id
+    );
+    if (!currentRoundInList) {
+      console.log(
+        `[updatePodStandings] Current round ${round.id} not in query results, adding it explicitly`
+      );
+      previousRoundsList = [...previousRoundsList, round];
+    }
+
+    console.log(
+      `[updatePodStandings] Processing pod ${podId}, round ${roundId}, found ${previousRoundsList.length} rounds (including current)`
+    );
+
+    // Initialize standings map
+    const standingsMap = new Map<
+      number,
+      {
+        matchPoints: number;
+        gamesWon: number;
+        gamesPlayed: number;
+        opponents: number[];
+      }
+    >();
+
+    playerIds.forEach((playerId) => {
+      standingsMap.set(playerId, {
+        matchPoints: 0,
+        gamesWon: 0,
+        gamesPlayed: 0,
+        opponents: [],
+      });
+    });
+
+    // Process all matches in previous rounds
+    for (const prevRound of previousRoundsList) {
+      const matches = await this.matchService.getMatchesForRoundByPlayers(
+        prevRound.id,
+        playerIds
+      );
+
+      console.log(
+        `[updatePodStandings] Round ${prevRound.roundNumber}: Found ${matches.length} matches for players in pod`
+      );
+
+      // Only count matches where both players are in this pod
+      // Check both pod relation and podId field for robustness
+      const podMatches = matches.filter(
+        (match) =>
+          (match.pod?.id === podId || match.podId === podId) &&
+          playerIds.includes(match.player1.id) &&
+          playerIds.includes(match.player2.id)
+      );
+
+      console.log(
+        `[updatePodStandings] Round ${prevRound.roundNumber}: ${podMatches.length} matches belong to pod ${podId}`
+      );
+
+      for (const match of podMatches) {
+        console.log(
+          `[updatePodStandings] Processing match ${match.id}: P1=${match.player1.id} (${match.player1GamesWon}) vs P2=${match.player2.id} (${match.player2GamesWon}), podId=${match.podId}, pod?.id=${match.pod?.id}`
+        );
+        const p1Id = match.player1.id;
+        const p2Id = match.player2.id;
+        const p1Standing = standingsMap.get(p1Id);
+        const p2Standing = standingsMap.get(p2Id);
+
+        if (!p1Standing || !p2Standing) continue;
+
+        // Calculate points (3 for win, 1 for draw, 0 for loss)
+        let p1Points = 0;
+        let p2Points = 0;
+
+        if (match.player1GamesWon > match.player2GamesWon) {
+          p1Points = 3;
+          p2Points = 0;
+        } else if (match.player1GamesWon < match.player2GamesWon) {
+          p1Points = 0;
+          p2Points = 3;
+        } else {
+          p1Points = 1;
+          p2Points = 1;
+        }
+
+        // Update standings
+        p1Standing.matchPoints += p1Points;
+        p1Standing.gamesWon += match.player1GamesWon;
+        p1Standing.gamesPlayed += match.player1GamesWon + match.player2GamesWon;
+        p1Standing.opponents.push(p2Id);
+
+        p2Standing.matchPoints += p2Points;
+        p2Standing.gamesWon += match.player2GamesWon;
+        p2Standing.gamesPlayed += match.player1GamesWon + match.player2GamesWon;
+        p2Standing.opponents.push(p1Id);
+      }
+    }
+
+    // Calculate OMW for each player
+    const podScoreRepo = this.appDataSource.getRepository(PlayerPodScore);
+    const podHistoryRepo = this.appDataSource.getRepository(
+      PlayerPodScoreHistory
+    );
+
+    console.log(
+      `[updatePodStandings] Final standings for pod ${podId}:`,
+      Array.from(standingsMap.entries()).map(([pid, s]) => ({
+        playerId: pid,
+        matchPoints: s.matchPoints,
+        gamesWon: s.gamesWon,
+        gamesPlayed: s.gamesPlayed,
+        opponents: s.opponents.length,
+      }))
+    );
+
+    for (const [playerId, standing] of standingsMap.entries()) {
+      // Calculate OMW (opponent match win percentage)
+      let omw = 0;
+      if (standing.opponents.length > 0) {
+        const opponentMatchPointPercentages = standing.opponents.map(
+          (oppId) => {
+            const oppStanding = standingsMap.get(oppId);
+            if (!oppStanding || oppStanding.opponents.length === 0) {
+              return 1 / 3; // Default to 33% if opponent has no matches
+            }
+            return Math.max(
+              1 / 3,
+              oppStanding.matchPoints /
+                (Math.max(oppStanding.opponents.length, 1) * 3)
+            );
+          }
+        );
+        omw =
+          opponentMatchPointPercentages.reduce((a, b) => a + b, 0) /
+          standing.opponents.length;
+      }
+
+      // Update current standings
+      await podScoreRepo.upsert(
+        {
+          playerId,
+          podId,
+          matchPoints: standing.matchPoints,
+          opponentMatchWinPercentage: omw,
+          gamesWon: standing.gamesWon,
+          gamesPlayed: standing.gamesPlayed,
+        },
+        ["playerId", "podId"]
+      );
+
+      // Save history snapshot
+      await podHistoryRepo.insert({
+        playerId,
+        podId,
+        roundId: round.id,
+        matchPoints: standing.matchPoints,
+        opponentMatchWinPercentage: omw,
+        gamesWon: standing.gamesWon,
+        gamesPlayed: standing.gamesPlayed,
+      });
+    }
   }
 }

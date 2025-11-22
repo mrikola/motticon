@@ -23,6 +23,7 @@ export class MatchService {
       .leftJoinAndSelect("match.player1", "player1")
       .leftJoinAndSelect("match.player2", "player2")
       .leftJoinAndSelect("match.playerGoingFirst", "playerGoingFirst")
+      .leftJoinAndSelect("match.pod", "pod")
       .where("match.id = :matchId", { matchId })
       .getOne();
   }
@@ -39,6 +40,7 @@ export class MatchService {
       .leftJoinAndSelect("match.player2", "player2")
       .leftJoinAndSelect("match.resultSubmittedBy", "user")
       .leftJoinAndSelect("match.playerGoingFirst", "playerGoingFirst")
+      .leftJoinAndSelect("match.pod", "pod")
       .where("round.id = :roundId", { roundId })
       .getMany();
     this.roundMatchesCache.set(roundId, matches);
@@ -54,6 +56,7 @@ export class MatchService {
       .leftJoinAndSelect("match.round", "round")
       .leftJoinAndSelect("match.player1", "player1")
       .leftJoinAndSelect("match.player2", "player2")
+      .leftJoinAndSelect("match.pod", "pod")
       .where("round.id = :roundId", { roundId })
       .andWhere(
         new Brackets((qb) =>

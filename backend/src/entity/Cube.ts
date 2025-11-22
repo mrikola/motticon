@@ -30,6 +30,9 @@ export class Cube {
   @Column({ nullable: true })
   imageUrl: string;
 
+  @Column({ type: "integer", default: 8 })
+  maxPlayersSupported: number;
+
   @ManyToOne(() => CardList, { nullable: true })
   cardlist: CardList;
 

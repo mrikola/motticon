@@ -479,6 +479,7 @@ export class TournamentController extends Controller {
       endDate,
       cubes,
       userEnrollmentEnabled,
+      pairingMode,
     } = tournamentData;
     return tournamentToDto(
       await this.tournamentService.createTournament(
@@ -491,7 +492,8 @@ export class TournamentController extends Controller {
         startDate,
         endDate,
         cubes,
-        userEnrollmentEnabled
+        userEnrollmentEnabled,
+        pairingMode
       )
     );
   }

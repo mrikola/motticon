@@ -159,7 +159,8 @@ export const generateDryRunPods = async (live?: boolean) => {
     new Date(),
     new Date(),
     cubeMultipliers,
-    true
+    true,
+    "bracket" // pairingMode - default to bracket for dry runs
   );
 
   // 2. enroll test users into the tournament
