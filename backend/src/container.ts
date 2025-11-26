@@ -22,6 +22,7 @@ import { RatingController } from "./controller/rating.controller";
 import { UserController } from "./controller/user.controller";
 import { TournamentController } from "./controller/tournament.controller";
 import { PhotosController } from "./controller/photos.controller";
+import { DraftController } from "./controller/draft.controller";
 
 // Register core dependencies
 Container.set("DataSource", AppDataSource);
@@ -92,7 +93,8 @@ Container.set(
   new DraftService(
     AppDataSource,
     Container.get("TournamentService"),
-    Container.get("CardService")
+    Container.get("CardService"),
+    Container.get("MatchService")
   )
 );
 
@@ -151,6 +153,11 @@ Container.set(
 Container.set(
   PhotosController,
   new PhotosController(Container.get("FileService"))
+);
+
+Container.set(
+  DraftController,
+  new DraftController(Container.get("DraftService"))
 );
 
 // Create tsoa-compatible container

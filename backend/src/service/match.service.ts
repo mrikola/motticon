@@ -35,7 +35,7 @@ export class MatchService {
     }
     const matches = await this.repository
       .createQueryBuilder("match")
-      .leftJoin("match.round", "round")
+      .leftJoinAndSelect("match.round", "round")
       .leftJoinAndSelect("match.player1", "player1")
       .leftJoinAndSelect("match.player2", "player2")
       .leftJoinAndSelect("match.resultSubmittedBy", "user")

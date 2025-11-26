@@ -6,6 +6,14 @@
   background: bootstrap.$dark;
 }
 
+a {
+  color: #333;
+  
+  &:hover {
+    color: #333;
+  }
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
@@ -24,4 +32,15 @@
 .big-spinner {
   width: 5rem;
   height: 5rem;
+}
+
+.btn-outline-primary {
+  color: #333;
+  
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    color: bootstrap.$light;
+  }
 }

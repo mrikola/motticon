@@ -45,6 +45,16 @@ export type DraftDto = {
   pods?: DraftPodDto[];
 };
 
+export type DraftPodStandingsRowDto = {
+  playerId: number;
+  firstName: string;
+  lastName: string;
+  matchPoints: number;
+  gamesWon: number;
+  gamesPlayed: number;
+  opponentMatchWinPercentage: number;
+};
+
 export const seatToDto = (seat: DraftPodSeat): DraftPodSeatDto =>
   seat
     ? {

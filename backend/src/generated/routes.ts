@@ -18,9 +18,9 @@ import { TournamentController } from './../controller/tournament.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { PhotosController } from './../controller/photos.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UserController } from './../controller/user.controller';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { DraftController } from './../controller/draft.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { UserController } from './../controller/user.controller';
 import { expressAuthentication } from './../auth/auth';
 // @ts-ignore - no great way to install types from subpackage
 import { iocContainer } from './../container';
@@ -367,6 +367,11 @@ const models: TsoaRoute.Models = {
             "points": {"dataType":"double","required":true},
         },
         "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DraftPodStandingsRowDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"opponentMatchWinPercentage":{"dataType":"double","required":true},"gamesPlayed":{"dataType":"double","required":true},"gamesWon":{"dataType":"double","required":true},"matchPoints":{"dataType":"double","required":true},"lastName":{"dataType":"string","required":true},"firstName":{"dataType":"string","required":true},"playerId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "PlayerWithRatingDto": {
@@ -2830,6 +2835,269 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDraftController_getPodsForDraft: Record<string, TsoaRoute.ParameterSchema> = {
+                draftId: {"in":"path","name":"draftId","required":true,"dataType":"double"},
+        };
+        app.get('/draft/pods/:draftId',
+            authenticateMiddleware([{"loggedIn":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(DraftController)),
+            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.getPodsForDraft)),
+
+            async function DraftController_getPodsForDraft(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_getPodsForDraft, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<DraftController>(DraftController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getPodsForDraft',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDraftController_getSeatsForPod: Record<string, TsoaRoute.ParameterSchema> = {
+                draftPodId: {"in":"path","name":"draftPodId","required":true,"dataType":"double"},
+        };
+        app.get('/draft/seats/:draftPodId',
+            authenticateMiddleware([{"loggedIn":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(DraftController)),
+            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.getSeatsForPod)),
+
+            async function DraftController_getSeatsForPod(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_getSeatsForPod, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<DraftController>(DraftController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getSeatsForPod',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDraftController_getDraftInfoForUser: Record<string, TsoaRoute.ParameterSchema> = {
+                draftId: {"in":"path","name":"draftId","required":true,"dataType":"double"},
+                userId: {"in":"path","name":"userId","required":true,"dataType":"double"},
+        };
+        app.get('/draft/:draftId/user/:userId',
+            authenticateMiddleware([{"loggedIn":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(DraftController)),
+            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.getDraftInfoForUser)),
+
+            async function DraftController_getDraftInfoForUser(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_getDraftInfoForUser, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<DraftController>(DraftController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getDraftInfoForUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDraftController_getRoundsForDraft: Record<string, TsoaRoute.ParameterSchema> = {
+                draftId: {"in":"path","name":"draftId","required":true,"dataType":"double"},
+        };
+        app.get('/draft/:draftId/rounds',
+            authenticateMiddleware([{"loggedIn":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(DraftController)),
+            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.getRoundsForDraft)),
+
+            async function DraftController_getRoundsForDraft(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_getRoundsForDraft, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<DraftController>(DraftController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getRoundsForDraft',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDraftController_getPodStandings: Record<string, TsoaRoute.ParameterSchema> = {
+                podId: {"in":"path","name":"podId","required":true,"dataType":"double"},
+        };
+        app.get('/draft/pod/:podId/standings',
+            authenticateMiddleware([{"loggedIn":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(DraftController)),
+            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.getPodStandings)),
+
+            async function DraftController_getPodStandings(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_getPodStandings, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<DraftController>(DraftController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getPodStandings',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDraftController_getPodMatches: Record<string, TsoaRoute.ParameterSchema> = {
+                podId: {"in":"path","name":"podId","required":true,"dataType":"double"},
+        };
+        app.get('/draft/pod/:podId/matches',
+            authenticateMiddleware([{"loggedIn":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(DraftController)),
+            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.getPodMatches)),
+
+            async function DraftController_getPodMatches(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_getPodMatches, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<DraftController>(DraftController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getPodMatches',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDraftController_submitDeck: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                tournamentId: {"in":"path","name":"tournamentId","required":true,"dataType":"double"},
+                seatId: {"in":"path","name":"seatId","required":true,"dataType":"double"},
+                file: {"in":"formData","name":"file","required":true,"dataType":"file"},
+                token: {"in":"header","name":"authorization","required":true,"dataType":"string"},
+        };
+        app.post('/draft/tournament/:tournamentId/submitDeck/:seatId',
+            authenticateMiddleware([{"loggedIn":[]}]),
+            upload.fields([
+                {
+                    name: "file",
+                    maxCount: 1
+                }
+            ]),
+            ...(fetchMiddlewares<RequestHandler>(DraftController)),
+            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.submitDeck)),
+
+            async function DraftController_submitDeck(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_submitDeck, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<DraftController>(DraftController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'submitDeck',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUserController_signup: Record<string, TsoaRoute.ParameterSchema> = {
                 user: {"in":"body","name":"user","required":true,"dataType":"any"},
         };
@@ -3214,197 +3482,6 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'setPassword',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsDraftController_getPodsForDraft: Record<string, TsoaRoute.ParameterSchema> = {
-                draftId: {"in":"path","name":"draftId","required":true,"dataType":"double"},
-        };
-        app.get('/draft/pods/:draftId',
-            authenticateMiddleware([{"loggedIn":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(DraftController)),
-            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.getPodsForDraft)),
-
-            async function DraftController_getPodsForDraft(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_getPodsForDraft, request, response });
-
-                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
-
-                const controller: any = await container.get<DraftController>(DraftController);
-                if (typeof controller['setStatus'] === 'function') {
-                controller.setStatus(undefined);
-                }
-
-              await templateService.apiHandler({
-                methodName: 'getPodsForDraft',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsDraftController_getSeatsForPod: Record<string, TsoaRoute.ParameterSchema> = {
-                draftPodId: {"in":"path","name":"draftPodId","required":true,"dataType":"double"},
-        };
-        app.get('/draft/seats/:draftPodId',
-            authenticateMiddleware([{"loggedIn":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(DraftController)),
-            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.getSeatsForPod)),
-
-            async function DraftController_getSeatsForPod(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_getSeatsForPod, request, response });
-
-                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
-
-                const controller: any = await container.get<DraftController>(DraftController);
-                if (typeof controller['setStatus'] === 'function') {
-                controller.setStatus(undefined);
-                }
-
-              await templateService.apiHandler({
-                methodName: 'getSeatsForPod',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsDraftController_getDraftInfoForUser: Record<string, TsoaRoute.ParameterSchema> = {
-                draftId: {"in":"path","name":"draftId","required":true,"dataType":"double"},
-                userId: {"in":"path","name":"userId","required":true,"dataType":"double"},
-        };
-        app.get('/draft/:draftId/user/:userId',
-            authenticateMiddleware([{"loggedIn":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(DraftController)),
-            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.getDraftInfoForUser)),
-
-            async function DraftController_getDraftInfoForUser(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_getDraftInfoForUser, request, response });
-
-                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
-
-                const controller: any = await container.get<DraftController>(DraftController);
-                if (typeof controller['setStatus'] === 'function') {
-                controller.setStatus(undefined);
-                }
-
-              await templateService.apiHandler({
-                methodName: 'getDraftInfoForUser',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsDraftController_getRoundsForDraft: Record<string, TsoaRoute.ParameterSchema> = {
-                draftId: {"in":"path","name":"draftId","required":true,"dataType":"double"},
-        };
-        app.get('/draft/:draftId/rounds',
-            authenticateMiddleware([{"loggedIn":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(DraftController)),
-            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.getRoundsForDraft)),
-
-            async function DraftController_getRoundsForDraft(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_getRoundsForDraft, request, response });
-
-                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
-
-                const controller: any = await container.get<DraftController>(DraftController);
-                if (typeof controller['setStatus'] === 'function') {
-                controller.setStatus(undefined);
-                }
-
-              await templateService.apiHandler({
-                methodName: 'getRoundsForDraft',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsDraftController_submitDeck: Record<string, TsoaRoute.ParameterSchema> = {
-                request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                tournamentId: {"in":"path","name":"tournamentId","required":true,"dataType":"double"},
-                seatId: {"in":"path","name":"seatId","required":true,"dataType":"double"},
-                file: {"in":"formData","name":"file","required":true,"dataType":"file"},
-                token: {"in":"header","name":"authorization","required":true,"dataType":"string"},
-        };
-        app.post('/draft/tournament/:tournamentId/submitDeck/:seatId',
-            authenticateMiddleware([{"loggedIn":[]}]),
-            upload.fields([
-                {
-                    name: "file",
-                    maxCount: 1
-                }
-            ]),
-            ...(fetchMiddlewares<RequestHandler>(DraftController)),
-            ...(fetchMiddlewares<RequestHandler>(DraftController.prototype.submitDeck)),
-
-            async function DraftController_submitDeck(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsDraftController_submitDeck, request, response });
-
-                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
-
-                const controller: any = await container.get<DraftController>(DraftController);
-                if (typeof controller['setStatus'] === 'function') {
-                controller.setStatus(undefined);
-                }
-
-              await templateService.apiHandler({
-                methodName: 'submitDeck',
                 controller,
                 response,
                 next,

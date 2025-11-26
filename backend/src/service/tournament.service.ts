@@ -588,8 +588,6 @@ export class TournamentService {
       })
     );
 
-    this.scoreService.saveSnapshot(tournamentId, round.roundNumber);
-
     // Update pod standings if tournament uses Swiss pairings
     const tournament = await this.repository.findOne({
       where: { id: tournamentId },
@@ -615,6 +613,8 @@ export class TournamentService {
         );
       }
     }
+
+    await this.scoreService.saveSnapshot(tournamentId, round.roundNumber);
 
     return null;
   }

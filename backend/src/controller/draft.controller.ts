@@ -15,11 +15,12 @@ import {
   DraftDto,
   DraftPodDto,
   DraftPodSeatDto,
+  DraftPodStandingsRowDto,
   draftToDto,
   podToDto,
   seatToDto,
 } from "../dto/draft.dto";
-import { RoundDto, roundToDto } from "../dto/round.dto";
+import { RoundDto, roundToDto, MatchDto, matchToDto } from "../dto/round.dto";
 import path from "path";
 import {
   FILE_ROOT,
@@ -70,6 +71,20 @@ export class DraftController extends Controller {
   @Security("loggedIn")
   public async getRoundsForDraft(@Path() draftId: number): Promise<RoundDto[]> {
     return (await this.draftService.getRoundsForDraft(draftId)).map(roundToDto);
+  }
+
+  @Get("pod/{podId}/standings")
+  @Security("loggedIn")
+  public async getPodStandings(
+    @Path() podId: number,
+  ): Promise<DraftPodStandingsRowDto[]> {
+    return await this.draftService.getPodStandings(podId);
+  }
+
+  @Get("pod/{podId}/matches")
+  @Security("loggedIn")
+  public async getPodMatches(@Path() podId: number): Promise<MatchDto[]> {
+    return (await this.draftService.getPodMatches(podId)).map(matchToDto);
   }
 
   @Post("tournament/{tournamentId}/submitDeck/{seatId}")

@@ -208,13 +208,6 @@ export class ScoreService {
       return;
     }
 
-    console.log(
-      `[updatePodStandings] Round details: id=${round.id}, roundNumber=${round.roundNumber}, status=${round.status}, tournamentId=${round.tournamentId}`
-    );
-    console.log(
-      `[updatePodStandings] Pod draft: firstRound=${pod.draft.firstRound}, lastRound=${pod.draft.lastRound}`
-    );
-
     const playerIds = pod.seats.map((seat) => seat.player.id);
 
     // Get all completed rounds in this draft up to and including current round
@@ -239,25 +232,14 @@ export class ScoreService {
       .orderBy('round."roundNumber"', "ASC")
       .getMany();
 
-    console.log(
-      `[updatePodStandings] Query params: tournamentId=${round.tournamentId}, firstRound=${pod.draft.firstRound}, currentRound=${round.roundNumber}, currentRoundId=${round.id}`
-    );
-
     // Ensure the current round is included even if status hasn't updated yet
     let previousRoundsList = previousRounds;
     const currentRoundInList = previousRoundsList.some(
       (r) => r.id === round.id
     );
     if (!currentRoundInList) {
-      console.log(
-        `[updatePodStandings] Current round ${round.id} not in query results, adding it explicitly`
-      );
       previousRoundsList = [...previousRoundsList, round];
     }
-
-    console.log(
-      `[updatePodStandings] Processing pod ${podId}, round ${roundId}, found ${previousRoundsList.length} rounds (including current)`
-    );
 
     // Initialize standings map
     const standingsMap = new Map<
@@ -286,10 +268,6 @@ export class ScoreService {
         playerIds
       );
 
-      console.log(
-        `[updatePodStandings] Round ${prevRound.roundNumber}: Found ${matches.length} matches for players in pod`
-      );
-
       // Only count matches where both players are in this pod
       // Check both pod relation and podId field for robustness
       const podMatches = matches.filter(
@@ -299,14 +277,7 @@ export class ScoreService {
           playerIds.includes(match.player2.id)
       );
 
-      console.log(
-        `[updatePodStandings] Round ${prevRound.roundNumber}: ${podMatches.length} matches belong to pod ${podId}`
-      );
-
       for (const match of podMatches) {
-        console.log(
-          `[updatePodStandings] Processing match ${match.id}: P1=${match.player1.id} (${match.player1GamesWon}) vs P2=${match.player2.id} (${match.player2GamesWon}), podId=${match.podId}, pod?.id=${match.pod?.id}`
-        );
         const p1Id = match.player1.id;
         const p2Id = match.player2.id;
         const p1Standing = standingsMap.get(p1Id);
@@ -346,17 +317,6 @@ export class ScoreService {
     const podScoreRepo = this.appDataSource.getRepository(PlayerPodScore);
     const podHistoryRepo = this.appDataSource.getRepository(
       PlayerPodScoreHistory
-    );
-
-    console.log(
-      `[updatePodStandings] Final standings for pod ${podId}:`,
-      Array.from(standingsMap.entries()).map(([pid, s]) => ({
-        playerId: pid,
-        matchPoints: s.matchPoints,
-        gamesWon: s.gamesWon,
-        gamesPlayed: s.gamesPlayed,
-        opponents: s.opponents.length,
-      }))
     );
 
     for (const [playerId, standing] of standingsMap.entries()) {
@@ -417,9 +377,6 @@ export class ScoreService {
           standing.opponents.length > 0 &&
           standing.matchPoints === 3 * standing.opponents.length
         ) {
-          console.log(
-            `[updatePodStandings] Player ${playerId} won all ${standing.opponents.length} matches in pod ${podId}, awarding draft win`
-          );
           await this.awardDraftWin(round.tournamentId, playerId);
         }
       }

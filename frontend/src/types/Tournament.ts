@@ -52,6 +52,7 @@ export type Match = {
   player2: Player;
   resultSubmittedBy?: Player;
   playerGoingFirst?: Player;
+  round?: Round;
 };
 
 export type Tournament = {
@@ -100,5 +101,15 @@ export type StandingsRow = {
   lastName: string;
   matchPoints: number;
   draftsWon: number;
+  opponentMatchWinPercentage: number;
+};
+
+export type DraftPodStandingsRow = {
+  playerId: number;
+  firstName: string;
+  lastName: string;
+  matchPoints: number;
+  gamesWon: number;
+  gamesPlayed: number;
   opponentMatchWinPercentage: number;
 };

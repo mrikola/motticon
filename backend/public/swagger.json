@@ -1324,6 +1324,46 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"DraftPodStandingsRowDto": {
+				"properties": {
+					"opponentMatchWinPercentage": {
+						"type": "number",
+						"format": "double"
+					},
+					"gamesPlayed": {
+						"type": "number",
+						"format": "double"
+					},
+					"gamesWon": {
+						"type": "number",
+						"format": "double"
+					},
+					"matchPoints": {
+						"type": "number",
+						"format": "double"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"playerId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"opponentMatchWinPercentage",
+					"gamesPlayed",
+					"gamesWon",
+					"matchPoints",
+					"lastName",
+					"firstName",
+					"playerId"
+				],
+				"type": "object"
+			},
 			"PlayerWithRatingDto": {
 				"allOf": [
 					{
@@ -3943,6 +3983,297 @@
 				"parameters": []
 			}
 		},
+		"/draft/pods/{draftId}": {
+			"get": {
+				"operationId": "GetPodsForDraft",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/DraftPodDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "draftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/draft/seats/{draftPodId}": {
+			"get": {
+				"operationId": "GetSeatsForPod",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/DraftPodSeatDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "draftPodId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/draft/{draftId}/user/{userId}": {
+			"get": {
+				"operationId": "GetDraftInfoForUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DraftPodDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "draftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/draft/{draftId}/rounds": {
+			"get": {
+				"operationId": "GetRoundsForDraft",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/RoundDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "draftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/draft/pod/{podId}/standings": {
+			"get": {
+				"operationId": "GetPodStandings",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/DraftPodStandingsRowDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "podId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/draft/pod/{podId}/matches": {
+			"get": {
+				"operationId": "GetPodMatches",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MatchDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "podId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/draft/tournament/{tournamentId}/submitDeck/{seatId}": {
+			"post": {
+				"operationId": "SubmitDeck",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DraftDto"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"loggedIn": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tournamentId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "seatId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"file"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/signup": {
 			"post": {
 				"operationId": "Signup",
@@ -4337,225 +4668,6 @@
 									"password"
 								],
 								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/draft/pods/{draftId}": {
-			"get": {
-				"operationId": "GetPodsForDraft",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/DraftPodDto"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"loggedIn": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "draftId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/draft/seats/{draftPodId}": {
-			"get": {
-				"operationId": "GetSeatsForPod",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/DraftPodSeatDto"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"loggedIn": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "draftPodId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/draft/{draftId}/user/{userId}": {
-			"get": {
-				"operationId": "GetDraftInfoForUser",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DraftPodDto"
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"loggedIn": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "draftId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/draft/{draftId}/rounds": {
-			"get": {
-				"operationId": "GetRoundsForDraft",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/RoundDto"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"loggedIn": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "draftId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/draft/tournament/{tournamentId}/submitDeck/{seatId}": {
-			"post": {
-				"operationId": "SubmitDeck",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DraftDto"
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"loggedIn": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "tournamentId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "path",
-						"name": "seatId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "header",
-						"name": "authorization",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"multipart/form-data": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"file": {
-										"type": "string",
-										"format": "binary"
-									}
-								},
-								"required": [
-									"file"
-								]
 							}
 						}
 					}
