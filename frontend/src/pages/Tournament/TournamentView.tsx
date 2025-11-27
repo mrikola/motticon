@@ -26,6 +26,7 @@ import GoToManageStaff from "./TournamentView/GoToManageStaff";
 import { toast } from "react-toastify";
 import { Enrollment } from "../../types/User";
 import GoToMatchHistory from "./TournamentView/GoToMatchHistory";
+import GoToFinalStandings from "./TournamentView/GoToFinalStandings";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
@@ -214,6 +215,12 @@ const TournamentView = () => {
           tournament={activeTournament}
           userEnrollmentEnabled={activeTournament.userEnrollmentEnabled}
         />
+      )}
+      {activeTournament.status === "completed" && (
+        <>
+          <hr />
+          <GoToFinalStandings tournamentId={activeTournament.id} />
+        </>
       )}
       {activeTournament.status !== "pending" && newestRoundNumber > 0 && (
         <>

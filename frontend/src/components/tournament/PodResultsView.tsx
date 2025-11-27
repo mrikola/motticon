@@ -10,14 +10,31 @@ type Props = {
   pod: DraftPod;
   user: User;
   draftIndex: number;
+  standings?: DraftPodStandingsRow[];
+  matches?: Match[];
 };
 
-function PodResultsView({ pod, user, draftIndex }: Props) {
+function PodResultsView({
+  pod,
+  user,
+  draftIndex,
+  standings: providedStandings,
+  matches: providedMatches,
+}: Props) {
   const [standings, setStandings] = useState<DraftPodStandingsRow[]>();
   const [matches, setMatches] = useState<Match[]>();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // If data is provided via props, use it and skip fetching
+    if (providedStandings !== undefined && providedMatches !== undefined) {
+      setStandings(providedStandings);
+      setMatches(providedMatches);
+      setLoading(false);
+      return;
+    }
+
+    // Otherwise, fetch the data
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -37,7 +54,8 @@ function PodResultsView({ pod, user, draftIndex }: Props) {
       }
     };
     fetchData();
-  }, [pod.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pod.id, providedStandings, providedMatches]);
 
   if (loading) {
     return <Loading />;

@@ -22,12 +22,14 @@ type PodWithDraft = {
   draftIndex: number;
 };
 
+type DraftPodsViewMode = "seats" | "results";
+
 function DraftPods() {
   const { tournamentId } = useParams();
   const user = useContext(UserInfoContext);
   const [tournament, setTournament] = useState<Tournament>();
   const [userDraftPods, setUserDraftPods] = useState<PodWithDraft[]>();
-  const [viewMode, setViewMode] = useState<"seats" | "results">("seats");
+  const [viewMode, setViewMode] = useState<DraftPodsViewMode>("seats");
 
   useEffect(() => {
     if (user) {
@@ -86,7 +88,7 @@ function DraftPods() {
                     value="seats"
                     checked={viewMode === "seats"}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setViewMode(e.currentTarget.value as "seats" | "results")
+                      setViewMode(e.currentTarget.value as DraftPodsViewMode)
                     }
                     className="flex-fill"
                   >
@@ -100,7 +102,7 @@ function DraftPods() {
                     value="results"
                     checked={viewMode === "results"}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setViewMode(e.currentTarget.value as "seats" | "results")
+                      setViewMode(e.currentTarget.value as DraftPodsViewMode)
                     }
                     className="flex-fill"
                   >
