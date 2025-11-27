@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useCallback, useState } from "react";
 import { useParams } from "react-router";
 import {
   Accordion,
@@ -57,12 +57,12 @@ function FinalStandings() {
             get(`/tournament/${tournamentId}/round/recent`).catch(() => null),
           ]);
 
-          const tourny = (await tournamentResp.json()) as Tournament;
-          setTournament(tourny);
+          const tournamentData = (await tournamentResp.json()) as Tournament;
+          setTournament(tournamentData);
 
           // Get all pods from all drafts
           const pods: PodWithDraft[] = [];
-          const sortedDrafts = tourny.drafts.sort(
+          const sortedDrafts = [...tournamentData.drafts].sort(
             (a, b) => a.draftNumber - b.draftNumber
           );
           sortedDrafts.forEach((draft, draftIndex) => {
@@ -98,7 +98,6 @@ function FinalStandings() {
       return; // Already have data
     }
 
-    // Check if we're already loading
     if (cachedData === "loading") {
       return; // Already loading
     }
@@ -135,54 +134,60 @@ function FinalStandings() {
     };
 
     fetchPodData();
+    // podDataCache is intentionally omitted from deps - we only want to fetch when expandedPodId changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expandedPodId]);
+  }, [expandedPodId, allPods]);
+
+  // Group pods by draft for better organization
+  const podsByDraft = useMemo(() => {
+    if (!allPods) return {};
+    return allPods.reduce((acc, podWithDraft) => {
+      const draftKey = podWithDraft.draft.id;
+      if (!acc[draftKey]) {
+        acc[draftKey] = {
+          draft: podWithDraft.draft,
+          draftIndex: podWithDraft.draftIndex,
+          pods: [],
+        };
+      }
+      acc[draftKey].pods.push(podWithDraft);
+      return acc;
+    }, {} as Record<number, { draft: Draft; draftIndex: number; pods: PodWithDraft[] }>);
+  }, [allPods]);
+
+  const renderPodResults = useCallback(
+    (podWithDraft: PodWithDraft, draftIndex: number) => {
+      const podId = podWithDraft.pod.id;
+      const cachedData = podDataCache.get(podId);
+
+      if (!user || cachedData === "loading") {
+        return <Loading />;
+      }
+
+      if (cachedData) {
+        return (
+          <PodResultsView
+            pod={podWithDraft.pod}
+            user={user}
+            draftIndex={draftIndex}
+            standings={cachedData.standings}
+            matches={cachedData.matches}
+          />
+        );
+      }
+
+      return <Loading />;
+    },
+    [podDataCache, user]
+  );
 
   if (!user || !tournament || !allPods) {
     return <Loading />;
   }
 
-  // Group pods by draft for better organization
-  const podsByDraft = allPods.reduce((acc, podWithDraft) => {
-    const draftKey = podWithDraft.draft.id;
-    if (!acc[draftKey]) {
-      acc[draftKey] = {
-        draft: podWithDraft.draft,
-        draftIndex: podWithDraft.draftIndex,
-        pods: [],
-      };
-    }
-    acc[draftKey].pods.push(podWithDraft);
-    return acc;
-  }, {} as Record<number, { draft: Draft; draftIndex: number; pods: PodWithDraft[] }>);
-
-  const renderPodResults = (podWithDraft: PodWithDraft, draftIndex: number) => {
-    const podId = podWithDraft.pod.id;
-    const cachedData = podDataCache.get(podId);
-
-    if (cachedData === "loading") {
-      return <Loading />;
-    }
-
-    if (cachedData) {
-      return (
-        <PodResultsView
-          pod={podWithDraft.pod}
-          user={user}
-          draftIndex={draftIndex}
-          standings={cachedData.standings}
-          matches={cachedData.matches}
-        />
-      );
-    }
-
-    // Data not yet fetched, show loading
-    return <Loading />;
-  };
-
   return (
     <Container className="mt-3 my-md-4">
-      <HelmetTitle titleText={`${tournament.name} - Final Standings`} />
+      <HelmetTitle titleText={`${tournament.name} - Final standings`} />
       <Row>
         <BackButton
           buttonText="Back to tournament"
@@ -190,7 +195,7 @@ function FinalStandings() {
         />
         <Col xs={12}>
           <h1 className="display-1">{tournament.name}</h1>
-          <h2 className="display-2">Final Standings</h2>
+          <h2 className="display-2">Final standings</h2>
         </Col>
       </Row>
       <Row className="mb-3">
@@ -208,7 +213,7 @@ function FinalStandings() {
               }
               className="flex-fill"
             >
-              Final Standings
+              Final standings
             </ToggleButton>
             <ToggleButton
               id="toggle-pods"
@@ -248,16 +253,18 @@ function FinalStandings() {
             >
               {Object.values(podsByDraft)
                 .sort((a, b) => a.draftIndex - b.draftIndex)
-                .map(({ draft, draftIndex, pods }) => (
-                  <div key={draft.id}>
-                    <Row className="mb-2 mt-4">
-                      <Col xs={12}>
-                        <h3 className="display-4">Draft {draftIndex + 1}</h3>
-                      </Col>
-                    </Row>
-                    {pods
-                      .sort((a, b) => a.pod.podNumber - b.pod.podNumber)
-                      .map((podWithDraft) => (
+                .map(({ draft, draftIndex, pods }) => {
+                  const sortedPods = [...pods].sort(
+                    (a, b) => a.pod.podNumber - b.pod.podNumber
+                  );
+                  return (
+                    <div key={draft.id}>
+                      <Row className="mb-2 mt-4">
+                        <Col xs={12}>
+                          <h3 className="display-4">Draft {draftIndex + 1}</h3>
+                        </Col>
+                      </Row>
+                      {sortedPods.map((podWithDraft) => (
                         <Accordion.Item
                           eventKey={podWithDraft.pod.id.toString()}
                           key={podWithDraft.pod.id}
@@ -273,8 +280,9 @@ function FinalStandings() {
                           </Accordion.Body>
                         </Accordion.Item>
                       ))}
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
             </Accordion>
           )}
         </Col>

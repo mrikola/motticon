@@ -5,7 +5,7 @@ import { Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Container, Row } from "react-bootstrap";
-import { CalendarEvent } from "react-bootstrap-icons";
+import { CalendarEvent, ListOl } from "react-bootstrap-icons";
 import { formatTournamentDate } from "../../utils/dateUtils";
 import {
   isUserTournamentStaff,
@@ -216,15 +216,15 @@ const TournamentView = () => {
           userEnrollmentEnabled={activeTournament.userEnrollmentEnabled}
         />
       )}
-      {activeTournament.status === "completed" && (
-        <>
-          <hr />
-          <GoToFinalStandings tournamentId={activeTournament.id} />
-        </>
-      )}
       {activeTournament.status !== "pending" && newestRoundNumber > 0 && (
         <>
           <hr />
+          <h2>
+            <ListOl /> Standings
+          </h2>
+          {activeTournament.status === "completed" && (
+            <GoToFinalStandings tournamentId={activeTournament.id} />
+          )}
           <Standings
             roundNumber={newestRoundNumber}
             tournamentId={activeTournament.id}

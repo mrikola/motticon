@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Col, Row } from "react-bootstrap";
-import { ListOl } from "react-bootstrap-icons";
 import { useState } from "react";
 
 type Props = {
@@ -22,9 +21,6 @@ function Standings({ roundNumber, tournamentId }: Props) {
 
   return (
     <Row className="my-3">
-      <h2>
-        <ListOl /> Standings
-      </h2>
       <Col xs={10} sm={8} className="d-grid gap-2 mx-auto">
         {rounds.map((round: number) => {
           return (

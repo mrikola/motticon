@@ -15,7 +15,7 @@ function GoToFinalStandings({ tournamentId }: Props) {
           className="btn btn-primary btn-lg"
         >
           <div className="icon-link">
-            <Trophy className="fs-3" /> View Final Standings
+            <Trophy className="fs-3" /> View final standings
           </div>
         </Link>
       </Col>
@@ -24,4 +24,3 @@ function GoToFinalStandings({ tournamentId }: Props) {
 }
 
 export default GoToFinalStandings;
-
