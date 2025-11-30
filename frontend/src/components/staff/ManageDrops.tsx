@@ -9,6 +9,7 @@ import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
 } from "../general/VerticallyCenteredModal";
 import { PersonFillX } from "react-bootstrap-icons";
+import { sortEnrollmentsByLastNameFirstName } from "../../utils/sortingUtils";
 
 type Props = {
   tournamentId: number;
@@ -62,18 +63,20 @@ const ManageDrops = ({ tournamentId }: Props) => {
   // Make sure each option has an unique id and a value
   const items = useMemo(
     () =>
-      activePlayers.map((enrollment) => ({
-        // required: id and value
-        id: enrollment.player?.id,
-        value:
-          enrollment.player?.firstName +
-          " " +
-          enrollment.player?.lastName +
-          " (" +
-          enrollment.player?.email +
-          ")",
-        ...enrollment, // pass along any other properties to access in your onSelect callback
-      })),
+      [...activePlayers]
+        .sort(sortEnrollmentsByLastNameFirstName)
+        .map((enrollment) => ({
+          // required: id and value
+          id: enrollment.player?.id,
+          value:
+            enrollment.player?.firstName +
+            " " +
+            enrollment.player?.lastName +
+            " (" +
+            enrollment.player?.email +
+            ")",
+          ...enrollment, // pass along any other properties to access in your onSelect callback
+        })),
     [activePlayers]
   );
 
@@ -161,11 +164,7 @@ const ManageDrops = ({ tournamentId }: Props) => {
               </thead>
               <tbody>
                 {droppedPlayers
-                  .sort((a, b) =>
-                    (a.player?.lastName ?? "").localeCompare(
-                      b.player?.lastName ?? ""
-                    )
-                  )
+                  .sort(sortEnrollmentsByLastNameFirstName)
                   .map((enrollment) => (
                     <tr key={enrollment.player?.id}>
                       <td>

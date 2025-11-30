@@ -1,13 +1,6 @@
 import { useContext, useEffect, useMemo, useCallback, useState } from "react";
 import { useParams } from "react-router";
-import {
-  Accordion,
-  ButtonGroup,
-  Col,
-  Container,
-  Row,
-  ToggleButton,
-} from "react-bootstrap";
+import { Accordion, Col, Row } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { get } from "../../services/ApiService";
 import {
@@ -22,6 +15,9 @@ import BackButton from "../../components/general/BackButton";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import StandingsTable from "../../components/tournament/StandingsTable";
 import PodResultsView from "../../components/tournament/PodResultsView";
+import ViewModeToggle from "../../components/general/ViewModeToggle";
+import PageContainer from "../../components/general/PageContainer";
+import { sortDraftsByDraftNumber } from "../../utils/sortingUtils";
 
 type PodWithDraft = {
   pod: DraftPod;
@@ -63,7 +59,7 @@ function FinalStandings() {
           // Get all pods from all drafts
           const pods: PodWithDraft[] = [];
           const sortedDrafts = [...tournamentData.drafts].sort(
-            (a, b) => a.draftNumber - b.draftNumber
+            sortDraftsByDraftNumber
           );
           sortedDrafts.forEach((draft, draftIndex) => {
             draft.pods.forEach((pod) => {
@@ -160,23 +156,19 @@ function FinalStandings() {
       const podId = podWithDraft.pod.id;
       const cachedData = podDataCache.get(podId);
 
-      if (!user || cachedData === "loading") {
+      if (!user || !cachedData || cachedData === "loading") {
         return <Loading />;
       }
 
-      if (cachedData) {
-        return (
-          <PodResultsView
-            pod={podWithDraft.pod}
-            user={user}
-            draftIndex={draftIndex}
-            standings={cachedData.standings}
-            matches={cachedData.matches}
-          />
-        );
-      }
-
-      return <Loading />;
+      return (
+        <PodResultsView
+          pod={podWithDraft.pod}
+          user={user}
+          draftIndex={draftIndex}
+          standings={cachedData.standings}
+          matches={cachedData.matches}
+        />
+      );
     },
     [podDataCache, user]
   );
@@ -186,54 +178,30 @@ function FinalStandings() {
   }
 
   return (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText={`${tournament.name} - Final standings`} />
       <Row>
         <BackButton
           buttonText="Back to tournament"
           path={`/tournament/${tournamentId}`}
         />
-        <Col xs={12}>
+        <Col>
           <h1 className="display-1">{tournament.name}</h1>
           <h2 className="display-2">Final standings</h2>
         </Col>
       </Row>
       <Row className="mb-3">
-        <Col xs={12}>
-          <ButtonGroup className="w-100">
-            <ToggleButton
-              id="toggle-standings"
-              type="radio"
-              variant="outline-primary"
-              name="view-mode"
-              value="standings"
-              checked={viewMode === "standings"}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setViewMode(e.currentTarget.value as FinalStandingsViewMode)
-              }
-              className="flex-fill"
-            >
-              Final standings
-            </ToggleButton>
-            <ToggleButton
-              id="toggle-pods"
-              type="radio"
-              variant="outline-primary"
-              name="view-mode"
-              value="pods"
-              checked={viewMode === "pods"}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setViewMode(e.currentTarget.value as FinalStandingsViewMode)
-              }
-              className="flex-fill"
-            >
-              Draft Pods
-            </ToggleButton>
-          </ButtonGroup>
-        </Col>
+        <ViewModeToggle
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          options={[
+            { value: "standings", label: "Final standings" },
+            { value: "pods", label: "Draft Pods" },
+          ]}
+        />
       </Row>
       <Row>
-        <Col xs={12}>
+        <Col>
           {viewMode === "standings" && latestRoundNumber > 0 && (
             <StandingsTable
               roundNumber={latestRoundNumber}
@@ -260,7 +228,7 @@ function FinalStandings() {
                   return (
                     <div key={draft.id}>
                       <Row className="mb-2 mt-4">
-                        <Col xs={12}>
+                        <Col>
                           <h3 className="display-4">Draft {draftIndex + 1}</h3>
                         </Col>
                       </Row>
@@ -287,7 +255,7 @@ function FinalStandings() {
           )}
         </Col>
       </Row>
-    </Container>
+    </PageContainer>
   );
 }
 

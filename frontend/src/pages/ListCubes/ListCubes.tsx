@@ -1,26 +1,27 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { PenFill } from "react-bootstrap-icons";
 import { get } from "../../services/ApiService";
 import { Cube } from "../../types/Cube";
-import { Card, Col, Container, Row } from "react-bootstrap";
+import { Card, Col, Row } from "react-bootstrap";
 import Loading from "../../components/general/Loading";
+import { useFetch } from "../../hooks/useFetch";
+import PageContainer from "../../components/general/PageContainer";
 
 const ListCubes = () => {
-  const [cubes, setCubes] = useState<Cube[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const { data: cubes, loading } = useFetch<Cube[]>(
+    async () => {
       const resp = await get("/cube");
-      const cubes = (await resp.json()) as Cube[];
-      setCubes(cubes);
-    };
+      return (await resp.json()) as Cube[];
+    },
+    []
+  );
 
-    fetchData();
-  }, []);
+  if (loading || !cubes) {
+    return <Loading />;
+  }
 
-  return cubes ? (
-    <Container className="mt-3 my-md-4">
+  return (
+    <PageContainer>
       <Row>
         <h1 className="display-1">All Cubes</h1>
       </Row>
@@ -65,9 +66,7 @@ const ListCubes = () => {
           );
         })}
       </Row>
-    </Container>
-  ) : (
-    <Loading />
+    </PageContainer>
   );
 };
 

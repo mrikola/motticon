@@ -1,4 +1,4 @@
-import { Col, Container, Row, Button, FloatingLabel } from "react-bootstrap";
+import { Col, Row, Button, FloatingLabel } from "react-bootstrap";
 import { get, post, put } from "../../services/ApiService";
 import { useIsAdmin } from "../../utils/auth";
 import Loading from "../general/Loading";
@@ -13,6 +13,8 @@ import { XOctagonFill } from "react-bootstrap-icons";
 import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
 } from "../general/VerticallyCenteredModal";
+import PageContainer from "../general/PageContainer";
+import { sortByLastNameFirstName } from "../../utils/sortingUtils";
 
 function ManageUsers() {
   const user = useIsAdmin();
@@ -51,8 +53,10 @@ function ManageUsers() {
     const fetchData = async () => {
       const response = await get(`/user/all`);
       const users = (await response.json()) as User[];
-      setAllUsers(users);
-      console.log(users);
+      // Sort by lastName, then firstName for easier searching
+      const sortedUsers = [...users].sort(sortByLastNameFirstName);
+      setAllUsers(sortedUsers);
+      console.log(sortedUsers);
     };
     fetchData();
   }, []);
@@ -127,7 +131,7 @@ function ManageUsers() {
   }
 
   return user ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText="Manage Users" />
       <Row>
         <BackButton buttonText="Back to admin" path="/admin" />
@@ -198,7 +202,7 @@ function ManageUsers() {
           variant="info"
         />
       </Row>
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

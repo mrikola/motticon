@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import { get, post, put } from "../../services/ApiService";
 import { Cube, CubeSelection } from "../../types/Cube";
-import { Container, Row, Form, Button, Col } from "react-bootstrap";
+import { Row, Form, Button, Col } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import CubeSelect from "./CubeSelect";
 import { generatePriorityArray } from "../../utils/preferences";
@@ -12,6 +12,7 @@ import HelmetTitle from "../general/HelmetTitle";
 import { toast } from "react-toastify";
 import { Preference, UserCubePreference } from "../../types/User";
 import BackButton from "../general/BackButton";
+import PageContainer from "../general/PageContainer";
 
 const UserCubePreferences = () => {
   const user = useContext(UserInfoContext);
@@ -105,16 +106,16 @@ const UserCubePreferences = () => {
           `/tournament/${tournamentId}/preferences/${user?.id}`
         );
         const prefs = (await resp.json()) as Preference[];
-        // sort existing preferences by point value for correct rendering of CubeSelects
-        prefs.sort((a, b) => b.points - a.points);
-        if (prefs.length > 0) {
+        // sort existing preferences by point value (descending) for correct rendering of CubeSelects
+        const sortedPrefs = [...prefs].sort((a, b) => b.points - a.points);
+        if (sortedPrefs.length > 0) {
           setSelectedOptions([]);
           const opts = [];
-          for (let i = 0; i < prefs.length; ++i) {
+          for (let i = 0; i < sortedPrefs.length; ++i) {
             opts.push({
-              key: prefs[i].cube.id.toString(),
-              value: prefs[i].cube.id.toString(),
-              displayText: prefs[i].cube.title,
+              key: sortedPrefs[i].cube.id.toString(),
+              value: sortedPrefs[i].cube.id.toString(),
+              displayText: sortedPrefs[i].cube.title,
               disabled: false,
             });
           }
@@ -157,7 +158,7 @@ const UserCubePreferences = () => {
     priorityArray &&
     selectedOptions &&
     previousSelections ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText={tournament.name + " – Cube Preferences"} />
       <Row>
         <BackButton
@@ -215,7 +216,7 @@ const UserCubePreferences = () => {
         </Form>
       </Row>
       <Row></Row>
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

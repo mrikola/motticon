@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { get } from "../../services/ApiService";
 import { Tournament, UsersTournaments } from "../../types/Tournament";
@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import TournamentCard from "../../components/general/TournamentCard";
 import Loading from "../../components/general/Loading";
+import PageContainer from "../../components/general/PageContainer";
 
 const Landing = () => {
   const [tournaments, setTournaments] = useState<UsersTournaments>();
@@ -22,9 +23,9 @@ const Landing = () => {
       if (user && !tournaments) {
         const response = await get(`/user/${user?.id}/tournaments`);
         const tournys = (await response.json()) as Tournament[];
-        tournys.sort((a, b) => (a.startDate > b.startDate ? -1 : 1));
+        const sortedTournys = [...tournys].sort((a, b) => (a.startDate > b.startDate ? -1 : 1));
         setTournaments({
-          ongoing: tournys.filter(
+          ongoing: sortedTournys.filter(
             (tournament) => tournament.status === "started",
           ),
           future: tournys.filter(
@@ -78,7 +79,7 @@ const Landing = () => {
     tournaments &&
     tournamentsStaffedIds &&
     tournamentsEnrolledIds ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText="Home" />
       <Col>
         <h1 className="display-1">
@@ -127,7 +128,7 @@ const Landing = () => {
             );
           })}
       </Col>
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

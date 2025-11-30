@@ -1,4 +1,4 @@
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import { Button, Col, Row, Table } from "react-bootstrap";
 import { useParams } from "react-router";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
@@ -9,6 +9,8 @@ import { Match, Tournament } from "../../types/Tournament";
 import { Enrollment, Player } from "../../types/User";
 import DatalistInput, { Item } from "react-datalist-input";
 import { InfoCircleFill } from "react-bootstrap-icons";
+import PageContainer from "../../components/general/PageContainer";
+import { sortEnrollmentsByLastNameFirstName } from "../../utils/sortingUtils";
 
 function StaffMatchHistory() {
   const { tournamentId } = useParams();
@@ -50,7 +52,11 @@ function StaffMatchHistory() {
     const fetchData = async () => {
       const response = await get(`/tournament/${tournamentId}/enrollment`);
       const tourny = (await response.json()) as Tournament;
-      setAllEnrollments(tourny.enrollments);
+      // Sort enrollments by lastName, then firstName for easier searching
+      const sortedEnrollments = [...tourny.enrollments].sort(
+        sortEnrollmentsByLastNameFirstName
+      );
+      setAllEnrollments(sortedEnrollments);
     };
     fetchData();
   }, [tournamentId]);
@@ -84,7 +90,7 @@ function StaffMatchHistory() {
   }
 
   return (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       {user && tournament ? (
         <>
           <HelmetTitle titleText={`${tournament.name} match history`} />
@@ -94,7 +100,7 @@ function StaffMatchHistory() {
               path={`/tournament/${tournamentId}`}
             />
             <h2 className="display-2">{tournament.name} match history</h2>
-            <Col xs={12}>
+            <Col>
               <DatalistInput
                 label="Player match history"
                 placeholder="Type to search..."
@@ -107,7 +113,7 @@ function StaffMatchHistory() {
                 }}
               />
             </Col>
-            <Col xs={12} className="my-3 d-grid">
+            <Col className="my-3 d-grid">
               <Button
                 variant="info"
                 onClick={getPlayerMatchHistory}
@@ -175,7 +181,7 @@ function StaffMatchHistory() {
       ) : (
         <>loading</>
       )}
-    </Container>
+    </PageContainer>
   );
 }
 

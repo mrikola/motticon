@@ -27,15 +27,15 @@ const NextDraft = ({
 
       const drafts = tournament.drafts ?? [];
       setFirstPendingDraft(
-        drafts
-          .sort((a, b) => a.draftNumber - b.draftNumber)
-          .find((draft) => draft.status === "pending"),
+        [...drafts]
+          .sort(sortDraftsByDraftNumber)
+          .find((draft) => draft.status === "pending")
       );
 
       setLastCompletedDraft(
-        drafts
-          .sort((a, b) => b.draftNumber - a.draftNumber)
-          .find((draft) => draft.status === "completed"),
+        [...drafts]
+          .sort((a, b) => sortDraftsByDraftNumber(b, a)) // Reverse for descending
+          .find((draft) => draft.status === "completed")
       );
     };
 
@@ -45,7 +45,7 @@ const NextDraft = ({
   const generateDraft = async () => {
     const response = await post(
       `/tournament/${tournamentId}/draft/generate`,
-      {},
+      {}
     );
     const updatedTournament = (await response.json()) as Tournament;
     if (updateTournament !== null) {
@@ -58,7 +58,7 @@ const NextDraft = ({
   const initiateDraft = async () => {
     const response = await put(
       `/tournament/${tournamentId}/draft/${firstPendingDraft?.id}/initiate`,
-      {},
+      {}
     );
     const draft = (await response.json()) as Draft;
     if (draft !== null) {

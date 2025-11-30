@@ -1,7 +1,6 @@
 import {
   Button,
   Col,
-  Container,
   FloatingLabel,
   Form,
   Row,
@@ -19,6 +18,7 @@ import { Tournament, PairingMode } from "../../types/Tournament";
 import HelmetTitle from "../general/HelmetTitle";
 import BackButton from "../general/BackButton";
 import { toast } from "react-toastify";
+import PageContainer from "../general/PageContainer";
 
 type TournamentForm = {
   name: string;
@@ -95,7 +95,7 @@ const CreateTournament = () => {
   }
 
   return user ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText="Create Tournament" />
       <Row>
         <BackButton buttonText="Back to admin" path="/admin" />
@@ -350,7 +350,7 @@ const CreateTournament = () => {
           </Col>
         </Form>
       </Row>
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

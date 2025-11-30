@@ -1,10 +1,4 @@
-import {
-  Col,
-  Container,
-  Row,
-  ButtonGroup,
-  ToggleButton,
-} from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import { useParams } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
@@ -15,6 +9,9 @@ import Loading from "../../components/general/Loading";
 import { DraftPod, Tournament, Draft } from "../../types/Tournament";
 import PodSeatsView from "../../components/tournament/PodSeatsView";
 import PodResultsView from "../../components/tournament/PodResultsView";
+import ViewModeToggle from "../../components/general/ViewModeToggle";
+import PageContainer from "../../components/general/PageContainer";
+import { sortDraftsByDraftNumber } from "../../utils/sortingUtils";
 
 type PodWithDraft = {
   pod: DraftPod;
@@ -38,9 +35,7 @@ function DraftPods() {
         const tourny = (await resp.json()) as Tournament;
         setTournament(tourny);
         const userPods: PodWithDraft[] = [];
-        const sortedDrafts = tourny.drafts.sort(
-          (a, b) => a.draftNumber - b.draftNumber
-        );
+        const sortedDrafts = [...tourny.drafts].sort(sortDraftsByDraftNumber);
         sortedDrafts.forEach((draft, draftIndex) => {
           for (const pod of draft.pods) {
             for (const seat of pod.seats) {
@@ -66,7 +61,7 @@ function DraftPods() {
     return (
       tournament &&
       userDraftPods && (
-        <Container className="mt-3 my-md-4">
+        <PageContainer>
           <HelmetTitle titleText={tournament.name + " Draft Pods"} />
           <Row>
             <BackButton
@@ -78,38 +73,14 @@ function DraftPods() {
           </Row>
           {hasCompletedDrafts && (
             <Row className="mb-3">
-              <Col xs={12}>
-                <ButtonGroup className="w-100">
-                  <ToggleButton
-                    id="toggle-seats"
-                    type="radio"
-                    variant="outline-primary"
-                    name="view-mode"
-                    value="seats"
-                    checked={viewMode === "seats"}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setViewMode(e.currentTarget.value as DraftPodsViewMode)
-                    }
-                    className="flex-fill"
-                  >
-                    Seats
-                  </ToggleButton>
-                  <ToggleButton
-                    id="toggle-results"
-                    type="radio"
-                    variant="outline-primary"
-                    name="view-mode"
-                    value="results"
-                    checked={viewMode === "results"}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setViewMode(e.currentTarget.value as DraftPodsViewMode)
-                    }
-                    className="flex-fill"
-                  >
-                    Results
-                  </ToggleButton>
-                </ButtonGroup>
-              </Col>
+              <ViewModeToggle
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+                options={[
+                  { value: "seats", label: "Seats" },
+                  { value: "results", label: "Results" },
+                ]}
+              />
             </Row>
           )}
           <Row>
@@ -137,7 +108,7 @@ function DraftPods() {
               );
             })}
           </Row>
-        </Container>
+        </PageContainer>
       )
     );
   } else {

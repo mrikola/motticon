@@ -1,21 +1,22 @@
-import { Card, Col, Container, Placeholder, Row } from "react-bootstrap";
+import { Card, Col, Placeholder, Row } from "react-bootstrap";
 import { SquareFill } from "react-bootstrap-icons";
+import PageContainer from "./PageContainer";
 
 function LoadingOngoing() {
   return (
-    <Container className="mt-3 my-md-4">
-      <Col xs={12}>
+    <PageContainer>
+      <Col>
         <Placeholder.Button xs={6} />
       </Col>
       <Row>
-        <Col xs={12}>
+        <Col>
           <h1>
             <Placeholder xs={4} aria-hidden="true" />
           </h1>
         </Col>
       </Row>
       <Row>
-        <Container>
+        <Col>
           <p>
             <Placeholder xs={6} aria-hidden="true" />
           </p>
@@ -40,28 +41,28 @@ function LoadingOngoing() {
             </Row>
           </Card>
 
-          <Col xs={12}>
+          <Col>
             <Placeholder xs={12} aria-hidden="true" />
             <Placeholder xs={4} aria-hidden="true" />
           </Col>
-        </Container>
+        </Col>
       </Row>
       <Row>
-        <Col xs={12} className="text-center">
+        <Col className="text-center">
           <Placeholder xs={8} aria-hidden="true" />
         </Col>
-        <Col xs={12} className="text-center">
+        <Col className="text-center">
           <Placeholder xs={2} aria-hidden="true" />
         </Col>
-        <Col xs={12} className="text-center">
+        <Col className="text-center">
           <Placeholder xs={8} aria-hidden="true" />
         </Col>
 
-        <Col xs={12} className="d-grid gap-2 my-3">
+        <Col className="d-grid gap-2 my-3">
           <Placeholder.Button />
         </Col>
       </Row>
-    </Container>
+    </PageContainer>
   );
 }
 

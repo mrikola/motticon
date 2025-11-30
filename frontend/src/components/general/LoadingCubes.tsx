@@ -1,13 +1,14 @@
-import { Card, Col, Container, Placeholder, Row } from "react-bootstrap";
+import { Card, Col, Placeholder, Row } from "react-bootstrap";
+import PageContainer from "./PageContainer";
 
 function LoadingCubes() {
   return (
-    <Container className="mt-3 my-md-4">
-      <Col xs={12}>
+    <PageContainer>
+      <Col>
         <Placeholder.Button xs={6} />
       </Col>
       <Row>
-        <Col xs={12}>
+        <Col>
           <h1 className="display-1 placeholder-wave">
             <Placeholder xs={4} aria-hidden="true" />
           </h1>
@@ -17,7 +18,7 @@ function LoadingCubes() {
         </Col>
       </Row>
       <Row xs={1} sm={1} md={2} lg={3} className="g-3">
-        <Col xs={12} className="cube-card">
+        <Col className="cube-card">
           <Card
             className="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 cube-card-image"
             border="light"
@@ -37,7 +38,7 @@ function LoadingCubes() {
           </Card>
         </Col>
       </Row>
-    </Container>
+    </PageContainer>
   );
 }
 

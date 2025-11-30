@@ -1,4 +1,4 @@
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { Tournament } from "../../types/Tournament";
 import { useEffect, useState } from "react";
 import { get } from "../../services/ApiService";
@@ -8,6 +8,7 @@ import BackButton from "../../components/general/BackButton";
 import { useIsTournamentStaff } from "../../utils/auth";
 import ManageEnrollments from "../../components/staff/ManageEnrollments";
 import ManageDrops from "../../components/staff/ManageDrops";
+import PageContainer from "../../components/general/PageContainer";
 
 const ManagePlayers = () => {
   const { tournamentId } = useParams();
@@ -25,30 +26,28 @@ const ManagePlayers = () => {
 
   if (user && tournament) {
     return (
-      <Container className="mt-3 my-md-4">
+      <PageContainer>
         <HelmetTitle titleText="Manage Players" />
         <Row>
           <BackButton
             buttonText="Back to tournament"
             path={`/tournament/${tournamentId}`}
           />
-          <Col xs={12}>
+          <Col>
             <h1 className="display-1">Manage players</h1>
           </Col>
         </Row>
         {tournament.status === "pending" && (
-          <Col xs={12}>
+          <Col>
             <ManageEnrollments tournamentId={Number(tournamentId)} />
           </Col>
         )}
         {tournament.status === "started" && (
-          <>
-            <Col xs={12}>
-              <ManageDrops tournamentId={Number(tournamentId)} />
-            </Col>
-          </>
+          <Col>
+            <ManageDrops tournamentId={Number(tournamentId)} />
+          </Col>
         )}
-      </Container>
+      </PageContainer>
     );
   }
 };

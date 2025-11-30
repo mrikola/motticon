@@ -1,4 +1,4 @@
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import { Button, Col, Row, Table } from "react-bootstrap";
 import { Tournament } from "../../types/Tournament";
 import { useEffect, useMemo, useState } from "react";
 import { get, post } from "../../services/ApiService";
@@ -10,6 +10,8 @@ import DatalistInput, { Item } from "react-datalist-input";
 import { User } from "../../types/User";
 import { useIsAdmin } from "../../utils/auth";
 import { PersonFillAdd, XLg } from "react-bootstrap-icons";
+import PageContainer from "../../components/general/PageContainer";
+import { sortByLastNameFirstName } from "../../utils/sortingUtils";
 
 const ManageStaff = () => {
   const user = useIsAdmin();
@@ -32,7 +34,7 @@ const ManageStaff = () => {
       const notStaff = allUsers.filter(
         (item) => !usersIdOnly.includes(item.id)
       );
-      notStaff.sort((a, b) => a.lastName.localeCompare(b.lastName));
+      notStaff.sort(sortByLastNameFirstName);
       setAvailableUsers(notStaff);
     }
   }, [allUsers, staff]);
@@ -72,9 +74,7 @@ const ManageStaff = () => {
             toast.success("Added " + item.value + " to staff");
             setItem(undefined);
             setSelectedUser("No user selected");
-            const stf = tourny.staffMembers.sort((a, b) =>
-              a.firstName.localeCompare(b.firstName)
-            );
+            const stf = [...tourny.staffMembers].sort(sortByLastNameFirstName);
             setStaff(stf);
           } else {
             console.log("add to staff failed");
@@ -108,9 +108,7 @@ const ManageStaff = () => {
               staffer.lastName +
               " from staff"
           );
-          const stf = tourny.staffMembers.sort((a, b) =>
-            a.firstName.localeCompare(b.firstName)
-          );
+          const stf = [...tourny.staffMembers].sort(sortByLastNameFirstName);
           setStaff(stf);
         } else {
           console.log("remove from staff failed");
@@ -123,7 +121,7 @@ const ManageStaff = () => {
     const fetchData = async () => {
       const response = await get(`/tournament/${tournamentId}/staff`);
       const tournament = (await response.json()) as Tournament;
-      const stf = tournament.staffMembers;
+      const stf = [...tournament.staffMembers].sort(sortByLastNameFirstName);
       setStaff(stf);
       console.log(tournament);
     };
@@ -139,18 +137,18 @@ const ManageStaff = () => {
 
   if (user) {
     return (
-      <Container className="mt-3 my-md-4">
+      <PageContainer>
         <HelmetTitle titleText="Manage Staff" />
         <Row>
           <BackButton
             buttonText="Back to tournament"
             path={`/tournament/${tournamentId}`}
           />
-          <Col xs={12}>
+          <Col>
             <h1 className="display-1">Manage staff</h1>
           </Col>
         </Row>
-        <Col xs={12}>
+        <Col>
           <h2>Add Staff</h2>
           <DatalistInput
             label="Add user to staff"
@@ -164,7 +162,7 @@ const ManageStaff = () => {
             }}
           />
         </Col>
-        <Col xs={12} className="my-3 d-grid">
+        <Col className="my-3 d-grid">
           <Button variant="info" className="text-light" onClick={addToStaff}>
             <div className="icon-link">
               <PersonFillAdd className="fs-4" /> {selectedUser}
@@ -172,7 +170,7 @@ const ManageStaff = () => {
           </Button>
         </Col>
         <Row>
-          <Col xs={12}>
+          <Col>
             <h2>Current staff</h2>
             <Table striped borderless hover>
               <thead>
@@ -201,7 +199,7 @@ const ManageStaff = () => {
             </Table>
           </Col>
         </Row>
-      </Container>
+      </PageContainer>
     );
   }
 };

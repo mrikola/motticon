@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import RoundOngoing from "../../components/tournament/RoundOngoing";
 import DraftOngoing from "../../components/tournament/DraftOngoing";
 import { Draft, Match, Round, Tournament } from "../../types/Tournament";
@@ -12,7 +12,8 @@ import BetweenRounds from "../../components/tournament/BetweenRounds";
 import LoadingOngoing from "../../components/general/LoadingOngoing";
 import { Enrollment } from "../../types/User";
 import { ApiClient, ApiException } from "../../services/ApiService";
-import { startPolling } from "../../utils/polling";
+import { usePolling } from "../../hooks/usePolling";
+import PageContainer from "../../components/general/PageContainer";
 
 const Ongoing = () => {
   const { tournamentId } = useParams();
@@ -24,9 +25,9 @@ const Ongoing = () => {
   const [latestRound, setLatestRound] = useState<Round>();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
 
-  useEffect(() => {
-    if (!user) return;
-    const fetchData = async () => {
+  usePolling(
+    async () => {
+      if (!user) return;
       try {
         const [round, draft] = await Promise.all([
           ApiClient.getCurrentRound(Number(tournamentId)),
@@ -37,7 +38,6 @@ const Ongoing = () => {
         setCurrentDraft(draft);
 
         // Handle draft completion
-
         if (
           !draft &&
           latestRound?.status === "completed" &&
@@ -50,16 +50,14 @@ const Ongoing = () => {
           console.error("Failed to fetch round/draft:", error.message);
         }
       }
-    };
+    },
+    [tournamentId, tournament, user, latestRound, currentDraft],
+    { enabled: !!user && tournament?.status !== "completed" }
+  );
 
-    if (tournament?.status !== "completed") {
-      return startPolling(() => fetchData());
-    }
-  }, [tournamentId, tournament, user]);
-
-  useEffect(() => {
-    if (!user) return;
-    const fetchData = async () => {
+  usePolling(
+    async () => {
+      if (!user) return;
       try {
         const tourny = await ApiClient.getTournament(Number(tournamentId));
         setTournament(tourny);
@@ -69,17 +67,17 @@ const Ongoing = () => {
           console.error("Failed to fetch tournament:", error.message);
         }
       }
-    };
+    },
+    [tournamentId, user],
+    { enabled: !!user }
+  );
 
-    return startPolling(() => fetchData());
-  }, [tournamentId, user]);
-
-  useEffect(() => {
-    if (!user) return;
-    const fetchData = async () => {
+  usePolling(
+    async () => {
+      if (!user) return;
       try {
         const tourny = await ApiClient.getTournamentEnrollments(
-          Number(tournamentId),
+          Number(tournamentId)
         );
         setEnrollments(tourny.enrollments);
       } catch (error) {
@@ -87,39 +85,35 @@ const Ongoing = () => {
           console.error("Failed to fetch enrollments:", error.message);
         }
       }
-    };
+    },
+    [tournamentId, user],
+    { enabled: !!user }
+  );
 
-    return startPolling(() => fetchData());
-  }, [tournamentId, user]);
-
-  useEffect(() => {
-    if (!user) return;
-    const fetchData = async () => {
-      if (currentRound && user?.id) {
-        try {
-          const match = await ApiClient.getPlayerMatch(
-            Number(tournamentId),
-            currentRound.id,
-            user.id,
-          );
-          setCurrentMatch(match);
-        } catch (error) {
-          if (error instanceof ApiException) {
-            console.error("Failed to fetch match:", error.message);
-          }
+  usePolling(
+    async () => {
+      if (!user || !currentRound || !user.id) return;
+      try {
+        const match = await ApiClient.getPlayerMatch(
+          Number(tournamentId),
+          currentRound.id,
+          user.id
+        );
+        setCurrentMatch(match);
+      } catch (error) {
+        if (error instanceof ApiException) {
+          console.error("Failed to fetch match:", error.message);
         }
       }
-    };
-
-    if (currentRound) {
-      return startPolling(() => fetchData());
-    }
-  }, [currentRound, tournamentId, user]);
+    },
+    [currentRound, tournamentId, user],
+    { enabled: !!user && !!currentRound }
+  );
 
   // latestRoundNumber used for showing standings table
-  useEffect(() => {
-    if (!user) return;
-    const fetchData = async () => {
+  usePolling(
+    async () => {
+      if (!user) return;
       try {
         const round = await ApiClient.getRecentRound(Number(tournamentId));
         setLatestRound(round);
@@ -129,14 +123,14 @@ const Ongoing = () => {
           console.error("Failed to fetch recent round:", error.message);
         }
       }
-    };
-
-    return startPolling(() => fetchData());
-  }, [currentRound, tournament, tournamentId, user]);
+    },
+    [currentRound, tournament, tournamentId, user],
+    { enabled: !!user }
+  );
 
   if (user && tournament && enrollments) {
     return (
-      <Container className="mt-3 my-md-4">
+      <PageContainer>
         <BackButton
           buttonText="Back to tournament"
           path={`/tournament/${tournamentId}`}
@@ -210,7 +204,7 @@ const Ongoing = () => {
             )}
           </>
         )}
-      </Container>
+      </PageContainer>
     );
   } else {
     return <LoadingOngoing />;

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CheckSquare, CheckSquareFill } from "react-bootstrap-icons";
 import { Enrollment } from "../../types/User";
 import { isPlayerDropped } from "../../utils/user";
+import { sortSeatsByPodThenSeat } from "../../utils/sortingUtils";
 
 type Props = {
   seats: DraftPodSeat[];
@@ -22,9 +23,8 @@ const DraftTable = ({
   const [incompleteSeats, setIncompleteSeats] = useState<DraftPodSeat[]>([]);
 
   useEffect(() => {
-    const sortedSeats = seats.sort(
-      (a, b) => (a.pod?.podNumber ?? 0) - (b.pod?.podNumber ?? 0)
-    );
+    // Sort by podNumber, then by seat number (non-mutating)
+    const sortedSeats = [...seats].sort(sortSeatsByPodThenSeat);
     setIncompleteSeats(sortedSeats.filter((seat) => !seat.deckPhotoUrl));
     setCompleteSeats(sortedSeats.filter((seat) => !!seat.deckPhotoUrl));
   }, [seats]);

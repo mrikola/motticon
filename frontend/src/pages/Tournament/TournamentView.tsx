@@ -4,7 +4,7 @@ import { ApiClient, ApiException } from "../../services/ApiService";
 import { Tournament } from "../../types/Tournament";
 import { Cube } from "../../types/Cube";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { CalendarEvent, ListOl } from "react-bootstrap-icons";
 import { formatTournamentDate } from "../../utils/dateUtils";
 import {
@@ -27,6 +27,7 @@ import { toast } from "react-toastify";
 import { Enrollment } from "../../types/User";
 import GoToMatchHistory from "./TournamentView/GoToMatchHistory";
 import GoToFinalStandings from "./TournamentView/GoToFinalStandings";
+import PageContainer from "../../components/general/PageContainer";
 
 const TournamentView = () => {
   const { tournamentId } = useParams();
@@ -141,7 +142,7 @@ const TournamentView = () => {
 
   if (error) {
     return (
-      <Container className="mt-3 my-md-4">
+      <PageContainer>
         <Row>
           <Col>
             <div className="alert alert-danger" role="alert">
@@ -150,12 +151,12 @@ const TournamentView = () => {
             <BackButton buttonText="Back to tournaments" path="/tournaments" />
           </Col>
         </Row>
-      </Container>
+      </PageContainer>
     );
   }
 
   return activeTournament && user ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText={activeTournament.name} />
       <Row>
         <BackButton buttonText="Back to tournaments" path="/tournaments" />
@@ -231,7 +232,7 @@ const TournamentView = () => {
           />
         </>
       )}
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

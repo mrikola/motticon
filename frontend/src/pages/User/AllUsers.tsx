@@ -1,4 +1,4 @@
-import { Col, Container, Row, Table } from "react-bootstrap";
+import { Col, Row, Table } from "react-bootstrap";
 import Loading from "../../components/general/Loading";
 import { useContext, useEffect, useState } from "react";
 import { get } from "../../services/ApiService";
@@ -6,6 +6,7 @@ import HelmetTitle from "../../components/general/HelmetTitle";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Player } from "../../types/User";
 import { Link } from "react-router-dom";
+import PageContainer from "../../components/general/PageContainer";
 
 const AllUsers = () => {
   const user = useContext(UserInfoContext);
@@ -15,22 +16,22 @@ const AllUsers = () => {
     const fetchData = async () => {
       const response = await get(`/user/all`);
       const players = (await response.json()) as Player[];
-      players.sort((a, b) => (a.rating! > b.rating! ? -1 : 1));
-      setAllPlayers(players);
+      const sortedPlayers = [...players].sort((a, b) => (a.rating! > b.rating! ? -1 : 1));
+      setAllPlayers(sortedPlayers);
     };
     fetchData();
   }, []);
 
   return user && allPlayers ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText={"Players"} />
       <Row className="my-3">
-        <Col xs={12}>
+        <Col>
           <h1 className="display-1">Rating Leaderboard</h1>
         </Col>
       </Row>
       <Row>
-        <Col xs={12}>
+        <Col>
           <Table striped borderless responsive>
             <thead>
               <tr>
@@ -55,7 +56,7 @@ const AllUsers = () => {
           </Table>
         </Col>
       </Row>
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

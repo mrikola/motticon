@@ -1,14 +1,15 @@
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
+import PageContainer from "./PageContainer";
 
 function Loading() {
   return (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <Row>
-        <Col xs={12}>
+        <Col>
           <h3>Loading...</h3>
         </Col>
       </Row>
-    </Container>
+    </PageContainer>
   );
 }
 

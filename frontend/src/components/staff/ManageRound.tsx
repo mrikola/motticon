@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import { Draft, Match, Round } from "../../types/Tournament";
 import dayjs, { Dayjs } from "dayjs";
 import ResultsInputModal, { ModalProps } from "../general/ResultsInputModal";
@@ -16,7 +16,9 @@ import VerticallyCenteredModal, {
 import HorizontalCard from "../general/HorizontalCard";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { startPolling } from "../../utils/polling";
+import { usePolling } from "../../hooks/usePolling";
+import { ApiException } from "../../services/ApiService";
+import { sortMatchesByTable } from "../../utils/sortingUtils";
 
 type Props = {
   currentRound: Round;
@@ -36,7 +38,6 @@ const ManageRound = ({
   const [timeRemaining, setTimeRemaining] = useState<number>(3000);
   // const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [matches, setMatches] = useState<Match[]>();
-  const [totalMatches, setTotalMatches] = useState<number>(0);
   const [roundStart, setRoundStart] = useState<Dayjs>();
   const [roundTimerStarted, setRoundTimerStarted] = useState<boolean>(false);
   const [modal, setModal] = useState<ModalProps>({
@@ -79,7 +80,7 @@ const ManageRound = ({
     if (currentRound) {
       const response = await put(
         `/tournament/${tournamentId}/round/${currentRound.id}/start`,
-        {},
+        {}
       );
       const round = (await response.json()) as Round;
       if (round !== null) {
@@ -98,65 +99,60 @@ const ManageRound = ({
     }
   }, [roundStart, timeRemaining, roundTimerStarted]);
 
-  useEffect(() => {
-    const fetchData = async () => {
+  usePolling(
+    async () => {
       const response = await get(`/match/round/${currentRound?.id}`);
       const mtchs = (await response.json()) as Match[];
-      // sort by table number, descending
-      mtchs.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1));
-      setMatches(mtchs);
+      // sort by table number, ascending
+      const sortedMatches = [...mtchs].sort(sortMatchesByTable);
+      setMatches(sortedMatches);
       // console.log(mtchs);
-    };
+    },
+    [currentRound],
+    { enabled: !!currentRound }
+  );
 
-    if (currentRound) {
-      return startPolling(() => fetchData());
-    }
-  }, [currentRound]);
+  const totalMatches = useMemo(() => matches?.length ?? 0, [matches]);
 
-  useEffect(() => {
-    if (matches) {
-      setTotalMatches(matches.length);
-    }
-  }, [matches]);
+  const resultsMissing = useMemo(
+    () => matches?.filter((match) => !match.resultSubmittedBy).length ?? 0,
+    [matches]
+  );
 
-  const [resultsMissing, setResultsMissing] = useState<number>(0);
-
-  useEffect(() => {
-    if (matches) {
-      setResultsMissing(
-        matches.filter((match) => !match.resultSubmittedBy).length,
-      );
-    }
-  }, [matches]);
-
-  function submitResult(
+  const submitResult = async (
     match: Match,
     player1GamesWon: string,
-    player2GamesWon: string,
-  ) {
+    player2GamesWon: string
+  ) => {
     const matchId = match.id;
     const resultSubmittedBy = user?.id;
     const roundId = currentRound?.id;
-    post(`/tournament/staff/${tournamentId}/submitResult`, {
-      roundId,
-      matchId,
-      resultSubmittedBy,
-      player1GamesWon,
-      player2GamesWon,
-    }).then(async (resp) => {
-      const jwt = (await resp.json()) as Match[];
-      if (jwt !== null) {
+    try {
+      const resp = await post(
+        `/tournament/staff/${tournamentId}/submitResult`,
+        {
+          roundId,
+          matchId,
+          resultSubmittedBy,
+          player1GamesWon,
+          player2GamesWon,
+        }
+      );
+      const updatedMatches = (await resp.json()) as Match[];
+      if (updatedMatches !== null) {
         toast.success("Result for table " + match.tableNumber + " submitted");
-        setMatches(
-          jwt.sort((a, b) => (a.tableNumber > b.tableNumber ? 1 : -1)),
-        );
+        setMatches([...updatedMatches].sort(sortMatchesByTable));
         setModal({
           ...modal,
           show: false,
         });
       }
-    });
-  }
+    } catch (error) {
+      if (error instanceof ApiException) {
+        toast.error("Failed to submit result: " + error.message);
+      }
+    }
+  };
 
   function submitResultClicked(clickedMatch: Match) {
     setModal({
@@ -181,7 +177,7 @@ const ManageRound = ({
   const endRound = async () => {
     const response = await put(
       `/tournament/${tournamentId}/round/${currentRound.id}/end`,
-      {},
+      {}
     );
 
     if (response.status === 200 || response.status === 204) {
@@ -189,7 +185,7 @@ const ManageRound = ({
       toast.success("Round ended");
       window.open(
         getURL(`/tournament/${tournamentId}/round/${currentRound.id}/results`),
-        "_blank",
+        "_blank"
       );
       setCurrentRound(undefined);
     }
