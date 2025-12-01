@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useParams } from "react-router";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Col, Row } from "react-bootstrap";
@@ -36,22 +36,13 @@ const Ongoing = () => {
 
         setCurrentRound(round);
         setCurrentDraft(draft);
-
-        // Handle draft completion
-        if (
-          !draft &&
-          latestRound?.status === "completed" &&
-          latestRound.roundNumber === currentDraft?.lastRound
-        ) {
-          setCurrentDraft(undefined);
-        }
       } catch (error) {
         if (error instanceof ApiException) {
           console.error("Failed to fetch round/draft:", error.message);
         }
       }
     },
-    [tournamentId, tournament, user, latestRound, currentDraft],
+    [tournamentId, user],
     { enabled: !!user && tournament?.status !== "completed" }
   );
 
@@ -124,7 +115,7 @@ const Ongoing = () => {
         }
       }
     },
-    [currentRound, tournament, tournamentId, user],
+    [tournamentId, user],
     { enabled: !!user }
   );
 

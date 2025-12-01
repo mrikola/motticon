@@ -8,7 +8,10 @@ import Loading from "../../components/general/Loading";
 import BackButton from "../../components/general/BackButton";
 import { Link } from "react-router-dom";
 import PageContainer from "../../components/general/PageContainer";
-import { sortDraftsByDraftNumber } from "../../utils/sortingUtils";
+import {
+  sortDraftsByDraftNumber,
+  sortSeatsBySeat,
+} from "../../utils/sortingUtils";
 
 function AllPoolsView() {
   const { tournamentId } = useParams();
@@ -71,7 +74,7 @@ function AllPoolsView() {
                       </tr>
                     </thead>
                     <tbody>
-                      {pod.seats.map((seat) => (
+                      {pod.seats.sort(sortSeatsBySeat).map((seat) => (
                         <tr key={seat.id}>
                           <td>{pod.podNumber}</td>
                           <td>{seat.seat}</td>

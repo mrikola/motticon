@@ -2,6 +2,7 @@ import { Col, Row, Table } from "react-bootstrap";
 import { DraftPod } from "../../types/Tournament";
 import DraftPoolButton from "../general/DraftPoolButton";
 import { User } from "../../types/User";
+import { sortSeatsBySeat } from "../../utils/sortingUtils";
 
 type Props = {
   pod: DraftPod;

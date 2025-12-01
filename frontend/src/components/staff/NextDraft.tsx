@@ -3,6 +3,7 @@ import { Draft, Tournament } from "../../types/Tournament";
 import { get, post, put } from "../../services/ApiService";
 import { Button, Col, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { sortDraftsByDraftNumber } from "../../utils/sortingUtils";
 
 type Props = {
   tournamentId: number;

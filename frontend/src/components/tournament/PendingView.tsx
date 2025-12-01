@@ -3,6 +3,7 @@ import { Draft, Tournament } from "../../types/Tournament";
 import { get } from "../../services/ApiService";
 import { Col, Row } from "react-bootstrap";
 import { usePolling } from "../../hooks/usePolling";
+import { sortDraftsByDraftNumber } from "../../utils/sortingUtils";
 
 type Props = {
   tournamentId: number;

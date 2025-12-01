@@ -7,6 +7,7 @@ import "react-datalist-input/dist/styles.css";
 import { PersonPlusFill } from "react-bootstrap-icons";
 import { Tournament } from "../../types/Tournament";
 import { toast } from "react-toastify";
+import { sortByLastNameFirstName } from "../../utils/sortingUtils";
 
 type Props = {
   enrollments: Enrollment[];
