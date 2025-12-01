@@ -2,7 +2,6 @@ import { Row, Table } from "react-bootstrap";
 import { useParams } from "react-router";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
-import { User } from "../../types/User";
 import { Match } from "../../types/Tournament";
 import { useMemo } from "react";
 import { get } from "../../services/ApiService";

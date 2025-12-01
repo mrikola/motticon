@@ -1,4 +1,4 @@
-import { User, Player, Enrollment } from "../types/User";
+import { Enrollment } from "../types/User";
 import { Match, DraftPodSeat, Draft, Round } from "../types/Tournament";
 
 /**
