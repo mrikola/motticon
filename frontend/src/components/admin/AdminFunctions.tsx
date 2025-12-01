@@ -1,10 +1,11 @@
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import Loading from "../../components/general/Loading";
 import { useIsAdmin } from "../../utils/auth";
 import { PersonFillGear } from "react-bootstrap-icons";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import { Card, ListedCard, PickedCard, Token } from "../../types/Card";
 import { get } from "../../services/ApiService";
+import PageContainer from "../general/PageContainer";
 
 const AdminFunctions = () => {
   const user = useIsAdmin();
@@ -95,7 +96,7 @@ const AdminFunctions = () => {
   };
 
   return user ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText="Admin" />
       <Row className="my-3">
         <Col xs={12}>
@@ -208,7 +209,7 @@ const AdminFunctions = () => {
           </Button>
         </Col>
       </Row>
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

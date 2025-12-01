@@ -2,6 +2,7 @@ import { Col, Row, Table } from "react-bootstrap";
 import { DraftPod } from "../../types/Tournament";
 import DraftPoolButton from "../general/DraftPoolButton";
 import { User } from "../../types/User";
+import { sortSeatsBySeat } from "../../utils/sortingUtils";
 
 type Props = {
   pod: DraftPod;
@@ -16,24 +17,22 @@ function PodSeatsView({ pod, user, draftIndex }: Props) {
       <h3>
         Pod {pod.podNumber}, {pod.cube?.title}
       </h3>
-      {pod.seats
-        .sort((a, b) => a.seat - b.seat)
-        .map((seat) => (
-          <div key={seat.id}>
-            {user.id === seat.player?.id && seat.deckPhotoUrl ? (
-              <Col
-                xs={10}
-                sm={8}
-                className="d-grid gap-2 my-3 mx-auto"
-                key={seat.id}
-              >
-                <DraftPoolButton seat={seat} />
-              </Col>
-            ) : (
-              ""
-            )}
-          </div>
-        ))}
+      {pod.seats.sort(sortSeatsBySeat).map((seat) => (
+        <div key={seat.id}>
+          {user.id === seat.player?.id && seat.deckPhotoUrl ? (
+            <Col
+              xs={10}
+              sm={8}
+              className="d-grid gap-2 my-3 mx-auto"
+              key={seat.id}
+            >
+              <DraftPoolButton seat={seat} />
+            </Col>
+          ) : (
+            ""
+          )}
+        </div>
+      ))}
       <Table striped borderless responsive>
         <thead>
           <tr>
@@ -42,21 +41,17 @@ function PodSeatsView({ pod, user, draftIndex }: Props) {
           </tr>
         </thead>
         <tbody>
-          {pod.seats
-            .sort((a, b) => a.seat - b.seat)
-            .map((seat) => (
-              <tr
-                key={seat.id}
-                className={
-                  user.id === seat.player?.id ? "table-primary" : ""
-                }
-              >
-                <td>{seat.seat}</td>
-                <td className="td-no-wrap">
-                  {seat.player?.firstName} {seat.player?.lastName}
-                </td>
-              </tr>
-            ))}
+          {pod.seats.sort(sortSeatsBySeat).map((seat) => (
+            <tr
+              key={seat.id}
+              className={user.id === seat.player?.id ? "table-primary" : ""}
+            >
+              <td>{seat.seat}</td>
+              <td className="td-no-wrap">
+                {seat.player?.firstName} {seat.player?.lastName}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </Table>
     </Row>
@@ -64,4 +59,3 @@ function PodSeatsView({ pod, user, draftIndex }: Props) {
 }
 
 export default PodSeatsView;
-

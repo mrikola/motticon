@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { get } from "../../services/ApiService";
-import { Accordion, Col, Container, Row, Table } from "react-bootstrap";
+import { Accordion, Col, Row, Table } from "react-bootstrap";
 import { Draft, Tournament } from "../../types/Tournament";
 import { useIsTournamentStaff } from "../../utils/auth";
 import Loading from "../../components/general/Loading";
 import BackButton from "../../components/general/BackButton";
 import { Link } from "react-router-dom";
+import PageContainer from "../../components/general/PageContainer";
+import {
+  sortDraftsByDraftNumber,
+  sortSeatsBySeat,
+} from "../../utils/sortingUtils";
 
 function AllPoolsView() {
   const { tournamentId } = useParams();
@@ -23,7 +28,7 @@ function AllPoolsView() {
         const tourny = (await resp.json()) as Tournament;
         console.log(tourny);
         setTournament(tourny);
-        setDrafts(tourny.drafts.sort((a, b) => a.draftNumber - b.draftNumber));
+        setDrafts([...tourny.drafts].sort(sortDraftsByDraftNumber));
       } catch {
         // TODO handle invalid response
       }
@@ -35,7 +40,7 @@ function AllPoolsView() {
   }, [user]);
 
   return user && tournament && drafts ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <Row>
         <BackButton
           buttonText="Back to tournament"
@@ -69,7 +74,7 @@ function AllPoolsView() {
                       </tr>
                     </thead>
                     <tbody>
-                      {pod.seats.map((seat) => (
+                      {pod.seats.sort(sortSeatsBySeat).map((seat) => (
                         <tr key={seat.id}>
                           <td>{pod.podNumber}</td>
                           <td>{seat.seat}</td>
@@ -98,7 +103,7 @@ function AllPoolsView() {
           </Accordion>
         </Col>
       ))}
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

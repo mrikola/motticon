@@ -5,6 +5,7 @@ import { DraftPod, DraftPodStandingsRow, Match } from "../../types/Tournament";
 import { User } from "../../types/User";
 import Loading from "../general/Loading";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
+import { sortMatchesByRound } from "../../utils/sortingUtils";
 
 type Props = {
   pod: DraftPod;
@@ -144,33 +145,28 @@ function PodResultsView({
               </tr>
             </thead>
             <tbody>
-              {matches
-                .sort(
-                  (a, b) =>
-                    (a.round?.roundNumber ?? 0) - (b.round?.roundNumber ?? 0)
-                )
-                .map((match) => (
-                  <tr key={match.id}>
-                    <td>{match.round?.roundNumber ?? "-"}</td>
-                    <td
-                      className={
-                        user.id === match.player1.id ? "table-primary" : ""
-                      }
-                    >
-                      {match.player1.firstName} {match.player1.lastName}
-                    </td>
-                    <td>
-                      {match.player1GamesWon} - {match.player2GamesWon}
-                    </td>
-                    <td
-                      className={
-                        user.id === match.player2.id ? "table-primary" : ""
-                      }
-                    >
-                      {match.player2.firstName} {match.player2.lastName}
-                    </td>
-                  </tr>
-                ))}
+              {matches.sort(sortMatchesByRound).map((match) => (
+                <tr key={match.id}>
+                  <td>{match.round?.roundNumber ?? "-"}</td>
+                  <td
+                    className={
+                      user.id === match.player1.id ? "table-primary" : ""
+                    }
+                  >
+                    {match.player1.firstName} {match.player1.lastName}
+                  </td>
+                  <td>
+                    {match.player1GamesWon} - {match.player2GamesWon}
+                  </td>
+                  <td
+                    className={
+                      user.id === match.player2.id ? "table-primary" : ""
+                    }
+                  >
+                    {match.player2.firstName} {match.player2.lastName}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </>

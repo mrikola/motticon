@@ -4,13 +4,13 @@ import { get, post } from "../../services/ApiService";
 import {
   Button,
   Col,
-  Container,
   FloatingLabel,
   Form,
   Row,
 } from "react-bootstrap";
 import { toast } from "react-toastify";
 import HelmetTitle from "../../components/general/HelmetTitle";
+import PageContainer from "../../components/general/PageContainer";
 
 type SignupForm = {
   firstName: string;
@@ -45,7 +45,7 @@ function SignUp() {
   });
 
   return (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText="Sign up" />
       <Col>
         <h1 className="display-1">Create account</h1>
@@ -200,7 +200,7 @@ function SignUp() {
           </Col>
         </Form>
       </Row>
-    </Container>
+    </PageContainer>
   );
 }
 

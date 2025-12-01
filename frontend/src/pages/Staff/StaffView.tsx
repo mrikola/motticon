@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { get, put } from "../../services/ApiService";
-import { Col, Container, Row, Button } from "react-bootstrap";
+import { Col, Row, Button } from "react-bootstrap";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
@@ -15,7 +15,8 @@ import StaffStandingsTable from "../../components/staff/StaffStandingsTable";
 import BackButton from "../../components/general/BackButton";
 import { toast } from "react-toastify";
 import { Enrollment } from "../../types/User";
-import { startPolling } from "../../utils/polling";
+import { usePolling } from "../../hooks/usePolling";
+import PageContainer from "../../components/general/PageContainer";
 
 function StaffView() {
   const { tournamentId } = useParams();
@@ -26,8 +27,8 @@ function StaffView() {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [latestRoundNumber, setLatestRoundNumber] = useState<number>(0);
 
-  useEffect(() => {
-    const fetchData = async () => {
+  usePolling(
+    async () => {
       const [roundResponse, draftResponse] = await Promise.all([
         get(`/tournament/${tournamentId}/round`),
         get(`/tournament/${tournamentId}/draft`),
@@ -49,12 +50,10 @@ function StaffView() {
       } catch {
         // TODO handle invalid response
       }
-    };
-
-    if (user) {
-      return startPolling(() => fetchData());
-    }
-  }, [tournamentId, user]);
+    },
+    [tournamentId, user],
+    { enabled: !!user }
+  );
 
   useEffect(() => {
     if (!tournament) {
@@ -69,17 +68,15 @@ function StaffView() {
     }
   }, [user]);
 
-  useEffect(() => {
-    const fetchData = async () => {
+  usePolling(
+    async () => {
       const response = await get(`/tournament/${tournamentId}/enrollment`);
       const tourny = (await response.json()) as Tournament;
       setEnrollments(tourny.enrollments);
-    };
-
-    if (user) {
-      return startPolling(() => fetchData());
-    }
-  }, [tournamentId, user]);
+    },
+    [tournamentId, user],
+    { enabled: !!user }
+  );
 
   const startTournament = async () => {
     const resp = await put(`/tournament/${tournamentId}/start`);
@@ -106,7 +103,7 @@ function StaffView() {
   }, [currentRound, tournament]);
 
   return user && tournament ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <Row>
         <BackButton
           buttonText="Back to tournament"
@@ -170,7 +167,7 @@ function StaffView() {
           </Col>
         </Row>
       )}
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

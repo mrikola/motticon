@@ -1,10 +1,11 @@
-import { Container, Row, Col } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { useParams } from "react-router";
 import { useContext } from "react";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import StandingsTable from "../../components/tournament/StandingsTable";
+import PageContainer from "../../components/general/PageContainer";
 
 function Standings() {
   const { roundNumber, tournamentId } = useParams();
@@ -12,8 +13,8 @@ function Standings() {
 
   if (user) {
     return (
-      <Container className="mt-3 my-md-4">
-        <HelmetTitle titleText={"Standings Round " + { roundNumber }} />
+      <PageContainer>
+        <HelmetTitle titleText={`Standings Round ${roundNumber}`} />
         <Row>
           <BackButton
             buttonText="Back to tournament"
@@ -30,11 +31,11 @@ function Standings() {
             />
           </Col>
         </Row>
-      </Container>
+      </PageContainer>
     );
   } else {
     return (
-      <Container className="mt-3 my-md-4">
+      <PageContainer>
         <Row>
           <BackButton
             buttonText="Back to tournament"
@@ -44,7 +45,7 @@ function Standings() {
             No standings found for round {roundNumber}
           </h1>
         </Row>
-      </Container>
+      </PageContainer>
     );
   }
 }

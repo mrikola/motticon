@@ -1,7 +1,7 @@
 import { Button, Table } from "react-bootstrap";
 import { Enrollment, Player } from "../../types/User";
 import { XLg } from "react-bootstrap-icons";
-import { useEffect } from "react";
+import { sortEnrollmentsByLastNameFirstName } from "../../utils/sortingUtils";
 
 type Props = {
   enrollments: Enrollment[];
@@ -9,11 +9,10 @@ type Props = {
 };
 
 const EnrolledPlayersTable = ({ enrollments, buttonFunction }: Props) => {
-  useEffect(() => {
-    enrollments.sort((a, b) =>
-      (a.player?.lastName ?? "").localeCompare(b.player?.lastName ?? ""),
-    );
-  }, [enrollments]);
+  // Sort enrollments by lastName, then firstName (non-mutating)
+  const sortedEnrollments = [...enrollments].sort(
+    sortEnrollmentsByLastNameFirstName
+  );
 
   return (
     <Table striped bordered hover>
@@ -24,7 +23,7 @@ const EnrolledPlayersTable = ({ enrollments, buttonFunction }: Props) => {
         </tr>
       </thead>
       <tbody>
-        {enrollments.map((enrollment) => (
+        {sortedEnrollments.map((enrollment) => (
           <tr key={enrollment.player?.id}>
             <td>
               {enrollment.player?.firstName} {enrollment.player?.lastName}

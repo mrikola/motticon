@@ -1,6 +1,5 @@
 import {
   Col,
-  Container,
   Row,
   Form,
   FloatingLabel,
@@ -18,6 +17,7 @@ import MTGAutocompleteInput from "../general/MTGAutocompleteInput";
 import { Cube } from "../../types/Cube";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
+import PageContainer from "../general/PageContainer";
 
 type EditCubeForm = {
   cubeId: number;
@@ -109,7 +109,7 @@ function EditCube() {
   }, [selectedCard]);
 
   return user && currentInfo ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText="Add cube" />
       <Row>
         <BackButton buttonText="Back to admin" path="/admin" />
@@ -282,7 +282,7 @@ function EditCube() {
           </Row>
         </Form>
       </Row>
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

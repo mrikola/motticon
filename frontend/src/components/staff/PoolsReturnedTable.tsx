@@ -3,6 +3,7 @@ import { Draft, DraftPod, DraftPodSeat } from "../../types/Tournament";
 import { useEffect, useState } from "react";
 import { CheckSquare, CheckSquareFill } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
+import { sortSeatsBySeat } from "../../utils/sortingUtils";
 
 type Props = {
   draft: Draft;
@@ -16,10 +17,14 @@ const PoolsReturnedTable = ({ draft, pod, seats, markDoneClicked }: Props) => {
   const [incompleteSeats, setIncompleteSeats] = useState<DraftPodSeat[]>([]);
 
   useEffect(() => {
+    // Sort seats by seat number (non-mutating)
+    const sortedSeats = [...seats].sort(sortSeatsBySeat);
     setIncompleteSeats(
-      seats.filter((seat) => seat.draftPoolReturned === false),
+      sortedSeats.filter((seat) => seat.draftPoolReturned === false)
     );
-    setCompleteSeats(seats.filter((seat) => seat.draftPoolReturned === true));
+    setCompleteSeats(
+      sortedSeats.filter((seat) => seat.draftPoolReturned === true)
+    );
   }, [seats]);
 
   if (completeSeats && incompleteSeats) {

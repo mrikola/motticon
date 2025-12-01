@@ -3,6 +3,7 @@ import { Match } from "../../types/Tournament";
 import { useEffect, useState } from "react";
 import { Enrollment } from "../../types/User";
 import { isPlayerDropped } from "../../utils/user";
+import { sortMatchesByTable } from "../../utils/sortingUtils";
 
 type Props = {
   matches: Match[];
@@ -23,8 +24,12 @@ const MatchTable = ({
   const [doneMatches, setDoneMatches] = useState<Match[]>();
 
   useEffect(() => {
-    setOngoingMatches(matches.filter((match) => !match.resultSubmittedBy));
-    setDoneMatches(matches.filter((match) => match.resultSubmittedBy));
+    // Sort matches by tableNumber (non-mutating)
+    const sortedMatches = [...matches].sort(sortMatchesByTable);
+    setOngoingMatches(
+      sortedMatches.filter((match) => !match.resultSubmittedBy)
+    );
+    setDoneMatches(sortedMatches.filter((match) => match.resultSubmittedBy));
   }, [matches]);
 
   if (ongoingMatches && doneMatches) {

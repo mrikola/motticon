@@ -5,11 +5,12 @@ import { PenFill } from "react-bootstrap-icons";
 import { get } from "../../services/ApiService";
 import { Cube } from "../../types/Cube";
 import { Tournament } from "../../types/Tournament";
-import { Badge, Card, Col, Container, Row } from "react-bootstrap";
+import { Badge, Card, Col, Row } from "react-bootstrap";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import LoadingCubes from "../../components/general/LoadingCubes";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
+import PageContainer from "../../components/general/PageContainer";
 
 const ListCubesForTournament = () => {
   const { tournamentId } = useParams();
@@ -60,7 +61,7 @@ const ListCubesForTournament = () => {
   }, [user]);
 
   return tournament ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText={tournament.name + " Cubes"} />
       <Row>
         <BackButton
@@ -80,7 +81,7 @@ const ListCubesForTournament = () => {
               "https://cards.scryfall.io/art_crop/front/5/9/593cbbd0-6ec3-4506-be0c-a229f070ce6d.jpg";
           }
           return (
-            <Col key={cube.id} xs={12} className="cube-card">
+            <Col key={cube.id} className="cube-card">
               <Card
                 className="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 cube-card-image"
                 border="light"
@@ -128,7 +129,7 @@ const ListCubesForTournament = () => {
           );
         })}
       </Row>
-    </Container>
+    </PageContainer>
   ) : (
     <LoadingCubes />
   );

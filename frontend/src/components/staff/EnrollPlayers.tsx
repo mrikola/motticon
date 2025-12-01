@@ -7,6 +7,7 @@ import "react-datalist-input/dist/styles.css";
 import { PersonPlusFill } from "react-bootstrap-icons";
 import { Tournament } from "../../types/Tournament";
 import { toast } from "react-toastify";
+import { sortByLastNameFirstName } from "../../utils/sortingUtils";
 
 type Props = {
   enrollments: Enrollment[];
@@ -38,9 +39,9 @@ const EnrollPlayers = ({
       }
       const playersIdOnly = players.map((x) => x.id);
       const notEnrolled = allPlayers.filter(
-        (item) => !playersIdOnly.includes(item.id),
+        (item) => !playersIdOnly.includes(item.id)
       );
-      notEnrolled.sort((a, b) => a.lastName.localeCompare(b.lastName));
+      notEnrolled.sort(sortByLastNameFirstName);
       setAvailablePlayers(notEnrolled);
     }
   }, [allPlayers, enrollments]);
@@ -57,7 +58,7 @@ const EnrollPlayers = ({
         // node: option.name, // use a custom ReactNode to display the option
         ...player, // pass along any other properties to access in your onSelect callback
       })),
-    [availablePlayers],
+    [availablePlayers]
   );
 
   useEffect(() => {
@@ -94,7 +95,7 @@ const EnrollPlayers = ({
             setSelectedPlayer("No player selected");
             setEnrollments(tournament.enrollments);
           }
-        },
+        }
       );
     } else {
       console.log("no player selected");

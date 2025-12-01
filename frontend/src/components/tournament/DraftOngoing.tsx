@@ -14,7 +14,7 @@ import HelmetTitle from "../general/HelmetTitle";
 import { Cube } from "../../types/Cube";
 import { PickedCard } from "../../types/Card";
 import { ApiClient, ApiException } from "../../services/ApiService";
-import { startPolling } from "../../utils/polling";
+import { usePolling } from "../../hooks/usePolling";
 import { calculateDeckBuildingPod } from "../../utils/tournamentUtils";
 
 type Props = {
@@ -42,8 +42,8 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
   const POOLSIZE = 45;
 
   // Poll draft pod data
-  useEffect(() => {
-    const fetchDraftPod = async () => {
+  usePolling(
+    async () => {
       try {
         const draftPod = await ApiClient.getDraftPodForUser(
           draft.id,
@@ -57,12 +57,10 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
           console.error("Failed to fetch draft pod:", error.message);
         }
       }
-    };
-
-    if (user && draft) {
-      return startPolling(() => fetchDraftPod());
-    }
-  }, [user, draft]);
+    },
+    [user, draft],
+    { enabled: !!user && !!draft }
+  );
 
   // One-time cube fetch
   useEffect(() => {

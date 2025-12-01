@@ -1,99 +1,101 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext, useMemo } from "react";
 import { get } from "../../services/ApiService";
 import {
   Tournament,
   TournamentsByType,
   UsersTournaments,
 } from "../../types/Tournament";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import dayjs from "dayjs";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import TournamentCard from "../../components/general/TournamentCard";
 import Loading from "../../components/general/Loading";
+import { useFetch } from "../../hooks/useFetch";
+import PageContainer from "../../components/general/PageContainer";
 
 function Tournaments() {
-  const [tournaments, setTournaments] = useState<TournamentsByType>();
-  const [tournamentsStaffed, setTournamentsStaffed] = useState<Tournament[]>();
-  const [tournamentsEnrolled, setTournamentsEnrolled] =
-    useState<Tournament[]>();
   const user = useContext(UserInfoContext);
-  const [tournamentsStaffedIds, setTournamentsStaffedIds] =
-    useState<number[]>();
-  const [tournamentsEnrolledIds, setTournamentsEnrolledIds] =
-    useState<number[]>();
   const tournamentTypes: (keyof UsersTournaments)[] = [
     "ongoing",
     "future",
     "past",
   ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await get("/tournament");
-      const tournys = (await response.json()) as Tournament[];
-      tournys.sort((a, b) => (a.startDate > b.startDate ? -1 : 1));
-      setTournaments({
-        ongoing: tournys.filter(
-          (tournament) => tournament.status === "started",
-        ),
-        future: tournys.filter((tournament) => tournament.status === "pending"),
-        past: tournys.filter((tournament) => tournament.status === "completed"),
-      });
-    };
-    fetchData();
+  const { data: allTournaments, loading: tournamentsLoading } = useFetch<
+    Tournament[]
+  >(async () => {
+    const response = await get("/tournament");
+    const tournys = (await response.json()) as Tournament[];
+    const sortedTournys = [...tournys].sort((a, b) =>
+      a.startDate > b.startDate ? -1 : 1
+    );
+    return sortedTournys;
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (user && !tournamentsEnrolled) {
-        const userTournys = await get(`/user/${user.id}/tournaments`);
-        const enrollments = (await userTournys.json()) as Tournament[];
-        setTournamentsEnrolled(enrollments);
-      }
+  const tournaments = useMemo<TournamentsByType | undefined>(() => {
+    if (!allTournaments) return undefined;
+    return {
+      ongoing: allTournaments.filter(
+        (tournament) => tournament.status === "started"
+      ),
+      future: allTournaments.filter(
+        (tournament) => tournament.status === "pending"
+      ),
+      past: allTournaments.filter(
+        (tournament) => tournament.status === "completed"
+      ),
     };
+  }, [allTournaments]);
 
-    fetchData();
-  }, [user, tournamentsEnrolled]);
+  const { data: tournamentsEnrolled, loading: enrolledLoading } = useFetch<
+    Tournament[]
+  >(
+    async () => {
+      if (!user) return [];
+      const userTournys = await get(`/user/${user.id}/tournaments`);
+      return (await userTournys.json()) as Tournament[];
+    },
+    [user?.id],
+    { enabled: !!user }
+  );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (user && !tournamentsStaffed) {
-        const response = await get(`/user/${user.id}/staff`);
-        setTournamentsStaffed(await response.json());
-      }
-    };
+  const { data: tournamentsStaffed, loading: staffedLoading } = useFetch<
+    Tournament[]
+  >(
+    async () => {
+      if (!user) return [];
+      const response = await get(`/user/${user.id}/staff`);
+      return (await response.json()) as Tournament[];
+    },
+    [user?.id],
+    { enabled: !!user }
+  );
 
-    fetchData();
-  }, [user, tournamentsStaffed]);
-
-  useEffect(() => {
-    if (!tournamentsStaffedIds && tournamentsStaffed) {
-      const ids = [];
-      for (const tournament in tournamentsStaffed) {
-        ids.push(tournamentsStaffed[tournament].id);
-      }
-      setTournamentsStaffedIds(ids);
-      // console.log(ids);
-    }
+  const tournamentsStaffedIds = useMemo(() => {
+    if (!tournamentsStaffed) return undefined;
+    return tournamentsStaffed.map((tournament) => tournament.id);
   }, [tournamentsStaffed]);
 
-  useEffect(() => {
-    if (!tournamentsEnrolledIds && tournamentsEnrolled) {
-      const ids = [];
-      for (const tournament in tournamentsEnrolled) {
-        ids.push(tournamentsEnrolled[tournament].id);
-      }
-      setTournamentsEnrolledIds(ids);
-      // console.log(ids);
-    }
+  const tournamentsEnrolledIds = useMemo(() => {
+    if (!tournamentsEnrolled) return undefined;
+    return tournamentsEnrolled.map((tournament) => tournament.id);
   }, [tournamentsEnrolled]);
 
-  return user &&
-    tournaments &&
-    tournamentsStaffedIds &&
-    tournamentsEnrolledIds ? (
-    <Container className="mt-3 my-md-4">
+  if (
+    tournamentsLoading ||
+    enrolledLoading ||
+    staffedLoading ||
+    !user ||
+    !tournaments ||
+    !tournamentsStaffedIds ||
+    !tournamentsEnrolledIds
+  ) {
+    return <Loading />;
+  }
+
+  return (
+    <PageContainer>
       <HelmetTitle titleText="Tournaments" />
       <Row>
         <h1 className="display-1">Tournaments</h1>
@@ -101,17 +103,19 @@ function Tournaments() {
       {tournaments &&
         tournamentTypes.map((type, index) => {
           const tourneys = tournaments[type];
-          tourneys.sort((a, b) => (a.startDate < b.startDate ? -1 : 1));
-          return tourneys.length > 0 ? (
+          const sortedTourneys = [...tourneys].sort((a, b) =>
+            a.startDate < b.startDate ? -1 : 1
+          );
+          return sortedTourneys.length > 0 ? (
             <div key={index}>
               <h2 className="text-capitalize mt-2">{type} tournaments</h2>
               <Row key={index} className="row-cols-1 row-cols-md-2 g-2">
-                {tourneys.map((tournament) => {
+                {sortedTourneys.map((tournament) => {
                   let date;
                   if (
                     dayjs(tournament.startDate).isSame(
                       dayjs(tournament.endDate),
-                      "day",
+                      "day"
                     )
                   ) {
                     date = dayjs(tournament.startDate).format("DD/MM/YYYY");
@@ -141,9 +145,7 @@ function Tournaments() {
             </Row>
           );
         })}
-    </Container>
-  ) : (
-    <Loading />
+    </PageContainer>
   );
 }
 

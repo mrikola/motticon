@@ -4,7 +4,6 @@ import { getUserInfoFromJwt } from "../../utils/auth";
 import {
   Button,
   Col,
-  Container,
   Row,
   Form,
   FloatingLabel,
@@ -14,6 +13,7 @@ import { Link } from "react-router-dom";
 import { BoxArrowInRight, PersonPlusFill } from "react-bootstrap-icons";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import { toast } from "react-toastify";
+import PageContainer from "../../components/general/PageContainer";
 
 type LoginForm = {
   email: string;
@@ -59,7 +59,7 @@ const Login = () => {
   };
 
   return (
-    <Container className="mt-3 my-md-4 text-center">
+    <PageContainer className="text-center">
       <HelmetTitle titleText="Login" />
       <Row>
         <h1 className="display-1">MottiCon</h1>
@@ -110,7 +110,7 @@ const Login = () => {
           </Link>
         </Col>
       </Row>
-    </Container>
+    </PageContainer>
   );
 };
 

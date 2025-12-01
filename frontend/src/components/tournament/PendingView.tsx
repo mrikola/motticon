@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Draft, Tournament } from "../../types/Tournament";
 import { get } from "../../services/ApiService";
 import { Col, Row } from "react-bootstrap";
-import { startPolling } from "../../utils/polling";
+import { usePolling } from "../../hooks/usePolling";
+import { sortDraftsByDraftNumber } from "../../utils/sortingUtils";
 
 type Props = {
   tournamentId: number;
@@ -13,30 +14,28 @@ const PendingView = ({ tournamentId }: Props) => {
   const [firstPendingDraft, setFirstPendingDraft] = useState<Draft>();
   const [tournament, setTournament] = useState<Tournament>();
 
-  useEffect(() => {
-    const fetchData = async () => {
+  usePolling(
+    async () => {
       const resp = await get(`/tournament/${tournamentId}/drafts`);
       const tourny = (await resp.json()) as Tournament;
       setTournament(tourny);
 
       const drafts = tourny.drafts ?? [];
       setFirstPendingDraft(
-        drafts
-          .sort((a, b) => a.draftNumber - b.draftNumber)
-          .find((draft) => draft.status === "pending"),
+        [...drafts]
+          .sort(sortDraftsByDraftNumber)
+          .find((draft) => draft.status === "pending")
       );
 
       setLastCompletedDraft(
-        drafts
-          .sort((a, b) => b.draftNumber - a.draftNumber)
-          .find((draft) => draft.status === "completed"),
+        [...drafts]
+          .sort((a, b) => sortDraftsByDraftNumber(b, a)) // Reverse for descending
+          .find((draft) => draft.status === "completed")
       );
-    };
-
-    if (tournamentId) {
-      return startPolling(() => fetchData());
-    }
-  }, [tournamentId]);
+    },
+    [tournamentId],
+    { enabled: !!tournamentId }
+  );
 
   // if latest draft completed == tournament draft count, tournament is over (minus top 8)
   // else if next draft pending == null, we need to generate the draft and pods

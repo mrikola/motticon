@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useContext } from "react";
 import { useParams } from "react-router";
 import { Col, Container, Row, Table } from "react-bootstrap";
 import { Cube } from "../../types/Cube";
@@ -10,12 +10,13 @@ import BackButton from "../../components/general/BackButton";
 import Loading from "../../components/general/Loading";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Color } from "../../types/Card";
+import { useFetch } from "../../hooks/useFetch";
+import PageContainer from "../../components/general/PageContainer";
 
 const ViewCube = () => {
   const user = useContext(UserInfoContext);
   const isAdmin = user?.isAdmin;
   const { cubeId, tournamentId } = useParams();
-  const [cube, setCube] = useState<Cube>();
   const colors: Color[] = ["W", "U", "B", "R", "G"];
   const cardtypes: string[] = [
     "Creature",
@@ -26,15 +27,13 @@ const ViewCube = () => {
     "Artifact",
   ];
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const { data: cube, loading } = useFetch<Cube>(
+    async () => {
       const resp = await get(`/cube/${cubeId}`);
-      const cube = (await resp.json()) as Cube;
-      setCube(cube);
-    };
-
-    fetchData();
-  }, [cubeId]);
+      return (await resp.json()) as Cube;
+    },
+    [cubeId]
+  );
 
   const colorSymbolToHeading = (symbol: Color) => {
     switch (symbol) {
@@ -50,6 +49,10 @@ const ViewCube = () => {
         return "Green";
     }
   };
+
+  if (loading || !cube) {
+    return <Loading />;
+  }
 
   if (cube) {
     return (
@@ -106,9 +109,9 @@ const ViewCube = () => {
             </Container>
           </div>
         </div>
-        <Container className="mt-3 my-md-4">
+        <PageContainer>
           <Row>
-            <Col xs="10" md="8" className="d-grid gap-2 mx-auto">
+            <Col xs={10} md={8} className="d-grid gap-2 mx-auto">
               <p className="lead">{cube.description}</p>
             </Col>
           </Row>
@@ -168,7 +171,7 @@ const ViewCube = () => {
               })}
             </Row>
           )}
-        </Container>
+        </PageContainer>
       </>
     );
   } else {

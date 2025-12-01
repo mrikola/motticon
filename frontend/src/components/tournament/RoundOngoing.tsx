@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useMemo } from "react";
 import { UserInfoContext } from "../provider/UserInfoProvider";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import dayjs, { Dayjs } from "dayjs";
@@ -24,7 +24,7 @@ import { toast } from "react-toastify";
 import DraftPoolButton from "../general/DraftPoolButton";
 import { isPlayerDropped } from "../../utils/user";
 import { ApiClient, ApiException } from "../../services/ApiService";
-import { startPolling } from "../../utils/polling";
+import { usePolling } from "../../hooks/usePolling";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
@@ -48,7 +48,6 @@ function RoundOngoing({
   const [timeRemaining, setTimeRemaining] = useState<number>();
   const user = useContext(UserInfoContext);
   const [roundStartTime, _setRoundStartTime] = useState<Dayjs>();
-  const [totalMatches, setTotalMatches] = useState<number>(0);
   const [matches, setMatches] = useState<Match[]>();
   const [playerRadioValue, setPlayerRadioValue] = useState<string>();
   const [opponentRadioValue, setOpponentRadioValue] = useState<string>();
@@ -180,8 +179,8 @@ function RoundOngoing({
   }, [user, roundStartTime, timeRemaining, roundTimerStarted, round]);
 
   // get all matches for round (for progress bar)
-  useEffect(() => {
-    const fetchData = async () => {
+  usePolling(
+    async () => {
       try {
         const mtchs = await ApiClient.getMatchesByRound(round.id);
         setMatches(mtchs);
@@ -190,30 +189,17 @@ function RoundOngoing({
           console.error("Failed to fetch matches:", error.message);
         }
       }
-    };
+    },
+    [round],
+    { enabled: !!round }
+  );
 
-    if (round) {
-      return startPolling(() => fetchData());
-    }
-  }, [round]);
-
-  // set total matches for progress bar
-  useEffect(() => {
-    if (matches) {
-      setTotalMatches(matches.length);
-    }
-  }, [matches]);
-
-  const [resultsMissing, setResultsMissing] = useState<number>(0);
-
-  // ongoing matches for progress bar
-  useEffect(() => {
-    if (matches) {
-      setResultsMissing(
-        matches.filter((match) => !match.resultSubmittedBy).length
-      );
-    }
-  }, [matches]);
+  // Derived state for progress bar
+  const totalMatches = useMemo(() => matches?.length ?? 0, [matches]);
+  const resultsMissing = useMemo(
+    () => matches?.filter((match) => !match.resultSubmittedBy).length ?? 0,
+    [matches]
+  );
 
   useEffect(() => {
     const fetchData = async () => {

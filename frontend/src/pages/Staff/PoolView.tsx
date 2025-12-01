@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { get, post } from "../../services/ApiService";
-import { Accordion, Container, Row } from "react-bootstrap";
+import { Accordion, Row } from "react-bootstrap";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
@@ -19,6 +19,8 @@ import PoolReturnedModal, {
   PoolReturnedModalProps,
 } from "../../components/staff/PoolReturnedModal";
 import { toast } from "react-toastify";
+import PageContainer from "../../components/general/PageContainer";
+import { sortSeatsBySeat } from "../../utils/sortingUtils";
 
 function PoolView() {
   const { tournamentId } = useParams();
@@ -73,7 +75,7 @@ function PoolView() {
       const seatId = seat.id;
       post(
         `/tournament/${tournamentId}/setDraftPoolReturned/${seatId}`,
-        {},
+        {}
       ).then(async (resp) => {
         const draft = (await resp.json()) as Draft;
         if (draft !== null) {
@@ -81,7 +83,7 @@ function PoolView() {
             seat.player?.firstName +
               " " +
               seat.player?.lastName +
-              " draft pool returned",
+              " draft pool returned"
           );
           setCurrentDraft(draft);
           setModal({
@@ -116,7 +118,7 @@ function PoolView() {
   }
 
   return user && tournament ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <Row>
         <BackButton
           buttonText="Back to staff view"
@@ -132,13 +134,13 @@ function PoolView() {
           {currentDraft.pods
             .sort((a, b) => a.podNumber - b.podNumber)
             .map((pod: DraftPod) => {
-              pod.seats.sort((a, b) => a.seat - b.seat);
+              const sortedSeats = [...pod.seats].sort(sortSeatsBySeat);
               return (
                 <PoolsReturnedTable
                   key={pod.id}
                   draft={currentDraft}
                   pod={pod}
-                  seats={pod.seats}
+                  seats={sortedSeats}
                   markDoneClicked={markDoneClicked}
                 />
               );
@@ -159,7 +161,7 @@ function PoolView() {
         actionFunction={modal.actionFunction}
         seat={modal.seat}
       />
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

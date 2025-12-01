@@ -1,4 +1,4 @@
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import { Button, Col, Row, Table } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { get } from "../../services/ApiService";
 import { useParams } from "react-router";
@@ -7,6 +7,7 @@ import Loading from "../../components/general/Loading";
 import { Enrollment, Player, Preference } from "../../types/User";
 import { Cube } from "../../types/Cube";
 import { Draft, Tournament } from "../../types/Tournament";
+import PageContainer from "../../components/general/PageContainer";
 
 type DryPlayer = {
   playerId: number;
@@ -176,7 +177,7 @@ const TestPreferencesTable = () => {
   }
 
   return user && dryPlayers3 && rawPreference ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <Row className="my-3">
         <Col xs={12}>
           <h1 className="display-1">Player cube preferences</h1>
@@ -300,7 +301,7 @@ const TestPreferencesTable = () => {
           </Table>
         </Col>
       </Row>
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

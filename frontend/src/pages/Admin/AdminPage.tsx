@@ -1,4 +1,4 @@
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Loading from "../../components/general/Loading";
 import { useIsAdmin } from "../../utils/auth";
@@ -9,12 +9,13 @@ import {
   TrophyFill,
 } from "react-bootstrap-icons";
 import HelmetTitle from "../../components/general/HelmetTitle";
+import PageContainer from "../../components/general/PageContainer";
 
 const AdminPage = () => {
   const user = useIsAdmin();
 
   return user ? (
-    <Container className="mt-3 my-md-4">
+    <PageContainer>
       <HelmetTitle titleText="Admin" />
       <Row className="my-3">
         <Col xs={12}>
@@ -49,7 +50,7 @@ const AdminPage = () => {
           </Link>
         </Col>
       </Row>
-    </Container>
+    </PageContainer>
   ) : (
     <Loading />
   );

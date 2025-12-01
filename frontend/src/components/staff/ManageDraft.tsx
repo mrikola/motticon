@@ -1,4 +1,5 @@
 import { Button, Col, Container, Row } from "react-bootstrap";
+import { useMemo } from "react";
 import {
   Draft,
   DraftPodSeat,
@@ -17,6 +18,11 @@ import { Link } from "react-router-dom";
 import dayjs, { Dayjs } from "dayjs";
 import { toast } from "react-toastify";
 import { Enrollment } from "../../types/User";
+import { ApiException } from "../../services/ApiService";
+import {
+  sortRoundsByRoundNumber,
+  sortSeatsBySeat,
+} from "../../utils/sortingUtils";
 
 type Props = {
   currentDraft: Draft;
@@ -41,9 +47,6 @@ const ManageDraft = ({
   const [lastCompletedRound, setLastCompletedRound] = useState<Round>();
   const [firstPendingRound, setFirstPendingRound] = useState<Round>();
   const [allSeats, setAllSeats] = useState<DraftPodSeat[]>([]);
-  const [totalPlayers, setTotalPlayers] = useState<number>(0);
-  const [buildingRemaining, setBuildingRemaining] = useState<number>(0);
-  const [poolsReturned, setPoolsReturned] = useState<number>(0);
   const [draftStart, setDraftStart] = useState<Dayjs>();
   const [draftTimerStarted, setDraftTimerStarted] = useState<boolean>(false);
   const [modal, setModal] = useState<DeckBuildingModalProps>({
@@ -65,16 +68,25 @@ const ManageDraft = ({
         seats.push({ ...seat, pod });
       }
     }
-    seats.sort((a, b) =>
-      a.seat === b.seat
-        ? (a.pod?.podNumber ?? 0) - (b.pod?.podNumber ?? 0)
-        : a.seat - b.seat,
-    );
-    setAllSeats(seats);
-    if (totalPlayers === 0) {
-      setTotalPlayers(seats.length);
-    }
+    const sortedSeats = [...seats].sort((a, b) => {
+      // Sort by seat first, then by pod number if seats are equal
+      const seatCompare = sortSeatsBySeat(a, b);
+      if (seatCompare !== 0) return seatCompare;
+      return (a.pod?.podNumber ?? 0) - (b.pod?.podNumber ?? 0);
+    });
+    setAllSeats(sortedSeats);
   }, [currentDraft]);
+
+  // Derived state
+  const totalPlayers = useMemo(() => allSeats.length, [allSeats]);
+  const buildingRemaining = useMemo(
+    () => allSeats.filter((seat) => seat.deckPhotoUrl == null).length,
+    [allSeats]
+  );
+  const poolsReturned = useMemo(
+    () => allSeats.filter((seat) => seat.draftPoolReturned === true).length,
+    [allSeats]
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,15 +96,15 @@ const ManageDraft = ({
       // console.log("rounds", JSON.stringify(rounds, null, 2));
 
       setFirstPendingRound(
-        rounds
-          .sort((a, b) => a.roundNumber - b.roundNumber)
-          .find((round) => round.status === "pending"),
+        [...rounds]
+          .sort(sortRoundsByRoundNumber)
+          .find((round) => round.status === "pending")
       );
 
       setLastCompletedRound(
-        rounds
-          .sort((a, b) => b.roundNumber - a.roundNumber)
-          .find((round) => round.status === "completed"),
+        [...rounds]
+          .sort((a, b) => sortRoundsByRoundNumber(b, a)) // Reverse for descending
+          .find((round) => round.status === "completed")
       );
     };
 
@@ -101,12 +113,12 @@ const ManageDraft = ({
 
   const generatePairings = async () => {
     const resp = await put(
-      `/tournament/${tournamentId}/draft/${currentDraft.id}/round/${firstPendingRound?.id}/pairings`,
+      `/tournament/${tournamentId}/draft/${currentDraft.id}/round/${firstPendingRound?.id}/pairings`
     );
     const matches = (await resp.json()) as Match[];
     if (matches !== null) {
       toast.success(
-        "Pairings for round " + firstPendingRound?.roundNumber + " generated",
+        "Pairings for round " + firstPendingRound?.roundNumber + " generated"
       );
       setFirstPendingRound({ ...firstPendingRound!, matches });
     }
@@ -120,7 +132,7 @@ const ManageDraft = ({
     if (firstPendingRound) {
       const response = await put(
         `/tournament/${tournamentId}/round/${firstPendingRound?.id}/start`,
-        {},
+        {}
       );
       const round = (await response.json()) as Round;
       setCurrentRound(round);
@@ -131,7 +143,7 @@ const ManageDraft = ({
     if (currentDraft) {
       const response = await put(
         `/tournament/${tournamentId}/draft/${currentDraft.id}/start`,
-        {},
+        {}
       );
       const draft = (await response.json()) as Draft;
       if (draft !== null) {
@@ -144,7 +156,7 @@ const ManageDraft = ({
   const completeDraft = async () => {
     const response = await put(
       `/tournament/${tournamentId}/draft/${currentDraft.id}/end`,
-      {},
+      {}
     );
     const updatedTournament = (await response.json()) as Tournament;
     console.log(updatedTournament);
@@ -153,41 +165,41 @@ const ManageDraft = ({
     // do some stuff here
   };
 
-  useEffect(() => {
-    if (allSeats) {
-      setBuildingRemaining(
-        allSeats.filter((seat) => seat.deckPhotoUrl == null).length,
-      );
+  const markDone = async (seat: DraftPodSeat) => {
+    if (!seat) {
+      console.error("No seat provided");
+      return;
     }
-  }, [allSeats]);
 
-  function markDone(seat: DraftPodSeat) {
-    if (seat) {
-      const seatId = seat.id;
-      post(`/tournament/${tournamentId}/setDeckPhoto/${seatId}`, {
-        tournamentId,
-        seatId,
-      }).then(async (resp) => {
-        const draft = (await resp.json()) as Draft;
-        if (draft !== null) {
-          // console.log(draft);
-          toast.success(
-            "Marked done for " +
-              seat.player?.firstName +
-              " " +
-              seat.player?.lastName,
-          );
-          setCurrentDraft(draft);
-          setModal({
-            ...modal,
-            show: false,
-          });
+    const seatId = seat.id;
+    try {
+      const resp = await post(
+        `/tournament/${tournamentId}/setDeckPhoto/${seatId}`,
+        {
+          tournamentId,
+          seatId,
         }
-      });
-    } else {
-      console.log("error");
+      );
+      const draft = (await resp.json()) as Draft;
+      if (draft !== null) {
+        toast.success(
+          "Marked done for " +
+            seat.player?.firstName +
+            " " +
+            seat.player?.lastName
+        );
+        setCurrentDraft(draft);
+        setModal({
+          ...modal,
+          show: false,
+        });
+      }
+    } catch (error) {
+      if (error instanceof ApiException) {
+        toast.error("Failed to mark seat as done: " + error.message);
+      }
     }
-  }
+  };
 
   function markDoneClicked(clickedSeat: DraftPodSeat) {
     setModal({
@@ -204,14 +216,6 @@ const ManageDraft = ({
       seat: clickedSeat,
     });
   }
-
-  useEffect(() => {
-    if (allSeats) {
-      setPoolsReturned(
-        allSeats.filter((seat) => seat.draftPoolReturned === true).length,
-      );
-    }
-  }, [allSeats]);
 
   useEffect(() => {
     if (!currentDraft.startTime) {
