@@ -13,6 +13,7 @@ import { ScoreService } from "./service/score.service";
 import { ComputerVisionService } from "./service/computerVision.service";
 import { FileService } from "./service/file.service";
 import { PairingsService } from "./service/pairings.service";
+import { PodScoreBackfillService } from "./service/podScoreBackfill.service";
 import { IocContainer, ServiceIdentifier } from "@tsoa/runtime";
 import { CardController } from "./controller/card.controller";
 import { CubeController } from "./controller/cube.controller";
@@ -94,6 +95,15 @@ Container.set(
     AppDataSource,
     Container.get("TournamentService"),
     Container.get("CardService"),
+    Container.get("MatchService")
+  )
+);
+
+// Register PodScoreBackfillService
+Container.set(
+  "PodScoreBackfillService",
+  new PodScoreBackfillService(
+    AppDataSource,
     Container.get("MatchService")
   )
 );
