@@ -14,6 +14,8 @@ import { ComputerVisionService } from "./service/computerVision.service";
 import { FileService } from "./service/file.service";
 import { PairingsService } from "./service/pairings.service";
 import { PodScoreBackfillService } from "./service/podScoreBackfill.service";
+import { R2StorageService } from "./service/r2-storage.service";
+import { loadConfig } from "./config/config";
 import { IocContainer, ServiceIdentifier } from "@tsoa/runtime";
 import { CardController } from "./controller/card.controller";
 import { CubeController } from "./controller/cube.controller";
@@ -28,11 +30,15 @@ import { DraftController } from "./controller/draft.controller";
 // Register core dependencies
 Container.set("DataSource", AppDataSource);
 
+// Load config for services that need it
+const config = loadConfig();
+
 // Register base services first (no dependencies)
 Container.set("CardService", new CardService(AppDataSource));
 Container.set("PreferenceService", new PreferenceService(AppDataSource));
 Container.set("MatchService", new MatchService(AppDataSource));
 Container.set("FileService", new FileService());
+Container.set("R2StorageService", new R2StorageService(config));
 
 // Register UserService before services that depend on it
 Container.set(
@@ -167,7 +173,10 @@ Container.set(
 
 Container.set(
   DraftController,
-  new DraftController(Container.get("DraftService"))
+  new DraftController(
+    Container.get("DraftService"),
+    Container.get("R2StorageService")
+  )
 );
 
 // Create tsoa-compatible container
