@@ -93,7 +93,7 @@ export const expressAuthentication = async (
 
     case "staff":
       // For staff routes that need tournamentId
-      const tournamentId = parseInt(request.params.tournamentId);
+      const tournamentId = Number(request.params.tournamentId);
       if (!isValidStaffMemberToken(token, tournamentId)) {
         throw new Error("Insufficient staff privileges");
       }

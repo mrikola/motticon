@@ -25,7 +25,7 @@
     "concurrently": "^9.1.2",
     "cors": "^2.8.5",
     "elo-rank": "^1.0.4",
-    "express": "4.21.2",
+    "express": "4.22.1",
     "joi": "^17.13.3",
     "js-levenshtein": "^1.1.6",
     "jsonwebtoken": "^9.0.2",
