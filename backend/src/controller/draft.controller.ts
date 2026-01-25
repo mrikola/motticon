@@ -22,21 +22,19 @@ import {
 } from "../dto/draft.dto";
 import { RoundDto, roundToDto, MatchDto, matchToDto } from "../dto/round.dto";
 import path from "path";
-import {
-  FILE_ROOT,
-  createDirIfNotExists,
-  removeScandinavianLetters,
-} from "../util/fs";
-import { writeFileSync } from "fs";
+import { removeScandinavianLetters } from "../util/fs";
 import mime from "mime-types";
 import { getUserFromToken } from "../auth/auth";
-import { ClientRequest } from "http";
 import express from "express";
+import { R2StorageService } from "../service/r2-storage.service";
 
 @Route("draft")
 @Service()
 export class DraftController extends Controller {
-  constructor(private draftService: DraftService) {
+  constructor(
+    private draftService: DraftService,
+    private r2StorageService: R2StorageService
+  ) {
     super();
   }
 
@@ -101,21 +99,28 @@ export class DraftController extends Controller {
       throw new Error("User not found");
     }
 
-    const filePath = path.join(
-      FILE_ROOT,
-      tournamentId.toString(),
-      seatId.toString(),
-    );
-    createDirIfNotExists(filePath);
-
     const extension = mime.extension(file.mimetype);
+    if (!extension) {
+      throw new Error("Unable to determine file extension from MIME type");
+    }
+
     const fileName = removeScandinavianLetters(
       `deck_${user.firstName}_${user.lastName}.${extension}`,
     );
-    const localFileFullPath = path.join(filePath, fileName);
-    writeFileSync(localFileFullPath, file.buffer);
 
-    const url = `${request.protocol}://${request.headers.host}${filePath}/${fileName}`;
+    // Construct the key (path) for R2 storage: tournamentId/seatId/filename
+    const key = path.join(
+      tournamentId.toString(),
+      seatId.toString(),
+      fileName,
+    ).replace(/\\/g, "/"); // Ensure forward slashes for R2
+
+    // Upload to R2 and get public URL
+    const url = await this.r2StorageService.uploadFile(
+      file.buffer,
+      key,
+      file.mimetype,
+    );
 
     return draftToDto(
       await this.draftService.setDeckPhotoForUser(tournamentId, seatId, url),
