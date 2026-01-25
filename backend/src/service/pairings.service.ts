@@ -79,13 +79,16 @@ export class PairingsService {
   private async getPodStandings(
     pod: DraftPod,
     draft: any,
-    currentRound: Round
+    currentRound: Round,
+    droppedPlayerIds: Set<number>
   ): Promise<
     Array<{
       player: User;
       matchPoints: number;
       opponentMatchWinPercentage: number;
       opponents: number[];
+      isDropped: boolean;
+      isDummy: boolean;
     }>
   > {
     const playerIds = pod.seats.map((seat) => seat.player.id);
@@ -105,6 +108,8 @@ export class PairingsService {
         matchPoints: number;
         opponentMatchWinPercentage: number;
         opponents: number[];
+        isDropped: boolean;
+        isDummy: boolean;
       }
     >();
 
@@ -116,6 +121,8 @@ export class PairingsService {
         matchPoints: podScore?.matchPoints ?? 0,
         opponentMatchWinPercentage: podScore?.opponentMatchWinPercentage ?? 0,
         opponents: [],
+        isDropped: droppedPlayerIds.has(seat.player.id),
+        isDummy: seat.player.isDummy,
       });
     });
 
@@ -179,6 +186,8 @@ export class PairingsService {
       matchPoints: number;
       opponentMatchWinPercentage: number;
       opponents: number[];
+      isDropped: boolean;
+      isDummy: boolean;
     }>,
     currentRound: Round,
     numberOfPods: number
@@ -196,6 +205,32 @@ export class PairingsService {
     const pairings: Match[] = [];
     const used = new Set<number>();
     let tableOffset = 0;
+
+    // Prioritize pairing dropped and dummy players against each other
+    // to minimize their impact on active players' pairings
+    const droppedAndDummyPlayers = sorted.filter(
+      (s) => s.isDropped || s.isDummy
+    );
+    
+    // Pair as many dropped/dummy players together as possible (leaving at most 1)
+    while (droppedAndDummyPlayers.length >= 2) {
+      const player1 = droppedAndDummyPlayers.shift()!;
+      const player2 = droppedAndDummyPlayers.shift()!;
+
+      pairings.push(
+        this.createMatch(
+          matchRepo,
+          currentRound,
+          pod,
+          player1.player,
+          player2.player,
+          pod.podNumber + numberOfPods * tableOffset++,
+          "swiss"
+        )
+      );
+      used.add(player1.player.id);
+      used.add(player2.player.id);
+    }
 
     // Standard Swiss pairing: pair top vs bottom of each bracket
     // Avoid rematches when possible
@@ -514,6 +549,15 @@ export class PairingsService {
       })
       .getOne();
 
+    // Fetch enrollments to get dropped status for Swiss pairings
+    const tournamentWithEnrollments =
+      await this.tournamentService.getTournamentEnrollments(tournamentId);
+    const droppedPlayerIds = new Set(
+      tournamentWithEnrollments.enrollments
+        .filter((e) => e.dropped)
+        .map((e) => e.player.id)
+    );
+
     this.tournamentService.initiateRound(tournamentId, roundId);
     const { pods } = draft;
     const numberOfPods = pods.length;
@@ -525,7 +569,8 @@ export class PairingsService {
           const standings = await this.getPodStandings(
             pod,
             draft,
-            currentRound
+            currentRound,
+            droppedPlayerIds
           );
           return await this.generateSwissPairings(
             pod,
