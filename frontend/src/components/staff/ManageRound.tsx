@@ -283,6 +283,7 @@ const ManageRound = ({
         />
         <ResultsInputModal
           show={modal.show}
+          allowDraw={true}
           onHide={() =>
             setModal({
               ...modal,

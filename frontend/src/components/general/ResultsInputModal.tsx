@@ -5,6 +5,7 @@ import { Match } from "../../types/Tournament";
 
 export type ModalProps = {
   show: boolean;
+  allowDraw?: boolean;
   onHide: () => void;
   heading: string;
   actionFunction: (
@@ -17,6 +18,7 @@ export type ModalProps = {
 
 function ResultsInputModal({
   show,
+  allowDraw = false,
   onHide,
   heading,
   actionFunction,
@@ -79,7 +81,7 @@ function ResultsInputModal({
               variant="info"
               className="btn-lg text-light"
               type="submit"
-              disabled={playerRadioValue === opponentRadioValue}
+              disabled={!allowDraw && playerRadioValue === opponentRadioValue}
               onClick={() =>
                 actionFunction(match, playerRadioValue, opponentRadioValue)
               }
