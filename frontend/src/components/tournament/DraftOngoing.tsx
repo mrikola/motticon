@@ -139,7 +139,7 @@ function DraftOngoing({ tournament, draft, setDraft }: Props) {
                   squareFillContent={`${calculateDeckBuildingPod(
                     playerPod.podNumber,
                     playerSeat.seat,
-                    tournament.totalSeats / 8
+                    draft.pods.length
                   )}`}
                 />
                 <p>
