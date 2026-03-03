@@ -34,7 +34,7 @@
     "lru-cache": "11.0.1",
     "mime-types": "^2.1.35",
     "mnemonist": "^0.39.8",
-    "multer": "^2.0.1",
+    "multer": "^2.1.0",
     "pg": "^8.4.0",
     "reflect-metadata": "0.2.2",
     "tsoa": "6.4.0",
