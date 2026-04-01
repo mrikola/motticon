@@ -57,49 +57,53 @@ function AllPoolsView() {
         <Col xs={12} key={index}>
           <h2 className="display-3">Draft {draft.draftNumber}</h2>
           <Accordion defaultActiveKey="0" flush className="staff-accordion">
-            {draft.pods.map((pod, i) => (
-              <Accordion.Item eventKey={pod.id.toString()} key={pod.id}>
-                <Accordion.Header>
-                  <h3>
-                    Pod {pod.podNumber}, {pod.cube?.title}
-                  </h3>
-                </Accordion.Header>
-                <Accordion.Body className="px-0">
-                  <Table striped responsive key={i}>
-                    <thead>
-                      <tr>
-                        <th>Pod</th>
-                        <th>Seat</th>
-                        <th>Player name</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pod.seats.sort(sortSeatsBySeat).map((seat) => (
-                        <tr key={seat.id}>
-                          <td>{pod.podNumber}</td>
-                          <td>{seat.seat}</td>
-                          <td>
-                            {seat.deckPhotoUrl ? (
-                              <Link
-                                to={seat.deckPhotoUrl}
-                                target="_blank"
-                                className="text-dark"
-                              >
-                                {seat.player?.firstName} {seat.player?.lastName}
-                              </Link>
-                            ) : (
-                              <>
-                                {seat.player?.firstName} {seat.player?.lastName}
-                              </>
-                            )}
-                          </td>
+            {draft.pods
+              .sort((a, b) => a.podNumber - b.podNumber)
+              .map((pod, i) => (
+                <Accordion.Item eventKey={pod.id.toString()} key={pod.id}>
+                  <Accordion.Header>
+                    <h3>
+                      Pod {pod.podNumber}, {pod.cube?.title}
+                    </h3>
+                  </Accordion.Header>
+                  <Accordion.Body className="px-0">
+                    <Table striped responsive key={i}>
+                      <thead>
+                        <tr>
+                          <th>Pod</th>
+                          <th>Seat</th>
+                          <th>Player name</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </Accordion.Body>
-              </Accordion.Item>
-            ))}
+                      </thead>
+                      <tbody>
+                        {pod.seats.sort(sortSeatsBySeat).map((seat) => (
+                          <tr key={seat.id}>
+                            <td>{pod.podNumber}</td>
+                            <td>{seat.seat}</td>
+                            <td>
+                              {seat.deckPhotoUrl ? (
+                                <Link
+                                  to={seat.deckPhotoUrl}
+                                  target="_blank"
+                                  className="text-dark"
+                                >
+                                  {seat.player?.firstName}{" "}
+                                  {seat.player?.lastName}
+                                </Link>
+                              ) : (
+                                <>
+                                  {seat.player?.firstName}{" "}
+                                  {seat.player?.lastName}
+                                </>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </Accordion.Body>
+                </Accordion.Item>
+              ))}
           </Accordion>
         </Col>
       ))}
