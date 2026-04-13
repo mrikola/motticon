@@ -17,4 +17,5 @@ export type StandingsRow = {
   matchPoints: number;
   draftsWon: number;
   opponentMatchWinPercentage: number;
+  playedGamesWinPercentage: number;
 };

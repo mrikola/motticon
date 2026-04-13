@@ -33,6 +33,7 @@ const StaffStandingsTable = ({ roundNumber }: Props) => {
             <th>Match points</th>
             <th>Drafts Won</th>
             <th>OMW%</th>
+            <th>PGW%</th>
           </tr>
         </thead>
         <tbody>
@@ -47,6 +48,11 @@ const StaffStandingsTable = ({ roundNumber }: Props) => {
               <td>
                 {result.opponentMatchWinPercentage != 0
                   ? (result.opponentMatchWinPercentage * 100).toPrecision(5)
+                  : Math.random().toPrecision(3).toString().substring(1, 5)}
+              </td>
+              <td>
+                {result.playedGamesWinPercentage != 0
+                  ? (result.playedGamesWinPercentage * 100).toPrecision(5)
                   : Math.random().toPrecision(3).toString().substring(1, 5)}
               </td>
             </tr>

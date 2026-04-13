@@ -1194,6 +1194,11 @@
 			},
 			"StandingsRow": {
 				"properties": {
+					"playedGamesWinPercentage": {
+						"type": "number",
+						"format": "double",
+						"description": "Games won divided by total games played (0–1)."
+					},
 					"opponentMatchWinPercentage": {
 						"type": "number",
 						"format": "double"
@@ -1218,6 +1223,7 @@
 					}
 				},
 				"required": [
+					"playedGamesWinPercentage",
 					"opponentMatchWinPercentage",
 					"draftsWon",
 					"matchPoints",

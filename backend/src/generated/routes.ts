@@ -342,7 +342,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "StandingsRow": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"opponentMatchWinPercentage":{"dataType":"double","required":true},"draftsWon":{"dataType":"double","required":true},"matchPoints":{"dataType":"double","required":true},"lastName":{"dataType":"string","required":true},"firstName":{"dataType":"string","required":true},"playerId":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"playedGamesWinPercentage":{"dataType":"double","required":true},"opponentMatchWinPercentage":{"dataType":"double","required":true},"draftsWon":{"dataType":"double","required":true},"matchPoints":{"dataType":"double","required":true},"lastName":{"dataType":"string","required":true},"firstName":{"dataType":"string","required":true},"playerId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "PlayerTournamentScoreDto": {

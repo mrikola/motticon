@@ -20,14 +20,14 @@ export class ScoreService {
   constructor(
     @Inject("DataSource") private appDataSource: DataSource,
     @Inject("UserService") private userService: UserService,
-    @Inject("MatchService") private matchService: MatchService
+    @Inject("MatchService") private matchService: MatchService,
   ) {
     this.repository = this.appDataSource.getRepository(PlayerTournamentScore);
   }
 
   async getPreviousScore(
     tournamentId: number,
-    playerId: number
+    playerId: number,
   ): Promise<PlayerTournamentScore> {
     return await this.repository.findOne({
       where: {
@@ -39,7 +39,7 @@ export class ScoreService {
 
   async getStandings(
     tournamentId: number,
-    roundNumber: number
+    roundNumber: number,
   ): Promise<StandingsRow[]> {
     const matches = await this.appDataSource
       .getRepository(OMWView)
@@ -73,7 +73,7 @@ export class ScoreService {
         matchPoints: (previousRecord?.matchPoints ?? 0) + row.playerPoints,
         matchesPlayed: (previousRecord?.matchesPlayed ?? 0) + 1,
         opponentIds: (previousRecord?.opponentIds ?? []).concat(
-          opponentIsBye ? [] : row.opponentId
+          opponentIsBye ? [] : row.opponentId,
         ),
       });
 
@@ -83,7 +83,7 @@ export class ScoreService {
         matchPointPercentage: Math.max(
           1 / 3,
           currentRecord.matchPoints /
-            (Math.max(currentRecord.matchesPlayed, 1) * 3)
+            (Math.max(currentRecord.matchesPlayed, 1) * 3),
         ),
       });
     }
@@ -92,13 +92,16 @@ export class ScoreService {
 
     records.forEach((player) => {
       const scoreRow = tournamentScores.find(
-        (score) => score.playerId === player.id
+        (score) => score.playerId === player.id,
       );
 
       const omw =
         sumArray(
-          player.opponentIds.map((id) => records.get(id).matchPointPercentage)
+          player.opponentIds.map((id) => records.get(id).matchPointPercentage),
         ) / Math.max(player.opponentIds.length, 1);
+
+      const pgw =
+        player.gamesPlayed > 0 ? player.gamesWon / player.gamesPlayed : 0;
 
       standings.push({
         playerId: scoreRow.player.id,
@@ -107,12 +110,19 @@ export class ScoreService {
         matchPoints: player.matchPoints,
         draftsWon: scoreRow.draftsWon,
         opponentMatchWinPercentage: omw,
+        playedGamesWinPercentage: pgw,
       });
     });
 
     return standings.sort((a, b) => {
       if (a.matchPoints === b.matchPoints) {
         if (a.draftsWon === b.draftsWon) {
+          if (
+            Math.round(a.opponentMatchWinPercentage * 1000) ===
+            Math.round(b.opponentMatchWinPercentage * 1000)
+          ) {
+            return b.playedGamesWinPercentage - a.playedGamesWinPercentage;
+          }
           return b.opponentMatchWinPercentage - a.opponentMatchWinPercentage;
         }
         return b.draftsWon - a.draftsWon;
@@ -130,14 +140,14 @@ export class ScoreService {
         playerId,
         points: (previousScore?.points ?? 0) + 3,
       },
-      ["tournamentId", "playerId"]
+      ["tournamentId", "playerId"],
     );
   }
 
   async awardDraw(
     tournamentId: number,
     player1Id: number,
-    player2Id: number
+    player2Id: number,
   ): Promise<void> {
     const previousScore1 = await this.getPreviousScore(tournamentId, player1Id);
     const previousScore2 = await this.getPreviousScore(tournamentId, player2Id);
@@ -148,7 +158,7 @@ export class ScoreService {
         playerId: player1Id,
         points: (previousScore1?.points ?? 0) + 1,
       },
-      ["tournamentId", "playerId"]
+      ["tournamentId", "playerId"],
     );
 
     await this.repository.upsert(
@@ -157,7 +167,7 @@ export class ScoreService {
         playerId: player2Id,
         points: (previousScore2?.points ?? 0) + 1,
       },
-      ["tournamentId", "playerId"]
+      ["tournamentId", "playerId"],
     );
   }
 
@@ -170,7 +180,7 @@ export class ScoreService {
         playerId,
         draftsWon: (previousScore.draftsWon ?? 0) + 1,
       },
-      ["tournamentId", "playerId"]
+      ["tournamentId", "playerId"],
     );
   }
 
@@ -179,7 +189,7 @@ export class ScoreService {
     this.appDataSource
       .getRepository(ScoreHistory)
       .insert(
-        scores.map((score) => ({ ...score, roundNumber } as ScoreHistory))
+        scores.map((score) => ({ ...score, roundNumber }) as ScoreHistory),
       );
   }
 
@@ -235,7 +245,7 @@ export class ScoreService {
     // Ensure the current round is included even if status hasn't updated yet
     let previousRoundsList = previousRounds;
     const currentRoundInList = previousRoundsList.some(
-      (r) => r.id === round.id
+      (r) => r.id === round.id,
     );
     if (!currentRoundInList) {
       previousRoundsList = [...previousRoundsList, round];
@@ -265,7 +275,7 @@ export class ScoreService {
     for (const prevRound of previousRoundsList) {
       const matches = await this.matchService.getMatchesForRoundByPlayers(
         prevRound.id,
-        playerIds
+        playerIds,
       );
 
       // Only count matches where both players are in this pod
@@ -274,7 +284,7 @@ export class ScoreService {
         (match) =>
           (match.pod?.id === podId || match.podId === podId) &&
           playerIds.includes(match.player1.id) &&
-          playerIds.includes(match.player2.id)
+          playerIds.includes(match.player2.id),
       );
 
       for (const match of podMatches) {
@@ -316,7 +326,7 @@ export class ScoreService {
     // Calculate OMW for each player
     const podScoreRepo = this.appDataSource.getRepository(PlayerPodScore);
     const podHistoryRepo = this.appDataSource.getRepository(
-      PlayerPodScoreHistory
+      PlayerPodScoreHistory,
     );
 
     for (const [playerId, standing] of standingsMap.entries()) {
@@ -332,9 +342,9 @@ export class ScoreService {
             return Math.max(
               1 / 3,
               oppStanding.matchPoints /
-                (Math.max(oppStanding.opponents.length, 1) * 3)
+                (Math.max(oppStanding.opponents.length, 1) * 3),
             );
-          }
+          },
         );
         omw =
           opponentMatchPointPercentages.reduce((a, b) => a + b, 0) /
@@ -351,7 +361,7 @@ export class ScoreService {
           gamesWon: standing.gamesWon,
           gamesPlayed: standing.gamesPlayed,
         },
-        ["playerId", "podId"]
+        ["playerId", "podId"],
       );
 
       // Save history snapshot
