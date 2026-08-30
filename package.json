@@ -14,7 +14,7 @@
     "deploy:test-frontend": "yarn deploy -c frontend-test.fly.toml",
     "deploy:test": "yarn deploy:test-backend && yarn deploy:test-frontend",
     "deploy:prod-backend": "yarn deploy -c backend-prod.fly.toml",
-    "deploy:prod-frontend": "yarn deploy -c frontend-prod.fly.toml",
+    "deploy:prod-frontend": "yarn deploy -c frontend-prod.fly.toml", 
     "deploy:prod": "yarn deploy:prod-backend && yarn deploy:prod-frontend",
     "deploy:web-test": "yarn workspace motticon-web run deploy:test",
     "deploy:web-prod": "yarn workspace motticon-web run deploy:prod",
