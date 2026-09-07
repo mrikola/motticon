@@ -2,7 +2,7 @@ import { Accordion, Col, Row, Table } from "react-bootstrap";
 import { Draft, DraftPod, DraftPodSeat } from "../../types/Tournament";
 import { useEffect, useState } from "react";
 import { CheckSquare, CheckSquareFill } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { sortSeatsBySeat } from "../../utils/sortingUtils";
 
 type Props = {

@@ -1,6 +1,6 @@
 import { Button, Col } from "react-bootstrap";
 import { BoxArrowInLeft } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type Props = {
   buttonText: string;

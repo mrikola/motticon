@@ -39,7 +39,7 @@
     "reflect-metadata": "0.2.2",
     "tsoa": "6.6.0",
     "typedi": "^0.10.0",
-    "typeorm": "0.3.30"
+    "typeorm": "0.3.31"
   },
   "scripts": {
     "dev": "npx concurrently \"nodemon -L --watch 'src/**/*.ts' --exec ts-node src/index.ts\" \"nodemon -L --watch 'src/**/*.controller.ts' --exec tsoa spec-and-routes\"",

@@ -26,7 +26,7 @@ import { isPlayerDropped } from "../../utils/user";
 import { ApiClient, ApiException } from "../../services/ApiService";
 import { usePolling } from "../../hooks/usePolling";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type Props = {
   tournament: Tournament;

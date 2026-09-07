@@ -6,8 +6,7 @@ import {
   PersonFillCheck,
   BoxFill,
 } from "react-bootstrap-icons";
-import { Outlet, useLocation } from "react-router";
-import { Link, NavLink } from "react-router-dom";
+import { Outlet, useLocation, Link, NavLink } from "react-router";
 import Footer from "./Footer";
 import { UserInfoContext } from "./provider/UserInfoProvider";
 import { useContext } from "react";

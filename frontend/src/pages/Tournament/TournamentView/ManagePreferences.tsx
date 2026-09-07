@@ -1,6 +1,6 @@
 import { Col, Row } from "react-bootstrap";
 import { Sliders2 } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type Props = {
   tournamentId: number;

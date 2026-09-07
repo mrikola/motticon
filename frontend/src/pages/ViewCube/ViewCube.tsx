@@ -1,10 +1,9 @@
 import { Fragment, useContext } from "react";
-import { useParams } from "react-router";
+import { useParams, Link } from "react-router";
 import { Col, Container, Row, Table } from "react-bootstrap";
 import { Cube } from "../../types/Cube";
 import { get } from "../../services/ApiService";
 import { PenFill, BoxArrowUpRight } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import BackButton from "../../components/general/BackButton";
 import Loading from "../../components/general/Loading";

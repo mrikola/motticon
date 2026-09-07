@@ -9,13 +9,12 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import CardCountdownTimer from "../general/CardCountdownTimer";
 import MatchesRemainingProgressBar from "../general/MatchesRemainingProgressBar";
 import MatchTable from "./MatchTable";
-import { useParams } from "react-router";
+import { useParams, Link } from "react-router";
 import VerticallyCenteredModal, {
   VerticallyCenteredModalProps,
 } from "../general/VerticallyCenteredModal";
 import HorizontalCard from "../general/HorizontalCard";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
 import { usePolling } from "../../hooks/usePolling";
 import { ApiException } from "../../services/ApiService";
 import { sortMatchesByTable } from "../../utils/sortingUtils";

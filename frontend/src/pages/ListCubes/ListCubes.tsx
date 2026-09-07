@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { PenFill } from "react-bootstrap-icons";
 import { get } from "../../services/ApiService";
 import { Cube } from "../../types/Cube";

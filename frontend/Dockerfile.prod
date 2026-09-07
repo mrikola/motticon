@@ -1,10 +1,17 @@
 # syntax = docker/dockerfile:1
 
 # Adjust NODE_VERSION as desired
-ARG NODE_VERSION=20.10.0
+ARG NODE_VERSION=26.8.1
 FROM node:${NODE_VERSION}-slim AS base
 
 LABEL fly_launch_runtime="Vite"
+
+# Install Yarn
+RUN apt-get update && apt-get install -y curl gnupg \
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /usr/share/keyrings/yarnkey.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" > /etc/apt/sources.list.d/yarn.list \
+    && apt-get update && apt-get install -y yarn \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Vite app lives here
 WORKDIR /app

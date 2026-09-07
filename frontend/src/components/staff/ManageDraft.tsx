@@ -9,12 +9,11 @@ import {
 } from "../../types/Tournament";
 import { useEffect, useState } from "react";
 import { get, post, put } from "../../services/ApiService";
-import { useParams } from "react-router";
+import { useParams, Link } from "react-router";
 import DraftTable from "./DraftTable";
 import DeckBuildingModal, { DeckBuildingModalProps } from "./DeckBuildingModal";
 import DecksSubmittedProgressBar from "./DecksSubmittedProgressBar";
 import CardCountupTimer from "../general/CardCountupTimer";
-import { Link } from "react-router-dom";
 import dayjs, { Dayjs } from "dayjs";
 import { toast } from "react-toastify";
 import { Enrollment } from "../../types/User";

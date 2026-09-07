@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { ApiClient, ApiException } from "../../services/ApiService";
 import { getUserInfoFromJwt } from "../../utils/auth";
 import {
@@ -9,7 +9,6 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
 import { BoxArrowInRight, PersonPlusFill } from "react-bootstrap-icons";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import { toast } from "react-toastify";

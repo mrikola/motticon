@@ -5,7 +5,7 @@ import { get } from "../../services/ApiService";
 import HelmetTitle from "../../components/general/HelmetTitle";
 import { UserInfoContext } from "../../components/provider/UserInfoProvider";
 import { Player } from "../../types/User";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import PageContainer from "../../components/general/PageContainer";
 
 const AllUsers = () => {

@@ -1,5 +1,5 @@
 import { BoxArrowUpRight } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { DraftPodSeat } from "../../types/Tournament";
 
 type Props = {

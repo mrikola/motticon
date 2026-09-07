@@ -1,5 +1,5 @@
 import { Col, Row } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import Loading from "../../components/general/Loading";
 import { useContext, useEffect, useState } from "react";
 import { get } from "../../services/ApiService";

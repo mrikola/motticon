@@ -1196,8 +1196,7 @@
 				"properties": {
 					"playedGamesWinPercentage": {
 						"type": "number",
-						"format": "double",
-						"description": "Games won divided by total games played (0–1)."
+						"format": "double"
 					},
 					"opponentMatchWinPercentage": {
 						"type": "number",

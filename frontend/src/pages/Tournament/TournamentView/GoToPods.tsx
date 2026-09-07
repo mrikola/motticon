@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Col, Row } from "react-bootstrap";
 import { CardList } from "react-bootstrap-icons";
 

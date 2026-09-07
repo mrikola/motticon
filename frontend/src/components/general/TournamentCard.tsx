@@ -1,6 +1,6 @@
 import { Badge, Card, Col } from "react-bootstrap";
 import { Tournament } from "../../types/Tournament";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { CheckCircleFill } from "react-bootstrap-icons";
 
 type Props = {

@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router";
+import { useParams, Link } from "react-router";
 import { get } from "../../services/ApiService";
 import { Accordion, Col, Row, Table } from "react-bootstrap";
 import { Draft, Tournament } from "../../types/Tournament";
 import { useIsTournamentStaff } from "../../utils/auth";
 import Loading from "../../components/general/Loading";
 import BackButton from "../../components/general/BackButton";
-import { Link } from "react-router-dom";
 import PageContainer from "../../components/general/PageContainer";
 import {
   sortDraftsByDraftNumber,

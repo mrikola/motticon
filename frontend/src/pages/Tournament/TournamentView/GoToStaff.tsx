@@ -5,7 +5,7 @@ import {
   ListOl,
   PeopleFill,
 } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type Props = {
   tournamentId: number;

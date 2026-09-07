@@ -1,5 +1,5 @@
 import { Col, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Loading from "../../components/general/Loading";
 import { useIsAdmin } from "../../utils/auth";
 import {
